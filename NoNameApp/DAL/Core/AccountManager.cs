@@ -1,9 +1,4 @@
-﻿// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
-using DAL.Core.Interfaces;
+﻿using DAL.Core.Interfaces;
 using DAL.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -12,7 +7,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DAL.Core {
@@ -31,11 +25,7 @@ namespace DAL.Core {
             _context.CurrentUserId = httpAccessor.HttpContext?.User.FindFirst(ClaimConstants.Subject)?.Value?.Trim();
             _userManager = userManager;
             _roleManager = roleManager;
-
         }
-
-
-
 
         public async Task<ApplicationUser> GetUserByIdAsync(string userId) {
             return await _userManager.FindByIdAsync(userId);
@@ -182,16 +172,6 @@ namespace DAL.Core {
 
                 return false;
             }
-
-            return true;
-        }
-
-
-        public async Task<bool> TestCanDeleteUserAsync(string userId) {
-            if (await _context.Orders.Where(o => o.CashierId == userId).AnyAsync())
-                return false;
-
-            //canDelete = !await ; //Do other tests...
 
             return true;
         }

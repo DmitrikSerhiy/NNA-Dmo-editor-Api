@@ -1,11 +1,4 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 import { Pipe, PipeTransform } from '@angular/core';
-
-
 
 @Pipe({ name: 'groupBy' })
 export class GroupByPipe implements PipeTransform {

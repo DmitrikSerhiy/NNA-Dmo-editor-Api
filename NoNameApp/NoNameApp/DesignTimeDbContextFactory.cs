@@ -1,18 +1,8 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
 using DAL;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using AutoMapper;
+using System.IO;
 
 namespace NoNameApp {
     public class DesignTimeDbContextFactory : IDesignTimeDbContextFactory<ApplicationDbContext> {

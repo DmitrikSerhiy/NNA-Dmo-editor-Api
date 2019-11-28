@@ -1,9 +1,4 @@
-﻿// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -277,10 +272,6 @@ namespace NoNameApp.Controllers {
 
             if (appUser == null)
                 return NotFound(id);
-
-            if (!await _accountManager.TestCanDeleteUserAsync(id))
-                return BadRequest("User cannot be deleted. Delete all orders associated with this user and try again");
-
 
             UserViewModel userVM = await GetUserViewModelHelper(appUser.Id);
 

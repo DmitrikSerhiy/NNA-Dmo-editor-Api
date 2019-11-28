@@ -1,10 +1,4 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 import { Utilities } from '../services/utilities';
-
 
 export class Notification {
 

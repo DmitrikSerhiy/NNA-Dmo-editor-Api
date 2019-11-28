@@ -1,14 +1,8 @@
-﻿// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
-using System;
-using System.Collections.Generic;
-using DAL.Core;
+﻿using DAL.Core;
 using IdentityModel;
 using IdentityServer4;
 using IdentityServer4.Models;
+using System.Collections.Generic;
 
 namespace NoNameApp {
     public class IdentityServerConfig {

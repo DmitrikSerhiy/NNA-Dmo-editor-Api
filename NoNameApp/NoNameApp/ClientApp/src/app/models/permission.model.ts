@@ -1,8 +1,3 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 export type PermissionNames =
     'View Users' | 'Manage Users' |
     'View Roles' | 'Manage Roles' | 'Assign Roles';

@@ -1,14 +1,5 @@
-﻿// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
-using FluentValidation;
-using System;
+﻿using FluentValidation;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 
 namespace NoNameApp.ViewModels {
@@ -20,12 +11,7 @@ namespace NoNameApp.ViewModels {
         public string Address { get; set; }
         public string City { get; set; }
         public string Gender { get; set; }
-
-        public ICollection<OrderViewModel> Orders { get; set; }
     }
-
-
-
 
     public class CustomerViewModelValidator : AbstractValidator<CustomerViewModel> {
         public CustomerViewModelValidator() {

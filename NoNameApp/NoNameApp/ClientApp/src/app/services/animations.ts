@@ -1,11 +1,4 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 import { animate, state, style, transition, trigger } from '@angular/animations';
-
-
 
 export const fadeInOut = trigger('fadeInOut', [
     transition(':enter', [style({ opacity: 0 }), animate('0.4s ease-in', style({ opacity: 1 }))]),

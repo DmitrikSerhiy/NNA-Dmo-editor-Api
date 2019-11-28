@@ -1,21 +1,9 @@
-﻿// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace NoNameApp {
     public class AppSettings {
         public SmtpConfig SmtpConfig { get; set; }
 
     }
-
-
 
     public class SmtpConfig {
         public string Host { get; set; }

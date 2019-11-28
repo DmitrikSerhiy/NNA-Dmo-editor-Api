@@ -1,8 +1,3 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 /**
  * alertify
  * An unobtrusive customizable JavaScript notification system

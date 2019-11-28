@@ -1,19 +1,11 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
-
 import { AlertService, DialogType, MessageSeverity } from '../../services/alert.service';
 import { ConfigurationService } from '../../services/configuration.service';
 import { AppTranslationService } from '../../services/app-translation.service';
 import { BootstrapSelectDirective } from '../../directives/bootstrap-select.directive';
 import { AccountService } from '../../services/account.service';
-import { ThemeManager } from '../../services/theme-manager';
 import { Utilities } from '../../services/utilities';
 import { Permission } from '../../models/permission.model';
-
 
 @Component({
     selector: 'user-preferences',
@@ -21,9 +13,6 @@ import { Permission } from '../../models/permission.model';
     styleUrls: ['./user-preferences.component.scss']
 })
 export class UserPreferencesComponent implements OnInit, OnDestroy {
-
-    themeSelectorToggle = true;
-
     languageChangedSubscription: any;
 
     @ViewChild('languageSelector', { static: true })
@@ -36,18 +25,14 @@ export class UserPreferencesComponent implements OnInit, OnDestroy {
         private alertService: AlertService,
         private translationService: AppTranslationService,
         private accountService: AccountService,
-        public themeManager: ThemeManager,
         public configurations: ConfigurationService) {
     }
 
     ngOnInit() {
         this.languageChangedSubscription = this.translationService.languageChanged$.subscribe(data => {
-            this.themeSelectorToggle = false;
-
             setTimeout(() => {
                 this.languageSelector.refresh();
                 this.homePageSelector.refresh();
-                this.themeSelectorToggle = true;
             });
         });
     }
@@ -55,8 +40,6 @@ export class UserPreferencesComponent implements OnInit, OnDestroy {
     ngOnDestroy() {
         this.languageChangedSubscription.unsubscribe();
     }
-
-
 
     reloadFromServer() {
         this.alertService.startLoadingMessage();
@@ -124,16 +107,4 @@ export class UserPreferencesComponent implements OnInit, OnDestroy {
             });
     }
 
-
-    get canViewCustomers() {
-        return this.accountService.userHasPermission(Permission.viewUsersPermission); // eg. viewCustomersPermission
-    }
-
-    get canViewProducts() {
-        return this.accountService.userHasPermission(Permission.viewUsersPermission); // eg. viewProductsPermission
-    }
-
-    get canViewOrders() {
-        return true; // eg. viewOrdersPermission
-    }
 }

@@ -1,11 +1,5 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 import { Injectable, ErrorHandler } from '@angular/core';
 import { AlertService, MessageSeverity } from './services/alert.service';
-
 
 @Injectable()
 export class AppErrorHandler extends ErrorHandler {

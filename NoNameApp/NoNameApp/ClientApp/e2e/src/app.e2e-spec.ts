@@ -1,7 +1,3 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
 
 import { AppPage } from './app.po';
 import { browser, logging } from 'protractor';

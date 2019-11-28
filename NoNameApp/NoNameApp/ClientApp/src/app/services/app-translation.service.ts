@@ -1,13 +1,6 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 import { Injectable } from '@angular/core';
 import { TranslateService, TranslateLoader } from '@ngx-translate/core';
 import { Observable, Subject, of } from 'rxjs';
-
-
 
 @Injectable()
 export class AppTranslationService {
@@ -98,12 +91,6 @@ export class TranslateLanguageLoader implements TranslateLoader {
         return of(require('../assets/locale/fr.json'));
       case 'de':
         return of(require('../assets/locale/de.json'));
-      case 'pt':
-        return of(require('../assets/locale/pt.json'));
-      case 'ar':
-        return of(require('../assets/locale/ar.json'));
-      case 'ko':
-        return of(require('../assets/locale/ko.json'));
       default:
     }
   }

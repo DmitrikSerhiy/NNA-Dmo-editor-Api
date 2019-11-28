@@ -1,17 +1,7 @@
-﻿// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
-using AutoMapper;
+﻿using AutoMapper;
 using DAL.Core;
 using DAL.Models;
 using Microsoft.AspNetCore.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NoNameApp.ViewModels {
     public class AutoMapperProfile : Profile {
@@ -50,12 +40,6 @@ namespace NoNameApp.ViewModels {
                 .ConvertUsing(s => (PermissionViewModel)ApplicationPermissions.GetPermissionByValue(s.ClaimValue));
 
             CreateMap<Customer, CustomerViewModel>()
-                .ReverseMap();
-
-            CreateMap<Product, ProductViewModel>()
-                .ReverseMap();
-
-            CreateMap<Order, OrderViewModel>()
                 .ReverseMap();
         }
     }

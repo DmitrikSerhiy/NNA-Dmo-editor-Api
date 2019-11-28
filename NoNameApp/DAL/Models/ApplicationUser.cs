@@ -1,15 +1,7 @@
-﻿// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
+﻿using DAL.Models.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using DAL.Models.Interfaces;
 
 namespace DAL.Models {
     public class ApplicationUser : IdentityUser, IAuditableEntity {
@@ -48,9 +40,5 @@ namespace DAL.Models {
         /// </summary>
         public virtual ICollection<IdentityUserClaim<string>> Claims { get; set; }
 
-        /// <summary>
-        /// Demo Navigation property for orders this user has processed
-        /// </summary>
-        public ICollection<Order> Orders { get; set; }
     }
 }

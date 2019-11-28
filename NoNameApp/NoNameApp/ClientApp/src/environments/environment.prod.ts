@@ -1,7 +1,4 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
+
 
 export const environment = {
   production: true,

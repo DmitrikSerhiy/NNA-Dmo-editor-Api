@@ -1,8 +1,3 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable, Subject, from, throwError } from 'rxjs';
@@ -75,8 +70,6 @@ export class EndpointBase {
       return throwError(error);
     }
   }
-
-
 
   private pauseTask(continuation: () => Observable<any>) {
     if (!this.taskPauser) {

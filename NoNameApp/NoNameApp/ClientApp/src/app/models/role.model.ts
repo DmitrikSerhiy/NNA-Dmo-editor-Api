@@ -1,10 +1,4 @@
-// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
 import { Permission } from './permission.model';
-
 
 export class Role {
 

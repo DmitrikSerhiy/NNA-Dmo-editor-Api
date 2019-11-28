@@ -51,11 +51,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <!--Include email templates in the publish output-->
-    <Content Include="Helpers\Templates\*.template" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Remove="ClientApp\dist\**" />
     <EmbeddedResource Remove="Logs\**" />
     <None Remove="ClientApp\dist\**" />

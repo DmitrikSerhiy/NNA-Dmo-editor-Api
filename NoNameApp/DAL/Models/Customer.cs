@@ -1,14 +1,5 @@
-﻿// =============================
-// Email: info@ebenmonney.com
-// www.ebenmonney.com/templates
-// =============================
-
-using DAL.Core;
+﻿using DAL.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DAL.Models {
     public class Customer : AuditableEntity {
@@ -21,8 +12,5 @@ namespace DAL.Models {
         public Gender Gender { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateModified { get; set; }
-
-
-        public ICollection<Order> Orders { get; set; }
     }
 }
