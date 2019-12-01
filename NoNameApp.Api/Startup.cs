@@ -6,8 +6,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using NoNameApp.Api.Data;
-using NoNameApp.Api.Models;
+using NoNameApp.Infrastructure;
+using NoNameApp.Persistence;
 
 namespace NoNameApp.Api {
     public class Startup {
@@ -19,15 +19,15 @@ namespace NoNameApp.Api {
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services) {
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
+            services.AddDbContext<NoNameAppContext>(options =>
+                options.UseMySql(
                     Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddDefaultIdentity<ApplicationUser>()
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<AppUser>()
+                .AddEntityFrameworkStores<NoNameAppContext>();
 
-            services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+            //services.AddIdentityServer()
+            //    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
