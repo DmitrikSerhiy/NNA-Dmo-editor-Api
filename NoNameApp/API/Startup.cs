@@ -1,3 +1,7 @@
+using System;
+using API.Infrastructure;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
@@ -7,18 +11,25 @@ using Microsoft.Extensions.Hosting;
 
 namespace API {
     public class Startup {
+
+        public IConfiguration Configuration { get; }
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
-
-        public void ConfigureServices(IServiceCollection services) {
+        public IServiceProvider ConfigureServices(IServiceCollection services) {
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => {
                 configuration.RootPath = "ClientApp/dist";
             });
+
+            var builder = new ContainerBuilder();
+            builder.Populate(services);
+            builder.RegisterModule(new AutofacModule());
+            var applicationContainer = builder.Build();
+
+            return new AutofacServiceProvider(applicationContainer);
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
@@ -29,7 +40,7 @@ namespace API {
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
+            
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             if (!env.IsDevelopment()) {
