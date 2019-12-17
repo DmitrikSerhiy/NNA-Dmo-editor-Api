@@ -1,7 +1,1 @@
-<body>
-  <app-nav-menu></app-nav-menu>
-  <app-sidebar (collapsedEvent)="receiveCollapsed($event)"></app-sidebar>
-  <section class="main-container" [ngClass]="{collapsed: collapedSideBar}">
-    <router-outlet></router-outlet>
-  </section>
-</body>
+<router-outlet></router-outlet>
