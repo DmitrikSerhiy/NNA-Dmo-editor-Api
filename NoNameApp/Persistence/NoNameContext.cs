@@ -1,12 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Model;
 
 namespace Persistence {
-    public class NoNameContext : DbContext {
+    public class NoNameContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid> {
+
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
 
         public DbSet<DecompositionNode> DecompositionNode { get; set; }
 
+        public NoNameContext() { }
+
         public NoNameContext(DbContextOptions<NoNameContext> options)
-            : base(options) { }
+            : base(options) {
+        }
     }
 }

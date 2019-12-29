@@ -1,13 +1,19 @@
-using System;
+﻿using System;
+using API.Helpers;
 using API.Infrastructure;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SpaServices.AngularCli;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
+using Persistence;
 
 namespace API {
     public class Startup {
@@ -18,6 +24,33 @@ namespace API {
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services) {
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            services.AddDbContext<NoNameContext>(options => {
+                options.UseMySql(connectionString, mySqlOptions => {
+                    mySqlOptions.EnableRetryOnFailure(1);
+                    mySqlOptions.MigrationsAssembly("Persistence");
+                });
+            });
+
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options => {
+                    options.RequireHttpsMetadata = false;//todo: swap to true
+                    options.TokenValidationParameters = new TokenValidationParameters {
+                        ValidateIssuer = true,
+                        ValidIssuer = AuthOptions.ISSUER,
+                        ValidateAudience = true,
+                        ValidAudience = AuthOptions.AUDIENCE,
+                        ValidateLifetime = true,
+                        IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+                        ValidateIssuerSigningKey = true,
+                    };
+                });
+
+            services.Configure<IdentityOptions>(options => {
+                // todo: add some password restrictions later
+                options.User.RequireUniqueEmail = true;
+            });
+
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => {
@@ -48,6 +81,8 @@ namespace API {
             }
 
             app.UseRouting();
+            app.UseAuthentication();
+
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
