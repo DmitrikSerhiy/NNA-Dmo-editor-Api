@@ -13,6 +13,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
+using Model;
 using Persistence;
 
 namespace API {
@@ -46,9 +47,20 @@ namespace API {
                     };
                 });
 
+            var identityBuilder = services
+                .AddIdentity<NoNameUser, NoNameRole>()
+                .AddEntityFrameworkStores<NoNameContext>();
+            //todo: add token provider for future Maybe I should use IdentityServer4 here
+            identityBuilder.AddUserManager<NoNameUserManager>();
+
             services.Configure<IdentityOptions>(options => {
                 // todo: add some password restrictions later
                 options.User.RequireUniqueEmail = true;
+                options.Password.RequireDigit = false;
+                options.Password.RequireLowercase = false;
+                options.Password.RequiredLength = 3;
+                options.Password.RequireNonAlphanumeric = false;
+                options.Password.RequireUppercase = false;
             });
 
             services.AddControllersWithViews();
@@ -56,6 +68,7 @@ namespace API {
             services.AddSpaStaticFiles(configuration => {
                 configuration.RootPath = "ClientApp/dist";
             });
+
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -82,7 +95,7 @@ namespace API {
 
             app.UseRouting();
             app.UseAuthentication();
-
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(

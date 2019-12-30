@@ -4,6 +4,6 @@ using System.Text;
 using Microsoft.AspNetCore.Identity;
 
 namespace Model {
-    public class ApplicationRole : IdentityRole<Guid> {
+    public class NoNameRole : IdentityRole<Guid> {
     }
 }

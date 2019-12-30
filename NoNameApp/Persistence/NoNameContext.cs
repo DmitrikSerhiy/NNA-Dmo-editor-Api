@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Model;
 
 namespace Persistence {
-    public class NoNameContext : IdentityDbContext<ApplicationUser, ApplicationRole, Guid> {
+    public class NoNameContext : IdentityDbContext<NoNameUser, NoNameRole, Guid> {
 
-        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<NoNameUser> ApplicationUsers { get; set; }
 
         public DbSet<DecompositionNode> DecompositionNode { get; set; }
 
