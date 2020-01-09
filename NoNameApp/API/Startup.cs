@@ -41,7 +41,8 @@ namespace API {
                         ValidIssuer = AuthOptions.ISSUER,
                         ValidateAudience = true,
                         ValidAudience = AuthOptions.AUDIENCE,
-                        ValidateLifetime = true,
+                        ValidateLifetime = false,
+                        //todo: change it later
                         IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true,
                     };

@@ -1,6 +1,5 @@
 ﻿using API.Helpers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Model;
@@ -49,7 +48,7 @@ namespace API.Controllers {
             });
         }
 
-        [HttpPost("/login")]
+        [HttpPost("/token")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(String email, String password) {
             var identity = await GetIdentity(email, password);

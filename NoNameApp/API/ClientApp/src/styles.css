@@ -14,3 +14,12 @@ code {
   background-color: #1b6ec2;
   border-color: #1861ac;
 }
+
+/* .non-user-agent-css {
+  background: 0 0 !important;
+  color: #fff !important;
+} */
+
+.non-user-agent-css:-webkit-autofill {
+  background-color: #222 !important;
+}
