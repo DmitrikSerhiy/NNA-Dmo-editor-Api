@@ -10,8 +10,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers {
-    [Authorize]
     [ApiController]
+    [Authorize]
     public class AccountController : ControllerBase {
         private readonly NoNameUserManager _userManager;
 
@@ -62,6 +62,11 @@ namespace API.Controllers {
                 access_token = jwt,
                 username = identity.Name
             });
+        }
+
+        [HttpGet("/secret")]
+        public IActionResult Secret() {
+            return Ok(HttpContext.Response.Headers["Authorization"]);
         }
 
         private async Task<ClaimsIdentity> GetIdentity(String email, String password) {
