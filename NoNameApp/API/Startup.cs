@@ -20,6 +20,7 @@ namespace API {
     public class Startup {
 
         public IConfiguration Configuration { get; }
+        private readonly string angularClientOrigin = "angularClient";
         public Startup(IConfiguration configuration) {
             Configuration = configuration;
         }
@@ -65,6 +66,13 @@ namespace API {
                     };
                 });
 
+            services.AddCors(o => {
+                o.AddPolicy("angularClient", policyBuilder => {
+                    policyBuilder.WithOrigins("http://localhost:4200");
+                    policyBuilder.AllowAnyMethod();
+                    policyBuilder.AllowAnyHeader();
+                });
+            });
 
             services.AddControllersWithViews();
             // In production, the Angular files will be served from this directory
@@ -97,7 +105,9 @@ namespace API {
             }
 
             app.UseRouting();
-            app.UseAuthentication();
+            app.UseCors("angularClient");
+
+                app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => {
@@ -106,16 +116,17 @@ namespace API {
                     pattern: "{controller}/{action=Index}/{id?}");
             });
 
-            app.UseSpa(spa => {
-                // To learn more about options for serving an Angular SPA from ASP.NET Core,
-                // see https://go.microsoft.com/fwlink/?linkid=864501
+            //uncomment to start client with server
+            //app.UseSpa(spa => {
+            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
+            //    // see https://go.microsoft.com/fwlink/?linkid=864501
 
-                spa.Options.SourcePath = "ClientApp";
+            //    spa.Options.SourcePath = "ClientApp";
 
-                if (env.IsDevelopment()) {
-                    spa.UseAngularCliServer(npmScript: "start");
-                }
-            });
+            //    if (env.IsDevelopment()) {
+            //        spa.UseAngularCliServer(npmScript: "start");
+            //    }
+            //});
         }
     }
 }

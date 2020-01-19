@@ -43,14 +43,19 @@ namespace API.Controllers {
             var jwt = CreateJWT(identity);
 
             return new JsonResult(new {
-                access_token = jwt,
-                username = identity.Name
+                accessToken = jwt,
+                userName = identity.Name,
+                email
             });
         }
 
         [HttpPost("/token")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(String email, String password) {
+            if (String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(password)) {
+                return BadRequest();
+            }
+
             var identity = await GetIdentity(email, password);
             if (identity == null) {
                 return BadRequest(new {errorText = "Invalid email or password."});
@@ -59,8 +64,9 @@ namespace API.Controllers {
             var jwt = CreateJWT(identity);
 
             return new JsonResult(new {
-                access_token = jwt,
-                username = identity.Name
+                accessToken = jwt,
+                userName = identity.Name,
+                email
             });
         }
 

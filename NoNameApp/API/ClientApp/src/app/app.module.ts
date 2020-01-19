@@ -1,3 +1,5 @@
+import { AuthService } from './shared/services/auth.service';
+import { AuthGuard } from './shared/auth.guard';
 import { Routes, RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -32,7 +34,7 @@ const routes: Routes = [
     FormsModule,
     NgbDropdownModule,
   ],
-  providers: [],
+  providers: [AuthGuard, AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
