@@ -10,6 +10,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace API.Controllers {
+    [Route("api/[controller]")]
     [ApiController]
     [Authorize]
     public class AccountController : ControllerBase {
@@ -21,7 +22,8 @@ namespace API.Controllers {
         }
 
 
-        [HttpPost("/register")]
+        [HttpPost]
+        [Route("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(String email, String userName, String password) {
             var notUniqueEmail = await _userManager.FindByEmailAsync(email);
@@ -49,7 +51,8 @@ namespace API.Controllers {
             });
         }
 
-        [HttpPost("/token")]
+        [HttpPost]
+        [Route("token")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(String email, String password) {
             if (String.IsNullOrWhiteSpace(email) || String.IsNullOrWhiteSpace(password)) {
@@ -70,11 +73,7 @@ namespace API.Controllers {
             });
         }
 
-        [HttpGet("/secret")]
-        public IActionResult Secret() {
-            return Ok(HttpContext.Response.Headers["Authorization"]);
-        }
-
+        //TODO: relocate it to separate service
         private async Task<ClaimsIdentity> GetIdentity(String email, String password) {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null) {

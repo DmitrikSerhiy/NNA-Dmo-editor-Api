@@ -9,8 +9,9 @@ import { catchError } from 'rxjs/operators';
 @Injectable()
 export class AuthService {
 
-    serverUrl = 'http://localhost:50680/';
-    constructor(private http: HttpClient ) {}
+    //todo: relocate it to environment file
+    serverUrl = 'http://localhost:50680/api/account/';
+    constructor(private http: HttpClient) { }
 
     authorize(email: string, password: string): Observable<UserDetails> {
         const params = new HttpParams()
@@ -18,23 +19,30 @@ export class AuthService {
             .set('password', password);
 
         return this.http
-            .post(this.serverUrl + 'token', {}, {params})
+            .post(this.serverUrl + 'token', {}, { params })
             .pipe(
-                map((response: UserDetails) => response ),
+                map((response: UserDetails) => response),
                 catchError(this.handleError));
     }
 
     register(userName: string, email: string, password: string): Observable<UserDetails> {
-            const params = new HttpParams()
-                .set('userName', userName)
-                .set('email', email)
-                .set('password', password);
+        const params = new HttpParams()
+            .set('userName', userName)
+            .set('email', email)
+            .set('password', password);
 
         return this.http
-            .post(this.serverUrl + 'register', {}, {params})
+            .post(this.serverUrl + 'register', {}, { params })
             .pipe(
-                map((response: UserDetails) => response ),
+                map((response: UserDetails) => response),
                 catchError(this.handleError));
+    }
+
+    logout() {
+        console.log('Logout');
+        localStorage.removeItem('user access token');
+        localStorage.removeItem('user email');
+        localStorage.removeItem('user name');
     }
 
     private handleError(err: HttpErrorResponse) {

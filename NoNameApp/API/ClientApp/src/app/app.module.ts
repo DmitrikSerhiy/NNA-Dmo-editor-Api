@@ -1,3 +1,5 @@
+import { AuthInterceptor } from './shared/auth.interceptor';
+import { UserManager } from './shared/user-manager';
 import { AuthService } from './shared/services/auth.service';
 import { AuthGuard } from './shared/auth.guard';
 import { Routes, RouterModule } from '@angular/router';
@@ -13,7 +15,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./layout/layout.module').then(m => m.LayoutModule) },
+  { path: '', loadChildren: () => import('./layout/layout.module').then(m => m.LayoutModule), canActivateChild: [AuthGuard] },
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
   { path: 'signup', loadChildren: () => import('./signup/signup.module').then(m => m.SignupModule) },
   { path: 'error', loadChildren: () => import('./server-error/server-error.module').then(m => m.ServerErrorModule) },
@@ -24,7 +26,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [
-    AppComponent,
+    AppComponent
   ],
   imports: [
     RouterModule.forRoot(routes),
@@ -32,9 +34,15 @@ const routes: Routes = [
     BrowserAnimationsModule,
     HttpClientModule,
     FormsModule,
-    NgbDropdownModule,
+    NgbDropdownModule
   ],
-  providers: [AuthGuard, AuthService],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, 
+    AuthGuard, AuthService, UserManager],
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: AuthInterceptor
+    // }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

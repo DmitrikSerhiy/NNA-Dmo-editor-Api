@@ -3,7 +3,7 @@ using System.Text;
 
 namespace API.Helpers {
     public class AuthOptions {
-        //todo: locate it to the appsettings.json later
+        //todo: locate it to the appsettings.json later or some secure place
         public const string ISSUER = "MyAuthServer";
         public const string AUDIENCE = "MyAuthClient";
         const string KEY = "mysupersecret_secretkey!123";

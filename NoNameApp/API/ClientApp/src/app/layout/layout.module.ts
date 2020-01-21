@@ -6,6 +6,7 @@ import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
 
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { ItemsComponent } from './items/items.component';
 
 const routes: Routes = [
     {
@@ -14,17 +15,17 @@ const routes: Routes = [
         children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'prefix' },
             { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
-            // { path: 'blank-page', loadChildren: () => import('./blank-page/blank-page.module').then(m => m.BlankPageModule) }
+            { path: 'items', component: ItemsComponent },
         ]
     }
 ];
 
 @NgModule({
+    declarations: [LayoutComponent, NavMenuComponent, SidebarComponent, ItemsComponent],
     imports: [
         CommonModule,
         RouterModule.forChild(routes),
         NgbDropdownModule
-    ],
-    declarations: [LayoutComponent, NavMenuComponent, SidebarComponent]
+    ]
 })
 export class LayoutModule {}
