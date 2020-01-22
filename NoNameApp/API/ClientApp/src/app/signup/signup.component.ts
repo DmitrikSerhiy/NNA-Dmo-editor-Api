@@ -1,3 +1,4 @@
+import { UserManager } from './../shared/user-manager';
 import { AuthService } from './../shared/services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { routerTransition } from '../router.animations';
@@ -13,8 +14,8 @@ export class SignupComponent implements OnInit {
 
   constructor(
     public router: Router,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+    private userManager: UserManager) { }
 
   ngOnInit() {
   }
@@ -22,11 +23,7 @@ export class SignupComponent implements OnInit {
   signUp(userName, email, password) {
     this.authService.register(userName, email, password)
     .subscribe((response) => {
-      console.log('Successful registration');
-      localStorage.setItem('user access token', response.accessToken);
-      localStorage.setItem('user email', response.email);
-      localStorage.setItem('user name', response.userName);
-      this.router.navigateByUrl('/');
+      this.userManager.register(response.accessToken, response.email, response.userName);
     });
   }
 }

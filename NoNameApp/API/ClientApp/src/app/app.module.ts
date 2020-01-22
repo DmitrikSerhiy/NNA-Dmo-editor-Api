@@ -1,13 +1,15 @@
+import { Toastr } from './shared/services/toastr.service';
 import { AuthInterceptor } from './shared/auth.interceptor';
 import { UserManager } from './shared/user-manager';
 import { AuthService } from './shared/services/auth.service';
-import { AuthGuard } from './shared/auth.guard';
+import { AuthGuardForChild, AuthGuard } from './shared/auth.guards';
 import { Routes, RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
+import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
@@ -15,7 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 const routes: Routes = [
-  { path: '', loadChildren: () => import('./layout/layout.module').then(m => m.LayoutModule), canActivateChild: [AuthGuard] },
+  { path: '', loadChildren: () => import('./layout/layout.module').then(m => m.LayoutModule)},
   { path: 'login', loadChildren: () => import('./login/login.module').then(m => m.LoginModule) },
   { path: 'signup', loadChildren: () => import('./signup/signup.module').then(m => m.SignupModule) },
   { path: 'error', loadChildren: () => import('./server-error/server-error.module').then(m => m.ServerErrorModule) },
@@ -32,17 +34,14 @@ const routes: Routes = [
     RouterModule.forRoot(routes),
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     BrowserAnimationsModule,
+    ToastrModule.forRoot(),
     HttpClientModule,
     FormsModule,
     NgbDropdownModule
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }, 
-    AuthGuard, AuthService, UserManager],
-    // {
-    //   provide: HTTP_INTERCEPTORS,
-    //   useClass: AuthInterceptor
-    // }],
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+    AuthGuardForChild, AuthGuard, AuthService, UserManager, ToastrService, Toastr],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

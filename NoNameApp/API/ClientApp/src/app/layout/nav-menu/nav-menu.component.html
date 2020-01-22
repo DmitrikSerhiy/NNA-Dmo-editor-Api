@@ -6,15 +6,21 @@
   </button>
   <div class="collapse navbar-collapse">
       <ul class="navbar-nav ml-auto">
-          <li class="nav-item dropdown" ngbDropdown>
+          <li *ngIf='isAuthorized'  class="nav-item dropdown" ngbDropdown>
               <a href="javascript:void(0)" class="nav-link" ngbDropdownToggle>
-                  <i class="fa fa-user"></i> John Smith <b class="caret"></b>
+                  <i class="fa fa-user"></i> {{ userManager.getCurrentUser() }} <b class="caret"></b>
               </a>
               <div class="dropdown-menu-right" ngbDropdownMenu>
-                  <a class="dropdown-item" [routerLink]="['/login']" (click)="onLoggedout()">
+                  <a class="dropdown-item" (click)="onLoggedout()">
                       <i class="fa fa-fw fa-power-off"></i> {{ 'Log Out' }}
                   </a>
               </div>
+          </li>
+
+          <li *ngIf='!isAuthorized' class="nav-item">
+            <a [routerLink]="['/login']" class="nav-link">
+                <i class="fa fa-sign-in" ></i> {{ 'Log In' }}
+            </a>
           </li>
       </ul>
   </div>

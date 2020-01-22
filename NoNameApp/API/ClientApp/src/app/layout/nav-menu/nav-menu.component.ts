@@ -1,3 +1,4 @@
+import { UserManager } from './../../shared/user-manager';
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
@@ -8,9 +9,12 @@ import { Router, NavigationEnd } from '@angular/router';
 })
 export class NavMenuComponent implements OnInit {
   isExpanded = false;
+  isAuthorized = false;
   public pushRightClass: string;
 
-  constructor(public router: Router) {
+  constructor(
+    public router: Router,
+    private userManager: UserManager) {
     this.router.events.subscribe(val => {
       if (
         val instanceof NavigationEnd &&
@@ -19,6 +23,7 @@ export class NavMenuComponent implements OnInit {
       ) {
         this.toggleSidebar();
       }
+      this.isAuthorized = this.userManager.isAuthorized();
     });
   }
 
@@ -37,7 +42,7 @@ export class NavMenuComponent implements OnInit {
   }
 
   onLoggedout() {
-    localStorage.removeItem('isLoggedin');
+    this.userManager.logout();
   }
 
 

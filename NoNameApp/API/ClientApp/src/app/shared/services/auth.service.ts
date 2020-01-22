@@ -38,13 +38,6 @@ export class AuthService {
                 catchError(this.handleError));
     }
 
-    logout() {
-        console.log('Logout');
-        localStorage.removeItem('user access token');
-        localStorage.removeItem('user email');
-        localStorage.removeItem('user name');
-    }
-
     private handleError(err: HttpErrorResponse) {
         let errorMessage = '';
         if (err.error instanceof Error) {
