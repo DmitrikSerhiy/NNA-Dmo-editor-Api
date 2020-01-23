@@ -6,7 +6,7 @@ import { AuthGuardForChild, AuthGuard } from './shared/auth.guards';
 import { Routes, RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { ToastrModule, ToastrService } from 'ngx-toastr';
@@ -37,6 +37,7 @@ const routes: Routes = [
     ToastrModule.forRoot(),
     HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     NgbDropdownModule
   ],
   providers: [

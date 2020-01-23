@@ -3,6 +3,7 @@ using API.Helpers;
 using API.Infrastructure;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -74,7 +75,10 @@ namespace API {
                 });
             });
 
-            services.AddControllersWithViews();
+            services
+                .AddControllersWithViews()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => {
                 configuration.RootPath = "ClientApp/dist";

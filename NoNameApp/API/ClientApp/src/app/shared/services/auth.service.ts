@@ -1,10 +1,11 @@
-import { UserDetails } from '../models/userDetails';
+
 import { HttpClient, HttpParams, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { catchError } from 'rxjs/operators';
+import { UserDetails } from '../models/serverResponse';
 
 @Injectable()
 export class AuthService {
@@ -14,12 +15,8 @@ export class AuthService {
     constructor(private http: HttpClient) { }
 
     authorize(email: string, password: string): Observable<UserDetails> {
-        const params = new HttpParams()
-            .set('email', email)
-            .set('password', password);
-
         return this.http
-            .post(this.serverUrl + 'token', {}, { params })
+            .post(this.serverUrl + 'token', { 'email': email, 'password': password } )
             .pipe(
                 map((response: UserDetails) => response),
                 catchError(this.handleError));
