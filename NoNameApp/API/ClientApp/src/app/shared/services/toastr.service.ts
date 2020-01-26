@@ -4,7 +4,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class Toastr {
 
-    toastrDelay = 1000;
+    toastrDelay = 2000;
     longtoastrDelay = 5000;
 
     constructor(private toastr: ToastrService) { }
@@ -26,4 +26,5 @@ export class Toastr {
             timeOut: this.toastrDelay
         });
     }
+
 }

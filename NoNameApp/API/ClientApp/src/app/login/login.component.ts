@@ -1,3 +1,4 @@
+import { Toastr } from './../shared/services/toastr.service';
 import { UserManager } from './../shared/user-manager';
 import { AuthService } from './../shared/services/auth.service';
 import { Component, OnInit } from '@angular/core';
@@ -14,26 +15,34 @@ import { FormGroup, FormControl, Validators } from '@angular/forms';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
+  get email() { return this.loginForm.get('email'); }
+  get password() { return this.loginForm.get('password'); }
 
   constructor(
     public router: Router,
     private authService: AuthService,
-    private userManager: UserManager) {
+    private userManager: UserManager,
+    private toast: Toastr) {
+  }
 
+
+  ngOnInit() {
     this.loginForm = new FormGroup({
       'email': new FormControl('', [Validators.required, Validators.email]),
-      'password': new FormControl('', [Validators.required, Validators.maxLength(8)])
+      'password': new FormControl('', [Validators.required, Validators.minLength(8)])
     });
   }
 
-  ngOnInit() {
+  onSubmit() {
+    if (this.loginForm.valid) {
+      this.authService.authorize(this.loginForm.get('email').value, this.loginForm.get('password').value)
+        .subscribe((response) => {
+          this.userManager.login(response.accessToken, response.email, response.userName);
+        },
+        (error) => {
+          this.toast.info(error);
+        });
+    }
+    return;
   }
-
-  submit(email, password) {
-    this.authService.authorize(email, password)
-      .subscribe((response) => {
-        this.userManager.login(response.accessToken, response.email, response.userName);
-      });
-  }
-
 }

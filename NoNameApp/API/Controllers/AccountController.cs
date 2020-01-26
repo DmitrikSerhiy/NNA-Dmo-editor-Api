@@ -16,12 +16,15 @@ namespace API.Controllers
     public class AccountController : ControllerBase {
         private readonly NoNameUserManager _userManager;
         private readonly IdentityService _identityService;
+        private readonly ResponseBuilder _responseBuilder;
 
         public AccountController(
             NoNameUserManager userManager, 
-            IdentityService identityService) {
+            IdentityService identityService, 
+            ResponseBuilder responseBuilder) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _identityService = identityService ?? throw new ArgumentNullException(nameof(identityService));
+            _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
         }
 
 
@@ -29,12 +32,12 @@ namespace API.Controllers
         [Route("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterModel registerModel) {
-            if (await _userManager.FindByEmailAsync(registerModel.Email) == null) {
-                return Ok(new { errorMessage = "Email is already taken"});
+            if (await _userManager.FindByEmailAsync(registerModel.Email) != null) {
+                return BadRequest(_responseBuilder.AppendBadRequestErrorMessage("Email is already taken"));
             }
 
-            if (await _userManager.FindByNameAsync(registerModel.UserName) == null) {
-                return Ok(new { errorMessage = "Username is already taken" });
+            if (await _userManager.FindByNameAsync(registerModel.UserName) != null) {
+                return BadRequest(_responseBuilder.AppendBadRequestErrorMessage("Username is already taken"));
             }
 
             var result = await _userManager
@@ -60,7 +63,7 @@ namespace API.Controllers
         public async Task<IActionResult> Login(LoginModel loginModel) {
             var identity = await _identityService.GetIdentity(loginModel.Email, loginModel.Password);
             if (identity == null) {
-                return Ok(new {errorMessage = "Invalid email or password."});
+                return BadRequest(_responseBuilder.AppendBadRequestErrorMessage("Invalid email or password"));
             }
 
             var jwt = _identityService.CreateJWT(identity);

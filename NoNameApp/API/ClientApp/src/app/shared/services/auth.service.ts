@@ -23,28 +23,19 @@ export class AuthService {
     }
 
     register(userName: string, email: string, password: string): Observable<UserDetails> {
-        const params = new HttpParams()
-            .set('userName', userName)
-            .set('email', email)
-            .set('password', password);
-
         return this.http
-            .post(this.serverUrl + 'register', {}, { params })
+            .post(this.serverUrl + 'register', {'userName': userName, 'email': email, 'password': password})
             .pipe(
                 map((response: UserDetails) => response),
                 catchError(this.handleError));
     }
 
     private handleError(err: HttpErrorResponse) {
-        let errorMessage = '';
-        if (err.error instanceof Error) {
-            // A client-side or network error occurred
-            errorMessage = `An error occurred: ${err.error.message}`;
-        } else {
-            // The backend returned an unsuccessful response code.
-            errorMessage = `Server returned code: ${err.status}, error message is: ${err.message}`;
+        const errorMessage = err.error.errorMessage;
+        if (!errorMessage) {
+            return throwError('Server error. Try later.');
         }
-        console.error(errorMessage);
+
         return throwError(errorMessage);
     }
 }
