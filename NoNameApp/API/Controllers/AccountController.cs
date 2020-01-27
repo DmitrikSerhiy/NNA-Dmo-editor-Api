@@ -2,11 +2,11 @@
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Model;
-using Model.Account;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using Model.Account;
+using Model.Entities;
 
 namespace API.Controllers
 {
@@ -47,7 +47,7 @@ namespace API.Controllers
             }
 
             var identity = await _identityService.GetIdentity(registerModel.Email, registerModel.Password);
-            var jwt = _identityService.CreateJWT(identity);
+            var jwt = _identityService.CreateJwt(identity);
 
             return new JsonResult(new
             {
@@ -66,7 +66,7 @@ namespace API.Controllers
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage("Invalid email or password"));
             }
 
-            var jwt = _identityService.CreateJWT(identity);
+            var jwt = _identityService.CreateJwt(identity);
 
             return new JsonResult(new {
                 accessToken = jwt,

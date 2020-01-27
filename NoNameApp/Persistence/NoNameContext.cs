@@ -1,14 +1,15 @@
 ﻿using System;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Model;
+using Model.Entities;
+
 
 namespace Persistence {
     public class NoNameContext : IdentityDbContext<NoNameUser, NoNameRole, Guid> {
 
         public DbSet<NoNameUser> ApplicationUsers { get; set; }
-
-        public DbSet<DecompositionNode> DecompositionNode { get; set; }
+        // ReSharper disable UnusedMember.Global
+        public DbSet<Dmo> Dmos { get; set; }
 
         public NoNameContext() { }
 

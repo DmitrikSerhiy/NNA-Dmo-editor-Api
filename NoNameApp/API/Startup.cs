@@ -15,6 +15,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Model;
+using Model.Entities;
 using Persistence;
 
 namespace API {
@@ -119,6 +120,8 @@ namespace API {
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
+
+            app.UseMiddleware<DbExecutionMiddleware>();
 
             //uncomment to start client with server
             //app.UseSpa(spa => {

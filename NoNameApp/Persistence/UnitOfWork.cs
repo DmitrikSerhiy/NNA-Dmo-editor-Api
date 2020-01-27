@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Persistence {
     public class UnitOfWork : IDisposable {
@@ -11,26 +13,29 @@ namespace Persistence {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-       
+        internal NoNameContext Context {
+            get {
+                ThrowIfDisposed();
+                return _context;
+            }
+        }
 
-
-        public IDisposable BeginTransaction() {
+        public void CommitChanges() {
             ThrowIfDisposed();
             if (_context.Database.CurrentTransaction != null) {
                 throw new InvalidOperationException("Transaction is already started");
             }
 
-            return _context.Database.BeginTransaction();
+            var strategy = _context.Database.CreateExecutionStrategy();
+            strategy.Execute(() => {
+                _context.Database.BeginTransaction();
+                _context.SaveChanges();
+                _context.Database.CurrentTransaction.Commit();
+            });
         }
 
-        public async Task Commit() {
-            ThrowIfDisposed();
-            if (_context.Database.CurrentTransaction == null) {
-                throw new InvalidOperationException("Transaction is not started. Commit failed");
-            }
-
-            await _context.SaveChangesAsync();
-            _context.Database.CurrentTransaction.Commit();
+        public Boolean HasChanges() {
+            return _context.ChangeTracker.HasChanges();
         }
 
         private void ThrowIfDisposed() {

@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Model;
 using System;
 using System.Collections.Generic;
+using Model.Entities;
 
 namespace API.Helpers {
     public class NoNameUserManager : UserManager<NoNameUser> {

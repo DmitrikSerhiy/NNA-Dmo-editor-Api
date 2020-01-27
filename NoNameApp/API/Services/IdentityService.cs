@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Helpers;
@@ -39,7 +38,7 @@ namespace API.Services
             return claimsIdentity;
         }
 
-        public String CreateJWT(ClaimsIdentity identity)
+        public String CreateJwt(ClaimsIdentity identity)
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(

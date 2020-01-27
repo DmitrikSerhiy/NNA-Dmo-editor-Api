@@ -21,6 +21,12 @@ namespace API.Infrastructure {
                 .RegisterType<UnitOfWork>()
                 .InstancePerLifetimeScope();
 
+            builder
+                .RegisterAssemblyTypes(typeof(NoNameContext).Assembly)
+                .Where(t => t.Name.EndsWith("Repository"))
+                .AsImplementedInterfaces()
+                .InstancePerLifetimeScope();
+
             builder.RegisterSource(
                 new AnyConcreteTypeNotAlreadyRegisteredSource()
                     .WithRegistrationsAs(b => b.InstancePerLifetimeScope()));
