@@ -20,17 +20,28 @@ namespace Persistence {
             }
         }
 
-        public void CommitChanges() {
+        public async Task CommitChangesAsync() {
             ThrowIfDisposed();
             if (_context.Database.CurrentTransaction != null) {
                 throw new InvalidOperationException("Transaction is already started");
             }
 
-            var strategy = _context.Database.CreateExecutionStrategy();
-            strategy.Execute(() => {
-                _context.Database.BeginTransaction();
-                _context.SaveChanges();
-                _context.Database.CurrentTransaction.Commit();
+            await _context.Database.CreateExecutionStrategy().ExecuteAsync(async () => {
+                IDbContextTransaction transaction = null;
+                try {
+                    using (transaction = await _context.Database.BeginTransactionAsync()) {
+                        await _context.SaveChangesAsync();
+                        await _context.Database.CurrentTransaction.CommitAsync();
+                    }
+                }
+                catch (DbUpdateException ex) {
+                    if (transaction != null) {
+                        await transaction.RollbackAsync();
+                    }
+                    //todo: add logger
+                    // ReSharper disable once PossibleIntendedRethrow
+                    throw ex;
+                }
             });
         }
 

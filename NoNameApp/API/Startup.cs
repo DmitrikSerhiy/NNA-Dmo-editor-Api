@@ -78,7 +78,11 @@ namespace API {
             });
 
             services
-                .AddControllersWithViews()
+                .AddControllersWithViews(options => {
+                    options.Filters.Add(typeof(ExceptionFilter));
+                    options.Filters.Add(typeof(TransactionFilter));
+                    //add other filters later
+                })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
 
             // In production, the Angular files will be served from this directory
@@ -122,8 +126,6 @@ namespace API {
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-
-            app.UseMiddleware<DbExecutionMiddleware>();
 
             //uncomment to start client with server
             //app.UseSpa(spa => {
