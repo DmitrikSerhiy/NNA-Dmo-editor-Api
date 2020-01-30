@@ -3,10 +3,9 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using API.Helpers;
 using Microsoft.IdentityModel.Tokens;
 
-namespace API.Services
+namespace API.Infrastructure.Authentication
 {
     public class IdentityService {
         private readonly NoNameUserManager _userManager;

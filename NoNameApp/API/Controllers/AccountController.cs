@@ -1,10 +1,10 @@
 ﻿using API.Helpers;
-using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Net;
 using System.Threading.Tasks;
+using API.Infrastructure.Authentication;
 using Model.Account;
 using Model.Entities;
 
@@ -53,7 +53,7 @@ namespace API.Controllers
             {
                 accessToken = jwt,
                 userName = identity.Name,
-                email = registerModel.Email
+                email = registerModel.Email,
             });
         }
 

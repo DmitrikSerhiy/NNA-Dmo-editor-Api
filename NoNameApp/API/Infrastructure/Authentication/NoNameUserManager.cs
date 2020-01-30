@@ -1,12 +1,11 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Model;
-using System;
-using System.Collections.Generic;
 using Model.Entities;
 
-namespace API.Helpers {
+namespace API.Infrastructure.Authentication {
     public class NoNameUserManager : UserManager<NoNameUser> {
         public NoNameUserManager(
             IUserStore<NoNameUser> store, 

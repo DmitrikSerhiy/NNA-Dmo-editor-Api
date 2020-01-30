@@ -1,4 +1,5 @@
 ﻿using API.Controllers;
+using API.Infrastructure.Authentication;
 using Autofac;
 using Autofac.Features.ResolveAnything;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +20,11 @@ namespace API.Infrastructure {
 
             builder
                 .RegisterType<UnitOfWork>()
+                .InstancePerLifetimeScope();
+
+            builder
+                .RegisterType<AuthenticatedIdentityProvider>()
+                .As<IAuthenticatedIdentityProvider>()
                 .InstancePerLifetimeScope();
 
             builder

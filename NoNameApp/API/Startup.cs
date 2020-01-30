@@ -1,6 +1,7 @@
 ﻿using System;
 using API.Helpers;
 using API.Infrastructure;
+using API.Infrastructure.Authentication;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using FluentValidation.AspNetCore;
@@ -112,8 +113,9 @@ namespace API {
             app.UseRouting();
             app.UseCors("angularClient");
 
-                app.UseAuthentication();
+            app.UseAuthentication();
             app.UseAuthorization();
+            app.UseMiddleware<AuthenticatedIdentityMiddleware>();
 
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
