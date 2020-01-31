@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using Model.Entities.Common;
 
 namespace Model.Entities {
-    public sealed class Dmo : Entity {
-        public String Name { get; set; }
-        public String MovieTitle { get; set; }
+    public class UserDmoCollection : Entity {
+        public String CollectionName { get; set; }
 
         public ICollection<DmoUserDmoCollection> DmoUserDmoCollection { get; set; }
+
+        public Guid NoNameUserId { get; set; }
+        public NoNameUser NoNameUser { get; set; }
+
     }
 }

@@ -17,6 +17,6 @@ namespace Model.Entities {
             UserName = userName;
         }
 
-        public ICollection<Dmo> DecomposedMovieObjects { get; set; }
+        public ICollection<UserDmoCollection> UserDmoCollections { get; set; }
     }
 }
