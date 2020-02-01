@@ -7,6 +7,6 @@ namespace Model.Entities {
         public String Name { get; set; }
         public String MovieTitle { get; set; }
 
-        public ICollection<DmoUserDmoCollection> DmoUserDmoCollection { get; set; }
+        public ICollection<DmoUserDmoCollection> DmoUserDmoCollections { get; set; }
     }
 }

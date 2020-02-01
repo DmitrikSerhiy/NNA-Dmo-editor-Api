@@ -2,7 +2,8 @@
 
 namespace API.DTO {
     public class DmoListDto {
-        public String Name { get; set; }
+        public Guid Id { get; set; }
+        public String CollectionName { get; set; }
 
     }
 }

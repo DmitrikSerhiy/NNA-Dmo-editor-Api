@@ -7,10 +7,8 @@ namespace Persistence {
     public class NoNameContext : IdentityDbContext<NoNameUser, NoNameRole, Guid> {
 
         public DbSet<NoNameUser> ApplicationUsers { get; set; }
-        // ReSharper disable UnusedMember.Global
         public DbSet<Dmo> Dmos { get; set; }
         public DbSet<UserDmoCollection> UserDmoCollections { get; set; }
-        public DbSet<DmoUserDmoCollection> DmoUserDmoCollections { get; set; }
 
         public NoNameContext() { }
 
@@ -24,7 +22,17 @@ namespace Persistence {
 
             modelBuilder.Entity<DmoUserDmoCollection>()
                 .HasKey(dc => new { dc.DmoId, dc.UserDmoCollectionId });
-            //todo: migrate all the configuration to this method with extension methods and fluent API
+
+            modelBuilder.Entity<DmoUserDmoCollection>()
+                .HasOne(sc => sc.Dmo)
+                .WithMany(s => s.DmoUserDmoCollections)
+                .HasForeignKey(sc => sc.DmoId);
+
+
+            modelBuilder.Entity<DmoUserDmoCollection>()
+                .HasOne(sc => sc.UserDmoCollection)
+                .WithMany(s => s.DmoUserDmoCollections)
+                .HasForeignKey(sc => sc.UserDmoCollectionId);
         }
         public NoNameContext(DbContextOptions<NoNameContext> options)
             : base(options) {

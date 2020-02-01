@@ -145,7 +145,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("UserDmoCollectionId");
 
-                    b.ToTable("DmoUserDmoCollections");
+                    b.ToTable("DmoUserDmoCollection");
                 });
 
             modelBuilder.Entity("Model.Entities.NoNameRole", b =>
@@ -313,13 +313,13 @@ namespace Persistence.Migrations
             modelBuilder.Entity("Model.Entities.DmoUserDmoCollection", b =>
                 {
                     b.HasOne("Model.Entities.Dmo", "Dmo")
-                        .WithMany("DmoUserDmoCollection")
+                        .WithMany("DmoUserDmoCollections")
                         .HasForeignKey("DmoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Model.Entities.UserDmoCollection", "UserDmoCollection")
-                        .WithMany("DmoUserDmoCollection")
+                        .WithMany("DmoUserDmoCollections")
                         .HasForeignKey("UserDmoCollectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

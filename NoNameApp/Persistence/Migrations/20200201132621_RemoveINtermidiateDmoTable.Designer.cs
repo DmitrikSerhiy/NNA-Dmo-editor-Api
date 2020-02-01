@@ -9,8 +9,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NoNameContext))]
-    [Migration("20200131183626_AddDmoLists")]
-    partial class AddDmoLists
+    [Migration("20200201132621_RemoveINtermidiateDmoTable")]
+    partial class RemoveINtermidiateDmoTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -135,7 +135,7 @@ namespace Persistence.Migrations
                     b.ToTable("Dmos");
                 });
 
-            modelBuilder.Entity("Model.Entities.DmoUserDmoCollections", b =>
+            modelBuilder.Entity("Model.Entities.DmoUserDmoCollection", b =>
                 {
                     b.Property<Guid>("DmoId")
                         .HasColumnType("char(36)");
@@ -147,7 +147,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("UserDmoCollectionId");
 
-                    b.ToTable("DmoUserDmoCollections");
+                    b.ToTable("DmoUserDmoCollection");
                 });
 
             modelBuilder.Entity("Model.Entities.NoNameRole", b =>
@@ -312,7 +312,7 @@ namespace Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Model.Entities.DmoUserDmoCollections", b =>
+            modelBuilder.Entity("Model.Entities.DmoUserDmoCollection", b =>
                 {
                     b.HasOne("Model.Entities.Dmo", "Dmo")
                         .WithMany("DmoUserDmoCollections")

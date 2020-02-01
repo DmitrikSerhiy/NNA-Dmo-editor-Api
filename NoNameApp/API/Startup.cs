@@ -4,6 +4,7 @@ using API.Infrastructure;
 using API.Infrastructure.Authentication;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -77,6 +78,8 @@ namespace API {
                 });
             });
 
+            services.AddAutoMapper(typeof(Startup));
+
             services
                 .AddControllersWithViews(options => {
                     options.Filters.Add(typeof(ExceptionFilter));
@@ -84,6 +87,7 @@ namespace API {
                     //add other filters later
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
+               // .AddJsonOptions(options => options.JsonSerializerOptions.AllowTrailingCommas = true);
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration => {
