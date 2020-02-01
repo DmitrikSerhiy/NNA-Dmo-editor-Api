@@ -32,7 +32,13 @@ export class UserManager {
         localStorage.removeItem('user access token');
         localStorage.removeItem('user email');
         localStorage.removeItem('user name');
-        location.reload();
+        if (this.router.url === '/dashboard') {
+            location.reload();
+        } else {
+            this.router.navigateByUrl('/').then(_ => {
+                location.reload();
+            });
+        }
     }
 
     register(accessToken, email, userName) {

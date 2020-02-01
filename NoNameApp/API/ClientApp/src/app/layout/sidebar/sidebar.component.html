@@ -1,13 +1,16 @@
 <nav class="sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}">
     <div class="list-group">
         <a [routerLink]="['/dashboard']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-            <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
+            <i class="fa fa-home"></i>&nbsp;
             <span>{{ 'Dashboard' }}</span>
         </a>
 
-        <a [routerLink]="['/items']" [routerLinkActive]="['router-link-active']" class="list-group-item">
-            <i class="fa fa-fw fa-bar-chart-o"></i>&nbsp;
-            <span>{{ 'Items' }}</span>
+        <!-- [routerLink]="['/dmoCollections']" [routerLinkActive]="['router-link-active']"  -->
+
+        <a *ngIf="isAuthorized" id="dmoCollections" (click)="sendDmoCollectionsEvent($event)" class="list-group-item"  
+        [ngClass]="{'selected' : dmoCollectionsSelected }">
+            <i class="fa fa-list"></i>&nbsp;
+            <span>{{ 'DMO collections' }}</span>
         </a>
 
     </div>

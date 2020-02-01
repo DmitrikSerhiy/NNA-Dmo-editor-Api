@@ -4,10 +4,11 @@ import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { LayoutComponent } from './layout.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule, CanActivate } from '@angular/router';
+import { Routes, RouterModule } from '@angular/router';
+import {MatSidenavModule} from '@angular/material/sidenav';
 
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
-import { ItemsComponent } from './items/items.component';
+import { DmoCollectionsComponent } from './dmo-collections/dmo-collections.component';
 
 const routes: Routes = [
     {
@@ -16,17 +17,18 @@ const routes: Routes = [
         children: [
             { path: '', redirectTo: 'dashboard', pathMatch: 'prefix' },
             { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
-            { path: 'items', component: ItemsComponent, canActivate: [AuthGuard] },
+            { path: 'dmoCollections', component: DmoCollectionsComponent, canActivate: [AuthGuard] },
         ]
     }
 ];
 
 @NgModule({
-    declarations: [LayoutComponent, NavMenuComponent, SidebarComponent, ItemsComponent],
+    declarations: [LayoutComponent, NavMenuComponent, SidebarComponent, DmoCollectionsComponent],
     imports: [
         CommonModule,
         RouterModule.forChild(routes),
-        NgbDropdownModule
+        NgbDropdownModule,
+        MatSidenavModule
     ]
 })
 export class LayoutModule {}

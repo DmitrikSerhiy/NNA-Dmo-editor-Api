@@ -1,5 +1,7 @@
+import { RightMenues } from './../right-menues';
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
+import { UserManager } from 'src/app/shared/user-manager';
 
 @Component({
   selector: 'app-sidebar',
@@ -11,10 +13,17 @@ export class SidebarComponent implements OnInit {
   collapsed: boolean;
   showMenu: string;
   pushRightClass: string;
+  dmoCollectionsSelected = false;
+  menues: any[] = [];
 
   @Output() collapsedEvent = new EventEmitter<boolean>();
+  @Output() toggleRightMenu = new EventEmitter<RightMenues>();
+  isAuthorized = false;
 
-  constructor(public router: Router) {
+  constructor(
+    public router: Router,
+    public userManager: UserManager) {
+    this.isAuthorized = userManager.isAuthorized();
     this.router.events.subscribe(val => {
       if (
         val instanceof NavigationEnd &&
@@ -31,6 +40,9 @@ export class SidebarComponent implements OnInit {
     this.collapsed = false;
     this.showMenu = '';
     this.pushRightClass = 'push-right';
+    Object.values(RightMenues).forEach(menu => {
+      this.menues.push({name: menu, isSelected: false});
+    });
   }
 
   eventCalled() {
@@ -59,5 +71,16 @@ export class SidebarComponent implements OnInit {
     const dom: any = document.querySelector('body');
     dom.classList.toggle(this.pushRightClass);
   }
+
+  sendDmoCollectionsEvent($event) {
+    //this.menues.map(m => m.isSelected = m.name === $event.target.id);
+    this.dmoCollectionsSelected = true;
+    this.toggleRightMenu.emit(RightMenues.dmoCollections);
+  }
+
+  // isSelected(tabName) {
+  //   console.log('is selected' + tabName);
+  //   return this.menues.find(m => m.name === tabName).isSelected;
+  // }
 
 }

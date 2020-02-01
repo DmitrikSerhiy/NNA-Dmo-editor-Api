@@ -1,3 +1,4 @@
+import { RightMenues } from './right-menues';
 import { Component, OnInit } from '@angular/core';
 
 @Component({
@@ -8,12 +9,21 @@ import { Component, OnInit } from '@angular/core';
 export class LayoutComponent implements OnInit {
 
     collapedSideBar: boolean;
+    toggleRightMenu: RightMenues;
+    currentMenuName: string;
 
     constructor() {}
 
-    ngOnInit() {}
+    ngOnInit() { }
 
     receiveCollapsed($event) {
         this.collapedSideBar = $event;
+    }
+
+    receiveRightMenu($event) {
+        if ($event === RightMenues.dmoCollections) {
+            this.currentMenuName = RightMenues.dmoCollections;
+        }
+        this.toggleRightMenu = $event;
     }
 }
