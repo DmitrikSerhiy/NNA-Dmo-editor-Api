@@ -1,0 +1,53 @@
+.dmo-collections {
+    border-bottom-width:0;
+
+    @mixin collection-item {
+        padding: .75rem 1.25rem;
+        text-decoration: none;
+        color: #000;
+        display: flex;
+        &:hover {
+            background-color: #f1f5f7;
+            cursor: pointer;
+        }
+      }
+
+    .collection-buttons-row {
+        display: flex;
+
+        .add-collection-button, .new-collection-form {
+            flex-basis: 80%;
+            @include collection-item;
+            justify-content: start;
+        }
+        .invisible {
+            display: none;
+        }
+        .filter-collection-button {
+            flex-basis: 20%;
+            @include collection-item;
+            
+            justify-content: center;
+            i {
+                margin: auto;
+            }
+        }
+    }
+    .collection-item {
+        text-decoration: none;
+        color: #000;
+        width: 100%;
+        display: block;
+        
+        border-width: 0px 0px 1px 0px;
+        border-radius: 0;
+        &:hover {
+            background-color: #f1f5f7;
+            cursor: pointer;
+        }
+    }
+
+    .collection-item:last-child {
+        border-width:0;
+    }
+}

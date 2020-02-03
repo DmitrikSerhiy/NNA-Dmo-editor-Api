@@ -11,6 +11,7 @@ import { Component, OnInit } from '@angular/core';
 export class DmoCollectionsComponent implements OnInit {
 
   dmoLists: DmoListDto[];
+  showAddButton = true;
   constructor(private dmoCollectionsService: DmoCollectionsService) { }
 
 
@@ -18,6 +19,10 @@ export class DmoCollectionsComponent implements OnInit {
     this.dmoCollectionsService.getAll().subscribe((response: DmoListDto[]) => {
       this.dmoLists = response;
     });
+  }
+
+  addCollection() {
+    this.showAddButton = !this.showAddButton;
   }
 
 }
