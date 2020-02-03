@@ -23,10 +23,6 @@ $topnav-background-color: #222;
     transition: all 0.2s ease-in-out;
     // border-top: 1px solid rgba(255,255,255,0.3);
 
-    .selected {
-        background: #151515 !important;
-        color: #fff !important;
-    }
     .list-group {
         a.list-group-item {
             background: $topnav-background-color;
@@ -41,10 +37,12 @@ $topnav-background-color: #222;
         a:hover {
             background: darken($topnav-background-color, 5%);
             color: #fff;
+            cursor: pointer;
         }
         a.router-link-active {
             background: darken($topnav-background-color, 5%);
             color: #fff;
+            cursor: pointer;
         }
         .header-fields {
             padding-top: 10px;

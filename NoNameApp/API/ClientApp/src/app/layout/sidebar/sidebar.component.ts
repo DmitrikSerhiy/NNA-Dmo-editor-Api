@@ -1,5 +1,5 @@
 import { RightMenues } from './../right-menues';
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, Renderer2 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UserManager } from 'src/app/shared/user-manager';
 
@@ -13,8 +13,6 @@ export class SidebarComponent implements OnInit {
   collapsed: boolean;
   showMenu: string;
   pushRightClass: string;
-  dmoCollectionsSelected = false;
-  menues: any[] = [];
 
   @Output() collapsedEvent = new EventEmitter<boolean>();
   @Output() toggleRightMenu = new EventEmitter<RightMenues>();
@@ -22,7 +20,8 @@ export class SidebarComponent implements OnInit {
 
   constructor(
     public router: Router,
-    public userManager: UserManager) {
+    public userManager: UserManager,
+    private render2: Renderer2) {
     this.isAuthorized = userManager.isAuthorized();
     this.router.events.subscribe(val => {
       if (
@@ -40,9 +39,6 @@ export class SidebarComponent implements OnInit {
     this.collapsed = false;
     this.showMenu = '';
     this.pushRightClass = 'push-right';
-    Object.values(RightMenues).forEach(menu => {
-      this.menues.push({name: menu, isSelected: false});
-    });
   }
 
   eventCalled() {
@@ -73,14 +69,18 @@ export class SidebarComponent implements OnInit {
   }
 
   sendDmoCollectionsEvent($event) {
-    //this.menues.map(m => m.isSelected = m.name === $event.target.id);
-    this.dmoCollectionsSelected = true;
+    this.setSelected($event);
     this.toggleRightMenu.emit(RightMenues.dmoCollections);
   }
 
-  // isSelected(tabName) {
-  //   console.log('is selected' + tabName);
-  //   return this.menues.find(m => m.name === tabName).isSelected;
-  // }
+  setSelected($event) {
+    const previouslySelected = this.render2.selectRootElement('.router-link-active', true);
+    this.render2.removeClass(previouslySelected, 'router-link-active');
 
+    const selected = $event.target.parentNode.localName === 'a'
+      ? this.render2.selectRootElement(`#${$event.target.parentNode.id}`, true)
+      : this.render2.selectRootElement(`#${$event.target.id}`, true);
+
+      this.render2.addClass(selected, 'router-link-active');
+  }
 }
