@@ -4,24 +4,36 @@
     </div>
     <div class="card-body p-0">
         <div class="collection-buttons-row">
-            <div class="add-collection-button" (click)="addCollection()" [ngClass]="{'invisible': !showAddButton}"><i
-                    class="fa fa-plus-square-o" aria-hidden="true"> new collection</i></div>
-            <div class="new-collection-form" [ngClass]="{'invisible': showAddButton}">
-                
-                <form>//todo
 
-               
-                <div class="input-group">
-                    <input class="" type="text" class="form-control" placeholder="name">
-                    <div class="submit">Create</div>
-                    <!-- <div class="input-group-append">
-                        <button class="btn btn-outline-secondary" type="button">Button</button>
-                    </div> -->
-                </div>
-            </form>
-
+            <div class="add-collection-button" (click)="toggleAddCollectionForm()"
+                [ngClass]="{'invisible': !showAddButton}">
+                <i class="fa fa-plus control-icon" aria-hidden="true"> <span>new collection</span></i>
             </div>
-            <div class="filter-collection-button"><i class="fa fa-filter" aria-hidden="true"></i></div>
+
+            <form [formGroup]="addCollectionForm" (ngSubmit)="onAddCollection()" [ngClass]="{'invisible': showAddButton}">
+                <div class="add-collection-form">
+                    <input type="text" name="collectionName" formControlName="collectionName"
+                        class="form-control input-underline-light" placeholder="name">
+                    <button type="submit" [disabled]="!addCollectionForm.valid" class='nna-button bg-primary'><i class="fa fa-check"
+                            aria-hidden="true"></i></button>
+                    <button type="button" class='nna-button bg-secondary' (click)="toggleAddCollectionForm()"><i
+                            class="fa fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div *ngIf="collectionName.invalid && (collectionName.dirty || collectionName.touched)" class="validation-wrapper">
+                    <div *ngIf="collectionName.invalid && (collectionName.dirty || collectionName.touched)" class="validation-container">
+                        <div *ngIf="collectionName.errors.required">
+                            <p class="validation-text">name is missing </p>
+                        </div>
+                        <div *ngIf="collectionName.errors.maxlength">
+                            <p class="validation-text">Maximum name length is 20</p>
+                        </div>
+                    </div>
+                </div> 
+            </form>
+            <div class="filter-collection-button" [ngClass]="{'invisible': !showAddButton}">
+                <i class="fa fa-filter" aria-hidden="true"></i>
+            </div>
         </div>
 
         <div class="list-group">

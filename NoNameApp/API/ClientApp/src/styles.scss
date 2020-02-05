@@ -1,4 +1,5 @@
 @import '~ngx-toastr/toastr';
+$control-size: 10px;
 /* You can add global styles to this file, and also import other style files */
 
 /* Provide sufficient contrast against white background */
@@ -42,3 +43,71 @@ code {
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+.nna-button {
+  border-radius: 50%;
+  border: 0;
+  box-shadow: none;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  min-width: inherit;
+  padding: 0;
+  background: darken(#222, 5%);//#169ade;
+  display: flex;
+  flex-shrink: 0;
+  white-space: nowrap;
+  text-decoration: none;
+  vertical-align: baseline;
+  text-align: center;
+  margin: 0;
+  font-size: $control-size;
+
+  &:focus {
+    outline:0 !important;
+  }
+
+  i {
+    margin: auto;
+    color: #fff;
+  }
+}
+
+
+.input-underline {
+  background: 0 0;
+  border: none;
+  box-shadow: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+  color: #fff;
+  border-radius: 0;
+}
+.input-underline:focus {
+  border-bottom: 2px solid #fff;
+  box-shadow: none;
+}
+
+.input-underline-light {
+  background: 0 0;
+  border: none;
+  box-shadow: none;
+  border-bottom: 2px solid rgba(255, 255, 255, 0.5);
+  color: #000;
+  border-radius: 0;
+}
+.input-underline-light:focus {
+  border-bottom: 1px solid #000;
+  box-shadow: 0px 17px 10px -17px rgba(0,0,0,0.54);
+  outline: none;
+}
+
+.control-icon {
+  color: #007bff;
+  font-size: 14px;
+  span {
+    margin-left: 0.5rem;
+    color: black;
+    font-size: medium;
+  }
+}

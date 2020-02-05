@@ -14,16 +14,37 @@
 
     .collection-buttons-row {
         display: flex;
-
-        .add-collection-button, .new-collection-form {
+        .add-collection-button {
+            height: 40px;
             flex-basis: 80%;
             @include collection-item;
-            justify-content: start;
+            justify-content: flex-start;
         }
-        .invisible {
-            display: none;
+        form {
+            width: 100%;
+            padding: 0;
+            .add-collection-form  {
+                display: flex;
+                justify-content: space-between;
+
+                input {
+                    flex: 1 1 70%;
+                }
+                button {
+                    margin: auto 5px;
+                }
+                .bg-secondary {
+                    margin-right: 1.5rem;
+                }
+            }
+            .validation-wrapper {
+                height: 1.3rem;
+                display: flex;
+                justify-content: center;
+            }
         }
         .filter-collection-button {
+            height: 40px;
             flex-basis: 20%;
             @include collection-item;
             
@@ -31,6 +52,9 @@
             i {
                 margin: auto;
             }
+        }
+        .invisible {
+            display: none;
         }
     }
     .collection-item {
@@ -45,6 +69,8 @@
             background-color: #f1f5f7;
             cursor: pointer;
         }
+
+
     }
 
     .collection-item:last-child {

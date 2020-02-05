@@ -9,6 +9,7 @@ import {MatSidenavModule} from '@angular/material/sidenav';
 
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { DmoCollectionsComponent } from './dmo-collections/dmo-collections.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 const routes: Routes = [
     {
@@ -28,6 +29,7 @@ const routes: Routes = [
         CommonModule,
         RouterModule.forChild(routes),
         NgbDropdownModule,
+        ReactiveFormsModule,
         MatSidenavModule
     ]
 })
