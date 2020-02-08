@@ -8,7 +8,7 @@ namespace Model {
         Task<List<UserDmoCollection>> GetAllAsync(Guid userId);
         Task<UserDmoCollection> Get(Guid collectionId, Guid userId);
         Task AddAsync(UserDmoCollection dmoCollection);
-        Task<Boolean> IsExist(Guid collectionId, Guid userId);
+        Task<Boolean> IsExist(String collectionName, Guid userId);
         void Delete(UserDmoCollection collection);
         void Update(UserDmoCollection oldDmoCollection, UserDmoCollection newDmoCollection);
     }

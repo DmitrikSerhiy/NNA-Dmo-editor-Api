@@ -14,7 +14,7 @@ const routes: Routes = [
         CommonModule,
         NgbCarouselModule,
         NgbAlertModule,
-        RouterModule.forChild(routes),
+        RouterModule.forChild(routes)
     ],
     declarations: [
         DashboardComponent

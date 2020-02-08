@@ -30,9 +30,9 @@ namespace Persistence.Repositories
                 .FirstOrDefaultAsync(udc => udc.NoNameUserId == userId && udc.Id == collectionId);
         }
 
-        public async Task<Boolean> IsExist(Guid collectionId, Guid userId) {
+        public async Task<Boolean> IsExist(String collectionName, Guid userId) {
             return await _context.UserDmoCollections.AnyAsync(udc =>
-                udc.Id == collectionId && udc.NoNameUserId == userId);
+                udc.CollectionName.Equals(collectionName, StringComparison.CurrentCultureIgnoreCase) && udc.NoNameUserId == userId);
         }
 
         public void Update(UserDmoCollection oldDmoCollection, UserDmoCollection newDmoCollection) {

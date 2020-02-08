@@ -111,3 +111,11 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
     font-size: medium;
   }
 }
+
+.nna-diabled-button {
+  background-color: #6c757d!important;
+  pointer-events: none;
+  &:hover {
+    background-color: #6c757d!important;
+  }
+}

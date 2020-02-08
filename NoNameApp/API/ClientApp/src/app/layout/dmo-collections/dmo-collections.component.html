@@ -10,13 +10,13 @@
                 <i class="fa fa-plus control-icon" aria-hidden="true"> <span>new collection</span></i>
             </div>
 
-            <form [formGroup]="addCollectionForm" (ngSubmit)="onAddCollection()" [ngClass]="{'invisible': showAddButton}">
+            <form [formGroup]="addCollectionForm" (ngSubmit)="onAddCollection()" [ngClass]="{'invisible': showAddButton}" autocomplete="off">
                 <div class="add-collection-form">
                     <input type="text" name="collectionName" formControlName="collectionName"
                         class="form-control input-underline-light" placeholder="name">
-                    <button type="submit" [disabled]="!addCollectionForm.valid" class='nna-button bg-primary'><i class="fa fa-check"
+                    <button type="submit" [disabled]="!addCollectionForm.valid" class='nna-button bg-primary' [ngClass]="{'nna-diabled-button': !addCollectionForm.valid}" ><i class="fa fa-check"
                             aria-hidden="true"></i></button>
-                    <button type="button" class='nna-button bg-secondary' (click)="toggleAddCollectionForm()"><i
+                    <button type="button" class='nna-button bg-secondary'  (click)="toggleAddCollectionForm()"><i
                             class="fa fa-times" aria-hidden="true"></i>
                     </button>
                 </div>
@@ -33,6 +33,9 @@
             </form>
             <div class="filter-collection-button" [ngClass]="{'invisible': !showAddButton}">
                 <i class="fa fa-filter" aria-hidden="true"></i>
+            </div>
+            <div *ngIf="isFormProcessing" class="loader-container">
+                <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
             </div>
         </div>
 

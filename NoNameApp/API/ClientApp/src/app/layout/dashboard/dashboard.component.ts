@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ANIMATION_MODULE_TYPE } from '@angular/platform-browser/animations';
 
 @Component({
   selector: 'app-dashboard',

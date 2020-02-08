@@ -1,3 +1,4 @@
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthGuard } from '../shared/auth.guards';
 import { SidebarComponent } from './sidebar/sidebar.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -30,7 +31,8 @@ const routes: Routes = [
         RouterModule.forChild(routes),
         NgbDropdownModule,
         ReactiveFormsModule,
-        MatSidenavModule
+        MatSidenavModule,
+        MatProgressSpinnerModule,
     ]
 })
 export class LayoutModule {}

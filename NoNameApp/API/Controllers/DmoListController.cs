@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading;
 //using System.Text.Json;
 using System.Threading.Tasks;
 using API.DTO;
@@ -39,6 +40,7 @@ namespace API.Controllers {
         public async Task<ActionResult<DmoListDto[]>> GetAll() {
             var user = await _currentUserService.GetAsync();
             var dmoCollections = await _dmoCollectionRepository.GetAllAsync(user.Id);
+            //Thread.Sleep(1500);
             return Ok(dmoCollections.Select(_mapper.Map<DmoListDto>).ToArray());
         }
 
@@ -55,10 +57,10 @@ namespace API.Controllers {
 
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> Add(DmoListDto dmoList) {
+        public async Task<ActionResult<DmoListDto[]>> Add(DmoListDto dmoList) {
             var user = await _currentUserService.GetAsync();
 
-            if (await _dmoCollectionRepository.IsExist(dmoList.Id, user.Id)) {
+            if (await _dmoCollectionRepository.IsExist(dmoList.CollectionName, user.Id)) {
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"List with name '{dmoList.CollectionName}' is already exist"));
             }
 
@@ -67,6 +69,8 @@ namespace API.Controllers {
                 NoNameUserId = user.Id,
                 CollectionName = dmoList.CollectionName
             });
+
+            //Thread.Sleep(1500);
 
             return NoContent();
         }
