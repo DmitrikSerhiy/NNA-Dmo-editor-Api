@@ -75,20 +75,41 @@
         }
 
     }
-    .collection-item {
-        text-decoration: none;
-        color: #000;
+    .list-group-item {
         width: 100%;
-        display: block;
-        
+        display: flex;
+        padding: 0;
         border-width: 0px 0px 1px 0px;
         border-radius: 0;
         &:hover {
             background-color: #f1f5f7;
             cursor: pointer;
+            
+            .remove-icon {
+                display: block;
+            }
         }
 
+        .list-group-item-link {
+            text-decoration: none;
+            color: #000;
+            outline: none;
+            padding: .75rem 1.25rem;
+            width: 100%;
 
+        }
+
+        .remove-icon {
+            z-index: 5;
+            position: absolute;
+            padding: .75rem 1.25rem;
+            right: 0;
+            border: 1px black;
+            border-radius: 50%;
+            display: none;
+            margin-left: auto;
+            margin-right: 0.4rem;
+        }
     }
 
     .collection-item:last-child {

@@ -1,8 +1,8 @@
 import { Toastr } from './shared/services/toastr.service';
-import { AuthInterceptor } from './shared/auth.interceptor';
-import { UserManager } from './shared/user-manager';
+import { AuthInterceptor } from './shared/services/auth.interceptor';
+import { UserManager } from './shared/services/user-manager';
 import { AuthService } from './shared/services/auth.service';
-import { AuthGuardForChild, AuthGuard } from './shared/auth.guards';
+import { AuthGuardForChild, AuthGuard } from './shared/services/auth.guards';
 import { Routes, RouterModule } from '@angular/router';
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
@@ -43,6 +43,6 @@ const routes: Routes = [
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     AuthGuardForChild, AuthGuard, AuthService, UserManager, ToastrService, Toastr],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

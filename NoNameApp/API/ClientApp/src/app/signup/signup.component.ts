@@ -1,4 +1,4 @@
-import { UserManager } from './../shared/user-manager';
+import { UserManager } from '../shared/services/user-manager';
 import { AuthService } from './../shared/services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { routerTransition } from '../router.animations';

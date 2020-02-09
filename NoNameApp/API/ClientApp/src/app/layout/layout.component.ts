@@ -24,6 +24,10 @@ export class LayoutComponent implements OnInit, AfterViewInit  {
         this.rightMenuIsClosing$ = this.rightMenu.closedStart;
     }
 
+    closeRightMenu() {
+        this.rightMenu.close();
+    }
+
     receiveCollapsed($event) {
         this.collapedSideBar = $event;
     }

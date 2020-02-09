@@ -7,5 +7,11 @@ namespace API.Helpers {
             //todo: relocate this logic to appropriate filter
             return new {errorMessage};
         }
+
+        public object AppendNotFoundErrorMessage(string errorMessage)
+        {
+            //todo: relocate this logic to appropriate filter
+            return new { errorMessage };
+        }
     }
 }

@@ -1,5 +1,5 @@
 import { Toastr } from './../shared/services/toastr.service';
-import { UserManager } from './../shared/user-manager';
+import { UserManager } from '../shared/services/user-manager';
 import { AuthService } from './../shared/services/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';

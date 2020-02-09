@@ -1,7 +1,7 @@
 import { RightMenues } from './../right-menues';
 import { Component, OnInit, Output, EventEmitter, Renderer2 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { UserManager } from 'src/app/shared/user-manager';
+import { UserManager } from 'src/app/shared/services/user-manager';
 
 @Component({
   selector: 'app-sidebar',

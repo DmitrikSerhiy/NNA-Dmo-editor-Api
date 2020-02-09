@@ -40,7 +40,6 @@ namespace API.Controllers {
         public async Task<ActionResult<DmoListDto[]>> GetAll() {
             var user = await _currentUserService.GetAsync();
             var dmoCollections = await _dmoCollectionRepository.GetAllAsync(user.Id);
-            //Thread.Sleep(1500);
             return Ok(dmoCollections.Select(_mapper.Map<DmoListDto>).ToArray());
         }
 
@@ -69,8 +68,6 @@ namespace API.Controllers {
                 NoNameUserId = user.Id,
                 CollectionName = dmoList.CollectionName
             });
-
-            //Thread.Sleep(1500);
 
             return NoContent();
         }

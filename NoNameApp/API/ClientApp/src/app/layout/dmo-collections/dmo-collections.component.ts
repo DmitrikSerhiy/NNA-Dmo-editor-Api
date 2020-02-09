@@ -1,12 +1,15 @@
+import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+
 import { Toastr } from './../../shared/services/toastr.service';
 import { DmoCollectionsService } from './dmo-collections.service';
 import { DmoListDto } from './dmoList.dto';
 
 import { concatMap, map, catchError, } from 'rxjs/operators';
-import { throwError, Observable } from 'rxjs';
+import { throwError, Observable  } from 'rxjs';
 
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dmo-collections',
@@ -19,17 +22,22 @@ export class DmoCollectionsComponent implements OnInit {
   dmoLists: DmoListDto[];
   showAddButton = true;
   isFormProcessing = false;
+  selectedDmoCollectionName: DmoListDto;
   get collectionName() { return this.addCollectionForm.get('collectionName'); }
   @Input() rightMenuIsClosing$: Observable<void>;
+  @Output() closeRightMenu = new EventEmitter<void>();
+  @ViewChild('removeCollectionModal', {static: true}) removeModal: NgbActiveModal;
 
   constructor(
     private dmoCollectionsService: DmoCollectionsService,
-    private toastr: Toastr) { }
+    private toastr: Toastr,
+    private modalService: NgbModal,
+    private router: Router) { }
 
 
   ngOnInit() {
     this.rightMenuIsClosing$.subscribe(() => {
-      this.toggleAddCollectionForm();
+      this.toggleAddCollectionForm(true);
     });
 
     this.addCollectionForm = new FormGroup({
@@ -42,6 +50,11 @@ export class DmoCollectionsComponent implements OnInit {
         (response: DmoListDto[]) => this.dmoLists = response,
         (error) => this.toastr.error(error),
         () => this.hideLoader() );
+  }
+
+  openCollection(id: string) {
+    this.closeRightMenu.emit();
+    this.router.navigate(['/dmo', { id: id}]);
   }
 
   onAddCollection() {
@@ -64,10 +77,40 @@ export class DmoCollectionsComponent implements OnInit {
     }
   }
 
+  async onDeleteCollection(dmoList: DmoListDto) {
+    this.selectedDmoCollectionName = dmoList;
+    const modalRef = this.modalService.open(this.removeModal);
+    const sendRemoveRequest = await modalRef.result.then(() => true, () => false);
 
-  private toggleAddCollectionForm() {
-    this.showAddButton = !this.showAddButton;
+    if (!sendRemoveRequest) {
+      return;
+    }
+    this.showLoader();
+    const delete$ = this.dmoCollectionsService.deleteCollection(this.selectedDmoCollectionName.id);
+    const getAll$ = this.dmoCollectionsService.getAll() ;
+
+    const deleteAndRefresh =
+      delete$.pipe(
+        catchError(innerError => { this.hideLoader(); this.resetAddCollectionForm(); return throwError(innerError); } ),
+        concatMap(() => getAll$.pipe(map((response: DmoListDto[]) => { this.dmoLists = response; } )) ));
+
+    deleteAndRefresh.subscribe(
+      () => {},
+      (error) => this.toastr.error(error),
+      () => { this.hideLoader(); this.toggleAddCollectionForm(true); } );
+  }
+
+  private toggleAddCollectionForm(close = false) {
+    if (close) {
+      this.showAddButton = true;
+    } else {
+      this.showAddButton = !this.showAddButton;
+    }
     this.resetAddCollectionForm();
+
+    if (!this.showAddButton) {
+      //todo: set focus on field here. It does not work
+    }
   }
 
   private resetAddCollectionForm() {

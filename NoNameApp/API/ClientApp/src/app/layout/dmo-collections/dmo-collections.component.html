@@ -10,18 +10,22 @@
                 <i class="fa fa-plus control-icon" aria-hidden="true"> <span>new collection</span></i>
             </div>
 
-            <form [formGroup]="addCollectionForm" (ngSubmit)="onAddCollection()" [ngClass]="{'invisible': showAddButton}" autocomplete="off">
+            <form [formGroup]="addCollectionForm" (ngSubmit)="onAddCollection()"
+                [ngClass]="{'invisible': showAddButton}" autocomplete="off">
                 <div class="add-collection-form">
-                    <input type="text" name="collectionName" formControlName="collectionName"
+                    <input id="collectionNameField" #collectionNameField type="text" name="collectionName" formControlName="collectionName"
                         class="form-control input-underline-light" placeholder="name">
-                    <button type="submit" [disabled]="!addCollectionForm.valid" class='nna-button bg-primary' [ngClass]="{'nna-diabled-button': !addCollectionForm.valid}" ><i class="fa fa-check"
+                    <button type="submit" [disabled]="!addCollectionForm.valid" class='nna-icon-button bg-primary'
+                        [ngClass]="{'nna-diabled-button': !addCollectionForm.valid}"><i class="fa fa-check"
                             aria-hidden="true"></i></button>
-                    <button type="button" class='nna-button bg-secondary'  (click)="toggleAddCollectionForm()"><i
+                    <button type="button" class='nna-icon-button bg-secondary' (click)="toggleAddCollectionForm()"><i
                             class="fa fa-times" aria-hidden="true"></i>
                     </button>
                 </div>
-                <div *ngIf="collectionName.invalid && (collectionName.dirty || collectionName.touched)" class="validation-wrapper">
-                    <div *ngIf="collectionName.invalid && (collectionName.dirty || collectionName.touched)" class="validation-container">
+                <div *ngIf="collectionName.invalid && (collectionName.dirty || collectionName.touched)"
+                    class="validation-wrapper">
+                    <div *ngIf="collectionName.invalid && (collectionName.dirty || collectionName.touched)"
+                        class="validation-container">
                         <div *ngIf="collectionName.errors.required">
                             <p class="validation-text">name is missing </p>
                         </div>
@@ -29,7 +33,7 @@
                             <p class="validation-text">Maximum name length is 20</p>
                         </div>
                     </div>
-                </div> 
+                </div>
             </form>
             <div class="filter-collection-button" [ngClass]="{'invisible': !showAddButton}">
                 <i class="fa fa-filter" aria-hidden="true"></i>
@@ -40,15 +44,29 @@
         </div>
 
         <div class="list-group">
-            <a *ngFor="let dmoList of dmoLists;" [routerLink]="['/dmo']" [queryParams]="{dmoId: dmoList.id}"
-                class="list-group-item clearfix d-block collection-item">
-                &#9679; {{ dmoList.collectionName }}
-            </a>
+            <div class="list-group-item" *ngFor="let dmoList of dmoLists;">
+                <div class="list-group-item-link" (click)="openCollection(dmoList.id)">
+                    &#9679; {{ dmoList.collectionName }}
+                </div>
+                <div class="remove-icon" (click)="onDeleteCollection(dmoList)"><i class="fa fa-trash"></i></div>
+            </div>
         </div>
-
-
-
-
-        <!-- <a href="#" class="btn btn-default btn-block">View All Alerts</a> -->
     </div>
+    
+    <ng-template #removeCollectionModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Remove collection</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()" >
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" ngbAutofocus>
+            Are you sure you want to remove '{{selectedDmoCollectionName.collectionName}}' collection?
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
+            <button type="button" class="btn btn-primary" (click)="modal.close()">Remove</button>
+        </div>
+    </ng-template>
+
 </div>

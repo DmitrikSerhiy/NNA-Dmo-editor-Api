@@ -1,4 +1,4 @@
-import { UserManager } from './../../shared/user-manager';
+import { UserManager } from '../../shared/services/user-manager';
 import { Component, OnInit } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 
