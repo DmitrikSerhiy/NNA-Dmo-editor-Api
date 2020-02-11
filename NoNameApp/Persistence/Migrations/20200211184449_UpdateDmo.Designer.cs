@@ -2,15 +2,17 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NoNameContext))]
-    partial class NoNameContextModelSnapshot : ModelSnapshot
+    [Migration("20200211184449_UpdateDmo")]
+    partial class UpdateDmo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,12 +139,7 @@ namespace Persistence.Migrations
                     b.Property<string>("ShortComment")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("UserDmoCollectionId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("UserDmoCollectionId");
 
                     b.ToTable("Dmos");
                 });
@@ -323,15 +320,6 @@ namespace Persistence.Migrations
                     b.HasOne("Model.Entities.NoNameUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Model.Entities.Dmo", b =>
-                {
-                    b.HasOne("Model.Entities.UserDmoCollection", "UserDmoCollection")
-                        .WithMany("Dmos")
-                        .HasForeignKey("UserDmoCollectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

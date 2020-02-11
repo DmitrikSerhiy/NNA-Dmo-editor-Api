@@ -10,12 +10,12 @@ import { catchError } from 'rxjs/operators';
 })
 export class DmoCollectionsService {
 
-  serverUrl = 'http://localhost:50680/api/dmoList/';
+  serverUrl = 'http://localhost:50680/api/dmoCollections/';
   constructor(private http: HttpClient) { }
 
   getAll(): Observable<DmoListDto[]> {
     return this.http
-      .get(this.serverUrl + 'all')
+      .get(this.serverUrl)
       .pipe(
         map((response: DmoListDto[]) => response),
         catchError(this.handleError));

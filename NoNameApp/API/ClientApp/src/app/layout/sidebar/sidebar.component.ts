@@ -39,6 +39,7 @@ export class SidebarComponent implements OnInit {
     this.collapsed = false;
     this.showMenu = '';
     this.pushRightClass = 'push-right';
+    this.router.navigateByUrl('/');
   }
 
   eventCalled() {
@@ -76,7 +77,6 @@ export class SidebarComponent implements OnInit {
   setSelected($event) {
     const previouslySelected = this.render2.selectRootElement('.router-link-active', true);
     this.render2.removeClass(previouslySelected, 'router-link-active');
-
     const selected = $event.target.parentNode.localName === 'a'
       ? this.render2.selectRootElement(`#${$event.target.parentNode.id}`, true)
       : this.render2.selectRootElement(`#${$event.target.id}`, true);

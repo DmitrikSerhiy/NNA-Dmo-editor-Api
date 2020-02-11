@@ -14,11 +14,15 @@ namespace Persistence {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Dmo>()
+                .HasOne(d => d.UserDmoCollection)
+                .WithMany(dc => dc.Dmos)
+                .HasForeignKey(d => d.UserDmoCollectionId);
+
             modelBuilder.Entity<UserDmoCollection>()
                 .HasOne(s => s.NoNameUser)
                 .WithMany(g => g.UserDmoCollections)
                 .HasForeignKey(s => s.NoNameUserId);
-
 
             modelBuilder.Entity<DmoUserDmoCollection>()
                 .HasKey(dc => new { dc.DmoId, dc.UserDmoCollectionId });
@@ -27,7 +31,6 @@ namespace Persistence {
                 .HasOne(sc => sc.Dmo)
                 .WithMany(s => s.DmoUserDmoCollections)
                 .HasForeignKey(sc => sc.DmoId);
-
 
             modelBuilder.Entity<DmoUserDmoCollection>()
                 .HasOne(sc => sc.UserDmoCollection)
