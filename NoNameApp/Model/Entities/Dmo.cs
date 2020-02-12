@@ -10,6 +10,10 @@ namespace Model.Entities {
         public String ShortComment { get; set; }
         public Int16 Mark { get; set; }
 
+
+        public NoNameUser NoNameUser { get; set; }
+        public Guid NoNameUserId { get; set; }
+
         public UserDmoCollection UserDmoCollection { get; set; }
         public Guid UserDmoCollectionId { get; set; }
         public ICollection<DmoUserDmoCollection> DmoUserDmoCollections { get; set; }

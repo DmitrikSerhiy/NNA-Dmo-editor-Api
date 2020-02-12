@@ -14,6 +14,12 @@ namespace Persistence {
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<Dmo>()
+                .HasOne(d => d.NoNameUser)
+                .WithMany(dc => dc.Dmos)
+                .HasForeignKey(d => d.NoNameUserId);
+
             modelBuilder.Entity<Dmo>()
                 .HasOne(d => d.UserDmoCollection)
                 .WithMany(dc => dc.Dmos)

@@ -5,11 +5,14 @@ using System.Threading.Tasks;
 
 namespace Model {
     public interface IDmoCollectionsRepository {
-        Task<List<UserDmoCollection>> GetAllAsync(Guid userId);
-        Task<UserDmoCollection> Get(Guid collectionId, Guid userId);
-        Task AddAsync(UserDmoCollection dmoCollection);
-        Task<Boolean> IsExist(String collectionName, Guid userId);
-        void Delete(UserDmoCollection collection);
-        void Update(UserDmoCollection oldDmoCollection, UserDmoCollection newDmoCollection);
+        Task<List<UserDmoCollection>> GetCollectionsAsync(Guid userId);
+        Task<UserDmoCollection> GetCollection(Guid collectionId, Guid userId);
+        Task AddCollectionAsync(UserDmoCollection dmoCollection);
+        Task<Boolean> IsCollectionExist(String collectionName, Guid userId);
+        void DeleteCollection(UserDmoCollection collection);
+        void UpdateCollectionName(UserDmoCollection oldDmoCollection, UserDmoCollection newDmoCollection);
+        Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid collectionId);
+        Task<Dmo> GetDmoAsync(Guid userId, Guid dmoId);
+        void DeleteDmoFromCollection(Dmo dmo);
     }
 }

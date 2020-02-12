@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
@@ -17,6 +18,7 @@ namespace Model.Entities {
             UserName = userName;
         }
 
+        public ICollection<Dmo> Dmos { get; set; }
         public ICollection<UserDmoCollection> UserDmoCollections { get; set; }
     }
 }

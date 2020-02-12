@@ -23,22 +23,35 @@ namespace API.Controllers {
         private readonly IMapper _mapper;
 
         public DmoCollectionsController(
-            IDmoCollectionsRepository dmoCollectionsRepository,
             CurrentUserService currentUserService, 
             ResponseBuilder responseBuilder,
-            IMapper mapper) {
-            _dmoCollectionsRepository = dmoCollectionsRepository ?? throw new ArgumentNullException(nameof(dmoCollectionsRepository));
+            IMapper mapper, 
+            IDmoCollectionsRepository dmoCollectionsRepository) {
             _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
             _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            _dmoCollectionsRepository = dmoCollectionsRepository ?? throw new ArgumentNullException(nameof(dmoCollectionsRepository));
         }
 
         [HttpGet]
         [Route("")]
         public async Task<ActionResult<DmoCollectionShortDto[]>> Get() {
             var user = await _currentUserService.GetAsync();
-            var dmoCollections = await _dmoCollectionsRepository.GetAllAsync(user.Id);
+            var dmoCollections = await _dmoCollectionsRepository.GetCollectionsAsync(user.Id);
             return Ok(dmoCollections.Select(_mapper.Map<DmoCollectionShortDto>).ToArray());
+        }
+
+        [HttpGet]
+        [Route("{collectionId}")]
+        public async Task<ActionResult<DmoCollectionDto>> Get(Guid collectionId)
+        {
+            var user = await _currentUserService.GetAsync();
+            var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, collectionId);
+            if (dmoCollection == null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<DmoCollectionDto>(dmoCollection));
         }
 
         [HttpPost]
@@ -46,11 +59,11 @@ namespace API.Controllers {
         public async Task<ActionResult<DmoCollectionShortDto[]>> Add(DmoCollectionShortDto dmoCollectionShort) {
             var user = await _currentUserService.GetAsync();
 
-            if (await _dmoCollectionsRepository.IsExist(dmoCollectionShort.CollectionName, user.Id)) {
+            if (await _dmoCollectionsRepository.IsCollectionExist(dmoCollectionShort.CollectionName, user.Id)) {
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"List with name '{dmoCollectionShort.CollectionName}' is already exist"));
             }
 
-            await _dmoCollectionsRepository.AddAsync(new UserDmoCollection {
+            await _dmoCollectionsRepository.AddCollectionAsync(new UserDmoCollection {
                 NoNameUser = user,
                 NoNameUserId = user.Id,
                 CollectionName = dmoCollectionShort.CollectionName
@@ -64,12 +77,12 @@ namespace API.Controllers {
         public async Task<IActionResult> Update(DmoCollectionShortDto dmoCollectionShort) {
             var user = await _currentUserService.GetAsync();
 
-            var collectionForUpdate = await _dmoCollectionsRepository.Get(dmoCollectionShort.Id, user.Id);
+            var collectionForUpdate = await _dmoCollectionsRepository.GetCollection(dmoCollectionShort.Id, user.Id);
             if (collectionForUpdate == null) {
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"'{dmoCollectionShort.CollectionName}' has been removed or invalid"));
             }
 
-            _dmoCollectionsRepository.Update(collectionForUpdate, _mapper.Map<UserDmoCollection>(dmoCollectionShort));
+            _dmoCollectionsRepository.UpdateCollectionName(collectionForUpdate, _mapper.Map<UserDmoCollection>(dmoCollectionShort));
             return NoContent();
         }
 
@@ -78,14 +91,40 @@ namespace API.Controllers {
         [Route("")]
         public async Task<ActionResult<DmoCollectionShortDto>> Delete(Guid collectionId) {
             var user = await _currentUserService.GetAsync();
-            var dmoCollection = await _dmoCollectionsRepository.Get(collectionId, user.Id);
+            var dmoCollection = await _dmoCollectionsRepository.GetCollection(collectionId, user.Id);
             if (dmoCollection == null) {
                 return NotFound();
             }
 
-            _dmoCollectionsRepository.Delete(dmoCollection);
+            _dmoCollectionsRepository.DeleteCollection(dmoCollection);
+            return NoContent();
+        }
 
-            return Ok();
+
+        [HttpDelete]
+        [Route("{collectionId}/{dmoId}")]
+        public async Task<IActionResult> RemoveDmoFromCollection(Guid collectionId, Guid dmoId)
+        {
+            var user = await _currentUserService.GetAsync();
+            var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, collectionId);
+            if (dmoCollection == null)
+            {
+                return NotFound();
+            }
+
+            var dmo = await _dmoCollectionsRepository.GetDmoAsync(user.Id, dmoId);
+            if (dmo == null)
+            {
+                return NotFound();
+            }
+
+            if (dmoCollection.Dmos.All(d => d.Id != dmo.Id))
+            {
+                return NotFound();
+            }
+
+            _dmoCollectionsRepository.DeleteDmoFromCollection(dmo);
+            return NoContent();
         }
     }
 }
