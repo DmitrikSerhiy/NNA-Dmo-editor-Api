@@ -1,8 +1,9 @@
+import { DmoCollectionShortDto } from './../models';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Toastr } from './../../shared/services/toastr.service';
 import { DmoCollectionsService } from './dmo-collections.service';
-import { DmoListDto } from './dmoList.dto';
+
 
 import { concatMap, map, catchError, } from 'rxjs/operators';
 import { throwError, Observable  } from 'rxjs';
@@ -19,10 +20,10 @@ import { Router } from '@angular/router';
 export class DmoCollectionsComponent implements OnInit {
 
   addCollectionForm: FormGroup;
-  dmoLists: DmoListDto[];
+  dmoLists: DmoCollectionShortDto[];
   showAddButton = true;
   isFormProcessing = false;
-  selectedDmoCollectionName: DmoListDto;
+  selectedDmoCollectionName: DmoCollectionShortDto;
   get collectionName() { return this.addCollectionForm.get('collectionName'); }
   @Input() rightMenuIsClosing$: Observable<void>;
   @Output() closeRightMenu = new EventEmitter<void>();
@@ -47,7 +48,7 @@ export class DmoCollectionsComponent implements OnInit {
     this.showLoader();
     this.dmoCollectionsService.getAll()
       .subscribe(
-        (response: DmoListDto[]) => this.dmoLists = response,
+        (response: DmoCollectionShortDto[]) => this.dmoLists = response,
         (error) => this.toastr.error(error),
         () => this.hideLoader() );
   }
@@ -68,7 +69,7 @@ export class DmoCollectionsComponent implements OnInit {
       const addAndRefresh =
         add$.pipe(
           catchError(innerError => { this.hideLoader(); this.resetAddCollectionForm(); return throwError(innerError); } ),
-          concatMap(() => getAll$.pipe(map((response: DmoListDto[]) => { this.dmoLists = response; } )) ));
+          concatMap(() => getAll$.pipe(map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; } )) ));
 
         addAndRefresh.subscribe(
           () => {},
@@ -77,7 +78,7 @@ export class DmoCollectionsComponent implements OnInit {
     }
   }
 
-  async onDeleteCollection(dmoList: DmoListDto) {
+  async onDeleteCollection(dmoList: DmoCollectionShortDto) {
     this.selectedDmoCollectionName = dmoList;
     const modalRef = this.modalService.open(this.removeModal);
     const sendRemoveRequest = await modalRef.result.then(() => true, () => false);
@@ -92,7 +93,7 @@ export class DmoCollectionsComponent implements OnInit {
     const deleteAndRefresh =
       delete$.pipe(
         catchError(innerError => { this.hideLoader(); this.resetAddCollectionForm(); return throwError(innerError); } ),
-        concatMap(() => getAll$.pipe(map((response: DmoListDto[]) => { this.dmoLists = response; } )) ));
+        concatMap(() => getAll$.pipe(map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; } )) ));
 
     deleteAndRefresh.subscribe(
       () => {},

@@ -1,4 +1,4 @@
-import { RightMenues } from './../right-menues';
+import { RightMenues } from '../models';
 import { Component, OnInit, Output, EventEmitter, Renderer2 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { UserManager } from 'src/app/shared/services/user-manager';

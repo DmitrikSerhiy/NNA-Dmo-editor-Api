@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs';
-import { RightMenues } from './right-menues';
+import { RightMenues } from './models';
 import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 

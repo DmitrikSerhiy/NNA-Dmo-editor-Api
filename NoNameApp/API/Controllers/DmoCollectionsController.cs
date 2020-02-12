@@ -43,8 +43,7 @@ namespace API.Controllers {
 
         [HttpGet]
         [Route("{collectionId}")]
-        public async Task<ActionResult<DmoCollectionDto>> Get(Guid collectionId)
-        {
+        public async Task<ActionResult<DmoCollectionDto>> Get(Guid collectionId) {
             var user = await _currentUserService.GetAsync();
             var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, collectionId);
             if (dmoCollection == null)
@@ -103,8 +102,7 @@ namespace API.Controllers {
 
         [HttpDelete]
         [Route("{collectionId}/{dmoId}")]
-        public async Task<IActionResult> RemoveDmoFromCollection(Guid collectionId, Guid dmoId)
-        {
+        public async Task<IActionResult> RemoveDmoFromCollection(Guid collectionId, Guid dmoId) {
             var user = await _currentUserService.GetAsync();
             var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, collectionId);
             if (dmoCollection == null)

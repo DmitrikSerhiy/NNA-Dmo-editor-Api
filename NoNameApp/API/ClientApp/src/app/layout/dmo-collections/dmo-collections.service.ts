@@ -1,4 +1,4 @@
-import { DmoListDto } from './dmoList.dto';
+import { DmoCollectionShortDto } from './../models';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -13,11 +13,11 @@ export class DmoCollectionsService {
   serverUrl = 'http://localhost:50680/api/dmoCollections/';
   constructor(private http: HttpClient) { }
 
-  getAll(): Observable<DmoListDto[]> {
+  getAll(): Observable<DmoCollectionShortDto[]> {
     return this.http
       .get(this.serverUrl)
       .pipe(
-        map((response: DmoListDto[]) => response),
+        map((response: DmoCollectionShortDto[]) => response),
         catchError(this.handleError));
   }
 
