@@ -1,0 +1,18 @@
+.table-wrapper {
+    table {
+        width: 100%;
+
+        .row-element {
+            padding: 0.75rem;
+            cursor: pointer;
+        }
+        .row-element:hover {
+            background: #f1f5f7;
+        }
+
+        .row-element:active {
+            background: #c9d6dc;
+        }
+        
+      }
+}

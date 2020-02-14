@@ -4,7 +4,6 @@ import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { Toastr } from './../../shared/services/toastr.service';
 import { DmoCollectionsService } from './dmo-collections.service';
 
-
 import { concatMap, map, catchError, } from 'rxjs/operators';
 import { throwError, Observable  } from 'rxjs';
 
@@ -66,15 +65,12 @@ export class DmoCollectionsComponent implements OnInit {
       const add$ = this.dmoCollectionsService.addCollection(collectionName);
       const getAll$ = this.dmoCollectionsService.getAll() ;
 
-      const addAndRefresh =
+      const addAndRefresh$ =
         add$.pipe(
           catchError(innerError => { this.hideLoader(); this.resetAddCollectionForm(); return throwError(innerError); } ),
           concatMap(() => getAll$.pipe(map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; } )) ));
 
-        addAndRefresh.subscribe(
-          () => {},
-          (error) => this.toastr.error(error),
-          () => { this.hideLoader(); this.toggleAddCollectionForm(); } );
+          this.subscribe(addAndRefresh$);
     }
   }
 
@@ -90,12 +86,16 @@ export class DmoCollectionsComponent implements OnInit {
     const delete$ = this.dmoCollectionsService.deleteCollection(this.selectedDmoCollectionName.id);
     const getAll$ = this.dmoCollectionsService.getAll() ;
 
-    const deleteAndRefresh =
+    const deleteAndRefresh$ =
       delete$.pipe(
         catchError(innerError => { this.hideLoader(); this.resetAddCollectionForm(); return throwError(innerError); } ),
         concatMap(() => getAll$.pipe(map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; } )) ));
 
-    deleteAndRefresh.subscribe(
+        this.subscribe(deleteAndRefresh$) ;
+  }
+
+  private subscribe(obserabable$: Observable<void>) {
+    obserabable$.subscribe(
       () => {},
       (error) => this.toastr.error(error),
       () => { this.hideLoader(); this.toggleAddCollectionForm(true); } );

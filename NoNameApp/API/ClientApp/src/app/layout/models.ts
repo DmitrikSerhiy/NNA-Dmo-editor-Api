@@ -9,6 +9,7 @@ export class DmoCollectionShortDto {
 }
 
 export class DmoShortDto {
+    id: string;
     name: string;
     movieTitle: string;
     dmoStatus: string;
@@ -20,6 +21,6 @@ export class DmoShortDto {
 export class DmoCollectionDto {
     id: string;
     collectionName: string;
-    dmos: DmoCollectionDto[];
+    dmos: DmoShortDto[];
 }
 
