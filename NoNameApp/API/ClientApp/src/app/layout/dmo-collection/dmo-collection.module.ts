@@ -6,6 +6,7 @@ import { NgbCarouselModule, NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 import {MatTableModule} from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 
 const routes: Routes = [
     { path: '', component: DmoCollectionComponent }
@@ -19,7 +20,9 @@ const routes: Routes = [
         RouterModule.forChild(routes),
         MatTableModule,
         MatPaginatorModule,
-        MatSortModule
+        MatSortModule,
+        ReactiveFormsModule,
+        FormsModule
     ],
     declarations: [
         DmoCollectionComponent

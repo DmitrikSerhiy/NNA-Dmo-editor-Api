@@ -1,7 +1,39 @@
 <div [hidden]="!shouldShowTable" class='table-wrapper'>
-    <h3 *ngIf="currentDmoCollection">{{currentDmoCollection.collectionName}}</h3>
-    <h4>Search</h4>
-    <input matInput (keyup)="applyFilter($event)" placeholder="dmo, movie, rating etc.">
+    <div class="table-details">
+
+
+        <div class="collection-name-container">
+            <div class="collection-name-header">
+                <h4 *ngIf="currentDmoCollection" [hidden]="showEditForm">{{currentDmoCollection.collectionName}}</h4>
+                <button type="button" [hidden]="showEditForm" class='nna-icon-button bg-primary'
+                    (click)='showEditCollectionNameForm()'>
+                    <i class="fa fa-pencil" aria-hidden="true"></i>
+                </button>
+            </div>
+            <form [hidden]="!showEditForm" [formGroup]="editCollectionNameForm" (ngSubmit)="onEditCollectionName()"
+                autocomplete="off">
+
+                <input type="text" name="collectionName" formControlName="collectionName"
+                    class="form-control input-underline-light search-input" placeholder="collection name"
+                    autocomplete="off">
+
+                <button type="submit" [disabled]="!editCollectionNameForm.valid" class='nna-icon-button bg-primary'
+                    [ngClass]="{'nna-diabled-button': !editCollectionNameForm.valid}">
+                    <i class="fa fa-check" aria-hidden="true"></i>
+                </button>
+                <button type="button" class='nna-icon-button bg-secondary' (click)="hideEditCollectionNameForm()"><i
+                        class="fa fa-times" aria-hidden="true"></i>
+                </button>
+            </form>
+
+        </div>
+        <div class="search-container">
+            <i class="fa fa-search text-muted"></i>
+            <input type="text" class="form-control input-underline-light search-input" [(ngModel)]="searchValue"
+                placeholder="dmo, movie, rating etc." (keyup)="applyFilter($event)" autocomplete="off">
+        </div>
+    </div>
+
     <table mat-table [dataSource]="table" matSort>
 
         <ng-container matColumnDef="id">
@@ -35,10 +67,10 @@
         </ng-container>
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row class="row-element" *matRowDef="let row; columns: displayedColumns;" (click)="onRowSelect(row)"></tr>
+        <tr mat-row class="row-element" *matRowDef="let row; columns: displayedColumns;"
+            [class.clicked-row]="clickedRow == row" (click)="onRowSelect(row)"></tr>
     </table>
 
     <mat-paginator [length]="resultsLength" [pageSize]="15" showFirstLastButtons></mat-paginator>
 
 </div>
-
