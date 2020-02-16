@@ -1,4 +1,4 @@
-import { DmoCollectionDto } from './../models';
+import { DmoCollectionDto, DmoCollectionShortDto } from './../models';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
@@ -18,11 +18,27 @@ export class DmoCollectionService {
       .get(this.serverUrl + collectionId)
       .pipe(
         map((response: DmoCollectionDto) => response),
-        catchError(this.handleError));
+        catchError(this.handleError) );
   }
 
+  updateCollectionName(collectionId: string, newCollectionName: string): Observable<any> {
+    return this.http
+    .put(this.serverUrl, {id: collectionId, collectionName: newCollectionName})
+    .pipe(
+      map(response => response),
+      catchError(this.handleError));
+  }
+
+  getCollectionName(collectionId: string): Observable<DmoCollectionShortDto> {
+    return this.http
+    .get(this.serverUrl + 'short/' + collectionId)
+    .pipe(
+      map((response: DmoCollectionShortDto) => response),
+      catchError(this.handleError));
+  }
 
   private handleError(err: HttpErrorResponse) {
+    console.log(err);
     const errorMessage = err.error.errorMessage;
     if (!errorMessage) {
       return throwError('Server error. Try later.');

@@ -24,9 +24,9 @@ namespace Persistence.Repositories {
                 .ToListAsync();
         }
 
-        public async Task<UserDmoCollection> GetCollection(Guid collectionId, Guid userId) {
+        public async Task<UserDmoCollection> GetCollectionAsync(Guid collectionId, Guid userId) {
             return await _context.UserDmoCollections
-                .FirstOrDefaultAsync(udc => udc.NoNameUserId == userId && udc.Id == collectionId);
+                .FirstOrDefaultAsync(udc => udc.Id == collectionId && udc.NoNameUserId == userId);
         }
 
         public async Task<Dmo> GetDmoAsync(Guid userId, Guid dmoId) {

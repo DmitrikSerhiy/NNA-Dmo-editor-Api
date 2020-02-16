@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Model {
     public interface IDmoCollectionsRepository {
         Task<List<UserDmoCollection>> GetCollectionsAsync(Guid userId);
-        Task<UserDmoCollection> GetCollection(Guid collectionId, Guid userId);
+        Task<UserDmoCollection> GetCollectionAsync(Guid collectionId, Guid userId);
         Task AddCollectionAsync(UserDmoCollection dmoCollection);
         Task<Boolean> IsCollectionExist(String collectionName, Guid userId);
         void DeleteCollection(UserDmoCollection collection);

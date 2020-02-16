@@ -1,20 +1,23 @@
+import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Toastr } from './../../shared/services/toastr.service';
-import { DmoCollectionDto, DmoShortDto } from './../models';
+import { DmoCollectionDto, DmoShortDto, DmoCollectionShortDto } from './../models';
 import { DmoCollectionService } from './dmo-collection.service';
-import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { switchMap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
+import { concatMap, map, takeUntil, finalize } from 'rxjs/operators';
+import { throwError, Observable, Subject  } from 'rxjs';
 
 @Component({
   selector: 'app-dmo-collection',
   templateUrl: './dmo-collection.component.html',
   styleUrls: ['./dmo-collection.component.scss']
 })
-export class DmoCollectionComponent implements OnInit {
+export class DmoCollectionComponent implements OnInit, OnDestroy {
 
   currentDmoCollection: DmoCollectionDto;
   shouldShowTable = false;
@@ -32,11 +35,13 @@ export class DmoCollectionComponent implements OnInit {
   showEditForm = false;
   searchValue: any;
 
+  private unsubscribe$: Subject<void> = new Subject();
+
   constructor(
     private dmoCollectionService: DmoCollectionService,
     private route: ActivatedRoute,
     private toastr: Toastr,
-    private router: Router) { }
+    private collectionManager: CollectionsManagerService) { }
 
   ngOnInit() {
     this.editCollectionNameForm = new FormGroup({
@@ -54,6 +59,11 @@ export class DmoCollectionComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
 
   onRowSelect(row) {
     this.clickedRow = row;
@@ -61,7 +71,31 @@ export class DmoCollectionComponent implements OnInit {
   }
 
   onEditCollectionName() {
-    console.log('submit');
+    if (this.editCollectionNameForm.valid) {
+      const newCollectionName = this.editCollectionNameForm.get('collectionName').value;
+      if (this.currentDmoCollection.collectionName === newCollectionName) {
+        this.hideEditCollectionNameForm();
+        return;
+      }
+
+      const collectionId = this.route.snapshot.paramMap.get('id');
+      const updateCollectionName$ = this.dmoCollectionService.updateCollectionName(collectionId, newCollectionName);
+      const getCollectionName$ = this.dmoCollectionService.getCollectionName(collectionId);
+
+      const updateAndGet$ =
+      updateCollectionName$.pipe(
+        takeUntil(this.unsubscribe$),
+        finalize(() => this.hideEditCollectionNameForm()),
+        concatMap(() => getCollectionName$.pipe(
+          takeUntil(this.unsubscribe$),
+          map((response: DmoCollectionShortDto) => {
+          this.currentDmoCollection.collectionName = response.collectionName; }, )) ));
+
+     updateAndGet$.subscribe({
+        error: (err) => { this.toastr.error(err); },
+    });
+
+    }
   }
 
   hideEditCollectionNameForm() {
@@ -85,12 +119,16 @@ export class DmoCollectionComponent implements OnInit {
 
   private loadDmos() {
     this.resetTable();
-    return this.dmoCollectionService.getWithDmos(this.route.snapshot.paramMap.get('id'))
-      .subscribe((response: DmoCollectionDto) => {
+    const collectionId = this.route.snapshot.paramMap.get('id');
+    return this.dmoCollectionService.getWithDmos(collectionId)
+    .subscribe({
+      next: (response: DmoCollectionDto) => {
         this.currentDmoCollection = response;
         this.initializeTable(this.currentDmoCollection.dmos);
+        this.collectionManager.setCollectionId(collectionId);
       },
-        (error) => this.toastr.error(error));
+      error: (err) => { this.toastr.error(err); },
+    });
   }
 
   private resetTable() {

@@ -50,7 +50,21 @@ namespace API.Controllers {
             {
                 return NotFound();
             }
+
             return Ok(_mapper.Map<DmoCollectionDto>(dmoCollection));
+        }
+
+        [HttpGet]
+        [Route("short/{collectionId}")]
+        public async Task<ActionResult<DmoCollectionShortDto>> GetCollectionName(Guid collectionId) {
+            var user = await _currentUserService.GetAsync();
+            var dmoCollection = await _dmoCollectionsRepository.GetCollectionAsync(collectionId, user.Id);
+            if (dmoCollection == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<DmoCollectionShortDto>(dmoCollection));
         }
 
         [HttpPost]
@@ -76,7 +90,7 @@ namespace API.Controllers {
         public async Task<IActionResult> Update(DmoCollectionShortDto dmoCollectionShort) {
             var user = await _currentUserService.GetAsync();
 
-            var collectionForUpdate = await _dmoCollectionsRepository.GetCollection(dmoCollectionShort.Id, user.Id);
+            var collectionForUpdate = await _dmoCollectionsRepository.GetCollectionAsync(dmoCollectionShort.Id, user.Id);
             if (collectionForUpdate == null) {
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"'{dmoCollectionShort.CollectionName}' has been removed or invalid"));
             }
@@ -90,7 +104,7 @@ namespace API.Controllers {
         [Route("")]
         public async Task<ActionResult<DmoCollectionShortDto>> Delete(Guid collectionId) {
             var user = await _currentUserService.GetAsync();
-            var dmoCollection = await _dmoCollectionsRepository.GetCollection(collectionId, user.Id);
+            var dmoCollection = await _dmoCollectionsRepository.GetCollectionAsync(collectionId, user.Id);
             if (dmoCollection == null) {
                 return NotFound();
             }
