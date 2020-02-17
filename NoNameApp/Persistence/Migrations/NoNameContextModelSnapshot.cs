@@ -29,7 +29,8 @@ namespace Persistence.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<string>("RoleId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -51,7 +52,8 @@ namespace Persistence.Migrations
                     b.Property<string>("ClaimValue")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -72,7 +74,8 @@ namespace Persistence.Migrations
                     b.Property<string>("ProviderDisplayName")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.HasKey("LoginProvider", "ProviderKey");
@@ -84,10 +87,10 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("RoleId")
+                    b.Property<string>("RoleId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("UserId", "RoleId");
@@ -99,7 +102,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.Property<Guid>("UserId")
+                    b.Property<string>("UserId")
                         .HasColumnType("char(36)");
 
                     b.Property<string>("LoginProvider")
@@ -118,7 +121,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Model.Entities.Dmo", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -134,30 +137,26 @@ namespace Persistence.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("NoNameUserId")
+                    b.Property<string>("NoNameUserId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.Property<string>("ShortComment")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("UserDmoCollectionId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NoNameUserId");
-
-                    b.HasIndex("UserDmoCollectionId");
 
                     b.ToTable("Dmos");
                 });
 
             modelBuilder.Entity("Model.Entities.DmoUserDmoCollection", b =>
                 {
-                    b.Property<Guid>("DmoId")
+                    b.Property<string>("DmoId")
                         .HasColumnType("char(36)");
 
-                    b.Property<Guid>("UserDmoCollectionId")
+                    b.Property<string>("UserDmoCollectionId")
                         .HasColumnType("char(36)");
 
                     b.HasKey("DmoId", "UserDmoCollectionId");
@@ -169,7 +168,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Model.Entities.NoNameRole", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -196,7 +195,7 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Model.Entities.NoNameUser", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
@@ -261,17 +260,15 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Model.Entities.UserDmoCollection", b =>
                 {
-                    b.Property<Guid>("Id")
+                    b.Property<string>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
                     b.Property<string>("CollectionName")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("DmoCount")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("NoNameUserId")
+                    b.Property<string>("NoNameUserId")
+                        .IsRequired()
                         .HasColumnType("char(36)");
 
                     b.HasKey("Id");
@@ -337,12 +334,6 @@ namespace Persistence.Migrations
                     b.HasOne("Model.Entities.NoNameUser", "NoNameUser")
                         .WithMany("Dmos")
                         .HasForeignKey("NoNameUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Model.Entities.UserDmoCollection", "UserDmoCollection")
-                        .WithMany("Dmos")
-                        .HasForeignKey("UserDmoCollectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

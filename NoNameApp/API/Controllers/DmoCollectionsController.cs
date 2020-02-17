@@ -130,10 +130,11 @@ namespace API.Controllers {
                 return NotFound();
             }
 
-            if (dmoCollection.Dmos.All(d => d.Id != dmo.Id))
-            {
-                return NotFound();
-            }
+            //todo: 
+            //if (dmoCollection.Dmos.All(d => d.Id != dmo.Id))
+            //{
+            //    return NotFound();
+            //}
 
             _dmoCollectionsRepository.DeleteDmoFromCollection(dmo);
             return NoContent();

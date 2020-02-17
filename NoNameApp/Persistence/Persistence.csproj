@@ -11,6 +11,22 @@
     <Compile Remove="Migrations\20200201131814_RemoveINtermidiateDmoTable.Designer.cs" />
     <Compile Remove="Migrations\20200201132437_RemoveINtermidiateDmoTable.cs" />
     <Compile Remove="Migrations\20200201132437_RemoveINtermidiateDmoTable.Designer.cs" />
+    <Compile Remove="Migrations\20200217220743_AddOnDeletePolicy.cs" />
+    <Compile Remove="Migrations\20200217220743_AddOnDeletePolicy.Designer.cs" />
+    <Compile Remove="Migrations\20200217221052_AddOnDeletePolicy.cs" />
+    <Compile Remove="Migrations\20200217221052_AddOnDeletePolicy.Designer.cs" />
+    <Compile Remove="Migrations\20200217221743_test123.cs" />
+    <Compile Remove="Migrations\20200217221743_test123.Designer.cs" />
+    <Compile Remove="Migrations\20200217221947_test123.cs" />
+    <Compile Remove="Migrations\20200217221947_test123.Designer.cs" />
+    <Compile Remove="Migrations\20200217222105_RemoveDmoCount.cs" />
+    <Compile Remove="Migrations\20200217222105_RemoveDmoCount.Designer.cs" />
+    <Compile Remove="Migrations\20200217222512_test123.cs" />
+    <Compile Remove="Migrations\20200217222512_test123.Designer.cs" />
+    <Compile Remove="Migrations\20200217222653_AddOnDeletePolicy.cs" />
+    <Compile Remove="Migrations\20200217222653_AddOnDeletePolicy.Designer.cs" />
+    <Compile Remove="Migrations\20200217230152_AddOnDeletePolicy.cs" />
+    <Compile Remove="Migrations\20200217230152_AddOnDeletePolicy.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

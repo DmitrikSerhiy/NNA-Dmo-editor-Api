@@ -20,15 +20,11 @@ namespace Persistence {
                 .WithMany(dc => dc.Dmos)
                 .HasForeignKey(d => d.NoNameUserId);
 
-            modelBuilder.Entity<Dmo>()
-                .HasOne(d => d.UserDmoCollection)
-                .WithMany(dc => dc.Dmos)
-                .HasForeignKey(d => d.UserDmoCollectionId);
-
             modelBuilder.Entity<UserDmoCollection>()
                 .HasOne(s => s.NoNameUser)
                 .WithMany(g => g.UserDmoCollections)
-                .HasForeignKey(s => s.NoNameUserId);
+                .HasForeignKey(s => s.NoNameUserId)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<DmoUserDmoCollection>()
                 .HasKey(dc => new { dc.DmoId, dc.UserDmoCollectionId });

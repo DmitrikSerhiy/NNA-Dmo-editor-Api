@@ -1,5 +1,5 @@
 import { DmoCollectionDto, DmoCollectionShortDto } from './../models';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -27,6 +27,14 @@ export class DmoCollectionService {
     .pipe(
       map(response => response),
       catchError(this.handleError));
+  }
+
+  deleteCollection(collectionId: string): Observable<any> {
+    return this.http
+      .delete(this.serverUrl, {params: new HttpParams().set('collectionId', collectionId)})
+      .pipe(
+        map(response => response ),
+        catchError(this.handleError));
   }
 
   getCollectionName(collectionId: string): Observable<DmoCollectionShortDto> {

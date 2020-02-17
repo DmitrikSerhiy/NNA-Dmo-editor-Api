@@ -49,14 +49,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
     });
 
     this.collectionManager.currentCollectionId
-      .subscribe(col => this.oppenedCollectionId = col);
+      .subscribe(col => { this.oppenedCollectionId = col; this.loadCollections(); } );
 
-    this.showLoader();
-    this.dmoCollectionsService.getAll()
-      .subscribe(
-        (response: DmoCollectionShortDto[]) => this.dmoLists = response,
-        (error) => this.toastr.error(error),
-        () => this.hideLoader() );
+      this.loadCollections();
   }
 
   ngOnDestroy(): void {
@@ -95,9 +90,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   async onDeleteCollection(dmoList: DmoCollectionShortDto) {
     this.selectedDmoCollectionName = dmoList;
     const modalRef = this.modalService.open(this.removeModal);
-    const sendRemoveRequest = await modalRef.result.then(() => true, () => false);
+    const shouldSendRemoveRequest = await modalRef.result.then(() => true, () => false);
 
-    if (!sendRemoveRequest) {
+    if (!shouldSendRemoveRequest) {
       return;
     }
     this.showLoader();
@@ -119,6 +114,15 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
         deleteAndRefresh$.subscribe({
           error: (err) => { this.toastr.error(err); },
       });
+  }
+
+  private loadCollections() {
+    this.showLoader();
+    this.dmoCollectionsService.getAll()
+      .subscribe(
+        (response: DmoCollectionShortDto[]) => this.dmoLists = response,
+        (error) => this.toastr.error(error),
+        () => this.hideLoader() );
   }
 
   private redirectToDashboard(collectionIdToBeDeleted: string) {

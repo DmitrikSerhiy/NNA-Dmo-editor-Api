@@ -1,3 +1,5 @@
+import { DmoCollectionsService } from './../dmo-collections/dmo-collections.service';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Toastr } from './../../shared/services/toastr.service';
@@ -27,6 +29,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   selectedDmo: DmoShortDto;
   clickedRow: any;
 
+  @ViewChild('removeFullCollectionModal', {static: true}) removeModal: NgbActiveModal;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -40,7 +43,9 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   constructor(
     private dmoCollectionService: DmoCollectionService,
     private route: ActivatedRoute,
+    private modalService: NgbModal,
     private toastr: Toastr,
+    private router: Router,
     private collectionManager: CollectionsManagerService) { }
 
   ngOnInit() {
@@ -64,7 +69,6 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-
   onRowSelect(row) {
     this.clickedRow = row;
     //todo: to some shit with it
@@ -83,19 +87,36 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
       const getCollectionName$ = this.dmoCollectionService.getCollectionName(collectionId);
 
       const updateAndGet$ =
-      updateCollectionName$.pipe(
-        takeUntil(this.unsubscribe$),
-        finalize(() => this.hideEditCollectionNameForm()),
-        concatMap(() => getCollectionName$.pipe(
+        updateCollectionName$.pipe(
           takeUntil(this.unsubscribe$),
-          map((response: DmoCollectionShortDto) => {
-          this.currentDmoCollection.collectionName = response.collectionName; }, )) ));
+          finalize(() => this.hideEditCollectionNameForm()),
+          concatMap(() => getCollectionName$.pipe(
+            takeUntil(this.unsubscribe$),
+            map((response: DmoCollectionShortDto) => {
+              this.currentDmoCollection.collectionName = response.collectionName;
+            }))));
 
-     updateAndGet$.subscribe({
+      updateAndGet$.subscribe({
+        error: (err) => { this.toastr.error(err); },
+      });
+    }
+  }
+
+  async onRemoveCollection() {
+    console.log(this.currentDmoCollection);
+    const modalRef = this.modalService.open(this.removeModal);
+    const shouldSendRemoveRequest = await modalRef.result.then(() => true, () => false);
+
+    if (!shouldSendRemoveRequest) {
+      return;
+    }
+
+    const deleteAndRedirect$ = this.dmoCollectionService.deleteCollection(this.currentDmoCollection.id);
+
+      deleteAndRedirect$.subscribe({
+        next: () => { this.redirectToDashboard(); },
         error: (err) => { this.toastr.error(err); },
     });
-
-    }
   }
 
   hideEditCollectionNameForm() {
@@ -115,6 +136,11 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     if (this.table.paginator) {
       this.table.paginator.firstPage();
     }
+  }
+
+  private redirectToDashboard() {
+    this.collectionManager.setCollectionId('');
+    this.router.navigateByUrl('/');
   }
 
   private loadDmos() {

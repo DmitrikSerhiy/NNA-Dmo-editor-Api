@@ -4,11 +4,13 @@
 
     .collection-name-container {
       display: flex;
-      padding-right: 2.5rem;
+      padding-right: 5rem;
+      height: 4rem;
 
       .collection-name-header {
         display: flex;
         align-items: center;
+
         h4 {
           margin: 0;
         }
@@ -17,7 +19,7 @@
           display: none;
         }
       }
-
+      
       &:hover {
         cursor: pointer;
         .collection-name-header {
@@ -38,7 +40,9 @@
         }
 
         .validation-wrapper {
-          margin-bottom: 1rem;
+          margin-top: 0;
+          margin-bottom: 0;
+          height: 1rem;
         }
       }
     }

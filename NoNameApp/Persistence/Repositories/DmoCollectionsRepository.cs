@@ -59,14 +59,15 @@ namespace Persistence.Repositories {
         public async Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid collectionId) {
             return await _context.UserDmoCollections
                 .Where(d => d.NoNameUserId == userId && d.Id == collectionId)
-                .Include(dc => dc.Dmos)
+                .Include(dc => dc.DmoUserDmoCollections)
+                    .ThenInclude(d => d.Dmo)
                 .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
 
         public void DeleteDmoFromCollection(Dmo dmo) {
             if (dmo == null) throw new ArgumentNullException(nameof(dmo));
-            dmo.UserDmoCollection = null;
+            //dmo.UserDmoCollection = null;
         }
 
     }

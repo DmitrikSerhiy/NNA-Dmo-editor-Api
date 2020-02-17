@@ -13,8 +13,8 @@ namespace API.Mappers {
             CreateMap<Dmo, DmoShortDto>()
                 .ForMember(udc => udc.DmoStatus, dcd => dcd.MapFrom(dd => GetDmoStatusString(dd.DmoStatus)))
                 .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => (Int16) dd.DmoStatus));
-            CreateMap<UserDmoCollection, DmoCollectionDto>()
-                .ForMember(udc => udc.DmoCount, dcd => dcd.MapFrom(dd => dd.Dmos.Count));
+            CreateMap<UserDmoCollection, DmoCollectionDto>();
+            //.ForMember(udc => udc.DmoCount, dcd => dcd.MapFrom(dd => dd.Dmos.Count));
         }
 
         private String GetDmoStatusString(Int16 status) {

@@ -9,8 +9,8 @@ using Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NoNameContext))]
-    [Migration("20200212195042_AddDmoToUser")]
-    partial class AddDmoToUser
+    [Migration("20200217222259_RemoveDmoCount")]
+    partial class RemoveDmoCount
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -142,14 +142,9 @@ namespace Persistence.Migrations
                     b.Property<string>("ShortComment")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<Guid>("UserDmoCollectionId")
-                        .HasColumnType("char(36)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("NoNameUserId");
-
-                    b.HasIndex("UserDmoCollectionId");
 
                     b.ToTable("Dmos");
                 });
@@ -270,9 +265,6 @@ namespace Persistence.Migrations
                     b.Property<string>("CollectionName")
                         .HasColumnType("longtext CHARACTER SET utf8mb4");
 
-                    b.Property<int>("DmoCount")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("NoNameUserId")
                         .HasColumnType("char(36)");
 
@@ -339,12 +331,6 @@ namespace Persistence.Migrations
                     b.HasOne("Model.Entities.NoNameUser", "NoNameUser")
                         .WithMany("Dmos")
                         .HasForeignKey("NoNameUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Model.Entities.UserDmoCollection", "UserDmoCollection")
-                        .WithMany("Dmos")
-                        .HasForeignKey("UserDmoCollectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
