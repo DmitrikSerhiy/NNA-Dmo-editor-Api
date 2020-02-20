@@ -1,15 +1,16 @@
 ﻿using System;
 using System.Linq;
 using API.DTO;
+using API.DTO.DmoCollections;
 using AutoMapper;
 using Model.Entities;
 using Model.Enums;
 
 namespace API.Mappers {
     // ReSharper disable once UnusedMember.Global
-    public class DmoMappers : Profile {
+    public class DmoCollectionsMappers : Profile {
 
-        public DmoMappers() {
+        public DmoCollectionsMappers() {
             CreateMap<UserDmoCollection, DmoCollectionShortDto>().ReverseMap();
             CreateMap<Dmo, DmoShortDto>()
                 .ForMember(udc => udc.DmoStatus, dcd => dcd.MapFrom(dd => GetDmoStatusString(dd.DmoStatus)))

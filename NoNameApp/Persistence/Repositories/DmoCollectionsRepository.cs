@@ -24,16 +24,19 @@ namespace Persistence.Repositories {
                 .ToListAsync();
         }
 
-        public async Task<UserDmoCollection> GetCollectionAsync(Guid userId, Guid collectionId) {
+        public async Task<UserDmoCollection> GetCollectionAsync(Guid userId, Guid? collectionId) {
+            if(!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
             return await _context.UserDmoCollections
                 .FirstOrDefaultAsync(udc => udc.Id == collectionId && udc.NoNameUserId == userId);
         }
 
-        public async Task<Dmo> GetDmoAsync(Guid userId, Guid dmoId) {
+        public async Task<Dmo> GetDmoAsync(Guid userId, Guid? dmoId) {
+            if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
             return await _context.Dmos.FirstOrDefaultAsync(d => d.Id == dmoId && d.NoNameUserId == userId);
         }
 
         public async Task<Boolean> IsCollectionExist(Guid userId, String collectionName) {
+            if(String.IsNullOrWhiteSpace(collectionName)) throw new ArgumentNullException(nameof(collectionName));
             return await _context.UserDmoCollections.AnyAsync(udc =>
                 udc.CollectionName.Equals(collectionName, StringComparison.CurrentCultureIgnoreCase) && udc.NoNameUserId == userId);
         }
@@ -57,7 +60,8 @@ namespace Persistence.Repositories {
             _context.UserDmoCollections.Remove(collection);
         }
 
-        public async Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid collectionId) {
+        public async Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid? collectionId) {
+            if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
             return await _context.UserDmoCollections
                 .Where(d => d.NoNameUserId == userId && d.Id == collectionId)
                 .Include(dc => dc.DmoUserDmoCollections)
@@ -77,8 +81,9 @@ namespace Persistence.Repositories {
             });
         }
 
-        public Boolean ContainsDmo(UserDmoCollection dmoCollection, Guid dmoId) {
+        public Boolean ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId) {
             if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
+            if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
 
             return dmoCollection.DmoUserDmoCollections.Any(d => d.DmoId == dmoId);
         }

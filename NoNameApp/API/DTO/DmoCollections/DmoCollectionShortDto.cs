@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace API.DTO {
+namespace API.DTO.DmoCollections {
     public class DmoCollectionShortDto {
-        public Guid Id { get; set; }
+        public Guid? Id { get; set; }
         public String CollectionName { get; set; }
     }
 }

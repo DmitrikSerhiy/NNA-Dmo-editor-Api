@@ -1,7 +1,6 @@
 ﻿using System;
-using Model.Enums;
 
-namespace API.DTO {
+namespace API.DTO.DmoCollections {
     public sealed class DmoShortDto {
         public String Id { get; set; }
         public String Name { get; set; }

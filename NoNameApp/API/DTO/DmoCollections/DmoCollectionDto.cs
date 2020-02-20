@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace API.DTO {
+namespace API.DTO.DmoCollections {
     public class DmoCollectionDto {
         public String Id { get; set; }
         public String CollectionName { get; set; }

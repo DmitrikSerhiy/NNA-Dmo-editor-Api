@@ -4,6 +4,7 @@ using Model;
 using Model.Entities;
 
 namespace Persistence.Repositories {
+    // ReSharper disable once UnusedMember.Global
     public class UserRepository : IUserRepository
     {
         private readonly NoNameContext _context;
@@ -14,7 +15,6 @@ namespace Persistence.Repositories {
             _context = unitOfWork.Context;
         }
 
-        //temporary
         public async Task<NoNameUser> WithId(Guid id) {
             return await _context.ApplicationUsers.FindAsync(id);
         }
