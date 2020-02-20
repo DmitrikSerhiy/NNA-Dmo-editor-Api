@@ -35,7 +35,7 @@ namespace API.Controllers {
 
         [HttpGet]
         [Route("")]
-        public async Task<ActionResult<DmoCollectionShortDto[]>> Get() {
+        public async Task<ActionResult<DmoCollectionShortDto[]>> GetCollections() {
             var user = await _currentUserService.GetAsync();
             var dmoCollections = await _dmoCollectionsRepository.GetCollectionsAsync(user.Id);
             return Ok(dmoCollections.Select(_mapper.Map<DmoCollectionShortDto>).ToArray());
@@ -43,7 +43,7 @@ namespace API.Controllers {
 
         [HttpGet]
         [Route("{collectionId}")]
-        public async Task<ActionResult<DmoCollectionDto>> Get(Guid collectionId) {
+        public async Task<ActionResult<DmoCollectionDto>> GetCollection(Guid collectionId) {
             var user = await _currentUserService.GetAsync();
             var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, collectionId);
             if (dmoCollection == null)
@@ -51,14 +51,15 @@ namespace API.Controllers {
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DmoCollectionDto>(dmoCollection));
+            var sdf = _mapper.Map<DmoCollectionDto>(dmoCollection);
+            return Ok(sdf);
         }
 
         [HttpGet]
         [Route("short/{collectionId}")]
         public async Task<ActionResult<DmoCollectionShortDto>> GetCollectionName(Guid collectionId) {
             var user = await _currentUserService.GetAsync();
-            var dmoCollection = await _dmoCollectionsRepository.GetCollectionAsync(collectionId, user.Id);
+            var dmoCollection = await _dmoCollectionsRepository.GetCollectionAsync(user.Id, collectionId);
             if (dmoCollection == null)
             {
                 return NotFound();
@@ -69,10 +70,10 @@ namespace API.Controllers {
 
         [HttpPost]
         [Route("")]
-        public async Task<ActionResult<DmoCollectionShortDto[]>> Add(DmoCollectionShortDto dmoCollectionShort) {
+        public async Task<ActionResult<DmoCollectionShortDto[]>> AddCollection(DmoCollectionShortDto dmoCollectionShort) {
             var user = await _currentUserService.GetAsync();
 
-            if (await _dmoCollectionsRepository.IsCollectionExist(dmoCollectionShort.CollectionName, user.Id)) {
+            if (await _dmoCollectionsRepository.IsCollectionExist(user.Id, dmoCollectionShort.CollectionName)) {
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"List with name '{dmoCollectionShort.CollectionName}' is already exist"));
             }
 
@@ -90,7 +91,7 @@ namespace API.Controllers {
         public async Task<IActionResult> Update(DmoCollectionShortDto dmoCollectionShort) {
             var user = await _currentUserService.GetAsync();
 
-            var collectionForUpdate = await _dmoCollectionsRepository.GetCollectionAsync(dmoCollectionShort.Id, user.Id);
+            var collectionForUpdate = await _dmoCollectionsRepository.GetCollectionAsync(user.Id, dmoCollectionShort.Id);
             if (collectionForUpdate == null) {
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"'{dmoCollectionShort.CollectionName}' has been removed or invalid"));
             }
@@ -102,9 +103,9 @@ namespace API.Controllers {
 
         [HttpDelete]
         [Route("")]
-        public async Task<ActionResult<DmoCollectionShortDto>> Delete(Guid collectionId) {
+        public async Task<ActionResult<DmoCollectionShortDto>> DeleteCollection(Guid collectionId) {
             var user = await _currentUserService.GetAsync();
-            var dmoCollection = await _dmoCollectionsRepository.GetCollectionAsync(collectionId, user.Id);
+            var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, collectionId);
             if (dmoCollection == null) {
                 return NotFound();
             }
@@ -113,30 +114,48 @@ namespace API.Controllers {
             return NoContent();
         }
 
+        [HttpPost]
+        [Route("dmos")]
+        public async Task<IActionResult> AddDmoToCollection(AddDmoToCollectionDto dto) {
+            var user = await _currentUserService.GetAsync();
+            var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, dto.CollectionId);
+            if (dmoCollection == null) {
+                return NotFound();
+            }
+
+            if (_dmoCollectionsRepository.ContainsDmo(dmoCollection, dto.DmoId)) {
+                return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"Collection already contains dmo with id {dto.DmoId}"));
+            }
+
+            var dmo = await _dmoCollectionsRepository.GetDmoAsync(user.Id, dto.DmoId);
+            if (dmo == null) {
+                return NotFound();
+            }
+
+            _dmoCollectionsRepository.AddDmoToCollection(dmoCollection, dmo);
+            return NoContent();
+        }
+
 
         [HttpDelete]
-        [Route("{collectionId}/{dmoId}")]
-        public async Task<IActionResult> RemoveDmoFromCollection(Guid collectionId, Guid dmoId) {
+        [Route("dmos")]
+        public async Task<IActionResult> RemoveDmoFromCollection(RemoveDmoFromCollectionDto dto) {
             var user = await _currentUserService.GetAsync();
-            var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, collectionId);
-            if (dmoCollection == null)
-            {
+            var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, dto.CollectionId);
+            if (dmoCollection == null) {
                 return NotFound();
             }
 
-            var dmo = await _dmoCollectionsRepository.GetDmoAsync(user.Id, dmoId);
-            if (dmo == null)
-            {
+            var dmo = await _dmoCollectionsRepository.GetDmoAsync(user.Id, dto.DmoId);
+            if (dmo == null) {
                 return NotFound();
             }
 
-            //todo: 
-            //if (dmoCollection.Dmos.All(d => d.Id != dmo.Id))
-            //{
-            //    return NotFound();
-            //}
+            if (dmoCollection.DmoUserDmoCollections.All(d => d.Dmo.Id != dmo.Id)) {
+                return NotFound();
+            }
 
-            _dmoCollectionsRepository.DeleteDmoFromCollection(dmo);
+            _dmoCollectionsRepository.RemoveDmoFromCollection(dmoCollection, dmo);
             return NoContent();
         }
     }

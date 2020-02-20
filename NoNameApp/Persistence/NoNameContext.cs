@@ -23,8 +23,7 @@ namespace Persistence {
             modelBuilder.Entity<UserDmoCollection>()
                 .HasOne(s => s.NoNameUser)
                 .WithMany(g => g.UserDmoCollections)
-                .HasForeignKey(s => s.NoNameUserId)
-                .OnDelete(DeleteBehavior.SetNull);
+                .HasForeignKey(s => s.NoNameUserId);
 
             modelBuilder.Entity<DmoUserDmoCollection>()
                 .HasKey(dc => new { dc.DmoId, dc.UserDmoCollectionId });
@@ -32,12 +31,14 @@ namespace Persistence {
             modelBuilder.Entity<DmoUserDmoCollection>()
                 .HasOne(sc => sc.Dmo)
                 .WithMany(s => s.DmoUserDmoCollections)
-                .HasForeignKey(sc => sc.DmoId);
+                .HasForeignKey(sc => sc.DmoId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DmoUserDmoCollection>()
                 .HasOne(sc => sc.UserDmoCollection)
                 .WithMany(s => s.DmoUserDmoCollections)
-                .HasForeignKey(sc => sc.UserDmoCollectionId);
+                .HasForeignKey(sc => sc.UserDmoCollectionId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
         public NoNameContext(DbContextOptions<NoNameContext> options)
             : base(options) {

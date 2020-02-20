@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using API.DTO;
 using AutoMapper;
 using Model.Entities;
@@ -13,8 +14,8 @@ namespace API.Mappers {
             CreateMap<Dmo, DmoShortDto>()
                 .ForMember(udc => udc.DmoStatus, dcd => dcd.MapFrom(dd => GetDmoStatusString(dd.DmoStatus)))
                 .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => (Int16) dd.DmoStatus));
-            CreateMap<UserDmoCollection, DmoCollectionDto>();
-            //.ForMember(udc => udc.DmoCount, dcd => dcd.MapFrom(dd => dd.Dmos.Count));
+            CreateMap<UserDmoCollection, DmoCollectionDto>()
+                .ForMember(udc => udc.Dmos, dcd => dcd.MapFrom(dd => dd.DmoUserDmoCollections.Select(d => d.Dmo).ToArray()));
         }
 
         private String GetDmoStatusString(Int16 status) {

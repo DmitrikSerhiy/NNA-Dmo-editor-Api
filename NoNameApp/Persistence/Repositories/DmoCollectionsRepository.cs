@@ -24,7 +24,7 @@ namespace Persistence.Repositories {
                 .ToListAsync();
         }
 
-        public async Task<UserDmoCollection> GetCollectionAsync(Guid collectionId, Guid userId) {
+        public async Task<UserDmoCollection> GetCollectionAsync(Guid userId, Guid collectionId) {
             return await _context.UserDmoCollections
                 .FirstOrDefaultAsync(udc => udc.Id == collectionId && udc.NoNameUserId == userId);
         }
@@ -33,7 +33,7 @@ namespace Persistence.Repositories {
             return await _context.Dmos.FirstOrDefaultAsync(d => d.Id == dmoId && d.NoNameUserId == userId);
         }
 
-        public async Task<Boolean> IsCollectionExist(String collectionName, Guid userId) {
+        public async Task<Boolean> IsCollectionExist(Guid userId, String collectionName) {
             return await _context.UserDmoCollections.AnyAsync(udc =>
                 udc.CollectionName.Equals(collectionName, StringComparison.CurrentCultureIgnoreCase) && udc.NoNameUserId == userId);
         }
@@ -53,6 +53,7 @@ namespace Persistence.Repositories {
 
         public void DeleteCollection(UserDmoCollection collection) {
             if (collection == null) throw new ArgumentNullException(nameof(collection));
+            collection.DmoUserDmoCollections = null;
             _context.UserDmoCollections.Remove(collection);
         }
 
@@ -61,13 +62,33 @@ namespace Persistence.Repositories {
                 .Where(d => d.NoNameUserId == userId && d.Id == collectionId)
                 .Include(dc => dc.DmoUserDmoCollections)
                     .ThenInclude(d => d.Dmo)
-                .AsNoTracking()
                 .FirstOrDefaultAsync();
         }
 
-        public void DeleteDmoFromCollection(Dmo dmo) {
+        public void AddDmoToCollection(UserDmoCollection dmoCollection, Dmo dmo) {
+            if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
             if (dmo == null) throw new ArgumentNullException(nameof(dmo));
-            //dmo.UserDmoCollection = null;
+            dmoCollection.DmoUserDmoCollections.Add(new DmoUserDmoCollection
+            {
+                DmoId = dmo.Id,
+                Dmo = dmo,
+                UserDmoCollection = dmoCollection,
+                UserDmoCollectionId = dmoCollection.Id
+            });
+        }
+
+        public Boolean ContainsDmo(UserDmoCollection dmoCollection, Guid dmoId) {
+            if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
+
+            return dmoCollection.DmoUserDmoCollections.Any(d => d.DmoId == dmoId);
+        }
+
+        public void RemoveDmoFromCollection(UserDmoCollection dmoCollection, Dmo dmo) {
+            if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
+            if (dmo == null) throw new ArgumentNullException(nameof(dmo));
+
+            var dmod = dmo.DmoUserDmoCollections.First(d => d.DmoId == dmo.Id);
+            dmod.UserDmoCollection = null;
         }
 
     }

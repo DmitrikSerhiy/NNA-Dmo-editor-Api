@@ -27,6 +27,16 @@
     <Compile Remove="Migrations\20200217222653_AddOnDeletePolicy.Designer.cs" />
     <Compile Remove="Migrations\20200217230152_AddOnDeletePolicy.cs" />
     <Compile Remove="Migrations\20200217230152_AddOnDeletePolicy.Designer.cs" />
+    <Compile Remove="Migrations\20200220191240_test123.cs" />
+    <Compile Remove="Migrations\20200220191240_test123.Designer.cs" />
+    <Compile Remove="Migrations\20200220192113_Restore.cs" />
+    <Compile Remove="Migrations\20200220192113_Restore.Designer.cs" />
+    <Compile Remove="Migrations\20200220192425_test123.cs" />
+    <Compile Remove="Migrations\20200220192425_test123.Designer.cs" />
+    <Compile Remove="Migrations\20200220193745_UpdateDmoCollections.cs" />
+    <Compile Remove="Migrations\20200220193745_UpdateDmoCollections.Designer.cs" />
+    <Compile Remove="Migrations\20200220193835_UpdateDmoCollections.cs" />
+    <Compile Remove="Migrations\20200220193835_UpdateDmoCollections.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

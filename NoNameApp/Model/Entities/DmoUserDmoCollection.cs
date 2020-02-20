@@ -1,7 +1,8 @@
 ﻿using System;
 
 namespace Model.Entities {
-    public sealed class DmoUserDmoCollection {
+    public sealed class DmoUserDmoCollection
+    {
         public Guid DmoId { get; set; }
         public Dmo Dmo { get; set; }
 
