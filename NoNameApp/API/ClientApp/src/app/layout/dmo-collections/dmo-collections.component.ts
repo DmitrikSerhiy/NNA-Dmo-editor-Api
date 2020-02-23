@@ -1,9 +1,9 @@
+import { DmoCollectionsService } from './../../shared/services/dmo-collections.service';
 import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
 import { DmoCollectionShortDto } from './../models';
 import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Toastr } from './../../shared/services/toastr.service';
-import { DmoCollectionsService } from './dmo-collections.service';
 
 import { concatMap, map, catchError, finalize, takeUntil } from 'rxjs/operators';
 import { throwError, Observable, Subject } from 'rxjs';
@@ -70,7 +70,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
       this.showLoader();
 
       const add$ = this.dmoCollectionsService.addCollection(collectionName);
-      const getAll$ = this.dmoCollectionsService.getAll() ;
+      const getAll$ = this.dmoCollectionsService.getCollections() ;
 
       const addAndRefresh$ =
         add$.pipe(
@@ -97,7 +97,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
     }
     this.showLoader();
     const delete$ = this.dmoCollectionsService.deleteCollection(this.selectedDmoCollectionName.id);
-    const getAll$ = this.dmoCollectionsService.getAll() ;
+    const getAll$ = this.dmoCollectionsService.getCollections() ;
 
     const deleteAndRefresh$ =
       delete$.pipe(
@@ -118,7 +118,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
 
   private loadCollections() {
     this.showLoader();
-    this.dmoCollectionsService.getAll()
+    this.dmoCollectionsService.getCollections()
       .subscribe(
         (response: DmoCollectionShortDto[]) => this.dmoLists = response,
         (error) => this.toastr.error(error),

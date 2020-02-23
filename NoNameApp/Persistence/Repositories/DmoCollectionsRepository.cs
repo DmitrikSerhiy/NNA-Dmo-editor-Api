@@ -21,6 +21,7 @@ namespace Persistence.Repositories {
             return await _context.UserDmoCollections
                 .Where(d => d.NoNameUserId == userId)
                 .AsNoTracking()
+                .OrderByDescending(d => d.DateOfCreation)
                 .ToListAsync();
         }
 
@@ -62,11 +63,14 @@ namespace Persistence.Repositories {
 
         public async Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid? collectionId) {
             if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
-            return await _context.UserDmoCollections
+            var dmoCollection = await _context.UserDmoCollections
                 .Where(d => d.NoNameUserId == userId && d.Id == collectionId)
                 .Include(dc => dc.DmoUserDmoCollections)
                     .ThenInclude(d => d.Dmo)
                 .FirstOrDefaultAsync();
+
+            dmoCollection.DmoUserDmoCollections = dmoCollection.DmoUserDmoCollections.OrderByDescending(d => d.Dmo.DateOfCreation).ToList();
+            return dmoCollection;
         }
 
         public void AddDmoToCollection(UserDmoCollection dmoCollection, Dmo dmo) {

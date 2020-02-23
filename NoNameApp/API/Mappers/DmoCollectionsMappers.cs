@@ -16,7 +16,8 @@ namespace API.Mappers {
                 .ForMember(udc => udc.DmoStatus, dcd => dcd.MapFrom(dd => GetDmoStatusString(dd.DmoStatus)))
                 .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => (Int16) dd.DmoStatus));
             CreateMap<UserDmoCollection, DmoCollectionDto>()
-                .ForMember(udc => udc.Dmos, dcd => dcd.MapFrom(dd => dd.DmoUserDmoCollections.Select(d => d.Dmo).ToArray()));
+                .ForMember(udc => udc.Dmos,
+                    dcd => dcd.MapFrom(dd => dd.DmoUserDmoCollections.Select(d => d.Dmo).ToArray()));
         }
 
         private String GetDmoStatusString(Int16 status) {

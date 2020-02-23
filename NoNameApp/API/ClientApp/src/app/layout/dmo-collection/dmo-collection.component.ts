@@ -1,18 +1,16 @@
-import { DmoCollectionsService } from './../dmo-collections/dmo-collections.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Toastr } from './../../shared/services/toastr.service';
 import { DmoCollectionDto, DmoShortDto, DmoCollectionShortDto } from './../models';
-import { DmoCollectionService } from './dmo-collection.service';
 import { Component, OnInit, ViewChild, AfterViewInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap } from 'rxjs/operators';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
 import { concatMap, map, takeUntil, finalize } from 'rxjs/operators';
-import { throwError, Observable, Subject  } from 'rxjs';
+import { throwError, Observable, Subject } from 'rxjs';
+import { DmoCollectionsService } from 'src/app/shared/services/dmo-collections.service';
 
 @Component({
   selector: 'app-dmo-collection',
@@ -29,7 +27,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   selectedDmo: DmoShortDto;
   clickedRow: any;
 
-  @ViewChild('removeFullCollectionModal', {static: true}) removeModal: NgbActiveModal;
+  @ViewChild('removeFullCollectionModal', { static: true }) removeModal: NgbActiveModal;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
 
@@ -41,7 +39,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject();
 
   constructor(
-    private dmoCollectionService: DmoCollectionService,
+    private dmoCollectionService: DmoCollectionsService,
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private toastr: Toastr,
@@ -54,9 +52,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     });
 
     let dmoObserver = this.loadDmos();
-
-    const params$ = this.route.params;
-    params$.subscribe(p => {
+    this.route.params.subscribe(p => {
       if (!p['id']) {
         return;
       }
@@ -92,9 +88,11 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
           finalize(() => this.hideEditCollectionNameForm()),
           concatMap(() => getCollectionName$.pipe(
             takeUntil(this.unsubscribe$),
+            finalize(() => this.collectionManager.setCollectionId(collectionId)),
             map((response: DmoCollectionShortDto) => {
               this.currentDmoCollection.collectionName = response.collectionName;
-            }))));
+            }))
+          ));
 
       updateAndGet$.subscribe({
         error: (err) => { this.toastr.error(err); },
@@ -113,9 +111,9 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
 
     const deleteAndRedirect$ = this.dmoCollectionService.deleteCollection(this.currentDmoCollection.id);
 
-      deleteAndRedirect$.subscribe({
-        next: () => { this.redirectToDashboard(); },
-        error: (err) => { this.toastr.error(err); },
+    deleteAndRedirect$.subscribe({
+      next: () => { this.redirectToDashboard(); },
+      error: (err) => { this.toastr.error(err); },
     });
   }
 
@@ -147,14 +145,14 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     this.resetTable();
     const collectionId = this.route.snapshot.paramMap.get('id');
     return this.dmoCollectionService.getWithDmos(collectionId)
-    .subscribe({
-      next: (response: DmoCollectionDto) => {
-        this.currentDmoCollection = response;
-        this.initializeTable(this.currentDmoCollection.dmos);
-        this.collectionManager.setCollectionId(collectionId);
-      },
-      error: (err) => { this.toastr.error(err); },
-    });
+      .subscribe({
+        next: (response: DmoCollectionDto) => {
+          this.currentDmoCollection = response;
+          this.initializeTable(this.currentDmoCollection.dmos);
+          this.collectionManager.setCollectionId(collectionId);
+        },
+        error: (err) => { this.toastr.error(err); },
+      });
   }
 
   private resetTable() {

@@ -36,7 +36,10 @@ namespace API.Validators.DmoCollections {
     public class DmoCollectionShortDtoValidator : AbstractValidator<DmoCollectionShortDto> {
         public DmoCollectionShortDtoValidator() {
             RuleFor(d => d.Id).NotEmpty().WithMessage("Collection id is missing");
-            RuleFor(d => d.CollectionName).NotEmpty().WithMessage("Collection name is missing");
+            RuleFor(d => d.CollectionName)
+                .NotEmpty().WithMessage("Collection id is missing")
+                .MaximumLength(ApplicationConstants.MaxEntityNameLength)
+                .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxEntityNameLength}");
         }
     }
 
@@ -51,4 +54,17 @@ namespace API.Validators.DmoCollections {
             RuleFor(d => d.DmoId).NotEmpty().WithMessage("Dmo id is missing");
         }
     }
+
+    public class AddNewDmoCollectionDtoValidator : AbstractValidator<AddNewDmoCollectionDto>
+    {
+        public AddNewDmoCollectionDtoValidator()
+        {
+            RuleFor(d => d.CollectionName)
+                .NotEmpty().WithMessage("Collection id is missing")
+                .MaximumLength(ApplicationConstants.MaxEntityNameLength)
+                .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxEntityNameLength}");
+        }
+    }
+
+    
 }
