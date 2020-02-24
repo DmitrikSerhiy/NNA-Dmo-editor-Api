@@ -124,8 +124,8 @@
                 <p style="margin: 0"> Don't worry, this action won't remove your DMOs.</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" (click)="modal.dismiss()">Cancel</button>
-                <button type="button" class="btn btn-primary" (click)="modal.close()">Remove</button>
+                <button type="button" class="nna-button nna-button-secondary" (click)="modal.dismiss()">Cancel</button>
+                <button type="button" class="nna-button nna-button-primary" (click)="modal.close()">Remove</button>
             </div>
         </ng-template>
 
@@ -133,7 +133,12 @@
 
     <div class="empty-collection-placeholder" [hidden]="resultsLength != 0">
         <div *ngIf="currentDmoCollection">'{{currentDmoCollection.collectionName}}' is empty</div>
-        <button class="nna-button nna-button-primary" (click)="onAddDmo()"><i class="fa fa-plus" aria-hidden="true"></i>
-            &#160; Add Dmo </button>
+        <button class="nna-button nna-button-primary" (click)="onAddDmo()">
+            <i class="fa fa-plus" aria-hidden="true"></i> &#160; Add Dmo 
+        </button>
+        or
+        <button type="button" class='nna-button nna-button-secondary'(click)='onRemoveCollection()'>
+            &#160; <i class="fa fa-trash" aria-hidden="true"></i> &#160;
+        </button>
     </div>
 </div>
