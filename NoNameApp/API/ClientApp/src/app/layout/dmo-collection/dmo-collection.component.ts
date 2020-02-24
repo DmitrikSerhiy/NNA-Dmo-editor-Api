@@ -74,9 +74,12 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
       return;
     }
     this.clickedRow = row;
-    console.log(row);
   }
 
+  onAddDmo() {
+
+  }
+  
   redirectToDmo() {
     if (!this.clickedRow) {
       return;
