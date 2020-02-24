@@ -159,7 +159,7 @@ namespace API.Controllers {
 
         [HttpDelete]
         [Route("collection/dmos")]
-        public async Task<IActionResult> RemoveDmoFromCollection(RemoveDmoFromCollectionDto dto) {
+        public async Task<IActionResult> RemoveDmoFromCollection([FromQuery]RemoveDmoFromCollectionDto dto) {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
             var user = await _currentUserService.GetAsync();
             var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, dto.CollectionId);

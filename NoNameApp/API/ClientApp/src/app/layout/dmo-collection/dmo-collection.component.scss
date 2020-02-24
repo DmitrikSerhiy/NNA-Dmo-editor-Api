@@ -4,8 +4,7 @@
 
     .collection-name-container {
       display: flex;
-      padding-right: 5rem;
-      height: 4rem;
+      height: 38px;
 
       .collection-name-header {
         display: flex;
@@ -15,8 +14,9 @@
           margin: 0;
         }
         button {
+          display: flex;
           margin-left: 0.5rem;
-          display: none;
+          opacity: 0;
         }
       }
       
@@ -24,12 +24,14 @@
         cursor: pointer;
         .collection-name-header {
           button {
-            display: flex;
+            opacity: 1;
           }
         }
       }
 
       form {
+        display: flex;
+        height: 2rem;
         .edit-collection-name {
           display: flex;
           align-items: center;
@@ -43,7 +45,26 @@
           margin-top: 0;
           margin-bottom: 0;
           height: 1rem;
+          align-self: center;
+          margin-left: 1rem;
         }
+      }
+    }
+
+    .dmo-details-container {
+      display: none;
+      justify-content: center;
+      margin-right: auto;
+      height: 2rem;
+
+      button {
+        align-self: center;
+        margin-left: 1rem;
+      }
+
+      div {
+        margin: auto;
+        margin-left: 1rem;
       }
     }
 
@@ -72,6 +93,10 @@
         background-color: unset;
       }
     }
+
+    .show-flex {
+      display: flex;
+    }
   }
 
   table {
@@ -96,6 +121,10 @@
 
     .hoverable-element:active {
       background: #c9d6dc;
+    }
+
+    .table-cell {
+      padding-left: 24px;
     }
 
     .clicked-row {

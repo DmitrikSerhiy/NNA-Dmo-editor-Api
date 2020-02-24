@@ -64,6 +64,17 @@ export class DmoCollectionsService {
         catchError(this.handleError) );
   }
 
+  removeFromCollection(dmoId: string, collectionId: string) {
+    const params = new HttpParams()
+      .set('collectionId', collectionId)
+      .set('dmoId', dmoId);
+    return this.http
+    .delete(this.serverUrl + 'collection/dmos', {params: params })
+    .pipe(
+      map((response: DmoCollectionDto) => response),
+      catchError(this.handleError) );
+  }
+
 
 
   private handleError(err: HttpErrorResponse) {

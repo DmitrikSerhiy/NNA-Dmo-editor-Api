@@ -42,7 +42,15 @@
             </form>
 
         </div>
-        <div class="search-container">
+
+        <div [hidden]="showEditForm" class="dmo-details-container" [ngClass]="{'show-flex': clickedRow}">
+            <div>
+                number of acts, bits, episodes etc.
+            </div>
+            <button class="nna-button nna-button-primary" (click)="redirectToDmo()"><i class="fa fa-cogs" aria-hidden="true"></i> Open dmo editor</button>
+            <button class="nna-button nna-button-secondary" (click)="removeFromCollection()"><i class="fa fa-trash" aria-hidden="true"></i> Remove from collection</button>
+        </div>
+        <div [hidden]="showEditForm" class="search-container">
             <i class="fa fa-search text-muted"></i>
             <input type="text" class="form-control input-underline-light search-input" [(ngModel)]="searchValue"
                 placeholder="dmo, movie, rating etc." (keyup)="applyFilter($event)" autocomplete="off">
@@ -53,37 +61,38 @@
 
         <ng-container matColumnDef="id">
             <th mat-header-cell *matHeaderCellDef class="hoverable-element"> </th>
-            <td mat-cell *matCellDef="let row"> {{row.id}} </td>
+            <td mat-cell class="table-cell" *matCellDef="let row"> {{row.id}} </td>
         </ng-container>
 
         <ng-container matColumnDef="movieTitle">
             <th mat-header-cell *matHeaderCellDef mat-sort-header="movieTitle" class="hoverable-element column-header"> Movie title </th>
-            <td mat-cell *matCellDef="let row"> {{row.movieTitle}} </td>
+            <td mat-cell class="table-cell" *matCellDef="let row"> {{row.movieTitle}} </td>
         </ng-container>
 
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef mat-sort-header="name" class="hoverable-element column-header"> DMO name </th>
-            <td mat-cell *matCellDef="let row"> {{row.name}} </td>
+            <td mat-cell class="table-cell" *matCellDef="let row"> {{row.name}} </td>
         </ng-container>
 
         <ng-container matColumnDef="dmoStatus">
             <th mat-header-cell *matHeaderCellDef mat-sort-header="dmoStatus" class="hoverable-element column-header"> Status </th>
-            <td mat-cell *matCellDef="let row"> {{row.dmoStatus}} </td>
+            <td mat-cell class="table-cell" *matCellDef="let row"> {{row.dmoStatus}} </td>
         </ng-container>
 
         <ng-container matColumnDef="shortComment">
             <th mat-header-cell *matHeaderCellDef mat-sort-header="shortComment" class="hoverable-element column-header"> Comment </th>
-            <td mat-cell *matCellDef="let row"> {{row.shortComment}} </td>
+            <td mat-cell class="table-cell" *matCellDef="let row"> {{row.shortComment}} </td>
         </ng-container>
 
         <ng-container matColumnDef="mark">
             <th mat-header-cell *matHeaderCellDef mat-sort-header="mark" class="hoverable-element column-header"> Rating </th>
-            <td mat-cell *matCellDef="let row"> {{row.mark}} </td>
-        </ng-container>
+            <td mat-cell class="table-cell" *matCellDef="let row"> {{row.mark}} </td>
+        </ng-container>       
 
         <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row class="hoverable-element" *matRowDef="let row; columns: displayedColumns;"
-            [class.clicked-row]="clickedRow == row" (click)="onRowSelect(row)"></tr>
+        <tr mat-row class="hoverable-element" *matRowDef="let row; columns: displayedColumns;" 
+            [class.clicked-row]="clickedRow == row" (click)="onRowSelect(row)">
+        </tr>
     </table>
 
     <mat-paginator [length]="resultsLength" [pageSize]="15" showFirstLastButtons></mat-paginator>

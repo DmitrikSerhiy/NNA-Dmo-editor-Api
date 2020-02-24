@@ -24,8 +24,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   table: MatTableDataSource<DmoShortDto>;
   displayedColumns: string[];
   resultsLength = 0;
-  selectedDmo: DmoShortDto;
-  clickedRow: any;
+  clickedRow: DmoShortDto;
 
   @ViewChild('removeFullCollectionModal', { static: true }) removeModal: NgbActiveModal;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
@@ -65,9 +64,41 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
-  onRowSelect(row) {
+  onRowSelect(row: DmoShortDto) {
+    if (this.showEditForm) {
+      return;
+    }
+
+    if (this.clickedRow && this.clickedRow === row) {
+      this.clickedRow = null;
+      return;
+    }
     this.clickedRow = row;
-    //todo: to some shit with it
+    console.log(row);
+  }
+
+  redirectToDmo() {
+    if (!this.clickedRow) {
+      return;
+    }
+    console.log('dmo editor is not implement yet');
+  }
+
+  removeFromCollection() {
+    if (!this.clickedRow) {
+      return;
+    }
+
+    const removeFromCollection$ = this.dmoCollectionService
+      .removeFromCollection(this.clickedRow.id, this.currentDmoCollection.id);
+
+    const removeAndReload$ = removeFromCollection$.pipe(
+      takeUntil(this.unsubscribe$),
+      map(() => this.loadDmos()));
+
+    removeAndReload$.subscribe({
+      error: (err) => { this.toastr.error(err); }
+    });
   }
 
   onEditCollectionName() {
@@ -125,6 +156,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   showEditCollectionNameForm() {
     this.editCollectionNameForm.get('collectionName').setValue(this.currentDmoCollection.collectionName);
     this.showEditForm = true;
+    this.clickedRow = null;
   }
 
   applyFilter(event: Event) {
@@ -149,7 +181,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
         next: (response: DmoCollectionDto) => {
           this.currentDmoCollection = response;
           this.initializeTable(this.currentDmoCollection.dmos);
-          this.collectionManager.setCollectionId(collectionId);
+          this.collectionManager.setCollectionId(collectionId); // this will trigger collections reload
         },
         error: (err) => { this.toastr.error(err); },
       });
@@ -161,7 +193,6 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     this.table = null;
     this.displayedColumns = null;
     this.resultsLength = 0;
-    this.selectedDmo = null;
     this.clickedRow = null;
     this.hideEditCollectionNameForm();
     this.showEditForm = false;
