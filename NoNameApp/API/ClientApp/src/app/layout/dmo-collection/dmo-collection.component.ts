@@ -8,7 +8,7 @@ import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { concatMap, map, takeUntil, finalize } from 'rxjs/operators';
+import { concatMap, map, takeUntil, finalize, catchError } from 'rxjs/operators';
 import { throwError, Observable, Subject } from 'rxjs';
 import { DmoCollectionsService } from 'src/app/shared/services/dmo-collections.service';
 
@@ -21,14 +21,21 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
 
   currentDmoCollection: DmoCollectionDto;
   shouldShowTable = false;
+  isAwaitingForDmos = true;
   table: MatTableDataSource<DmoShortDto>;
   displayedColumns: string[];
   resultsLength = 0;
   clickedRow: DmoShortDto;
+  allOtherDmos: DmoShortDto[];
+  selectedDmos: DmoShortDto[];
 
   @ViewChild('removeFullCollectionModal', { static: true }) removeModal: NgbActiveModal;
+  @ViewChild('addDmoToCollectionModal', { static: true }) addToCollectionModal: NgbActiveModal;
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  // @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
+  // @ViewChild('dmoMatSort', { static: true }) dmoSort: MatSort;
 
   editCollectionNameForm: FormGroup;
   get collectionName() { return this.editCollectionNameForm.get('collectionName'); }
@@ -76,10 +83,6 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     this.clickedRow = row;
   }
 
-  onAddDmo() {
-
-  }
-  
   redirectToDmo() {
     if (!this.clickedRow) {
       return;
@@ -134,8 +137,32 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     }
   }
 
+  async onAddDmo() {
+    const modalRef = this.modalService.open(this.addToCollectionModal);
+
+    const collectionId = this.route.snapshot.paramMap.get('id');
+    await this.dmoCollectionService.getExcludedDmos(collectionId).toPromise()
+      .then((res) => this.allOtherDmos = res )
+      .catch((err) => this.toastr.error(err));
+    // .subscribe({
+    //   next: (response)  => { this.allOtherDmos = response; this.isAwaitingForDmos = false; },
+    //   error: (err) => { this.toastr.error(err); },
+    // });
+    
+    this.isAwaitingForDmos = false;
+    console.log(this.allOtherDmos);
+    const shouldSendRemoveRequest = await modalRef.result.then(() => true, () => false);
+
+    console.log('close');
+    if (!shouldSendRemoveRequest) {
+      return;
+    }
+
+    this.isAwaitingForDmos = true;
+    // const addAndRefresh$ = this.dmoCollectionService
+  }
+
   async onRemoveCollection() {
-    console.log(this.currentDmoCollection);
     const modalRef = this.modalService.open(this.removeModal);
     const shouldSendRemoveRequest = await modalRef.result.then(() => true, () => false);
 
@@ -200,6 +227,8 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     this.hideEditCollectionNameForm();
     this.showEditForm = false;
     this.searchValue = '';
+    this.allOtherDmos = null;
+    this.selectedDmos = null;
   }
 
   private initializeTable(dataSource: DmoShortDto[]) {

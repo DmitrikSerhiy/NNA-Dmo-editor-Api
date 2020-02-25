@@ -92,6 +92,14 @@ namespace Persistence.Repositories {
             return dmoCollection.DmoUserDmoCollections.Any(d => d.DmoId == dmoId);
         }
 
+        public async Task<List<Dmo>> GetExcludedDmos(Guid userId, Guid? collectionId) {
+            if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
+
+            return await _context.Dmos
+                .Where(d => d.NoNameUserId == userId && d.DmoUserDmoCollections.All(dc => dc.UserDmoCollectionId != collectionId.Value))
+                .ToListAsync();
+        }
+
         public void RemoveDmoFromCollection(UserDmoCollection dmoCollection, Dmo dmo) {
             if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
             if (dmo == null) throw new ArgumentNullException(nameof(dmo));

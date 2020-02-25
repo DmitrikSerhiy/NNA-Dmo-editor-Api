@@ -158,4 +158,10 @@
       margin: 0 0.5rem;
     }
   }
+
+  @at-root .dmos-loader-container {
+    display: flex;
+    justify-content: center;
+    margin: auto;
+  }
 }

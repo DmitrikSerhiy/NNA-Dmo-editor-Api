@@ -15,6 +15,7 @@ namespace Model {
         Boolean ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId);
         Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid? collectionId);
         Task<Dmo> GetDmoAsync(Guid userId, Guid? dmoId);
+        Task<List<Dmo>> GetExcludedDmos(Guid userId, Guid? collectionId);
         void RemoveDmoFromCollection(UserDmoCollection dmoCollection, Dmo dmo);
     }
 }

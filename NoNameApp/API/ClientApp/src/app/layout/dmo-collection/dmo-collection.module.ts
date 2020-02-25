@@ -1,3 +1,4 @@
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Routes, RouterModule } from '@angular/router';
 import { DmoCollectionComponent } from './dmo-collection.component';
 import { NgModule } from '@angular/core';
@@ -22,7 +23,8 @@ const routes: Routes = [
         MatPaginatorModule,
         MatSortModule,
         ReactiveFormsModule,
-        FormsModule
+        FormsModule,
+        MatProgressSpinnerModule
     ],
     declarations: [
         DmoCollectionComponent

@@ -55,14 +55,19 @@ namespace API.Validators.DmoCollections {
         }
     }
 
-    public class AddNewDmoCollectionDtoValidator : AbstractValidator<AddNewDmoCollectionDto>
-    {
-        public AddNewDmoCollectionDtoValidator()
-        {
+    public class AddNewDmoCollectionDtoValidator : AbstractValidator<AddNewDmoCollectionDto> {
+        public AddNewDmoCollectionDtoValidator() {
             RuleFor(d => d.CollectionName)
                 .NotEmpty().WithMessage("Collection id is missing")
                 .MaximumLength(ApplicationConstants.MaxEntityNameLength)
                 .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxEntityNameLength}");
+        }
+    }
+
+    public class GetExcludedDmosDtoValidator : AbstractValidator<GetExcludedDmosDto> {
+        public GetExcludedDmosDtoValidator() {
+            RuleFor(d => d.CollectionId)
+                .NotEmpty().WithMessage("Collection id is missing");
         }
     }
 

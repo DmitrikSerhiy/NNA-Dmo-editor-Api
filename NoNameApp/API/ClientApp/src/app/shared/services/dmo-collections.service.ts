@@ -1,4 +1,4 @@
-import { DmoCollectionShortDto, DmoCollectionDto } from './../../layout/models';
+import { DmoCollectionShortDto, DmoCollectionDto, DmoShortDto } from './../../layout/models';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -84,6 +84,17 @@ export class DmoCollectionsService {
     .pipe(
       map((response: DmoCollectionDto) => response),
       catchError(this.handleError) );
+  }
+
+  getExcludedDmos(collectionId: string) {
+    const params = new HttpParams()
+    .set('collectionId', collectionId)
+    .set('excluded', 'true');
+  return this.http
+  .get(this.serverUrl + 'collection/dmos', {params: params })
+  .pipe(
+    map((response: DmoShortDto[]) => response),
+    catchError(this.handleError) );
   }
 
   private handleError(err: HttpErrorResponse) {

@@ -141,4 +141,46 @@
             &#160; <i class="fa fa-trash" aria-hidden="true"></i> &#160;
         </button>
     </div>
+
+
+
+    <ng-template #addDmoToCollectionModal let-modal>
+        <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">Add dmo to collection</h4>
+            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body" ngbAutofocus>
+            
+            <div [hidden]="!isAwaitingForDmos" class="dmos-loader-container">
+                <mat-progress-spinner diameter="80" mode="indeterminate"></mat-progress-spinner>
+            </div>
+            <div [hidden]="!allOtherDmos" >
+                <!-- <table mat-table [dataSource]="allOtherDmos" #dmoMatSort>
+
+                    <ng-container matColumnDef="id">
+                        <th mat-header-cell *matHeaderCellDef class="hoverable-element"> </th>
+                        <td mat-cell class="table-cell" *matCellDef="let row"> {{row.id}} </td>
+                    </ng-container>
+        
+                    <ng-container matColumnDef="movieTitle">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="movieTitle"
+                            class="hoverable-element column-header"> Movie title </th>
+                        <td mat-cell class="table-cell" *matCellDef="let row"> {{row.movieTitle}} </td>
+                    </ng-container>
+    
+                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                    <tr mat-row class="hoverable-element" *matRowDef="let row; columns: displayedColumns;"
+                        [class.clicked-row]="clickedRow == row" (click)="onRowSelect(row)">
+                    </tr>
+                </table> -->
+            </div>
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="nna-button nna-button-secondary" (click)="modal.dismiss()">Cancel</button>
+            <button type="button" class="nna-button nna-button-primary" (click)="modal.close()">Add</button>
+        </div>
+    </ng-template>
 </div>

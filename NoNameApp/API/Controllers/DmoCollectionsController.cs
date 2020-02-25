@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using API.DTO.DmoCollections;
 using API.Helpers;
@@ -131,6 +132,17 @@ namespace API.Controllers {
             }
 
             return Ok(_mapper.Map<DmoCollectionDto>(dmoCollection));
+        }
+
+        [HttpGet]
+        [Route("collection/dmos")]
+        public async Task<ActionResult<DmoShortDto[]>> GetExcludedDmos([FromQuery]GetExcludedDmosDto dto) {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+
+            var user = await _currentUserService.GetAsync();
+            var dmos = await _dmoCollectionsRepository.GetExcludedDmos(user.Id, dto.CollectionId);
+
+            return Ok(dmos.Select(_mapper.Map<DmoShortDto>).ToArray());
         }
 
         [HttpPost]
