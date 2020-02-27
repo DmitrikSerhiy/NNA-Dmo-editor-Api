@@ -1,5 +1,5 @@
 <div class="collection-page">
-    <div [hidden]="!shouldShowTable || resultsLength == 0" class='collection-table-wrapper'>
+    <div [hidden]="!shouldCollectionShowTable || collectionLength == 0" class='collection-table-wrapper'>
         <div class="table-details">
             <div class="collection-name-container">
                 <div class="collection-name-header">
@@ -46,7 +46,7 @@
 
             </div>
 
-            <div [hidden]="showEditForm" class="dmo-details-container" [ngClass]="{'show-flex': clickedRow}">
+            <div [hidden]="showEditForm" class="dmo-details-container" [ngClass]="{'show-flex': selectedDmoInCollection}">
                 <div>
                     number of acts, bits, episodes etc.
                 </div>
@@ -61,12 +61,12 @@
             </div>
             <div [hidden]="showEditForm" class="search-container">
                 <i class="fa fa-search text-muted"></i>
-                <input type="text" class="form-control input-underline-light search-input" [(ngModel)]="searchValue"
-                    placeholder="dmo, movie, rating etc." (keyup)="applyFilter($event)" autocomplete="off">
+                <input type="text" class="form-control input-underline-light search-input"
+                    placeholder="dmo, movie, rating etc." (keyup)="applyCollectionFilter($event)" autocomplete="off">
             </div>
         </div>
 
-        <table mat-table [dataSource]="table" matSort>
+        <table mat-table [dataSource]="collectionTable" #collectionSort="matSort" matSort>
 
             <ng-container matColumnDef="id">
                 <th mat-header-cell *matHeaderCellDef class="hoverable-element"> </th>
@@ -103,13 +103,13 @@
                 <td mat-cell class="table-cell" *matCellDef="let row"> {{row.mark}} </td>
             </ng-container>
 
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row class="hoverable-element" *matRowDef="let row; columns: displayedColumns;"
-                [class.clicked-row]="clickedRow == row" (click)="onRowSelect(row)">
+            <tr mat-header-row *matHeaderRowDef="collectionTableColumn"></tr>
+            <tr mat-row class="hoverable-element" *matRowDef="let row; columns: collectionTableColumn;"
+                [class.clicked-row]="selectedDmoInCollection == row" (click)="onRowSelect(row)">
             </tr>
         </table>
 
-        <mat-paginator [length]="resultsLength" [pageSize]="15" showFirstLastButtons></mat-paginator>
+        <mat-paginator #collectionPaginator [length]="collectionLength" [pageSize]="15" showFirstLastButtons></mat-paginator>
 
         <ng-template #removeFullCollectionModal let-modal>
             <div class="modal-header">
@@ -131,10 +131,10 @@
 
     </div>
 
-    <div class="empty-collection-placeholder" [hidden]="resultsLength != 0">
+    <div class="empty-collection-placeholder" [hidden]="collectionLength != 0">
         <div *ngIf="currentDmoCollection">'{{currentDmoCollection.collectionName}}' is empty</div>
         <button class="nna-button nna-button-primary" (click)="onAddDmo()">
-            <i class="fa fa-plus" aria-hidden="true"></i> &#160; Add Dmo 
+            <i class="fa fa-plus" aria-hidden="true"></i> &#160; Add DMO 
         </button>
         or
         <button type="button" class='nna-button nna-button-secondary'(click)='onRemoveCollection()'>
@@ -144,37 +144,51 @@
 
 
 
-    <ng-template #addDmoToCollectionModal let-modal>
+    <ng-template #addDmoToCollectionModal let-modal class="dmos-modal">
         <div class="modal-header">
-            <h4 class="modal-title" id="modal-basic-title">Add dmo to collection</h4>
+            <h4 class="modal-title" id="modal-basic-title">Add DMOs to '{{currentDmoCollection.collectionName}}' collection</h4>
             <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
                 <span aria-hidden="true">&times;</span>
             </button>
         </div>
         <div class="modal-body" ngbAutofocus>
-            
             <div [hidden]="!isAwaitingForDmos" class="dmos-loader-container">
                 <mat-progress-spinner diameter="80" mode="indeterminate"></mat-progress-spinner>
             </div>
-            <div [hidden]="!allOtherDmos" >
-                <!-- <table mat-table [dataSource]="allOtherDmos" #dmoMatSort>
+            <div [hidden]="!allOtherDmos" class="dmos-table-container">
+                <table mat-table [dataSource]="dmosTable" #dmosSort="matSort" matSort >
 
-                    <ng-container matColumnDef="id">
-                        <th mat-header-cell *matHeaderCellDef class="hoverable-element"> </th>
-                        <td mat-cell class="table-cell" *matCellDef="let row"> {{row.id}} </td>
-                    </ng-container>
-        
+                    <ng-container matColumnDef="select">
+                        <th mat-header-cell *matHeaderCellDef>
+                          <mat-checkbox (change)="$event ? dmosTableToggle() : null"
+                                        [checked]="selectedDmo.hasValue() && isAllDmoSelected()"
+                                        [indeterminate]="selectedDmo.hasValue() && !isAllDmoSelected()">
+                          </mat-checkbox>
+                        </th>
+                        <td mat-cell *matCellDef="let row">
+                          <mat-checkbox (click)="$event.stopPropagation()"
+                                        (change)="$event ? selectedDmo.toggle(row) : null"
+                                        [checked]="selectedDmo.isSelected(row)">
+                          </mat-checkbox>
+                        </td>
+                      </ng-container>
+
                     <ng-container matColumnDef="movieTitle">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header="movieTitle"
-                            class="hoverable-element column-header"> Movie title </th>
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="movieTitle" class=""> Movie title </th>
                         <td mat-cell class="table-cell" *matCellDef="let row"> {{row.movieTitle}} </td>
                     </ng-container>
+        
+                    <ng-container matColumnDef="name">
+                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name" class=""> DMO name </th>
+                        <td mat-cell class="table-cell" *matCellDef="let row"> {{row.name}} </td>
+                    </ng-container>
     
-                    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-                    <tr mat-row class="hoverable-element" *matRowDef="let row; columns: displayedColumns;"
-                        [class.clicked-row]="clickedRow == row" (click)="onRowSelect(row)">
-                    </tr>
-                </table> -->
+                    <tr mat-header-row *matHeaderRowDef="dmosTableColumn"></tr>
+                    <tr mat-row class="" *matRowDef="let row; columns: dmosTableColumn;"> </tr>
+                   
+                </table>
+
+                <mat-paginator #dmosPaginator [length]="dmosCount" [pageSize]="5" showFirstLastButtons></mat-paginator>
             </div>
 
         </div>

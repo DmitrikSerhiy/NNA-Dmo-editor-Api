@@ -20,7 +20,7 @@
             opacity: 0;
           }
         }
-        
+
         &:hover {
           cursor: pointer;
           .collection-name-header {
@@ -149,7 +149,6 @@
   }
 
   .empty-collection-placeholder {
-    
     display: flex;
     justify-content: center;
     margin: auto;
@@ -164,4 +163,12 @@
     justify-content: center;
     margin: auto;
   }
+
+  @at-root .dmos-table-container {
+    table {
+      width: 100%;
+      margin: auto;
+    }
+  }
+
 }
