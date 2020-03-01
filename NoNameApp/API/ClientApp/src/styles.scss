@@ -47,47 +47,6 @@ body {
 }
 
 @mixin nna-bitton-settings() {
-  border-radius: 50%;
-  border: 0;
-  box-shadow: none;
-  padding: 0;
-  background: darken(#222, 5%); //#169ade;
-  display: flex;
-  flex-shrink: 0;
-  white-space: nowrap;
-  text-decoration: none;
-  vertical-align: baseline;
-  text-align: center;
-  margin: 0;
-  min-width: inherit;
-}
-
-.nna-icon-button {
-  @include nna-bitton-settings;
-  width: 25px;
-  height: 25px;
-  line-height: 25px;
-  font-size: 10px;
-
-  &:focus {
-    outline: 0 !important;
-  }
-
-  i {
-    margin: auto;
-    color: #fff;
-  }
-}
-
-.nna-diabled-button {
-  background-color: #6c757d !important;
-  pointer-events: none;
-  &:hover {
-    background-color: #6c757d !important;
-  }
-}
-
-.nna-button {
   height: 1.8rem;
   font-size: 0.6rem;
   outline: none !important;
@@ -111,6 +70,32 @@ body {
   &:hover {
     text-shadow: none;
   }
+}
+
+.nna-icon-button {
+  @include nna-bitton-settings;
+  width: 25px;
+  height: 25px;
+  line-height: 25px;
+  font-size: 10px;
+
+  &:focus {
+    outline: 0 !important;
+  }
+
+  i {
+    margin: auto;
+    color: #fff;
+  }
+}
+
+.nna-diabled-button {
+  background-color: #545b62 !important;
+  pointer-events: none;
+}
+
+.nna-button {
+  @include nna-bitton-settings;
 }
 
 .nna-button-primary {
