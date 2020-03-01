@@ -1,3 +1,5 @@
+import { SharedModule } from './../../shared/shared.module';
+import { RemoveCollectionPopupComponent } from './../../shared/components/remove-collection-popup/remove-collection-popup.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { Routes, RouterModule } from '@angular/router';
 import { DmoCollectionComponent } from './dmo-collection.component';
@@ -29,12 +31,13 @@ const routes: Routes = [
         FormsModule,
         MatProgressSpinnerModule,
         MatCheckboxModule,
-        MatDialogModule
+        MatDialogModule,
+        SharedModule
     ],
     declarations: [
         DmoCollectionComponent,
         AddDmosPopupComponent
     ],
-    entryComponents: [AddDmosPopupComponent],
+    entryComponents: [AddDmosPopupComponent, RemoveCollectionPopupComponent],
 })
 export class DmoCollectionModule {}

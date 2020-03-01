@@ -1,3 +1,4 @@
+import { RemoveCollectionPopupComponent } from './../../shared/components/remove-collection-popup/remove-collection-popup.component';
 import { DmoCollectionsService } from './../../shared/services/dmo-collections.service';
 import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
 import { DmoCollectionShortDto } from './../models';
@@ -11,6 +12,7 @@ import { throwError, Observable, Subject } from 'rxjs';
 import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnDestroy, ElementRef } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dmo-collections',
@@ -29,14 +31,14 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   get collectionName() { return this.addCollectionForm.get('collectionName'); }
   @Input() rightMenuIsClosing$: Observable<void>;
   @Output() closeRightMenu = new EventEmitter<void>();
-  @ViewChild('removeCollectionModal', {static: true}) removeModal: NgbActiveModal;
-  @ViewChild('collectionNameField', {static: true}) collectionNameField: ElementRef;
+  @ViewChild('removeCollectionModal', { static: true }) removeModal: NgbActiveModal;
+  @ViewChild('collectionNameField', { static: true }) collectionNameField: ElementRef;
 
   constructor(
     private dmoCollectionsService: DmoCollectionsService,
     private toastr: Toastr,
-    private modalService: NgbModal,
     private router: Router,
+    public matModule: MatDialog,
     private collectionManager: CollectionsManagerService) { }
 
 
@@ -50,9 +52,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
     });
 
     this.collectionManager.currentCollectionId
-      .subscribe(col => { this.oppenedCollectionId = col; this.loadCollections(); } );
+      .subscribe(col => { this.oppenedCollectionId = col; this.loadCollections(); });
 
-      this.loadCollections();
+    this.loadCollections();
   }
 
   ngOnDestroy(): void {
@@ -62,7 +64,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
 
   openCollection(id: string) {
     this.closeRightMenu.emit();
-    this.router.navigate(['/dmo', { id: id}]);
+    this.router.navigate(['/dmo', { id: id }]);
   }
 
   onAddCollection() {
@@ -71,49 +73,57 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
       this.showLoader();
 
       const add$ = this.dmoCollectionsService.addCollection(collectionName);
-      const getAll$ = this.dmoCollectionsService.getCollections() ;
+      const getAll$ = this.dmoCollectionsService.getCollections();
 
       const addAndRefresh$ =
         add$.pipe(
           takeUntil(this.unsubscribe$),
           finalize(() => { this.hideLoader(); this.toggleAddCollectionForm(true); }),
-          catchError(innerError => { this.hideLoader(); this.resetAddCollectionForm(); return throwError(innerError); } ),
+          catchError(innerError => { this.hideLoader(); this.resetAddCollectionForm(); return throwError(innerError); }),
           concatMap(() => getAll$.pipe(
             takeUntil(this.unsubscribe$),
-            map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; } )) ));
+            map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; }))));
 
-        addAndRefresh$.subscribe({
-          error: (err) => { this.toastr.error(err); },
+      addAndRefresh$.subscribe({
+        error: (err) => { this.toastr.error(err); },
       });
     }
   }
 
-  async onDeleteCollection(dmoList: DmoCollectionShortDto) {
+  onDeleteCollection(dmoList: DmoCollectionShortDto) {
     this.selectedDmoCollectionName = dmoList;
-    const modalRef = this.modalService.open(this.removeModal);
-    const shouldSendRemoveRequest = await modalRef.result.then(() => true, () => false);
+    const delteCollectionModal = this.matModule.open(RemoveCollectionPopupComponent, {
+      data: dmoList.collectionName
+    });
 
-    if (!shouldSendRemoveRequest) {
-      return;
-    }
-    this.showLoader();
-    const delete$ = this.dmoCollectionsService.deleteCollection(this.selectedDmoCollectionName.id);
-    const getAll$ = this.dmoCollectionsService.getCollections() ;
+    delteCollectionModal.afterClosed()
+      .subscribe({
+        next: (shouldDelete: boolean) => {
+          if (!shouldDelete) {
+            return;
+          }
 
-    const deleteAndRefresh$ =
-      delete$.pipe(
-        takeUntil(this.unsubscribe$),
-        finalize(() => {
-          this.hideLoader();
-          this.toggleAddCollectionForm(true);
-          this.redirectToDashboard(this.selectedDmoCollectionName.id); }),
-        catchError(innerError => {  this.resetAddCollectionForm(); return throwError(innerError); } ),
-        concatMap(() => getAll$.pipe(
-          takeUntil(this.unsubscribe$),
-          map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; } )) ));
+          this.showLoader();
+          const delete$ = this.dmoCollectionsService.deleteCollection(this.selectedDmoCollectionName.id);
+          const getAll$ = this.dmoCollectionsService.getCollections();
 
-        deleteAndRefresh$.subscribe({
-          error: (err) => { this.toastr.error(err); },
+          const deleteAndRefresh$ =
+            delete$.pipe(
+              takeUntil(this.unsubscribe$),
+              finalize(() => {
+                this.hideLoader();
+                this.toggleAddCollectionForm(true);
+                this.redirectToDashboard(this.selectedDmoCollectionName.id);
+              }),
+              catchError(innerError => { this.resetAddCollectionForm(); return throwError(innerError); }),
+              concatMap(() => getAll$.pipe(
+                takeUntil(this.unsubscribe$),
+                map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; }))));
+
+          deleteAndRefresh$.subscribe({
+            error: (err) => { this.toastr.error(err); },
+          });
+        }
       });
   }
 
@@ -123,7 +133,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
       .subscribe(
         (response: DmoCollectionShortDto[]) => this.dmoLists = response,
         (error) => this.toastr.error(error),
-        () => this.hideLoader() );
+        () => this.hideLoader());
   }
 
   private redirectToDashboard(collectionIdToBeDeleted: string) {
@@ -154,10 +164,10 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   }
 
   private showLoader() {
-      this.isFormProcessing = true;
+    this.isFormProcessing = true;
   }
 
   private hideLoader() {
-      this.isFormProcessing = false;
+    this.isFormProcessing = false;
   }
 }

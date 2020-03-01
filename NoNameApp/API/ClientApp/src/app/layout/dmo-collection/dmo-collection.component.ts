@@ -1,3 +1,4 @@
+import { RemoveCollectionPopupComponent } from './../../shared/components/remove-collection-popup/remove-collection-popup.component';
 import { AddDmosPopupComponent } from './add-dmos-popup/add-dmos-popup.component';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
@@ -42,7 +43,6 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   constructor(
     private dmoCollectionService: DmoCollectionsService,
     private route: ActivatedRoute,
-    private modalService: NgbModal,
     public matModule: MatDialog,
     private toastr: Toastr,
     private router: Router,
@@ -172,19 +172,24 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
 
   }
 
-  async onRemoveCollection() {
-    const modalRef = this.modalService.open(this.removeCollectionModal);
-    const shouldSendRemoveRequest = await modalRef.result.then(() => true, () => false);
+  onRemoveCollection() {
+    const delteCollectionModal = this.matModule.open(RemoveCollectionPopupComponent, {
+      data: this.currentDmoCollection.collectionName
+    });
 
-    if (!shouldSendRemoveRequest) {
-      return;
-    }
+    delteCollectionModal.afterClosed()
+    .subscribe({
+      next: (shouldDelete: boolean) => {
+        if (!shouldDelete) {
+          return;
+        }
+        const deleteAndRedirect$ = this.dmoCollectionService.deleteCollection(this.currentDmoCollection.id);
 
-    const deleteAndRedirect$ = this.dmoCollectionService.deleteCollection(this.currentDmoCollection.id);
-
-    deleteAndRedirect$.subscribe({
-      next: () => { this.redirectToDashboard(); },
-      error: (err) => { this.toastr.error(err); },
+        deleteAndRedirect$.subscribe({
+          next: () => { this.redirectToDashboard(); },
+          error: (err) => { this.toastr.error(err); },
+        });
+      }
     });
   }
 

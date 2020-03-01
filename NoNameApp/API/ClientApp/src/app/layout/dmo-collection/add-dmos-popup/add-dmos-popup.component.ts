@@ -13,17 +13,16 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
   styleUrls: ['./add-dmos-popup.component.scss']
 })
 export class AddDmosPopupComponent implements OnInit {
-
   dmosTable: MatTableDataSource<DmoShorterDto>;
-    dmos: DmoShortDto[];
-    collectionName: string;
-    isAwaitingForDmos = true;
-    dmosTableColumn: string[];
-    dmosCount = 0;
-    @ViewChild('dmosPaginator', { static: true }) dmosPaginator: MatPaginator;
-    @ViewChild('dmosSort', { static: true }) dmosSorter: MatSort;
-    @ViewChild('addDmoToCollectionModal', { static: true }) addToCollectionModal: NgbActiveModal;
-    selectedDmo = new SelectionModel<DmoShorterDto>(true, []);
+  dmos: DmoShortDto[];
+  collectionName: string;
+  isAwaitingForDmos = true;
+  dmosTableColumn: string[];
+  dmosCount = 0;
+  @ViewChild('dmosPaginator', { static: true }) dmosPaginator: MatPaginator;
+  @ViewChild('dmosSort', { static: true }) dmosSorter: MatSort;
+  @ViewChild('addDmoToCollectionModal', { static: true }) addToCollectionModal: NgbActiveModal;
+  selectedDmo = new SelectionModel<DmoShorterDto>(true, []);
 
   @Input() openModule: boolean;
 

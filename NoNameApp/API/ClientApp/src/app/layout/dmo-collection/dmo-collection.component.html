@@ -109,25 +109,6 @@
         </table>
 
         <mat-paginator #collectionPaginator [length]="collectionLength" [pageSize]="15" showFirstLastButtons></mat-paginator>
-
-        <ng-template #removeFullCollectionModal let-modal>
-            <div class="modal-header">
-                <h4 class="modal-title" id="modal-basic-title">Remove collection</h4>
-                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body" ngbAutofocus>
-                <p style="margin: 0"> Are you sure you want to remove '{{currentDmoCollection.collectionName}}'
-                    collection?</p>
-                <p style="margin: 0"> Don't worry, this action won't remove your DMOs.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="nna-button nna-button-secondary" (click)="modal.dismiss()">Cancel</button>
-                <button type="button" class="nna-button nna-button-primary" (click)="modal.close()">Remove</button>
-            </div>
-        </ng-template>
-
     </div>
 
     <div class="empty-collection-placeholder" [hidden]="collectionLength != 0">

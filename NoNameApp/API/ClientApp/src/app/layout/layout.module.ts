@@ -1,3 +1,6 @@
+import { SharedModule } from './../shared/shared.module';
+import { MatDialogModule } from '@angular/material/dialog';
+import { RemoveCollectionPopupComponent } from './../shared/components/remove-collection-popup/remove-collection-popup.component';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthGuard } from '../shared/services/auth.guards';
 import { SidebarComponent } from './sidebar/sidebar.component';
@@ -34,7 +37,9 @@ const routes: Routes = [
         ReactiveFormsModule,
         MatSidenavModule,
         MatProgressSpinnerModule,
-        NgbModule
-    ]
+        MatDialogModule,
+        SharedModule
+    ],
+    entryComponents: [RemoveCollectionPopupComponent]
 })
 export class LayoutModule {}
