@@ -2,6 +2,9 @@
     <div class="card-header">
         <i class="fa fa-list"></i> Decomposed movie object collentions
     </div>
+    <div *ngIf="isFormProcessing" class="loader-container">
+        <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
+    </div>
     <div class="card-body p-0">
         <div class="collection-buttons-row">
 
@@ -37,9 +40,6 @@
             </form>
             <div class="filter-collection-button" [ngClass]="{'invisible': !showAddButton}">
                 <i class="fa fa-filter" aria-hidden="true"></i>
-            </div>
-            <div *ngIf="isFormProcessing" class="loader-container">
-                <mat-progress-spinner diameter="40" mode="indeterminate"></mat-progress-spinner>
             </div>
         </div>
 
