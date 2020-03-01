@@ -3,22 +3,22 @@ import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Toastr } from './../../shared/services/toastr.service';
-import { DmoCollectionDto, DmoShortDto, DmoCollectionShortDto, AddDmosToCollectionDto, DmosIdDto, ShortDmoCollectionDto, DmoShorterDto } from './../models';
-import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
+import { DmoCollectionDto, DmoShortDto, DmoCollectionShortDto, AddDmosToCollectionDto,
+   DmosIdDto, ShortDmoCollectionDto, DmoShorterDto } from './../models';
+import { Component, OnInit, ViewChild, OnDestroy, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatSort } from '@angular/material/sort';
 import { MatPaginator } from '@angular/material/paginator';
-import { concatMap, map, takeUntil, finalize, catchError } from 'rxjs/operators';
-import { throwError, Observable, Subject } from 'rxjs';
+import { concatMap, map, takeUntil, finalize } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import { DmoCollectionsService } from 'src/app/shared/services/dmo-collections.service';
 import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-dmo-collection',
   templateUrl: './dmo-collection.component.html',
-  styleUrls: ['./dmo-collection.component.scss'],
-  // changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./dmo-collection.component.scss']
 })
 export class DmoCollectionComponent implements OnInit, OnDestroy {
   currentDmoCollection: DmoCollectionDto;
@@ -32,6 +32,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   @ViewChild('collectionSort', { static: true }) collectionSorter: MatSort;
   @ViewChild('removeFullCollectionModal', { static: true }) removeCollectionModal: NgbActiveModal;
   @ViewChild('addDmoToCollectionModal', { static: true }) addToCollectionModal: NgbActiveModal;
+  @ViewChild('editCollectionNameField', {static: true}) collectionNameField: ElementRef;
 
   editCollectionNameForm: FormGroup;
   get collectionName() { return this.editCollectionNameForm.get('collectionName'); }
@@ -196,6 +197,10 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     this.editCollectionNameForm.get('collectionName').setValue(this.currentDmoCollection.collectionName);
     this.showEditForm = true;
     this.selectedDmoInCollection = null;
+
+    setTimeout(() => {
+      this.collectionNameField.nativeElement.focus();
+    }, 100);
   }
 
   applyCollectionFilter(event: Event) {

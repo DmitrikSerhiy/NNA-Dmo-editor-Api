@@ -7,13 +7,11 @@
     </div>
     <div class="card-body p-0">
         <div class="collection-buttons-row">
-            <div class="add-collection-button" (click)="toggleAddCollectionForm()"
-                [ngClass]="{'invisible': !showAddButton}">
+            <div class="add-collection-button" (click)="toggleAddCollectionForm()" [hidden]="!showAddButton">
                 <i class="fa fa-plus control-icon" aria-hidden="true"> <span>new collection</span></i>
             </div>
 
-            <form [formGroup]="addCollectionForm" (ngSubmit)="onAddCollection()"
-                [ngClass]="{'invisible': showAddButton}" autocomplete="off">
+            <form [formGroup]="addCollectionForm" (ngSubmit)="onAddCollection()" [hidden]="showAddButton" autocomplete="off">
                 <div class="add-collection-form">
                     <input id="collectionNameField" #collectionNameField type="text" name="collectionName" formControlName="collectionName"
                         class="form-control input-underline-light" placeholder="name">
@@ -37,7 +35,7 @@
                     </div>
                 </div>
             </form>
-            <div class="filter-collection-button" [ngClass]="{'invisible': !showAddButton}">
+            <div class="filter-collection-button" [hidden]="!showAddButton">
                 <i class="fa fa-filter" aria-hidden="true"></i>
             </div>
         </div>

@@ -8,7 +8,7 @@ import { Toastr } from './../../shared/services/toastr.service';
 import { concatMap, map, catchError, finalize, takeUntil } from 'rxjs/operators';
 import { throwError, Observable, Subject } from 'rxjs';
 
-import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, Output, EventEmitter, OnDestroy, ElementRef } from '@angular/core';
 import { FormGroup, Validators, FormControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 
@@ -30,6 +30,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   @Input() rightMenuIsClosing$: Observable<void>;
   @Output() closeRightMenu = new EventEmitter<void>();
   @ViewChild('removeCollectionModal', {static: true}) removeModal: NgbActiveModal;
+  @ViewChild('collectionNameField', {static: true}) collectionNameField: ElementRef;
 
   constructor(
     private dmoCollectionsService: DmoCollectionsService,
@@ -142,7 +143,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
     this.resetAddCollectionForm();
 
     if (!this.showAddButton) {
-      //todo: set focus on field here. It does not work
+      setTimeout(() => {
+        this.collectionNameField.nativeElement.focus();
+      }, 100);
     }
   }
 
