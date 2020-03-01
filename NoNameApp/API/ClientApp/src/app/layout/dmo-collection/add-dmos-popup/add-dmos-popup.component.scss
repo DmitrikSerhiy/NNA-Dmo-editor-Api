@@ -2,7 +2,19 @@
   .dmos-table-container {
 
     .search-container {
-      
+      flex: 0 1 100%;
+      display: flex;
+      i {
+        position: relative;
+        margin-top: 0.6rem;
+        margin-left: 1rem;
+      }
+
+      .search-input {
+        &:focus {
+          background-color: unset;
+        }
+      }
     }
 
     table {

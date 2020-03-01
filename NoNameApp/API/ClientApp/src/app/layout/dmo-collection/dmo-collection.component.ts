@@ -143,7 +143,6 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
       .then((dmos: DmoShortDto[]) => collectionWithDmo.dmos = dmos.map(d => new DmoShorterDto(d.id, d.movieTitle, d.name)))
       .catch((err) => this.toastr.error(err));
 
-    this.awaitingForDmos = false;
     const dialogRef = this.matModule.open(AddDmosPopupComponent, {
       data: collectionWithDmo,
       minWidth: '430px'
@@ -152,6 +151,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     dialogRef.afterClosed()
       .subscribe({
         next: (selectDmos: DmoShortDto[]) => {
+          this.awaitingForDmos = false;
           if (!selectDmos) {
             return;
           }
