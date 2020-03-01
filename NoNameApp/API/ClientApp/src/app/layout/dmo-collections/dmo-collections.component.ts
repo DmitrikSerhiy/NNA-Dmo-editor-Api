@@ -23,6 +23,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
 
   addCollectionForm: FormGroup;
   dmoLists: DmoCollectionShortDto[];
+  sortedDmoLists: DmoCollectionShortDto[];
   showAddButton = true;
   isFormProcessing = false;
   selectedDmoCollectionName: DmoCollectionShortDto;
@@ -33,6 +34,10 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   @Output() closeRightMenu = new EventEmitter<void>();
   @ViewChild('removeCollectionModal', { static: true }) removeModal: NgbActiveModal;
   @ViewChild('collectionNameField', { static: true }) collectionNameField: ElementRef;
+
+  collectionsByDesc = false;
+  collectionsByAcs = false;
+  byDate = true;
 
   constructor(
     private dmoCollectionsService: DmoCollectionsService,
@@ -62,6 +67,30 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
     this.unsubscribe$.complete();
   }
 
+  sortCollections() {
+    if (this.byDate) {
+      this.byDate = false;
+      this.collectionsByAcs = true;
+      this.collectionsByDesc = false;
+      this.sortedDmoLists = this.sortedDmoLists.sort(comparer);
+    } else if (this.collectionsByAcs) {
+      this.byDate = false;
+      this.collectionsByAcs = false;
+      this.collectionsByDesc = true;
+      this.sortedDmoLists = this.sortedDmoLists.sort(comparer).reverse();
+    } else {
+      this.resetCollectionsSort();
+    }
+
+    function comparer(a, b) {
+      if (a.dmoCount > b.dmoCount) { return 1; }
+      if (a.dmoCount < b.dmoCount) { return -1; }
+
+      return 0;
+    }
+  }
+
+
   openCollection(id: string) {
     this.closeRightMenu.emit();
     this.router.navigate(['/dmo', { id: id }]);
@@ -82,7 +111,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
           catchError(innerError => { this.hideLoader(); this.resetAddCollectionForm(); return throwError(innerError); }),
           concatMap(() => getAll$.pipe(
             takeUntil(this.unsubscribe$),
-            map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; }))));
+            map((response: DmoCollectionShortDto[]) => {
+              this.dmoLists = response;
+              this.resetCollectionsSort(); }))));
 
       addAndRefresh$.subscribe({
         error: (err) => { this.toastr.error(err); },
@@ -118,7 +149,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
               catchError(innerError => { this.resetAddCollectionForm(); return throwError(innerError); }),
               concatMap(() => getAll$.pipe(
                 takeUntil(this.unsubscribe$),
-                map((response: DmoCollectionShortDto[]) => { this.dmoLists = response; }))));
+                map((response: DmoCollectionShortDto[]) => {
+                  this.dmoLists = response;
+                  this.resetCollectionsSort(); }))));
 
           deleteAndRefresh$.subscribe({
             error: (err) => { this.toastr.error(err); },
@@ -127,11 +160,20 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
       });
   }
 
+  private resetCollectionsSort() {
+    this.byDate = true;
+    this.collectionsByAcs = false;
+    this.collectionsByDesc = false;
+    this.sortedDmoLists = [...this.dmoLists];
+  }
+
   private loadCollections() {
     this.showLoader();
     this.dmoCollectionsService.getCollections()
       .subscribe(
-        (response: DmoCollectionShortDto[]) => this.dmoLists = response,
+        (response: DmoCollectionShortDto[]) => {
+          this.dmoLists = response;
+          this.resetCollectionsSort(); },
         (error) => this.toastr.error(error),
         () => this.hideLoader());
   }
