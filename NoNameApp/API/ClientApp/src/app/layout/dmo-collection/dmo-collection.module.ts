@@ -9,6 +9,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatSortModule } from '@angular/material/sort';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { AddDmosPopupComponent } from './add-dmos-popup/add-dmos-popup.component';
+import { MatDialogModule } from '@angular/material/dialog';
 
 const routes: Routes = [
     { path: '', component: DmoCollectionComponent }
@@ -26,10 +28,13 @@ const routes: Routes = [
         ReactiveFormsModule,
         FormsModule,
         MatProgressSpinnerModule,
-        MatCheckboxModule
+        MatCheckboxModule,
+        MatDialogModule
     ],
     declarations: [
-        DmoCollectionComponent
-    ]
+        DmoCollectionComponent,
+        AddDmosPopupComponent
+    ],
+    entryComponents: [AddDmosPopupComponent],
 })
 export class DmoCollectionModule {}

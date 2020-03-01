@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -147,7 +148,7 @@ namespace API.Controllers {
 
         [HttpPost]
         [Route("collection/dmos")]
-        public async Task<IActionResult> AddDmoToCollection(AddDmoToCollectionDto dto) {
+        public async Task<IActionResult> AddDmoToCollection([FromBody]AddDmoToCollectionDto dto) {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
             var user = await _currentUserService.GetAsync();
             var dmoCollection = await _dmoCollectionsRepository.GetCollectionWithDmos(user.Id, dto.CollectionId);
@@ -155,16 +156,22 @@ namespace API.Controllers {
                 return NotFound();
             }
 
-            if (_dmoCollectionsRepository.ContainsDmo(dmoCollection, dto.DmoId)) {
-                return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"Collection already contains dmo with id {dto.DmoId}"));
+            foreach (var dmoInCollection in dto.Dmos) {
+                if (_dmoCollectionsRepository.ContainsDmo(dmoCollection, dmoInCollection.Id)) {
+                    return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"Collection already contains dmo with id {dmoInCollection.Id}"));
+                }
             }
 
-            var dmo = await _dmoCollectionsRepository.GetDmoAsync(user.Id, dto.DmoId);
-            if (dmo == null) {
-                return NotFound();
+            var dmos = new List<Dmo>();
+            foreach (var dmoInCollection in dto.Dmos) {
+                var dmo = await _dmoCollectionsRepository.GetDmoAsync(user.Id, dmoInCollection.Id);
+                if (dmo == null) {
+                    return NotFound();
+                }
+                dmos.Add(dmo);
             }
 
-            _dmoCollectionsRepository.AddDmoToCollection(dmoCollection, dmo);
+            _dmoCollectionsRepository.AddDmoToCollection(dmoCollection, dmos);
             return NoContent();
         }
 

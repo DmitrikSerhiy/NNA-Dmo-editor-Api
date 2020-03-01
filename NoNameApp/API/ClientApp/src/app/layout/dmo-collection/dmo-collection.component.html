@@ -142,59 +142,7 @@
         </button>
     </div>
 
-
-
-    <ng-template #addDmoToCollectionModal let-modal class="dmos-modal">
-        <div class="modal-header">
-            <h4 class="modal-title" id="modal-basic-title">Add DMOs to '{{currentDmoCollection.collectionName}}' collection</h4>
-            <button type="button" class="close" aria-label="Close" (click)="modal.dismiss()">
-                <span aria-hidden="true">&times;</span>
-            </button>
-        </div>
-        <div class="modal-body" ngbAutofocus>
-            <div [hidden]="!isAwaitingForDmos" class="dmos-loader-container">
-                <mat-progress-spinner diameter="80" mode="indeterminate"></mat-progress-spinner>
-            </div>
-            <div [hidden]="!allOtherDmos" class="dmos-table-container">
-                <table mat-table [dataSource]="dmosTable" #dmosSort="matSort" matSort >
-
-                    <ng-container matColumnDef="select">
-                        <th mat-header-cell *matHeaderCellDef>
-                          <mat-checkbox (change)="$event ? dmosTableToggle() : null"
-                                        [checked]="selectedDmo.hasValue() && isAllDmoSelected()"
-                                        [indeterminate]="selectedDmo.hasValue() && !isAllDmoSelected()">
-                          </mat-checkbox>
-                        </th>
-                        <td mat-cell *matCellDef="let row">
-                          <mat-checkbox (click)="$event.stopPropagation()"
-                                        (change)="$event ? selectedDmo.toggle(row) : null"
-                                        [checked]="selectedDmo.isSelected(row)">
-                          </mat-checkbox>
-                        </td>
-                      </ng-container>
-
-                    <ng-container matColumnDef="movieTitle">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header="movieTitle" class=""> Movie title </th>
-                        <td mat-cell class="table-cell" *matCellDef="let row"> {{row.movieTitle}} </td>
-                    </ng-container>
-        
-                    <ng-container matColumnDef="name">
-                        <th mat-header-cell *matHeaderCellDef mat-sort-header="name" class=""> DMO name </th>
-                        <td mat-cell class="table-cell" *matCellDef="let row"> {{row.name}} </td>
-                    </ng-container>
-    
-                    <tr mat-header-row *matHeaderRowDef="dmosTableColumn"></tr>
-                    <tr mat-row class="" *matRowDef="let row; columns: dmosTableColumn;"> </tr>
-                   
-                </table>
-
-                <mat-paginator #dmosPaginator [length]="dmosCount" [pageSize]="5" showFirstLastButtons></mat-paginator>
-            </div>
-
-        </div>
-        <div class="modal-footer">
-            <button type="button" class="nna-button nna-button-secondary" (click)="modal.dismiss()">Cancel</button>
-            <button type="button" class="nna-button nna-button-primary" (click)="modal.close()">Add</button>
-        </div>
-    </ng-template>
+    <div [hidden]="!awaitingForDmos" class="dmos-loader-container">
+        <mat-progress-spinner diameter="80" mode="indeterminate"></mat-progress-spinner>
+    </div>
 </div>

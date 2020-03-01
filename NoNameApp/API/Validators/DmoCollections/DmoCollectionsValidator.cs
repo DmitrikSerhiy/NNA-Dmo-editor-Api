@@ -16,8 +16,14 @@ namespace API.Validators.DmoCollections {
 
     public class AddDmoToCollectionDtoValidator : AbstractValidator<AddDmoToCollectionDto> {
         public AddDmoToCollectionDtoValidator() {
-            RuleFor(d => d.DmoId).NotEmpty().WithMessage("Dmo id is missing");
             RuleFor(d => d.CollectionId).NotEmpty().WithMessage("Collection id is missing");
+            RuleFor(d => d.Dmos).NotEmpty().WithMessage("No dmo to add to collection");
+        }
+    }
+
+    public class DmoInCollectionDtoValidator : AbstractValidator<DmoInCollectionDto> {
+        public DmoInCollectionDtoValidator() {
+            RuleFor(d => d.Id).NotEmpty().WithMessage("Dmo id is missing");
         }
     }
 

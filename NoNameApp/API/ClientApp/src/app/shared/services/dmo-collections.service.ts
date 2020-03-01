@@ -1,4 +1,4 @@
-import { DmoCollectionShortDto, DmoCollectionDto, DmoShortDto } from './../../layout/models';
+import { DmoCollectionShortDto, DmoCollectionDto, DmoShortDto, AddDmosToCollectionDto } from './../../layout/models';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { Observable, throwError } from 'rxjs';
@@ -64,12 +64,9 @@ export class DmoCollectionsService {
         catchError(this.handleError) );
   }
 
-  addToCollection(dmoId: string, collectionId: string) {
-    const params = new HttpParams()
-      .set('collectionId', collectionId)
-      .set('dmoId', dmoId);
+  addDmosToCollection(addDmosToCollectionDto: AddDmosToCollectionDto) {
     return this.http
-    .post(this.serverUrl + 'collection/dmos', {params: params })
+    .post(this.serverUrl + 'collection/dmos', addDmosToCollectionDto)
     .pipe(
       map((response: DmoCollectionDto) => response),
       catchError(this.handleError) );

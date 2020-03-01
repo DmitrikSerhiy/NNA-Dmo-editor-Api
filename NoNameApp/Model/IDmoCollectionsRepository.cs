@@ -11,7 +11,7 @@ namespace Model {
         Task<Boolean> IsCollectionExist(Guid userId, String collectionName);
         void DeleteCollection(UserDmoCollection collection);
         void UpdateCollectionName(UserDmoCollection oldDmoCollection, UserDmoCollection newDmoCollection);
-        void AddDmoToCollection(UserDmoCollection dmoCollection, Dmo dmo);
+        void AddDmoToCollection(UserDmoCollection dmoCollection, List<Dmo> dmos);
         Boolean ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId);
         Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid? collectionId);
         Task<Dmo> GetDmoAsync(Guid userId, Guid? dmoId);

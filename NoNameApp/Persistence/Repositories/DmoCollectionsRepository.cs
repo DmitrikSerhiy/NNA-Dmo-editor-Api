@@ -73,16 +73,17 @@ namespace Persistence.Repositories {
             return dmoCollection;
         }
 
-        public void AddDmoToCollection(UserDmoCollection dmoCollection, Dmo dmo) {
+        public void AddDmoToCollection(UserDmoCollection dmoCollection, List<Dmo> dmos) {
             if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
-            if (dmo == null) throw new ArgumentNullException(nameof(dmo));
-            dmoCollection.DmoUserDmoCollections.Add(new DmoUserDmoCollection
-            {
-                DmoId = dmo.Id,
-                Dmo = dmo,
-                UserDmoCollection = dmoCollection,
-                UserDmoCollectionId = dmoCollection.Id
-            });
+            if (dmos == null || dmos.Count == 0) throw new ArgumentNullException(nameof(dmos));
+            foreach (var dmo in dmos) {
+                dmoCollection.DmoUserDmoCollections.Add(new DmoUserDmoCollection {
+                    DmoId = dmo.Id,
+                    Dmo = dmo,
+                    UserDmoCollection = dmoCollection,
+                    UserDmoCollectionId = dmoCollection.Id
+                });
+            }
         }
 
         public Boolean ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId) {

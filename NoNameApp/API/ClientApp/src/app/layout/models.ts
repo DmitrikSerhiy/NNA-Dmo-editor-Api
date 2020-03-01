@@ -1,6 +1,5 @@
 export enum RightMenues {
-    dmoCollections = 'dmoCollections',
-    dmos = 'dmos'
+    dmoCollections = 'dmoCollections'
 }
 
 export class DmoCollectionShortDto {
@@ -18,9 +17,37 @@ export class DmoShortDto {
     mark: number;
 }
 
+export class DmoShorterDto {
+    constructor(id: string, movieTitle: string, dmoName: string) {
+        this.id = id;
+        this.movieTitle = movieTitle;
+        this.name = dmoName;
+    }
+    id: string;
+    movieTitle: string;
+    name: string;
+}
+
+export class ShortDmoCollectionDto {
+    collectionName: string;
+    dmos: DmoShorterDto[];
+}
+
 export class DmoCollectionDto {
     id: string;
     collectionName: string;
     dmos: DmoShortDto[];
+}
+
+export class DmosIdDto {
+    constructor(id: string) {
+        this.id = id;
+    }
+    id: string;
+}
+
+export class AddDmosToCollectionDto {
+    collectionId: string;
+    dmos: DmosIdDto[];
 }
 
