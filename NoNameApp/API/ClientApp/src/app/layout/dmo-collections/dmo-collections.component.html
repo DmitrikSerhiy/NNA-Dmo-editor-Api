@@ -7,7 +7,6 @@
     </div>
     <div class="card-body p-0">
         <div class="collection-buttons-row">
-
             <div class="add-collection-button" (click)="toggleAddCollectionForm()"
                 [ngClass]="{'invisible': !showAddButton}">
                 <i class="fa fa-plus control-icon" aria-hidden="true"> <span>new collection</span></i>
@@ -52,7 +51,10 @@
             </div>
         </div>
     </div>
-    
+    <div *ngIf="dmoLists && !dmoLists.length" class="collections-placeholder">
+        <div> You have no collection yet</div>
+    </div>
+
     <ng-template #removeCollectionModal let-modal>
         <div class="modal-header">
             <h4 class="modal-title" id="modal-basic-title">Remove collection</h4>

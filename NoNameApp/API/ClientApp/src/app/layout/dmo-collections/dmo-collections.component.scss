@@ -98,8 +98,8 @@
       display: flex;
 
       .dmo-count {
-          margin-left: auto;
-          margin-right: 4rem;
+        margin-left: auto;
+        margin-right: 4rem;
       }
     }
 
@@ -113,6 +113,15 @@
       display: none;
       margin-left: auto;
       margin-right: 0.4rem;
+    }
+  }
+
+  .collections-placeholder {
+    display: flex;
+    justify-content: center;
+    div {
+        margin: auto;
+        margin-top: 4rem;
     }
   }
 
