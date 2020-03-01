@@ -20,6 +20,7 @@ namespace Persistence.Repositories {
         public async Task<List<UserDmoCollection>> GetCollectionsAsync(Guid userId) {
             return await _context.UserDmoCollections
                 .Where(d => d.NoNameUserId == userId)
+                .Include(d => d.DmoUserDmoCollections)
                 .AsNoTracking()
                 .OrderByDescending(d => d.DateOfCreation)
                 .ToListAsync();

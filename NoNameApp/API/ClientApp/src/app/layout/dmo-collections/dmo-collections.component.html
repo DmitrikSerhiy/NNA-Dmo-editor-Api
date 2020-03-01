@@ -46,7 +46,7 @@
         <div class="list-group">
             <div class="list-group-item" *ngFor="let dmoList of dmoLists;">
                 <div class="list-group-item-link" (click)="openCollection(dmoList.id)">
-                    &#9679; {{ dmoList.collectionName }}
+                    &#9679; {{ dmoList.collectionName }} <span class="dmo-count">{{ dmoList.dmoCount }}</span>
                 </div>
                 <div class="remove-icon" (click)="onDeleteCollection(dmoList)"><i class="fa fa-trash"></i></div>
             </div>

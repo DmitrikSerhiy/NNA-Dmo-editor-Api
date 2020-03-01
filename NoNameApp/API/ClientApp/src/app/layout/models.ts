@@ -4,6 +4,7 @@ export enum RightMenues {
 
 export class DmoCollectionShortDto {
     id: string;
+    dmoCount: number;
     collectionName: string;
 }
 

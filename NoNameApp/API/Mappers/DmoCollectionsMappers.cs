@@ -11,7 +11,9 @@ namespace API.Mappers {
     public class DmoCollectionsMappers : Profile {
 
         public DmoCollectionsMappers() {
-            CreateMap<UserDmoCollection, DmoCollectionShortDto>().ReverseMap();
+            CreateMap<UserDmoCollection, DmoCollectionShortDto>()
+                .ForMember(udc => udc.DmoCount, dcd => dcd.MapFrom(dd => dd.DmoUserDmoCollections.Count))
+                .ReverseMap();
             CreateMap<Dmo, DmoShortDto>()
                 .ForMember(udc => udc.DmoStatus, dcd => dcd.MapFrom(dd => GetDmoStatusString(dd.DmoStatus)))
                 .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => (Int16) dd.DmoStatus));
