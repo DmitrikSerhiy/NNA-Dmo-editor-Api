@@ -74,6 +74,16 @@ export class SidebarComponent implements OnInit {
     this.toggleRightMenu.emit(RightMenues.dmoCollections);
   }
 
+  sendDmosEvent($event) {
+    this.setSelected($event);
+    this.toggleRightMenu.emit(RightMenues.dmos);
+  }
+
+  sendDashboardEvent($event) {
+    this.setSelected($event);
+    this.toggleRightMenu.emit(RightMenues.dashboard);
+  }
+
   setSelected($event) {
     const previouslySelected = this.render2.selectRootElement('.router-link-active', true);
     this.render2.removeClass(previouslySelected, 'router-link-active');

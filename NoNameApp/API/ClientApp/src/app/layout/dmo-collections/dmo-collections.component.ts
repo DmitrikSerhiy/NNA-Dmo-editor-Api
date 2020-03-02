@@ -56,7 +56,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
       'collectionName': new FormControl('', [Validators.required, Validators.maxLength(20)])
     });
 
-    this.collectionManager.currentCollectionId
+    this.collectionManager.currentCollectionObserver
       .subscribe(col => { this.oppenedCollectionId = col; this.loadCollections(); });
 
     this.loadCollections();
@@ -93,7 +93,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
 
   openCollection(id: string) {
     this.closeRightMenu.emit();
-    this.router.navigate(['/dmo', { id: id }]);
+    this.router.navigate(['/dmoCollection', { id: id }]);
   }
 
   onAddCollection() {

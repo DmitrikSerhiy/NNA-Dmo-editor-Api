@@ -14,7 +14,6 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { RemoveCollectionPopupComponent } from './shared/components/remove-collection-popup/remove-collection-popup.component';
 
 
 const routes: Routes = [

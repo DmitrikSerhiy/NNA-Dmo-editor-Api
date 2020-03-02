@@ -1,5 +1,5 @@
 <body>
-  <mat-sidenav-container role="main" style="height: 100%">
+  <mat-sidenav-container role="main" style="height: 100%" (backdropClick)="closeByBackdrop()" >
     <mat-sidenav #rightMenu position="end" [mode]="over" [(opened)]="toggleRightMenu" role="directory"
       [fixedInViewport]="true" [fixedTopGap]="0" [fixedBottomGap]="0"> 
       
@@ -12,7 +12,7 @@
    
     </mat-sidenav>
     <mat-sidenav-content>
-
+      <app-right-menu-grabber *ngIf="shouldShowGrabber" [menuName]="currentMenuName" [userFriendlyMenuName]="currentUserFriendlyMenuName" (toggleMenu)="oppenedByGrabber($event)" ></app-right-menu-grabber>
       <app-nav-menu></app-nav-menu>
       <app-sidebar (collapsedEvent)="receiveCollapsed($event)" (toggleRightMenu)="receiveRightMenu($event)">
       </app-sidebar>

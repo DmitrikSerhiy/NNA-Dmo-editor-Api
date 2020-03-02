@@ -1,3 +1,4 @@
+import { RightMenuGrabberComponent } from './../shared/components/right-menu-grabber/right-menu-grabber.component';
 import { SharedModule } from './../shared/shared.module';
 import { MatDialogModule } from '@angular/material/dialog';
 import { RemoveCollectionPopupComponent } from './../shared/components/remove-collection-popup/remove-collection-popup.component';
@@ -9,23 +10,21 @@ import { LayoutComponent } from './layout.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Routes, RouterModule } from '@angular/router';
-import {MatSidenavModule} from '@angular/material/sidenav';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
-import { NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { DmoCollectionsComponent } from './dmo-collections/dmo-collections.component';
 import { ReactiveFormsModule } from '@angular/forms';
 
-const routes: Routes = [
-    {
-        path: '',
-        component: LayoutComponent,
-        children: [
-            { path: '', redirectTo: 'dashboard', pathMatch: 'prefix' },
-            { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
-            { path: 'dmo', loadChildren: () => import('./dmo-collection/dmo-collection.module').then(m => m.DmoCollectionModule) },
-            { path: 'dmoCollections', component: DmoCollectionsComponent, canActivate: [AuthGuard] },
-        ]
-    }
+const routes: Routes = [{
+    path: '',
+    component: LayoutComponent,
+    children: [
+        { path: '', redirectTo: 'dashboard', pathMatch: 'prefix' },
+        { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
+        { path: 'dmos', loadChildren: () => import('./dmos/dmos.module').then(m => m.DmosModule), canActivate: [AuthGuard] },
+        { path: 'dmoCollection', loadChildren: () => import('./dmo-collection/dmo-collection.module').then(m => m.DmoCollectionModule), canActivate: [AuthGuard] },
+    ]}
 ];
 
 @NgModule({
@@ -40,6 +39,6 @@ const routes: Routes = [
         MatDialogModule,
         SharedModule
     ],
-    entryComponents: [RemoveCollectionPopupComponent]
+    entryComponents: [RemoveCollectionPopupComponent, RightMenuGrabberComponent]
 })
-export class LayoutModule {}
+export class LayoutModule { }

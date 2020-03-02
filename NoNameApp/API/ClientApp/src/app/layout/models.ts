@@ -1,5 +1,7 @@
 export enum RightMenues {
-    dmoCollections = 'dmoCollections'
+    dashboard = 'dashboard',
+    dmoCollections = 'dmoCollections',
+    dmos = 'dmos'
 }
 
 export class DmoCollectionShortDto {

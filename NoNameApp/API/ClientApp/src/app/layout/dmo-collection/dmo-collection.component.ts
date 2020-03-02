@@ -1,6 +1,6 @@
 import { RemoveCollectionPopupComponent } from './../../shared/components/remove-collection-popup/remove-collection-popup.component';
 import { AddDmosPopupComponent } from './add-dmos-popup/add-dmos-popup.component';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Toastr } from './../../shared/services/toastr.service';
@@ -168,8 +168,6 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
           });
         }
       });
-
-
   }
 
   onRemoveCollection() {
