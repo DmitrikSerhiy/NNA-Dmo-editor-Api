@@ -130,6 +130,12 @@
         background: #c9d6dc;
       }
 
+      ::ng-deep .mat-sort-header-container {
+        button {
+          outline: none;
+        }
+      }
+
       .table-cell {
         padding-left: 24px;
       }

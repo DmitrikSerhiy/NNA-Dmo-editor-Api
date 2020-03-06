@@ -23,7 +23,8 @@ const routes: Routes = [{
         { path: '', redirectTo: 'dashboard', pathMatch: 'prefix' },
         { path: 'dashboard', loadChildren: () => import('./dashboard/dashboard.module').then(m => m.DashboardModule) },
         { path: 'dmos', loadChildren: () => import('./dmos/dmos.module').then(m => m.DmosModule), canActivate: [AuthGuard] },
-        { path: 'dmoCollection', loadChildren: () => import('./dmo-collection/dmo-collection.module').then(m => m.DmoCollectionModule), canActivate: [AuthGuard] },
+        { path: 'dmoCollection', loadChildren: () => import('./dmo-collection/dmo-collection.module')
+            .then(m => m.DmoCollectionModule), canActivate: [AuthGuard] },
     ]}
 ];
 
