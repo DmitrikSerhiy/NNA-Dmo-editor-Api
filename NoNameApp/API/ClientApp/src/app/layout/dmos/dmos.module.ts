@@ -1,3 +1,4 @@
+import { RemoveDmoPopupComponent } from './../../shared/components/remove-dmo-popup/remove-dmo-popup.component';
 import { MatTableModule } from '@angular/material/table';
 import { MatSortModule } from '@angular/material/sort';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
@@ -27,7 +28,7 @@ const routes: Routes = [
   declarations: [
     DmosComponent
   ],
-  entryComponents: []
+  entryComponents: [RemoveDmoPopupComponent]
 })
 
 export class DmosModule { }

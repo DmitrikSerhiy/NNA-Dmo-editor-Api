@@ -4,10 +4,10 @@ using Model;
 
 namespace API.Validators.DmoCollections {
     // ReSharper disable UnusedMember.Global
-    public class DmoCollectionsValidator : AbstractValidator<DmoCollectionShortDto> {
-        public DmoCollectionsValidator() {
+    public class AddNewDmoCollectionDtoValidator : AbstractValidator<AddNewDmoCollectionDto> {
+        public AddNewDmoCollectionDtoValidator() {
             RuleFor(d => d.CollectionName)
-                .NotEmpty().WithMessage("Name of collection is missing")
+                .NotEmpty().WithMessage("Collection id is missing")
                 .MaximumLength(ApplicationConstants.MaxEntityNameLength)
                 .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxEntityNameLength}");
         }

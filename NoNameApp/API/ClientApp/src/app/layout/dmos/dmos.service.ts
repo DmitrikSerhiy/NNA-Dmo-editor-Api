@@ -1,5 +1,5 @@
 import { DmoShortDto } from './../models';
-import { HttpErrorResponse, HttpClient } from '@angular/common/http';
+import { HttpErrorResponse, HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -18,6 +18,14 @@ export class DmosService {
       .get(this.serverUrl)
       .pipe(
         map((response: DmoShortDto[]) => response),
+        catchError(this.handleError));
+  }
+
+  deleteDMO(dmoId: string): Observable<any> {
+    return this.http
+      .delete(this.serverUrl, {params: new HttpParams().set('dmoId', dmoId)})
+      .pipe(
+        map(response => response ),
         catchError(this.handleError));
   }
 

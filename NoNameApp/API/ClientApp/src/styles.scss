@@ -46,8 +46,8 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-@mixin nna-bitton-settings() {
-  height: 1.8rem;
+@mixin nna-button-settings() {
+  height: 1.6rem;
   font-size: 0.6rem;
   outline: none !important;
   text-shadow: none;
@@ -59,7 +59,7 @@ body {
   user-select: none;
   text-transform: uppercase;
   cursor: pointer;
-  display: inline-block;
+  display: flex;
   min-height: 1em;
   border: none;
   vertical-align: baseline;
@@ -73,9 +73,9 @@ body {
 }
 
 .nna-icon-button {
-  @include nna-bitton-settings;
-  width: 25px;
-  height: 25px;
+  @include nna-button-settings;
+  width: 1.6rem;
+  height: 1.6rem;
   line-height: 25px;
   font-size: 10px;
 
@@ -95,7 +95,7 @@ body {
 }
 
 .nna-button {
-  @include nna-bitton-settings;
+  @include nna-button-settings;
 }
 
 .nna-button-primary {

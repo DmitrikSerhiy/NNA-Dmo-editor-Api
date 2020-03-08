@@ -15,7 +15,6 @@ export class SidebarComponent implements OnInit {
   collapsed: boolean;
   showMenu: string;
   pushRightClass: string;
-  selectedMenu: string;
 
   @Output() collapsedEvent = new EventEmitter<boolean>();
   @Output() toggleRightMenu = new EventEmitter<RightMenues>();
@@ -44,9 +43,7 @@ export class SidebarComponent implements OnInit {
     this.pushRightClass = 'push-right';
     this.router.navigateByUrl('/');
 
-    this.currestSidebarService.currentMenuSource$.subscribe({
-      next: (menu) => {this.selectedMenu = menu; }
-  });
+    this.currestSidebarService.currentMenuSource$.subscribe();
   }
 
   eventCalled() {

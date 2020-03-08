@@ -36,6 +36,12 @@
       .hoverable-element:active {
         background: #c9d6dc;
       }
+
+      ::ng-deep .mat-sort-header-container {
+        button {
+          outline: none;
+        }
+      }
     }
   }
 }

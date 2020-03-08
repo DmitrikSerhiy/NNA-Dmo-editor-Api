@@ -1,4 +1,5 @@
-import { Component, OnInit } from '@angular/core';
+import { RightMenuGrabberService } from './../../shared/services/right-menu-grabber.service';
+import { Component, OnInit, Output } from '@angular/core';
 import { ANIMATION_MODULE_TYPE } from '@angular/platform-browser/animations';
 
 @Component({
@@ -8,9 +9,12 @@ import { ANIMATION_MODULE_TYPE } from '@angular/platform-browser/animations';
 })
 export class DashboardComponent implements OnInit {
 
-  constructor() { }
+  constructor(private rightMenuGrabberService: RightMenuGrabberService) { }
 
   ngOnInit() {
+    // console.log(this.rightMenuGrabberService.isGrabbershouldBeShowen());
+    this.rightMenuGrabberService.hideGrabber();
+    // console.log(this.rightMenuGrabberService.isGrabbershouldBeShowen());
   }
 
 }

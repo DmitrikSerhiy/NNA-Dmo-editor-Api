@@ -1,3 +1,4 @@
+import { RightMenuGrabberService } from './../shared/services/right-menu-grabber.service';
 import { CurrentSidebarService } from './../shared/services/current-sidebar.service';
 import { CollectionsManagerService } from './../shared/services/collections-manager.service';
 import { Observable } from 'rxjs';
@@ -18,13 +19,16 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     currentMenuName: string;
     currentUserFriendlyMenuName: string;
     rightMenuIsClosing$: Observable<void>;
-    shouldShowGrabber = false;
+    shouldShowGrabber: boolean;
 
     constructor(
         private collectionService: CollectionsManagerService,
-        private currestSidebarService: CurrentSidebarService) { }
+        private currestSidebarService: CurrentSidebarService,
+        private rightMenuGrabberService: RightMenuGrabberService) { }
 
-    ngOnInit() { }
+    ngOnInit() {
+        this.rightMenuGrabberService.shouldShowGrabber$.subscribe();
+    }
 
     ngAfterViewInit(): void {
         this.rightMenuIsClosing$ = this.rightMenu.closedStart;
@@ -51,15 +55,17 @@ export class LayoutComponent implements OnInit, AfterViewInit {
         if ($event === RightMenues.dmoCollections) {
             this.currentMenuName = RightMenues.dmoCollections;
             this.currentUserFriendlyMenuName = this.getCurrentUserFriendlyRightMenu($event);
-            this.shouldShowGrabber = true;
+            this.rightMenuGrabberService.showGrabber();
             this.toggleRightMenu = $event;
         } else if ($event === RightMenues.dmos) {
-            this.shouldShowGrabber = false;
+            this.rightMenuGrabberService.hideGrabber();
             this.collectionService.setCollectionId('');
         } else if ($event === RightMenues.dashboard) {
-            this.shouldShowGrabber = false;
+            this.rightMenuGrabberService.hideGrabber();
             this.collectionService.setCollectionId('');
         }
+
+        this.shouldShowGrabber = this.rightMenuGrabberService.isGrabbershouldBeShowen();
     }
 
     oppenedByGrabber($event) {
@@ -76,7 +82,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     private resetMenues() {
         this.currentMenuName = '';
         this.currentUserFriendlyMenuName = '';
-        this.shouldShowGrabber = false;
         this.toggleRightMenu = null;
     }
 

@@ -1,3 +1,4 @@
+import { CurrentSidebarService } from './../../shared/services/current-sidebar.service';
 import { RemoveCollectionPopupComponent } from './../../shared/components/remove-collection-popup/remove-collection-popup.component';
 import { AddDmosPopupComponent } from './add-dmos-popup/add-dmos-popup.component';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
@@ -5,7 +6,7 @@ import { CollectionsManagerService } from './../../shared/services/collections-m
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Toastr } from './../../shared/services/toastr.service';
 import { DmoCollectionDto, DmoShortDto, DmoCollectionShortDto, AddDmosToCollectionDto,
-   DmosIdDto, ShortDmoCollectionDto, DmoShorterDto } from './../models';
+   DmosIdDto, ShortDmoCollectionDto, DmoShorterDto, LeftMenuTabs } from './../models';
 import { Component, OnInit, ViewChild, OnDestroy, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
@@ -46,7 +47,8 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     public matModule: MatDialog,
     private toastr: Toastr,
     private router: Router,
-    private collectionManager: CollectionsManagerService) { }
+    private collectionManager: CollectionsManagerService,
+    private currentSidebarService: CurrentSidebarService) { }
 
   ngOnInit() {
     this.editCollectionNameForm = new FormGroup({
@@ -215,7 +217,12 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
     }
   }
 
+  resetSelected() {
+    this.selectedDmoInCollection = null;
+  }
+
   private redirectToDashboard() {
+    this.currentSidebarService.setMenu(LeftMenuTabs.dashboard);
     this.collectionManager.setCollectionId('');
     this.router.navigateByUrl('/');
   }

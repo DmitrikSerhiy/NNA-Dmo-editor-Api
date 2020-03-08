@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using API.DTO.DmoCollections;
+﻿using API.DTO.DmoCollections;
+using API.DTO.Dmos;
 using API.Helpers;
 using API.Infrastructure.Authentication;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Model;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace API.Controllers {
+namespace API.Controllers
+{
 
     [Route("api/[controller]")]
     [ApiController]
@@ -41,5 +41,19 @@ namespace API.Controllers {
             return Ok(dmos.Select(_mapper.Map<DmoShortDto>).ToArray());
         }
 
+        [HttpDelete]
+        [Route("")]
+        public async Task<ActionResult<DmoShortDto[]>> RemoveDmo([FromQuery]RemoveDmoDto dto) {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            var user = await _currentUserService.GetAsync();
+
+            var dmo = await _dmosRepository.GetDmo(user.Id, dto.DmoId);
+            if (dmo == null) {
+                return NotFound();
+            }
+
+            _dmosRepository.RemoveDmo(dmo);
+            return NoContent();
+        }
     }
 }

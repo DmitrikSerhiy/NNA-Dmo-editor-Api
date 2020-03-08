@@ -2,7 +2,7 @@ import { RemoveCollectionPopupComponent } from './../../shared/components/remove
 import { DmoCollectionsService } from './../../shared/services/dmo-collections.service';
 import { CollectionsManagerService } from './../../shared/services/collections-manager.service';
 import { DmoCollectionShortDto } from './../models';
-import { NgbModal, NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 import { Toastr } from './../../shared/services/toastr.service';
 
@@ -35,9 +35,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   @ViewChild('removeCollectionModal', { static: true }) removeModal: NgbActiveModal;
   @ViewChild('collectionNameField', { static: true }) collectionNameField: ElementRef;
 
-  collectionsByDesc = false;
+  collectionsByDesc = true;
   collectionsByAcs = false;
-  byDate = true;
+  collectionsByDefault = false;
 
   constructor(
     private dmoCollectionsService: DmoCollectionsService,
@@ -68,16 +68,16 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   }
 
   sortCollections() {
-    if (this.byDate) {
-      this.byDate = false;
+    if (this.collectionsByDesc) {
+      this.collectionsByDefault = false;
       this.collectionsByAcs = true;
       this.collectionsByDesc = false;
-      this.sortedDmoLists = this.sortedDmoLists.sort(comparer);
-    } else if (this.collectionsByAcs) {
-      this.byDate = false;
-      this.collectionsByAcs = false;
-      this.collectionsByDesc = true;
       this.sortedDmoLists = this.sortedDmoLists.sort(comparer).reverse();
+    } else if (this.collectionsByAcs) {
+      this.collectionsByDefault = true;
+      this.collectionsByAcs = false;
+      this.collectionsByDesc = false;
+      this.sortedDmoLists = this.sortedDmoLists.sort(comparer);
     } else {
       this.resetCollectionsSort();
     }
@@ -161,9 +161,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   }
 
   private resetCollectionsSort() {
-    this.byDate = true;
+    this.collectionsByDefault = false;
     this.collectionsByAcs = false;
-    this.collectionsByDesc = false;
+    this.collectionsByDesc = true;
     this.sortedDmoLists = [...this.dmoLists];
   }
 
