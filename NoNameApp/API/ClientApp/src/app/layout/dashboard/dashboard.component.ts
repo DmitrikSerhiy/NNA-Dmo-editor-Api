@@ -12,9 +12,7 @@ export class DashboardComponent implements OnInit {
   constructor(private rightMenuGrabberService: RightMenuGrabberService) { }
 
   ngOnInit() {
-    // console.log(this.rightMenuGrabberService.isGrabbershouldBeShowen());
     this.rightMenuGrabberService.hideGrabber();
-    // console.log(this.rightMenuGrabberService.isGrabbershouldBeShowen());
   }
 
 }

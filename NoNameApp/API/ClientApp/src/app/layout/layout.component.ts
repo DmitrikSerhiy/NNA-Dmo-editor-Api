@@ -19,7 +19,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     currentMenuName: string;
     currentUserFriendlyMenuName: string;
     rightMenuIsClosing$: Observable<void>;
-    shouldShowGrabber: boolean;
 
     constructor(
         private collectionService: CollectionsManagerService,
@@ -64,8 +63,6 @@ export class LayoutComponent implements OnInit, AfterViewInit {
             this.rightMenuGrabberService.hideGrabber();
             this.collectionService.setCollectionId('');
         }
-
-        this.shouldShowGrabber = this.rightMenuGrabberService.isGrabbershouldBeShowen();
     }
 
     oppenedByGrabber($event) {
