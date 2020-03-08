@@ -1,1 +1,51 @@
-<p id='dmo-component'>dmos works!</p>
+<div class="dmos-page">
+
+
+    <div [hidden]="!shouldShowDmosTable || dmosCount == 0" class='dmos-table-wrapper'>
+
+        <table mat-table [dataSource]="dmosTable" #dmosSorter="matSort" matSort>
+
+            <ng-container matColumnDef="id">
+                <th mat-header-cell *matHeaderCellDef class="hoverable-element"> </th>
+                <td mat-cell class="table-cell" *matCellDef="let row"> {{row.id}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="movieTitle">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="movieTitle"
+                    class="hoverable-element column-header"> Movie title </th>
+                <td mat-cell class="table-cell" *matCellDef="let row"> {{row.movieTitle}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="name">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="name" class="hoverable-element column-header">
+                    DMO name </th>
+                <td mat-cell class="table-cell" *matCellDef="let row"> {{row.name}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="dmoStatus">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="dmoStatus"
+                    class="hoverable-element column-header"> Status </th>
+                <td mat-cell class="table-cell" *matCellDef="let row"> {{row.dmoStatus}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="shortComment">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="shortComment"
+                    class="hoverable-element column-header"> Comment </th>
+                <td mat-cell class="table-cell" *matCellDef="let row"> {{row.shortComment}} </td>
+            </ng-container>
+
+            <ng-container matColumnDef="mark">
+                <th mat-header-cell *matHeaderCellDef mat-sort-header="mark" class="hoverable-element column-header">
+                    Rating </th>
+                <td mat-cell class="table-cell" *matCellDef="let row"> {{row.mark}} </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="dmosTableColumns"></tr>
+            <tr mat-row class="hoverable-element" *matRowDef="let row; columns: dmosTableColumns;"
+                [class.clicked-row]="selectedDmo == row" (click)="onRowSelect(row)">
+            </tr>
+        </table>
+
+        <mat-paginator #dmosPaginator [length]="dmosCount" [pageSize]="15" showFirstLastButtons></mat-paginator>
+    </div>
+</div>

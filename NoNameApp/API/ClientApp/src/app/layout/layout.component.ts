@@ -1,3 +1,4 @@
+import { CurrentSidebarService } from './../shared/services/current-sidebar.service';
 import { CollectionsManagerService } from './../shared/services/collections-manager.service';
 import { Observable } from 'rxjs';
 import { RightMenues } from './models';
@@ -19,7 +20,9 @@ export class LayoutComponent implements OnInit, AfterViewInit {
     rightMenuIsClosing$: Observable<void>;
     shouldShowGrabber = false;
 
-    constructor(private collectionService: CollectionsManagerService) { }
+    constructor(
+        private collectionService: CollectionsManagerService,
+        private currestSidebarService: CurrentSidebarService) { }
 
     ngOnInit() { }
 
@@ -31,6 +34,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
         if (!this.collectionService.getCurrentCollectionId()) {
             this.collectionService.setCollectionId('');
             this.resetMenues();
+            this.currestSidebarService.setPrevious();
         }
     }
 

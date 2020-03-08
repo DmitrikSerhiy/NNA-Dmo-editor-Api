@@ -1,16 +1,17 @@
 <nav class="sidebar" [ngClass]="{sidebarPushRight: isActive, collapsed: collapsed}">
     <div class="list-group">
-        <a id="dashboard-tab" [routerLink]="['/dashboard']" [routerLinkActive]="['router-link-active']" (click)="sendDashboardEvent($event)" class="list-group-item">
+        <!-- Id should be the same as LeftMenuTab -->
+        <a id="dashboard-tab" [routerLink]="['/dashboard']" [routerLinkActive]="['router-link-active']" (click)="sendDashboardEvent()" class="list-group-item">
             <i class="fa fa-home"></i>&nbsp;
             <span>{{ 'Dashboard' }}</span>
         </a>
 
-        <a *ngIf="isAuthorized" id="dmoCollections-tab" (click)="sendDmoCollectionsEvent($event)" class="list-group-item">
+        <a id="dmoCollections-tab" *ngIf="isAuthorized" id="dmoCollections-tab" (click)="sendDmoCollectionsEvent()" class="list-group-item">
             <i class="fa fa-list"></i>&nbsp;
             <span>{{ 'DMO collections' }}</span>
         </a>
 
-        <a *ngIf="isAuthorized" id="dmos-tab" [routerLink]="['/dmos']" [routerLinkActive]="['router-link-active']" (click)="sendDmosEvent($event)" class="list-group-item">
+        <a id="dmos-tab" *ngIf="isAuthorized" id="dmos-tab" [routerLink]="['/dmos']" [routerLinkActive]="['router-link-active']" (click)="sendDmosEvent()" class="list-group-item">
             <i class="fa fa-sitemap"></i>&nbsp;
             <span>{{ 'DMOs' }}</span>
         </a>

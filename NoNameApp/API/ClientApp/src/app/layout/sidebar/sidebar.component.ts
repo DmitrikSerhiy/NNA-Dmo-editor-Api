@@ -1,3 +1,5 @@
+import { LeftMenuTabs } from './../models';
+import { CurrentSidebarService } from './../../shared/services/current-sidebar.service';
 import { RightMenues } from '../models';
 import { Component, OnInit, Output, EventEmitter, Renderer2 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
@@ -13,6 +15,7 @@ export class SidebarComponent implements OnInit {
   collapsed: boolean;
   showMenu: string;
   pushRightClass: string;
+  selectedMenu: string;
 
   @Output() collapsedEvent = new EventEmitter<boolean>();
   @Output() toggleRightMenu = new EventEmitter<RightMenues>();
@@ -21,7 +24,7 @@ export class SidebarComponent implements OnInit {
   constructor(
     public router: Router,
     public userManager: UserManager,
-    private render2: Renderer2) {
+    private currestSidebarService: CurrentSidebarService) {
     this.isAuthorized = userManager.isAuthorized();
     this.router.events.subscribe(val => {
       if (
@@ -40,6 +43,10 @@ export class SidebarComponent implements OnInit {
     this.showMenu = '';
     this.pushRightClass = 'push-right';
     this.router.navigateByUrl('/');
+
+    this.currestSidebarService.currentMenuSource$.subscribe({
+      next: (menu) => {this.selectedMenu = menu; }
+  });
   }
 
   eventCalled() {
@@ -69,28 +76,18 @@ export class SidebarComponent implements OnInit {
     dom.classList.toggle(this.pushRightClass);
   }
 
-  sendDmoCollectionsEvent($event) {
-    this.setSelected($event);
+  sendDmoCollectionsEvent() {
+    this.currestSidebarService.setMenu(LeftMenuTabs.dmoCollections);
     this.toggleRightMenu.emit(RightMenues.dmoCollections);
   }
 
-  sendDmosEvent($event) {
-    this.setSelected($event);
+  sendDmosEvent() {
+    this.currestSidebarService.setMenu(LeftMenuTabs.dmos);
     this.toggleRightMenu.emit(RightMenues.dmos);
   }
 
-  sendDashboardEvent($event) {
-    this.setSelected($event);
+  sendDashboardEvent() {
+    this.currestSidebarService.setMenu(LeftMenuTabs.dashboard);
     this.toggleRightMenu.emit(RightMenues.dashboard);
-  }
-
-  setSelected($event) {
-    const previouslySelected = this.render2.selectRootElement('.router-link-active', true);
-    this.render2.removeClass(previouslySelected, 'router-link-active');
-    const selected = $event.target.parentNode.localName === 'a'
-      ? this.render2.selectRootElement(`#${$event.target.parentNode.id}`, true)
-      : this.render2.selectRootElement(`#${$event.target.id}`, true);
-
-      this.render2.addClass(selected, 'router-link-active');
   }
 }

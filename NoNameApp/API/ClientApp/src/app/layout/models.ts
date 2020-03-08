@@ -4,6 +4,12 @@ export enum RightMenues {
     dmos = 'dmos'
 }
 
+export enum LeftMenuTabs {
+    dashboard = 'dashboard',
+    dmoCollections = 'dmoCollections',
+    dmos = 'dmos'
+}
+
 export class DmoCollectionShortDto {
     id: string;
     dmoCount: number;
