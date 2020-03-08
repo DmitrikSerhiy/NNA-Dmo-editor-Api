@@ -10,8 +10,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Controllers
-{
+namespace API.Controllers {
 
     [Route("api/[controller]")]
     [ApiController]
@@ -47,13 +46,27 @@ namespace API.Controllers
             if (dto == null) throw new ArgumentNullException(nameof(dto));
             var user = await _currentUserService.GetAsync();
 
-            var dmo = await _dmosRepository.GetDmo(user.Id, dto.DmoId);
+            var dmo = await _dmosRepository.GetShortDmo(user.Id, dto.DmoId);
             if (dmo == null) {
                 return NotFound();
             }
 
             _dmosRepository.RemoveDmo(dmo);
             return NoContent();
+        }
+
+        [HttpGet]
+        [Route("editor")]
+        public async Task<ActionResult<DmoDto>> GetDmo([FromQuery]GetDmoDto dto) {
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            var user = await _currentUserService.GetAsync();
+
+            var dmo = await _dmosRepository.GetDmo(user.Id, dto.DmoId);
+            if (dmo == null) {
+                return NotFound();
+            }
+
+            return Ok(_mapper.Map<DmoDto>(dmo));
         }
     }
 }

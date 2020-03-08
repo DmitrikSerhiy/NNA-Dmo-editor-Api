@@ -2,18 +2,23 @@
     <div class="list-group">
         <!-- Id should be the same as LeftMenuTab -->
         <a id="dashboard-tab" [routerLink]="['/dashboard']" [routerLinkActive]="['router-link-active']" (click)="sendDashboardEvent()" class="list-group-item">
-            <i class="fa fa-home"></i>&nbsp;
+            <i class="fa fa-home" aria-hidden="true"></i>&nbsp;
             <span>{{ 'Dashboard' }}</span>
         </a>
 
-        <a id="dmoCollections-tab" *ngIf="isAuthorized" id="dmoCollections-tab" (click)="sendDmoCollectionsEvent()" class="list-group-item">
-            <i class="fa fa-list"></i>&nbsp;
+        <a *ngIf="isAuthorized" id="dmoCollections-tab" (click)="sendDmoCollectionsEvent()" class="list-group-item">
+            <i class="fa fa-list" aria-hidden="true"></i>&nbsp;
             <span>{{ 'DMO collections' }}</span>
         </a>
 
-        <a id="dmos-tab" *ngIf="isAuthorized" id="dmos-tab" [routerLink]="['/dmos']" [routerLinkActive]="['router-link-active']" (click)="sendDmosEvent()" class="list-group-item">
-            <i class="fa fa-sitemap"></i>&nbsp;
+        <a *ngIf="isAuthorized" id="dmos-tab" [routerLink]="['/dmos']" [routerLinkActive]="['router-link-active']" (click)="sendDmosEvent()" class="list-group-item">
+            <i class="fa fa-sitemap" aria-hidden="true"></i>&nbsp;
             <span>{{ 'DMOs' }}</span>
+        </a>
+
+        <a *ngIf="isAuthorized" id="dmo-tab" [routerLink]="['/dmo']" [routerLinkActive]="['router-link-active']" (click)="sendDmoEvent()" class="list-group-item">
+            <i class="fa fa-plus" aria-hidden="true"></i>&nbsp;
+            <span>{{ 'Create DMO' }}</span>
         </a>
 
     </div>

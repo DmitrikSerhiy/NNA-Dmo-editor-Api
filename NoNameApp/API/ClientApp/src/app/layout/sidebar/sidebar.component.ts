@@ -1,4 +1,4 @@
-import { LeftMenuTabs } from './../models';
+import { SidebarTabs } from './../models';
 import { CurrentSidebarService } from './../../shared/services/current-sidebar.service';
 import { RightMenues } from '../models';
 import { Component, OnInit, Output, EventEmitter, Renderer2 } from '@angular/core';
@@ -74,17 +74,22 @@ export class SidebarComponent implements OnInit {
   }
 
   sendDmoCollectionsEvent() {
-    this.currestSidebarService.setMenu(LeftMenuTabs.dmoCollections);
+    this.currestSidebarService.setMenu(SidebarTabs.dmoCollections);
     this.toggleRightMenu.emit(RightMenues.dmoCollections);
   }
 
   sendDmosEvent() {
-    this.currestSidebarService.setMenu(LeftMenuTabs.dmos);
+    this.currestSidebarService.setMenu(SidebarTabs.dmos);
     this.toggleRightMenu.emit(RightMenues.dmos);
   }
 
   sendDashboardEvent() {
-    this.currestSidebarService.setMenu(LeftMenuTabs.dashboard);
+    this.currestSidebarService.setMenu(SidebarTabs.dashboard);
     this.toggleRightMenu.emit(RightMenues.dashboard);
+  }
+
+  sendDmoEvent() {
+    this.currestSidebarService.setMenu(SidebarTabs.dmo);
+    this.toggleRightMenu.emit(RightMenues.dmo);
   }
 }

@@ -4,7 +4,7 @@ import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { Toastr } from './../../shared/services/toastr.service';
 import { DmoShortDto } from './../models';
-import { DmosService } from './dmos.service';
+import { DmosService } from '../../shared/services/dmos.service';
 import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { MatSort } from '@angular/material/sort';
 import { MatDialog } from '@angular/material/dialog';
@@ -56,7 +56,7 @@ export class DmosComponent implements OnInit, OnDestroy {
           if (!shouldDelete) {
             return;
           }
-          const deleteDMO$ = this.dmosService.deleteDMO(this.selectedDmo.id);
+          const deleteDMO$ = this.dmosService.deleteDmo(this.selectedDmo.id);
 
           const deleteAndReload$ = deleteDMO$.pipe(
             catchError((err) => throwError(err) ),

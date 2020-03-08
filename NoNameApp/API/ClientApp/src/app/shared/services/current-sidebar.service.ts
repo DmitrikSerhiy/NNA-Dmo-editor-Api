@@ -1,4 +1,4 @@
-import { RightMenues, LeftMenuTabs } from './../../layout/models';
+import { RightMenues, SidebarTabs } from './../../layout/models';
 import { BehaviorSubject } from 'rxjs';
 import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 
@@ -8,8 +8,8 @@ import { Injectable, Renderer2, RendererFactory2 } from '@angular/core';
 export class CurrentSidebarService {
   private renderer: Renderer2;
 
-  private currentTab: LeftMenuTabs;
-  private previousTab: LeftMenuTabs;
+  private currentTab: SidebarTabs;
+  private previousTab: SidebarTabs;
 
   private currentMenuSource = new BehaviorSubject('');
   currentMenuSource$ = this.currentMenuSource.asObservable();
@@ -19,8 +19,8 @@ export class CurrentSidebarService {
     this.renderer = rendererFactory.createRenderer(null, null);
    }
 
-  setMenu(tab: LeftMenuTabs) {
-    this.previousTab = this.currentTab ? this.currentTab : LeftMenuTabs.dashboard;
+  setMenu(tab: SidebarTabs) {
+    this.previousTab = this.currentTab ? this.currentTab : SidebarTabs.dashboard;
     this.currentTab = tab;
     this.setSelectedStyle(this.currentTab);
     this.currentMenuSource.next(this.currentTab);
@@ -35,15 +35,15 @@ export class CurrentSidebarService {
     this.previousTab = menu;
   }
 
-  private setSelectedStyle(sideBarTab: LeftMenuTabs) {
+  private setSelectedStyle(sideBarTab: SidebarTabs) {
     this.clearTabs();
     const selectedTab = this.renderer.selectRootElement(`#${sideBarTab.toString()}-tab`, true);
     this.renderer.addClass(selectedTab, 'router-link-active');
   }
 
   private clearTabs() {
-    Object.keys(LeftMenuTabs).forEach(leftMenuTab => {
-      const selectedTab = this.renderer.selectRootElement(`#${leftMenuTab.toString()}-tab`, true);
+    Object.keys(SidebarTabs).forEach(sideBarTab => {
+      const selectedTab = this.renderer.selectRootElement(`#${sideBarTab.toString()}-tab`, true);
       this.renderer.removeClass(selectedTab, 'router-link-active');
     });
   }

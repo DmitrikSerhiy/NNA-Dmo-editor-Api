@@ -1,13 +1,15 @@
 export enum RightMenues {
     dashboard = 'dashboard',
     dmoCollections = 'dmoCollections',
-    dmos = 'dmos'
+    dmos = 'dmos',
+    dmo = 'dmo'
 }
 
-export enum LeftMenuTabs {
+export enum SidebarTabs {
     dashboard = 'dashboard',
     dmoCollections = 'dmoCollections',
-    dmos = 'dmos'
+    dmos = 'dmos',
+    dmo = 'dmo'
 }
 
 export class DmoCollectionShortDto {
@@ -17,6 +19,16 @@ export class DmoCollectionShortDto {
 }
 
 export class DmoShortDto {
+    id: string;
+    name: string;
+    movieTitle: string;
+    dmoStatus: string;
+    dmoStatusId: number;
+    shortComment: string;
+    mark: number;
+}
+
+export class DmoDto {
     id: string;
     name: string;
     movieTitle: string;

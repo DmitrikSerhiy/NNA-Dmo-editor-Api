@@ -57,9 +57,9 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
     });
 
     this.collectionManager.currentCollectionObserver
-      .subscribe(col => { this.oppenedCollectionId = col; this.loadCollections(); });
+      .subscribe(col => { this.oppenedCollectionId = col; });
 
-    this.loadCollections();
+      this.loadCollections();
   }
 
   ngOnDestroy(): void {
@@ -170,6 +170,7 @@ export class DmoCollectionsComponent implements OnInit, OnDestroy {
   private loadCollections() {
     this.showLoader();
     this.dmoCollectionsService.getCollections()
+      .pipe(takeUntil(this.unsubscribe$))
       .subscribe(
         (response: DmoCollectionShortDto[]) => {
           this.dmoLists = response;

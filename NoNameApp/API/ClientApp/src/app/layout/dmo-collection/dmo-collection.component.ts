@@ -6,7 +6,7 @@ import { CollectionsManagerService } from './../../shared/services/collections-m
 import { FormGroup, FormControl, Validators } from '@angular/forms';
 import { Toastr } from './../../shared/services/toastr.service';
 import { DmoCollectionDto, DmoShortDto, DmoCollectionShortDto, AddDmosToCollectionDto,
-   DmosIdDto, ShortDmoCollectionDto, DmoShorterDto, LeftMenuTabs } from './../models';
+   DmosIdDto, ShortDmoCollectionDto, DmoShorterDto, SidebarTabs } from './../models';
 import { Component, OnInit, ViewChild, OnDestroy, ElementRef } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { MatTableDataSource } from '@angular/material/table';
@@ -222,7 +222,7 @@ export class DmoCollectionComponent implements OnInit, OnDestroy {
   }
 
   private redirectToDashboard() {
-    this.currentSidebarService.setMenu(LeftMenuTabs.dashboard);
+    this.currentSidebarService.setMenu(SidebarTabs.dashboard);
     this.collectionManager.setCollectionId('');
     this.router.navigateByUrl('/');
   }
