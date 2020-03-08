@@ -25,9 +25,7 @@ export class LayoutComponent implements OnInit, AfterViewInit {
         private currestSidebarService: CurrentSidebarService,
         private rightMenuGrabberService: RightMenuGrabberService) { }
 
-    ngOnInit() {
-        this.rightMenuGrabberService.shouldShowGrabber$.subscribe();
-    }
+    ngOnInit() { }
 
     ngAfterViewInit(): void {
         this.rightMenuIsClosing$ = this.rightMenu.closedStart;

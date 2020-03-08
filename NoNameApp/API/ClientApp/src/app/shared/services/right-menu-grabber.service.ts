@@ -11,16 +11,16 @@ export class RightMenuGrabberService {
   shouldShowGrabber$ = this.shouldShowGrabberSource.asObservable();
 
   showGrabber() {
-    this.shouldShowGrabberSource.next(true);
     this.shouldShowGrabber = true;
+    this.shouldShowGrabberSource.next(true);
   }
 
   hideGrabber() {
-    this.shouldShowGrabberSource.next(false);
     this.shouldShowGrabber = false;
+    this.shouldShowGrabberSource.next(false);
   }
 
-  isGrabbershouldBeShowen() {
+  isGrabbershouldBeShown() {
     return this.shouldShowGrabber;
   }
 

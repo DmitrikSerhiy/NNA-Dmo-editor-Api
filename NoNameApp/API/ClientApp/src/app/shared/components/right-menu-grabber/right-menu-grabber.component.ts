@@ -12,12 +12,15 @@ export class RightMenuGrabberComponent implements OnInit {
   @Input() menuName: RightMenues;
   @Input() userFriendlyMenuName: string;
   @Output() toggleMenu = new EventEmitter<string>();
-  shouldbeShowen: boolean;
+  shouldbeShown: boolean;
 
-  constructor(private rightMenuGrabberService: RightMenuGrabberService) { }
+  constructor(
+    private rightMenuGrabberService: RightMenuGrabberService) { }
 
   ngOnInit() {
-    this.shouldbeShowen = this.rightMenuGrabberService.isGrabbershouldBeShowen();
+    this.rightMenuGrabberService.shouldShowGrabber$.subscribe({
+      next: () => this.shouldbeShown = this.rightMenuGrabberService.isGrabbershouldBeShown()
+    });
   }
 
   toggleRightMenu() {
