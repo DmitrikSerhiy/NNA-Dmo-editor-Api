@@ -1,5 +1,4 @@
 ﻿using System;
-using API.Helpers;
 using API.Infrastructure;
 using API.Infrastructure.Authentication;
 using Autofac;
@@ -9,8 +8,6 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -87,12 +84,11 @@ namespace API {
                     //add other filters later
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
-               // .AddJsonOptions(options => options.JsonSerializerOptions.AllowTrailingCommas = true);
 
             // In production, the Angular files will be served from this directory
-            services.AddSpaStaticFiles(configuration => {
-                configuration.RootPath = "ClientApp/dist";
-            });
+            //services.AddSpaStaticFiles(configuration => {
+            //    configuration.RootPath = "ClientApp/dist";
+            //});
 
 
             var builder = new ContainerBuilder();
@@ -130,18 +126,6 @@ namespace API {
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
             });
-
-            //uncomment to start client with server
-            //app.UseSpa(spa => {
-            //    // To learn more about options for serving an Angular SPA from ASP.NET Core,
-            //    // see https://go.microsoft.com/fwlink/?linkid=864501
-
-            //    spa.Options.SourcePath = "ClientApp";
-
-            //    if (env.IsDevelopment()) {
-            //        spa.UseAngularCliServer(npmScript: "start");
-            //    }
-            //});
         }
     }
 }
