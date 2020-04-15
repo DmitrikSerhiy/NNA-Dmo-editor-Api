@@ -68,7 +68,7 @@ namespace API {
                 });
 
             services.AddCors(o => {
-                o.AddPolicy("angularClient", policyBuilder => {
+                o.AddPolicy(angularClientOrigin, policyBuilder => {
                     policyBuilder.WithOrigins("http://localhost:4200");
                     policyBuilder.AllowAnyMethod();
                     policyBuilder.AllowAnyHeader();
@@ -110,12 +110,9 @@ namespace API {
             
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-            if (!env.IsDevelopment()) {
-                app.UseSpaStaticFiles();
-            }
 
             app.UseRouting();
-            app.UseCors("angularClient");
+            app.UseCors(angularClientOrigin);
 
             app.UseAuthentication();
             app.UseAuthorization();
