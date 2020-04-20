@@ -1,5 +1,4 @@
-﻿using System;
-using API.Infrastructure;
+﻿using API.Infrastructure;
 using API.Infrastructure.Authentication;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
@@ -11,23 +10,32 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
-using Model;
 using Model.Entities;
 using Persistence;
+using System;
+using Microsoft.Extensions.Logging;
 
-namespace API {
+namespace API
+{
     public class Startup {
 
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
         private readonly string angularClientOrigin = "angularClient";
-        public Startup(IConfiguration configuration) {
-            Configuration = configuration;
+        public Startup(IHostingEnvironment env) {
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", true, true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true)
+                .AddEnvironmentVariables();
+            _configuration = builder.Build();
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services) {
-            var connectionString = Configuration.GetConnectionString("DefaultConnection");
+            //var connectionString =
+            //    "Server=nna-dev.c2lvxmxgqxkc.eu-central-1.rds.amazonaws.com;Port=3306;Database=nnaDevDB;Uid=superadmin;Pwd=1q2w3eazsxdc";
+
+            var connectionString = _configuration.GetConnectionString("DefaultConnection");
             services.AddDbContext<NoNameContext>(options => {
                 options.UseMySql(connectionString, mySqlOptions => {
                     mySqlOptions.EnableRetryOnFailure(1);
@@ -81,15 +89,8 @@ namespace API {
                 .AddControllersWithViews(options => {
                     options.Filters.Add(typeof(ExceptionFilter));
                     options.Filters.Add(typeof(TransactionFilter));
-                    //add other filters later
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
-
-            // In production, the Angular files will be served from this directory
-            //services.AddSpaStaticFiles(configuration => {
-            //    configuration.RootPath = "ClientApp/dist";
-            //});
-
 
             var builder = new ContainerBuilder();
             builder.Populate(services);
@@ -100,16 +101,9 @@ namespace API {
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-            if (env.IsDevelopment()) {
-                app.UseDeveloperExceptionPage();
-            } else if(env.IsEnvironment("QA")) {
-                app.UseExceptionHandler("/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
-            
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
+            app.UseDeveloperExceptionPage();
+            //app.UseHttpsRedirection();
+            //app.UseHsts();
 
             app.UseRouting();
             app.UseCors(angularClientOrigin);

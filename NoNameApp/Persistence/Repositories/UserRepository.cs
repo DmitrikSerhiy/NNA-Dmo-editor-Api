@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Model;
 using Model.Entities;
 
@@ -15,6 +17,9 @@ namespace Persistence.Repositories {
             _context = unitOfWork.Context;
         }
 
+        public async Task<NoNameUser> FirstUser() {
+            return await _context.ApplicationUsers.FirstAsync();
+        }
         public async Task<NoNameUser> WithId(Guid id) {
             return await _context.ApplicationUsers.FindAsync(id);
         }
