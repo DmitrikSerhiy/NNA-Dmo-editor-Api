@@ -1,13 +1,12 @@
-﻿using API.Controllers;
-using API.Infrastructure.Authentication;
+﻿using API.Infrastructure.Authentication;
 using Autofac;
 using Autofac.Features.ResolveAnything;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Model;
 using Persistence;
 
-namespace API.Infrastructure {
+namespace API.Infrastructure
+{
     public class AutofacModule : Module {
         public AutofacModule() { }
         protected override void Load(ContainerBuilder builder) {
