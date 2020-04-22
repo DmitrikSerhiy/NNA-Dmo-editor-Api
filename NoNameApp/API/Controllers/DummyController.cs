@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model;
+using Serilog;
 
 namespace API.Controllers {
     [Route("api/[controller]")]
@@ -18,6 +19,7 @@ namespace API.Controllers {
         [HttpGet]
         [Route("")]
         public ActionResult<string> Hello() {
+            Log.Information("hello there");
             return Ok("Hello from dummy");
         }
 
