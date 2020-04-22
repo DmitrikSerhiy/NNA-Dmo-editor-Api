@@ -8,9 +8,8 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Serilog;
 using System;
-using System.Linq;
+using Serilog;
 
 namespace API
 {
@@ -33,19 +32,7 @@ namespace API
         public IServiceProvider ConfigureServices(IServiceCollection services) {
             var builder = new ContainerBuilder();
             services.AddLoggerOptions(_environment, _configuration);
-            Log.Information("Some random shit once again");
-            var connectionString =
-                "Server=nna-dev.c2lvxmxgqxkc.eu-central-1.rds.amazonaws.com;Port=3306;Database=nnaDevDB;Uid=superadmin;Pwd=1q2w3eazsxdc";
-            
-            var cs3 = _configuration.GetSection("ConnectionStrings")["DefaultConnection"];
-
-            //var cs1 = _configuration.GetConnectionString("DefaultConnection");
-            //var cs2 = _configuration.GetChildren().FirstOrDefault(c => c["ConnectionStrings"] == "DefaultConnection");
-
-            Log.Warning(cs3);
-            //Log.Warning(cs2);
-
-            services.AddDbOptions(connectionString);
+            services.AddDbOptions(_configuration);
             services.AddAuthenticationOptions();
             services.AddCors(o => {
                 o.AddPolicy(angularClientOrigin, policyBuilder => {
@@ -57,11 +44,10 @@ namespace API
             services.AddAutoMapper(typeof(Startup));
             services.AddMvcAndFilters();
 
-            
+
             builder.Populate(services);
             builder.RegisterModule(new AutofacModule());
             var applicationContainer = builder.Build();
-
             return new AutofacServiceProvider(applicationContainer);
         }
 

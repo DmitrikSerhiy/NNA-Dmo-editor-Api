@@ -6,6 +6,13 @@
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)' == '' Or '$(Configuration)' == 'Debug'">
+    <EnvironmentName>Development</EnvironmentName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' != '' AND '$(Configuration)' != 'Debug' ">
+    <EnvironmentName>QA</EnvironmentName>
+  </PropertyGroup>
+
   <ItemGroup>
     <Compile Remove="Services\**" />
     <Compile Remove="wwwroot\**" />
