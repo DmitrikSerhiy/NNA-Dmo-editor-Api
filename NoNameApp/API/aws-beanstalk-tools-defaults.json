@@ -1,10 +1,10 @@
 
 {
     "comment" : "This file is used to help set default values when using the dotnet CLI extension Amazon.ElasticBeanstalk.Tools. For more information run \"dotnet eb --help\" from the project root.",
-    "profile" : "nna-profile",
+    "profile" : "SuperUser",
     "region"  : "eu-central-1",
     "application" : "nna-api",
-    "environment" : "nna-api-dev",
+    "environment" : "nna-api-qa",
     "cname"       : "nna-api-dev",
     "solution-stack" : "64bit Windows Server 2016 v2.5.2 running IIS 10.0",
     "environment-type" : "SingleInstance",
