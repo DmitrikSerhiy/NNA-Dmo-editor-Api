@@ -10,4 +10,4 @@ phases:
       - dotnet publish -c release -o ./build_output NoNameApp/API/API.csproj
 artifacts:
   files:
-    - .\bin\Debug\netcoreapp3.1\*
+    - NoNameApp/API/bin/**/*
