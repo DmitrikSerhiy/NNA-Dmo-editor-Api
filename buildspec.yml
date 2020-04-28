@@ -8,3 +8,6 @@ phases:
   build:
     commands:
       - dotnet publish -c release -o ./build_output NoNameApp/API/API.csproj
+artifacts:
+  files:
+    - **/*
