@@ -6,7 +6,7 @@ phases:
       - dotnet restore NoNameApp/API/API.csproj
       - dotnet build NoNameApp/API/API.csproj
       - dotnet publish -c release -o ./build_output NoNameApp/API/API.csproj
-      - cp ./awsConfig/aws-windows-deployment-manifest.json ./build_output.
+      - cp aws-windows-deployment-manifest.json ./build_output.
 artifacts:
   files:
     - '/**/*'
