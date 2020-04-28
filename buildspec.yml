@@ -10,7 +10,7 @@ phases:
       - dotnet publish -c release -o ./build_output NoNameApp/API/API.csproj
   post_build:
     commands:
-      - cp aws-windows-deployment-manifest.json ./build_output.
+      - cp ./NoNameApp/aws-windows-deployment-manifest.json ./build_output.
 artifacts:
   files:
     - '**/*'
