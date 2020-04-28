@@ -1,14 +1,13 @@
 version: 0.2
 
 phases:
-  pre_build:
+  build:
     commands:
       - dotnet restore NoNameApp/API/API.csproj
       - dotnet build NoNameApp/API/API.csproj
-  build:
-    commands:
       - dotnet publish -c release -o ./build_output NoNameApp/API/API.csproj
+      - cp ./awsConfig/aws-windows-deployment-manifest.json ./build_output.
 artifacts:
   files:
-    - '**/*'
+    - '/**/*'
   base-directory: build_output
