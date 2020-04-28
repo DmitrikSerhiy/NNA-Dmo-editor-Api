@@ -1,10 +1,13 @@
 version: 0.2
 
 phases:
-  build:
+  pre_build:
     commands:
       - dotnet restore NoNameApp/API/API.csproj
       - dotnet build NoNameApp/API/API.csproj
+  build:
+    commands:
+      - dotnet publish -c release -o ./build_output NoNameApp/API/API.csproj
 artifacts:
   files:
     - .\bin\Debug\netcoreapp3.1\*
