@@ -35,7 +35,7 @@ namespace API
             services.AddAuthenticationOptions();
             services.AddCors(o => {
                 o.AddPolicy(angularClientOrigin, policyBuilder => {
-                    policyBuilder.WithOrigins("http://localhost:4200");
+                    policyBuilder.WithOrigins("http://localhost:4200", "http://nna-front-bucket1.s3-website.eu-central-1.amazonaws.com");
                     policyBuilder.AllowAnyMethod();
                     policyBuilder.AllowAnyHeader();
                 });
