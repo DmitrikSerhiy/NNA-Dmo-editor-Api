@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using API.Hubs;
 
 namespace API
 {
@@ -43,6 +44,11 @@ namespace API
             services.AddAutoMapper(typeof(Startup));
             services.AddMvcAndFilters();
 
+            services.AddSignalR().AddHubOptions<EditorHub>(o => {
+                o.EnableDetailedErrors = true;
+                o.KeepAliveInterval = TimeSpan.FromMinutes(1);
+            });
+
 
             builder.Populate(services);
             builder.RegisterModule(new AutofacModule());
@@ -55,8 +61,9 @@ namespace API
             //app.UseHttpsRedirection();
             //app.UseHsts();
 
-            app.UseRouting();
+
             app.UseCors(angularClientOrigin);
+            app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -66,6 +73,10 @@ namespace API
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapHub<EditorHub>("/api/editor", o => {
+                    o.ApplicationMaxBufferSize = 64;
+                    o.TransportMaxBufferSize = 64;
+                });
             });
         }
     }
