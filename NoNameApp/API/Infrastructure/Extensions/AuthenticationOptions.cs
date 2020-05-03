@@ -45,11 +45,13 @@ namespace API.Infrastructure.Extensions {
                     };
                     options.Events = new JwtBearerEvents
                     {
-                        OnMessageReceived = context => {
+                        OnMessageReceived = context =>
+                        {
                             var accessToken = context.Request.Query["access_token"];
                             var path = context.HttpContext.Request.Path;
 
-                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/api/editor"))) {
+                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/api/editor")))
+                            {
                                 context.Token = accessToken;
                             }
 

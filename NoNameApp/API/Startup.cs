@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using API.Hubs;
+using Microsoft.AspNetCore.Http.Connections;
 
 namespace API
 {
@@ -33,22 +34,20 @@ namespace API
             var builder = new ContainerBuilder();
             services.AddLoggerOptions(_environment, _configuration);
             services.AddDbOptions(_configuration);
-            services.AddAuthenticationOptions();
             services.AddCors(o => {
                 o.AddPolicy(angularClientOrigin, policyBuilder => {
                     policyBuilder.WithOrigins("http://localhost:4200", "http://nna-front-bucket1.s3-website.eu-central-1.amazonaws.com");
                     policyBuilder.AllowAnyMethod();
                     policyBuilder.AllowAnyHeader();
+                    policyBuilder.AllowCredentials();
                 });
+            });
+            services.AddAuthenticationOptions();
+            services.AddSignalR().AddHubOptions<EditorHub>(o => {
+                o.EnableDetailedErrors = true;
             });
             services.AddAutoMapper(typeof(Startup));
             services.AddMvcAndFilters();
-
-            services.AddSignalR().AddHubOptions<EditorHub>(o => {
-                o.EnableDetailedErrors = true;
-                o.KeepAliveInterval = TimeSpan.FromMinutes(1);
-            });
-
 
             builder.Populate(services);
             builder.RegisterModule(new AutofacModule());
@@ -61,9 +60,8 @@ namespace API
             //app.UseHttpsRedirection();
             //app.UseHsts();
 
-
-            app.UseCors(angularClientOrigin);
             app.UseRouting();
+            app.UseCors(angularClientOrigin);
 
             app.UseAuthentication();
             app.UseAuthorization();
@@ -73,9 +71,9 @@ namespace API
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<EditorHub>("/api/editor", o => {
-                    o.ApplicationMaxBufferSize = 64;
-                    o.TransportMaxBufferSize = 64;
+                endpoints.MapHub<EditorHub>("api/editor", o => {
+                    o.Transports = HttpTransportType.WebSockets;
+                    //todo: consider use Redis backplane when api is scale out (2 or more EC2)
                 });
             });
         }
