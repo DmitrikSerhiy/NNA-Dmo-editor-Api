@@ -15,5 +15,7 @@ namespace Model.Entities {
         public Guid NoNameUserId { get; set; }
 
         public ICollection<DmoUserDmoCollection> DmoUserDmoCollections { get; set; }
+
+        public ICollection<Beat> Beats { get; set; }
     }
 }
