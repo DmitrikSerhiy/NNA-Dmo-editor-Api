@@ -15,7 +15,7 @@ namespace Persistence.Repositories {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public void UpdateBeats(Beat[] beats) {
+        public void UpdateBeats(Beat[] beats, Guid dmoId) {
             using (IDbConnection db = new SqlConnection(_connectionString)) {
 
 

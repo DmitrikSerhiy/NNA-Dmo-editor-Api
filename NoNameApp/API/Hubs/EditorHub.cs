@@ -1,19 +1,25 @@
 ﻿using System;
 using System.Threading.Tasks;
-using AutoMapper.Configuration;
+using API.DTO.Dmos;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Model;
+using Model.Entities;
 using Serilog;
 
 namespace API.Hubs {
     [Authorize]
     public class EditorHub : Hub {
 
-        private IBeatsRepository _beatsRepository;
+        private readonly IBeatsRepository _beatsRepository;
+        private readonly IMapper _mapper;
 
-        public EditorHub(IBeatsRepository beatsRepository) {
+        public EditorHub(
+            IBeatsRepository beatsRepository, 
+            IMapper mapper) {
             _beatsRepository = beatsRepository ?? throw new ArgumentNullException(nameof(beatsRepository));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
         public override Task OnConnectedAsync() {
@@ -31,10 +37,12 @@ namespace API.Hubs {
             return base.OnDisconnectedAsync(exception);
         }
 
-        public async Task NewBeat(object beat) {
-            //_beatsRepository.UpdateBeats(null);
+        public async Task DmoUpdate(PartialDmoWithBeatsDto dmoUpdate) {
+            var beats = _mapper.Map<Beat[]>(dmoUpdate.Beats);
+            var dmoId = Guid.Parse(dmoUpdate.DmoId);
+            _beatsRepository.UpdateBeats(beats, dmoId);
 
-            await Clients.Caller.SendAsync("Notify", $"{beat} received from server");
+            await Clients.Caller.SendAsync("UpdateNotify", $"Dmo {dmoUpdate.DmoId} saved");
         }
 
     }
