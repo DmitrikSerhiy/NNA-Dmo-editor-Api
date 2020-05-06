@@ -1,7 +1,8 @@
 ﻿using System;
+using Model.Entities.Common;
 
 namespace Model.Entities {
-    public class Beat {
+    public class Beat : Entity {
         public TimeSpan PlotTimeSpot { get; set; }
         public Int16 Order { get; set; }
         public string Description { get; set; }

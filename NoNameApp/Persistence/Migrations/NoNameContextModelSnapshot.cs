@@ -116,6 +116,34 @@ namespace Persistence.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("Model.Entities.Beat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("char(36)");
+
+                    b.Property<long>("DateOfCreation")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
+                    b.Property<Guid>("DmoId")
+                        .HasColumnType("char(36)");
+
+                    b.Property<short>("Order")
+                        .HasColumnType("smallint");
+
+                    b.Property<TimeSpan>("PlotTimeSpot")
+                        .HasColumnType("time(6)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DmoId");
+
+                    b.ToTable("Beats");
+                });
+
             modelBuilder.Entity("Model.Entities.Dmo", b =>
                 {
                     b.Property<Guid>("Id")
@@ -326,6 +354,15 @@ namespace Persistence.Migrations
                     b.HasOne("Model.Entities.NoNameUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Model.Entities.Beat", b =>
+                {
+                    b.HasOne("Model.Entities.Dmo", "Dmo")
+                        .WithMany("Beats")
+                        .HasForeignKey("DmoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
