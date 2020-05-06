@@ -150,6 +150,9 @@ namespace Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("char(36)");
 
+                    b.Property<string>("BeatsJson")
+                        .HasColumnType("longtext CHARACTER SET utf8mb4");
+
                     b.Property<long>("DateOfCreation")
                         .HasColumnType("bigint");
 

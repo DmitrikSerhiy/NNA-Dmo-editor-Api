@@ -35,6 +35,7 @@ namespace API
         public IServiceProvider ConfigureServices(IServiceCollection services) {
             var builder = new ContainerBuilder();
             services.AddLoggerOptions(_environment, _configuration);
+            services.AddDbOptions(_configuration);
             services.AddCors(o => {
                 o.AddPolicy(angularClientOrigin, policyBuilder => {
                     policyBuilder.WithOrigins("http://localhost:4200", "http://nna-front-bucket1.s3-website.eu-central-1.amazonaws.com");
@@ -51,7 +52,7 @@ namespace API
             services.AddMvcAndFilters();
 
             builder.Populate(services);
-            builder.RegisterModule(new AutofacModule());
+            builder.RegisterModule(new AutofacModule(_configuration));
             var applicationContainer = builder.Build();
             return new AutofacServiceProvider(applicationContainer);
         }

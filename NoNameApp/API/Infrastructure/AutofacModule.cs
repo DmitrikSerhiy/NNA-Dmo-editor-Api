@@ -1,6 +1,8 @@
-﻿using API.Infrastructure.Authentication;
+﻿using System;
+using API.Infrastructure.Authentication;
 using Autofac;
 using Autofac.Features.ResolveAnything;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Model;
 using Persistence;
@@ -8,7 +10,10 @@ using Persistence;
 namespace API.Infrastructure
 {
     public class AutofacModule : Module {
-        public AutofacModule() { }
+        private readonly IConfiguration _configuration;
+        public AutofacModule(IConfiguration configuration) {
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+        }
         protected override void Load(ContainerBuilder builder) {
 
             builder

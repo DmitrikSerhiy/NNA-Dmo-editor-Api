@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
+using Serilog;
 
 namespace Persistence {
     public class UnitOfWork : IDisposable {
@@ -38,9 +39,8 @@ namespace Persistence {
                     if (transaction != null) {
                         await transaction.RollbackAsync();
                     }
-                    //todo: add logger
-                    // ReSharper disable once PossibleIntendedRethrow
-                    throw ex;
+                    Log.Error("Transaction failed", ex);
+                    throw;
                 }
             });
         }

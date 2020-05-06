@@ -14,17 +14,8 @@ namespace Persistence {
 
         public NoNameContext() { }
 
-        public NoNameContext(DbContextOptions options) : base(options)
-        { }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseMySql("Server=127.0.0.1;Port=3306;Database=nna-database;Uid=root;Pwd=98986476Serega;", mySqlOptions => {
-                mySqlOptions.EnableRetryOnFailure(1);
-                mySqlOptions.MigrationsAssembly("Persistence");
-            });
-
-        }
+        public NoNameContext(DbContextOptions<NoNameContext> options)
+            : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             base.OnModelCreating(modelBuilder);
@@ -32,9 +23,6 @@ namespace Persistence {
             UserDmoCollectionConfiguration.Configure(modelBuilder);
             DmoUserDmoCollectionConfiguration.Configure(modelBuilder);
             BeatsConfiguration.Configure(modelBuilder);
-        }
-        public NoNameContext(DbContextOptions<NoNameContext> options)
-            : base(options) {
         }
     }
 }

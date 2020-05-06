@@ -5,6 +5,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200506183152_AddJsonBeats.cs" />
+    <Compile Remove="Migrations\20200506183152_AddJsonBeats.Designer.cs" />
+    <Compile Remove="Migrations\20200506184328_AddJsonBeats.cs" />
+    <Compile Remove="Migrations\20200506184328_AddJsonBeats.Designer.cs" />
+    <Compile Remove="Migrations\20200506184618_AddJsonBeats.cs" />
+    <Compile Remove="Migrations\20200506184618_AddJsonBeats.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0-preview3.20122.2" />
@@ -19,6 +28,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.0" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
   </ItemGroup>
 
   <ItemGroup>
