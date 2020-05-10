@@ -57,7 +57,7 @@ namespace API.Controllers {
 
         [HttpGet]
         [Route("editor")]
-        public async Task<ActionResult<DmoDto>> GetDmo([FromQuery]GetDmoDto dto) {
+        public async Task<ActionResult<ShortDmoWithBeatsDto>> GetDmo([FromQuery]GetDmoDto dto) {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
             var user = await _currentUserService.GetAsync();
 
@@ -66,7 +66,7 @@ namespace API.Controllers {
                 return NotFound();
             }
 
-            return Ok(_mapper.Map<DmoDto>(dmo));
+            return Ok(_mapper.Map<ShortDmoWithBeatsDto>(dmo));
         }
     }
 }

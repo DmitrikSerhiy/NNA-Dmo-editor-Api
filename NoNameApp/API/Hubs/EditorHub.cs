@@ -9,6 +9,8 @@ using Model;
 using Model.Entities;
 using Serilog;
 using System.Text.Json;
+using API.Hubs.Extensions;
+using API.Hubs.Helpers;
 using API.Infrastructure.Authentication;
 
 namespace API.Hubs {
@@ -18,16 +20,13 @@ namespace API.Hubs {
         private readonly IBeatsRepository _beatsRepository;
         private readonly IMapper _mapper;
         private readonly NoNameUserManager _userManager;
-        private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
 
         public EditorHub(
             IBeatsRepository beatsRepository, 
-            IMapper mapper, 
-            IAuthenticatedIdentityProvider authenticatedIdentityProvider, 
+            IMapper mapper,
             NoNameUserManager userManager) {
             _beatsRepository = beatsRepository ?? throw new ArgumentNullException(nameof(beatsRepository));
-            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-            _authenticatedIdentityProvider = authenticatedIdentityProvider ?? throw new ArgumentNullException(nameof(authenticatedIdentityProvider));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); 
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
@@ -43,37 +42,39 @@ namespace API.Hubs {
                 await OnDisconnectedAsync(new AuthenticationException("User not found [websocket]"));
                 return;
             }
-
-            _authenticatedIdentityProvider.SetAuthenticatedUser(user);
-            Console.WriteLine($"{_authenticatedIdentityProvider.AuthenticatedUserEmail} just connected to the editor");
+            Context.SaveUser(user);
+            Console.WriteLine($"{Context.GetCurrentUserEmail()} just connected to the editor");
             await base.OnConnectedAsync();
         }
 
         public override Task OnDisconnectedAsync(Exception exception) {
             if (exception != null) {
-                Log.Error($"Error on websoket disconnection. User: {_authenticatedIdentityProvider.AuthenticatedUserId}",
+                Log.Error($"Error on websoket disconnection. User: {Context.GetCurrentUserId()}",
                     exception.Message);
             }
 
-            Console.WriteLine($"{_authenticatedIdentityProvider.AuthenticatedUserEmail} disconnected from the editor");
-            _authenticatedIdentityProvider.ClearAuthenticatedUserInfo();
+            Console.WriteLine($"{Context.GetCurrentUserEmail()} disconnected from the editor");
+            Context.RemoveUser();
             return base.OnDisconnectedAsync(exception);
         }
 
         public async Task LoadDmo(string dmoId) {
-            var dmo = await _beatsRepository.LoadDmoAsync(Guid.Parse(dmoId), _authenticatedIdentityProvider.AuthenticatedUserId);
+            if (!Context.ContainsUser()) {
+                return;
+            }
+            var dmo = await _beatsRepository.LoadDmoAsync(Guid.Parse(dmoId), Context.GetCurrentUserId().GetValueOrDefault());
             if (dmo == null) {
                 await Clients.Caller.SendAsync("LoadDmoResult");
             }
             else {
-                await Clients.Caller.SendAsync("LoadDmoResult", _mapper.Map<DmoDto>(dmo));
+                await Clients.Caller.SendAsync("LoadDmoResult", _mapper.Map<ShortDmoWithBeatsDto>(dmo));
             }
         }
 
-        public async Task DmoUpdate(PartialDmoWithBeatsDto dmoUpdate) {
-            var beats = _mapper.Map<Beat[]>(dmoUpdate.Beats);
-            var dmoId = Guid.Parse(dmoUpdate.DmoId);
-            var result = await _beatsRepository.UpdateBeatsAsync(JsonSerializer.Serialize(beats), dmoId);
+        public async Task DmoUpdate(ShortDmoWithBeatsDto dmoUpdate) {
+            var dmoId = Guid.Parse(dmoUpdate.Id);
+            var result = await _beatsRepository.UpdateBeatsAsync(
+                JsonSerializer.Serialize(BeatsIdGenerator.GenerateMissingBeatsIds(dmoUpdate.Beats)), dmoId);
 
             if (result == BeatUpdateStatus.Success) {
                 await Clients.Caller.SendAsync("PartialDmoUpdateResult", $"{BeatUpdateStatus.Success}");
@@ -82,6 +83,5 @@ namespace API.Hubs {
                 await Clients.Caller.SendAsync("PartialDmoUpdateResult", $"{BeatUpdateStatus.Failed}");
             }
         }
-
     }
 }
