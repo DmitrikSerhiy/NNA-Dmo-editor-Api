@@ -17,6 +17,6 @@ namespace Model.Entities {
         public ICollection<DmoUserDmoCollection> DmoUserDmoCollections { get; set; }
 
         public ICollection<Beat> Beats { get; set; }
-        public string BeatsJson { get; set; }
+        public String BeatsJson { get; set; }
     }
 }

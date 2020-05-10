@@ -24,7 +24,7 @@ namespace API.Infrastructure.Authentication
                 return;
             }
 
-            //todo: isn't it overhead? To get user by userManager and then by repository. Should think of it later. Should test db calls.
+            //todo: isn't it overhead? To get user by userManager and then by repository. Should think of it later. Should pfofile db calls.
             var user = await _userManager.FindByNameAsync(userName.Value);
             if (user == null) {
                 throw new AuthenticationException($"There is no user with name {userName}");

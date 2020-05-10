@@ -9,7 +9,7 @@ namespace API.DTO.Dmos {
         public Int16 DmoStatusId { get; set; }
         public String ShortComment { get; set; }
         public Int16 Mark { get; set; }
-
+        public String BeatsJson { get; set; }
         //add more later
     }
 }

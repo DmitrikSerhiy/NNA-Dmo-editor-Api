@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Model.Entities;
 
 namespace Model {
     public interface IBeatsRepository {
-        void UpdateBeats(Beat[] beats, Guid dmoId);
+        Task<BeatUpdateStatus> UpdateBeatsAsync(string jsonBeats, Guid dmoId);
+        Task<Dmo> LoadDmoAsync(Guid dmoId, Guid userId);
     }
 }
