@@ -12,6 +12,7 @@ using System.Text.Json;
 using API.Hubs.Extensions;
 using API.Hubs.Helpers;
 using API.Infrastructure.Authentication;
+using Model.Enums;
 
 namespace API.Hubs {
     [Authorize]
@@ -58,6 +59,15 @@ namespace API.Hubs {
             return base.OnDisconnectedAsync(exception);
         }
 
+        public async Task CreateDmo(CreateDmoDto dmoDto) {
+            if (!Context.ContainsUser()) {
+                return;
+            }
+
+            var result = await _beatsRepository.CreateDmoAsync(_mapper.Map<Dmo>(dmoDto), Context.GetCurrentUserId().GetValueOrDefault());
+            await Clients.Caller.SendAsync("CreateDmoResult", $"{result}");
+        }
+
         public async Task LoadDmo(string dmoId) {
             if (!Context.ContainsUser()) {
                 return;
@@ -70,7 +80,6 @@ namespace API.Hubs {
                 await Clients.Caller.SendAsync("LoadDmoResult", _mapper.Map<ShortDmoWithBeatsDto>(dmo));
             }
         }
-
         public async Task DmoUpdate(ShortDmoWithBeatsDto dmoUpdate) {
             var dmoId = Guid.Parse(dmoUpdate.Id);
             var result = await _beatsRepository.UpdateBeatsAsync(

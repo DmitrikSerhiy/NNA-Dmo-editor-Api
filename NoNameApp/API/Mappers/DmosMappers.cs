@@ -18,6 +18,8 @@ namespace API.Mappers {
                     .MapFrom(dd => DeserializeBeats(dd.BeatsJson)))
                 .ReverseMap();
 
+            CreateMap<Dmo, CreateDmoDto>().ReverseMap();
+
             CreateMap<Beat, BeatDto>()
                 .ForMember(udc => udc.PlotTimeSpot, dcd => dcd
                     .MapFrom(dd => new TimeSpan(0, dd.PlotTimeSpot.Hours, dd.PlotTimeSpot.Minutes)))

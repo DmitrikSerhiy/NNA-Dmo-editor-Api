@@ -54,19 +54,5 @@ namespace API.Controllers {
             _dmosRepository.RemoveDmo(dmo);
             return NoContent();
         }
-
-        [HttpGet]
-        [Route("editor")]
-        public async Task<ActionResult<ShortDmoWithBeatsDto>> GetDmo([FromQuery]GetDmoDto dto) {
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
-            var user = await _currentUserService.GetAsync();
-
-            var dmo = await _dmosRepository.GetDmo(user.Id, dto.DmoId);
-            if (dmo == null) {
-                return NotFound();
-            }
-
-            return Ok(_mapper.Map<ShortDmoWithBeatsDto>(dmo));
-        }
     }
 }

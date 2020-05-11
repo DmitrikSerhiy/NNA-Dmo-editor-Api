@@ -7,6 +7,7 @@ using System;
 using System.Data.Common;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Model.Enums;
 using Serilog;
 
 namespace Persistence.Repositories {
@@ -19,6 +20,26 @@ namespace Persistence.Repositories {
             _dapperConnectionString = configuration.GetConnectionString("ConnectionForDapper");
         }
 
+        public async Task<UpdateDmoStatus> CreateDmoAsync(Dmo dmoFromClient, Guid userId) {
+            try {
+                await using var db = GetMySqlConnection();
+                var dmoWithIdentity = new Dmo();
+                var result = await db.ExecuteAsync(
+                    "INSERT INTO dmos (Id, DateOfCreation, Name, MovieTitle, DmoStatus, ShortComment, Mark, NoNameUserId) " +
+                    $"VALUES('{dmoWithIdentity.Id}', {dmoWithIdentity.DateOfCreation}, '{dmoFromClient.Name}', '{dmoFromClient.MovieTitle}', " +
+                    $"{(Int16)DmoStatus.New}, '{dmoFromClient.ShortComment}', {dmoFromClient.Mark}, '{userId}')");
+                if (result != 1) {
+                    return UpdateDmoStatus.SqlUpdateInvalid;
+                }
+            }
+            catch (Exception ex) {
+                Log.Error("Error when creating new dmo", ex);
+                return UpdateDmoStatus.Failed;
+            }
+
+            return UpdateDmoStatus.Success;
+        }
+
         public async Task<Dmo> LoadDmoAsync(Guid dmoId, Guid userId) {
             await using var db = GetMySqlConnection();
             return await db.QueryFirstOrDefaultAsync<Dmo>($"select * from dmos where Id = '{dmoId}' and NoNameUserId = '{userId}'");
@@ -29,17 +50,13 @@ namespace Persistence.Repositories {
                 await using var db = GetMySqlConnection();
                 var result = await db.ExecuteAsync($"update dmos set BeatsJson = '{jsonBeats}' where Id = '{dmoId}'");
                 if (result != 1) {
-                    throw new UpdateBeatsWSException();
+                    return BeatUpdateStatus.SqlUpdateInvalid;
                 }
             }
-            catch (UpdateBeatsWSException) {
-                return BeatUpdateStatus.SqlUpdateFailed;
-            }
             catch (Exception ex) {
-                Log.Error("Unknown error while updating beats json", ex);
+                Log.Error("Error while updating beats json", ex);
                 return BeatUpdateStatus.Failed;
             }
-
 
             return BeatUpdateStatus.Success;
         }

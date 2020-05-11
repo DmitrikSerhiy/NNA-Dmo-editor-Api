@@ -1,7 +1,7 @@
-﻿namespace Model {
+﻿namespace Model.Enums {
     public enum BeatUpdateStatus {
         Success,
-        SqlUpdateFailed,
+        SqlUpdateInvalid,
         Failed
     }
 }

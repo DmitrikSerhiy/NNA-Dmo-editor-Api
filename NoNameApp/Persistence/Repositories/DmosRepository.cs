@@ -30,10 +30,6 @@ namespace Persistence.Repositories
             return await _context.Dmos.FirstOrDefaultAsync(d => d.NoNameUserId == userId && d.Id == dmoId.Value);
         }
 
-        public async Task<Dmo> GetDmo(Guid userId, Guid? dmoId) {
-            if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
-            return await _context.Dmos.FirstOrDefaultAsync(d => d.NoNameUserId == userId && d.Id == dmoId.Value); //add included
-        }
 
         public void RemoveDmo(Dmo dmo) {
             if (dmo == null) throw new ArgumentNullException(nameof(dmo));
