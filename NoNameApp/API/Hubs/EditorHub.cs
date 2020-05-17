@@ -59,27 +59,38 @@ namespace API.Hubs {
             return base.OnDisconnectedAsync(exception);
         }
 
-        public async Task CreateDmo(CreateDmoDto dmoDto) {
+        public async Task<CreateDmoDto> CreateDmo(CreateDmoDto dmoDto) {
             if (!Context.ContainsUser()) {
-                return;
+                return null;
             }
 
-            var result = await _beatsRepository.CreateDmoAsync(_mapper.Map<Dmo>(dmoDto), Context.GetCurrentUserId().GetValueOrDefault());
-            await Clients.Caller.SendAsync("CreateDmoResult", $"{result}");
+            var createdDmo = await _beatsRepository
+                .CreateDmoAsync(_mapper.Map<Dmo>(dmoDto), Context.GetCurrentUserId().GetValueOrDefault());
+            return createdDmo == null ? null : _mapper.Map<CreateDmoDto>(createdDmo);
         }
 
-        public async Task LoadDmo(string dmoId) {
+        public async Task<ShortDmoWithBeatsDto> LoadDmo(string dmoId) {
             if (!Context.ContainsUser()) {
-                return;
+                return null;
             }
-            var dmo = await _beatsRepository.LoadDmoAsync(Guid.Parse(dmoId), Context.GetCurrentUserId().GetValueOrDefault());
-            if (dmo == null) {
-                await Clients.Caller.SendAsync("LoadDmoResult");
-            }
-            else {
-                await Clients.Caller.SendAsync("LoadDmoResult", _mapper.Map<ShortDmoWithBeatsDto>(dmo));
-            }
+            var dmo = await _beatsRepository
+                .LoadDmoAsync(Guid.Parse(dmoId), Context.GetCurrentUserId().GetValueOrDefault());
+            return dmo == null ? null : _mapper.Map<ShortDmoWithBeatsDto>(dmo);
         }
+
+        public async Task<EditDmoInfoDto> UpdateDmoInfo(EditDmoInfoDto dmoDto) {
+            if (!Context.ContainsUser()) {
+                return null;
+            }
+
+            var updatedDmo = await _beatsRepository
+                .EditDmoAsync(_mapper.Map<Dmo>(dmoDto), Context.GetCurrentUserId().GetValueOrDefault());
+            return updatedDmo == null ? null : _mapper.Map<EditDmoInfoDto>(updatedDmo);
+        }
+
+
+
+
         public async Task DmoUpdate(ShortDmoWithBeatsDto dmoUpdate) {
             var dmoId = Guid.Parse(dmoUpdate.Id);
             var result = await _beatsRepository.UpdateBeatsAsync(

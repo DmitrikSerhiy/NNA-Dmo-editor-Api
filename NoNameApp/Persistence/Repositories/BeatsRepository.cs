@@ -2,15 +2,14 @@
 using Microsoft.Extensions.Configuration;
 using Model;
 using Model.Entities;
-using Model.Exceptions;
-using System;
-using System.Data.Common;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Model.Enums;
 using Serilog;
+using System;
+using System.Data.Common;
+using System.Threading.Tasks;
 
-namespace Persistence.Repositories {
+namespace Persistence.Repositories
+{
     public class BeatsRepository : IBeatsRepository {
         private readonly string _dapperConnectionString;
         private DbProviderFactory Factory => MySql.Data.MySqlClient.MySqlClientFactory.Instance;
@@ -20,29 +19,53 @@ namespace Persistence.Repositories {
             _dapperConnectionString = configuration.GetConnectionString("ConnectionForDapper");
         }
 
-        public async Task<UpdateDmoStatus> CreateDmoAsync(Dmo dmoFromClient, Guid userId) {
+        public async Task<Dmo> CreateDmoAsync(Dmo dmoFromClient, Guid userId) {
             try {
                 await using var db = GetMySqlConnection();
                 var dmoWithIdentity = new Dmo();
-                var result = await db.ExecuteAsync(
+                var createResult = await db.ExecuteAsync(
                     "INSERT INTO dmos (Id, DateOfCreation, Name, MovieTitle, DmoStatus, ShortComment, Mark, NoNameUserId) " +
                     $"VALUES('{dmoWithIdentity.Id}', {dmoWithIdentity.DateOfCreation}, '{dmoFromClient.Name}', '{dmoFromClient.MovieTitle}', " +
                     $"{(Int16)DmoStatus.New}, '{dmoFromClient.ShortComment}', {dmoFromClient.Mark}, '{userId}')");
-                if (result != 1) {
-                    return UpdateDmoStatus.SqlUpdateInvalid;
+                if (createResult != 1) {
+                    return null;
                 }
+
+                return await db.QueryFirstAsync<Dmo>(
+                    $"SELECT Id, Name, MovieTitle, ShortComment FROM dmos WHERE Id = '{dmoWithIdentity.Id}' and NoNameUserId = '{userId}'");
+            } catch (Exception ex) {
+                Log.Error("Error while creating new dmo", ex);
+                return null;
+            }
+        }
+
+        public async Task<Dmo> EditDmoAsync(Dmo dmoFromClient, Guid userId) {
+            try {
+                await using var db = GetMySqlConnection();
+                var editResult = await db.ExecuteAsync(
+                    $"UPDATE dmos set Name = '{dmoFromClient.Name}', MovieTitle = '{dmoFromClient.MovieTitle}', ShortComment = '{dmoFromClient.ShortComment}' " +
+                    $"WHERE Id = '{dmoFromClient.Id}' and NoNameUserId = '{userId}'");
+                if (editResult != 1) {
+                    return null;
+                }
+                return await db.QueryFirstAsync<Dmo>(
+                    $"SELECT Id, Name, MovieTitle, ShortComment FROM dmos WHERE Id = '{dmoFromClient.Id}' and NoNameUserId = '{userId}'");
             }
             catch (Exception ex) {
-                Log.Error("Error when creating new dmo", ex);
-                return UpdateDmoStatus.Failed;
+                Log.Error("Error while editing dmo info", ex);
+                return null;
             }
-
-            return UpdateDmoStatus.Success;
         }
 
         public async Task<Dmo> LoadDmoAsync(Guid dmoId, Guid userId) {
-            await using var db = GetMySqlConnection();
-            return await db.QueryFirstOrDefaultAsync<Dmo>($"select * from dmos where Id = '{dmoId}' and NoNameUserId = '{userId}'");
+            try {
+                await using var db = GetMySqlConnection();
+                return await db.QueryFirstOrDefaultAsync<Dmo>(
+                    $"SELECT Id, Name, MovieTitle, DmoStatus, ShortComment, Mark, BeatsJson FROM dmos WHERE Id = '{dmoId}' and NoNameUserId = '{userId}'");
+            } catch (Exception ex) {
+                Log.Error("Error while getting dmo", ex);
+                return null;
+            }
         }
 
         public async Task<BeatUpdateStatus> UpdateBeatsAsync(string jsonBeats, Guid dmoId) {
@@ -52,8 +75,7 @@ namespace Persistence.Repositories {
                 if (result != 1) {
                     return BeatUpdateStatus.SqlUpdateInvalid;
                 }
-            }
-            catch (Exception ex) {
+            } catch (Exception ex) {
                 Log.Error("Error while updating beats json", ex);
                 return BeatUpdateStatus.Failed;
             }

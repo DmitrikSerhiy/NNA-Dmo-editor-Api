@@ -18,7 +18,12 @@ namespace API.Mappers {
                     .MapFrom(dd => DeserializeBeats(dd.BeatsJson)))
                 .ReverseMap();
 
-            CreateMap<Dmo, CreateDmoDto>().ReverseMap();
+            CreateMap<Dmo, CreateDmoDto>()
+                .ForMember(udc => udc.Id, dcd => dcd.MapFrom(dd => dd.Id.ToString()))
+                .ReverseMap();
+            CreateMap<Dmo, EditDmoInfoDto>()
+                .ForMember(udc => udc.Id, dcd => dcd.MapFrom(dd => dd.Id.ToString()))
+                .ReverseMap();
 
             CreateMap<Beat, BeatDto>()
                 .ForMember(udc => udc.PlotTimeSpot, dcd => dcd
