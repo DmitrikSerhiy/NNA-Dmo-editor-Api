@@ -20,7 +20,7 @@ namespace API.Controllers {
         [Route("")]
         public ActionResult<string> Hello() {
             Log.Information("hello there");
-            return Ok("Hello from dummy this is update for continuous deliverance 3");
+            return Ok("Hello from dummy this is update for continuous deliverance. Upadate once more");
         }
 
 
