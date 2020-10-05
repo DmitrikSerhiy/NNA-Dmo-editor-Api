@@ -8,11 +8,11 @@ namespace Model {
         Task<List<UserDmoCollection>> GetCollectionsAsync(Guid userId);
         Task<UserDmoCollection> GetCollectionAsync(Guid userId, Guid? collectionId);
         Task AddCollectionAsync(UserDmoCollection dmoCollection);
-        Task<Boolean> IsCollectionExist(Guid userId, String collectionName);
+        Task<bool> IsCollectionExist(Guid userId, string collectionName);
         void DeleteCollection(UserDmoCollection collection);
         void UpdateCollectionName(UserDmoCollection oldDmoCollection, UserDmoCollection newDmoCollection);
         void AddDmoToCollection(UserDmoCollection dmoCollection, List<Dmo> dmos);
-        Boolean ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId);
+        bool ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId);
         Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid? collectionId);
         Task<Dmo> GetDmoAsync(Guid userId, Guid? dmoId);
         Task<List<Dmo>> GetExcludedDmos(Guid userId, Guid? collectionId);

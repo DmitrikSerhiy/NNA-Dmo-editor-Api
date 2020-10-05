@@ -6,7 +6,7 @@ namespace API.Hubs.Helpers {
     public class BeatsIdGenerator {
         public static BeatDto[] GenerateMissingBeatsIds(BeatDto[] beats) {
             return beats.Select(beat => {
-                if (String.IsNullOrWhiteSpace(beat.Id)) {
+                if (string.IsNullOrWhiteSpace(beat.Id)) {
                     beat.Id = Guid.NewGuid().ToString();
                 }
                 return beat;

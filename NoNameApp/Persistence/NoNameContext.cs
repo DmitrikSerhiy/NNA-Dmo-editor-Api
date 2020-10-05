@@ -9,6 +9,7 @@ namespace Persistence {
 
         public DbSet<NoNameUser> ApplicationUsers { get; set; }
         public DbSet<Dmo> Dmos { get; set; }
+        // ReSharper disable once UnusedMember.Global
         public DbSet<Beat> Beats { get; set; }
         public DbSet<UserDmoCollection> UserDmoCollections { get; set; }
 

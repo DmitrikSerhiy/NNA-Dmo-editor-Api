@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repositories
 {
+    // ReSharper disable once UnusedMember.Global
     public class BeatsRepository : IBeatsRepository {
         private readonly string _dapperConnectionString;
         private DbProviderFactory Factory => MySql.Data.MySqlClient.MySqlClientFactory.Instance;
@@ -26,7 +27,7 @@ namespace Persistence.Repositories
                 var createResult = await db.ExecuteAsync(
                     "INSERT INTO dmos (Id, DateOfCreation, Name, MovieTitle, DmoStatus, ShortComment, Mark, NoNameUserId) " +
                     $"VALUES('{dmoWithIdentity.Id}', {dmoWithIdentity.DateOfCreation}, '{dmoFromClient.Name}', '{dmoFromClient.MovieTitle}', " +
-                    $"{(Int16)DmoStatus.New}, '{dmoFromClient.ShortComment}', {dmoFromClient.Mark}, '{userId}')");
+                    $"{(short)DmoStatus.New}, '{dmoFromClient.ShortComment}', {dmoFromClient.Mark}, '{userId}')");
                 if (createResult != 1) {
                     return null;
                 }
@@ -84,6 +85,7 @@ namespace Persistence.Repositories
         }
 
 
+        // ReSharper disable PossibleNullReferenceException
         private DbConnection GetMySqlConnection(bool open = true,
             bool convertZeroDatetime = false, bool allowZeroDatetime = false) {
             var csb = Factory.CreateConnectionStringBuilder();

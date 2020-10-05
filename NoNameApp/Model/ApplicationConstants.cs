@@ -1,12 +1,12 @@
-﻿using System;
-
-namespace Model {
+﻿namespace Model {
     public static class ApplicationConstants {
-        public const Int16 MaxEntityNameLength = 20;
+        public const short MaxEntityNameLength = 20;
         
-        public const Int16 MaxUserEmailLength = 40;
-        public const Int16 MaxUserNameLength = 20;
-        public const Int16 MaxPasswordLength = 30;
-        public const Int16 MinPasswordLength = 8;
+        public const short MaxUserEmailLength = 40;
+        // ReSharper disable once UnusedMember.Global
+
+        public const short MaxUserNameLength = 20;
+        public const short MaxPasswordLength = 30;
+        public const short MinPasswordLength = 8;
     }
 }

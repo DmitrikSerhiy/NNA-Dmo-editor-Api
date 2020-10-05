@@ -43,7 +43,7 @@ namespace API.Controllers
             var result = await _userManager
                 .CreateAsync(new NoNameUser(registerModel.Email, registerModel.UserName), registerModel.Password);
             if (!result.Succeeded) {
-                return StatusCode((Int32) HttpStatusCode.InternalServerError);
+                return StatusCode((int) HttpStatusCode.InternalServerError);
             }
 
             var identity = await _identityService.GetIdentity(registerModel.Email, registerModel.Password);

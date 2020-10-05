@@ -13,7 +13,7 @@ namespace API.Infrastructure.Authentication
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        public async Task<ClaimsIdentity> GetIdentity(String email, String password)
+        public async Task<ClaimsIdentity> GetIdentity(string email, string password)
         {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
@@ -37,7 +37,7 @@ namespace API.Infrastructure.Authentication
             return claimsIdentity;
         }
 
-        public String CreateJwt(ClaimsIdentity identity)
+        public string CreateJwt(ClaimsIdentity identity)
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(

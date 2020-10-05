@@ -1,10 +1,10 @@
-﻿using System;
-
-namespace API.DTO.Dmos {
+﻿namespace API.DTO.Dmos {
     public class CreateDmoDto {
-        public String Id { get; set; }
-        public String Name { get; set; }
-        public String MovieTitle { get; set; }
-        public String ShortComment { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public string MovieTitle { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public string ShortComment { get; set; }
     }
 }

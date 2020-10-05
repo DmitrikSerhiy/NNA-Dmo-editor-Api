@@ -1,16 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
 namespace Model.Entities {
     public sealed class NoNameUser : IdentityUser<Guid> {
-        public NoNameUser(String email, String userName) {
-            if (String.IsNullOrWhiteSpace(email)) {
+        public NoNameUser(string email, string userName) {
+            if (string.IsNullOrWhiteSpace(email)) {
                 throw new ArgumentNullException(nameof(email));
             }
 
-            if (String.IsNullOrWhiteSpace(userName)) {
+            if (string.IsNullOrWhiteSpace(userName)) {
                 throw new ArgumentNullException(nameof(userName));
             }
 

@@ -1,9 +1,9 @@
-﻿using System;
-
-namespace API.DTO.Dmos {
+﻿namespace API.DTO.Dmos {
     public class BeatDto {
-        public String Id { get; set; }
-        public String Description { get; set; }
+        public string Id { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public string Description { get; set; }
+        // ReSharper disable once UnusedMember.Global
         public int Order { get; set; }
         public TimeDto PlotTimeSpot { get; set; }
     }

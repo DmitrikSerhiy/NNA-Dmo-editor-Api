@@ -1,6 +1,5 @@
 ﻿using API.DTO.DmoCollections;
 using API.DTO.Dmos;
-using API.Helpers;
 using API.Infrastructure.Authentication;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -17,17 +16,14 @@ namespace API.Controllers {
     [Authorize]
     public class DmosController : ControllerBase {
         private readonly CurrentUserService _currentUserService;
-        private readonly ResponseBuilder _responseBuilder;
         private readonly IMapper _mapper;
         private readonly IDmosRepository _dmosRepository;
 
         public DmosController(
             CurrentUserService currentUserService, 
-            ResponseBuilder responseBuilder, 
             IMapper mapper, 
             IDmosRepository dmosRepository) {
             _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
-            _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _dmosRepository = dmosRepository ?? throw new ArgumentNullException(nameof(dmosRepository));
         }

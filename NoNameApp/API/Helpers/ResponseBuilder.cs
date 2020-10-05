@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace API.Helpers {
+﻿namespace API.Helpers {
     public class ResponseBuilder {
 
         public object AppendBadRequestErrorMessage(string errorMessage) {
@@ -8,6 +6,7 @@ namespace API.Helpers {
             return new {errorMessage};
         }
 
+        // ReSharper disable once UnusedMember.Global
         public object AppendNotFoundErrorMessage(string errorMessage)
         {
             //todo: relocate this logic to appropriate filter

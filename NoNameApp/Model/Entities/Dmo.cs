@@ -4,11 +4,11 @@ using Model.Entities.Common;
 
 namespace Model.Entities {
     public sealed class Dmo : Entity {
-        public String Name { get; set; }
-        public String MovieTitle { get; set; }
-        public Int16 DmoStatus { get; set; }
-        public String ShortComment { get; set; }
-        public Int16 Mark { get; set; }
+        public string Name { get; set; }
+        public string MovieTitle { get; set; }
+        public short DmoStatus { get; set; }
+        public string ShortComment { get; set; }
+        public short Mark { get; set; }
 
 
         public NoNameUser NoNameUser { get; set; }
@@ -17,6 +17,6 @@ namespace Model.Entities {
         public ICollection<DmoUserDmoCollection> DmoUserDmoCollections { get; set; }
 
         public ICollection<Beat> Beats { get; set; }
-        public String BeatsJson { get; set; }
+        public string BeatsJson { get; set; }
     }
 }

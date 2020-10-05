@@ -6,7 +6,7 @@ namespace API.Infrastructure.Authentication {
     public class AuthenticatedIdentityProvider : IAuthenticatedIdentityProvider {
         public Guid AuthenticatedUserId { get; private set; }
         public bool IsAuthenticated { get; private set; }
-        public String AuthenticatedUserEmail { get; private set; }
+        public string AuthenticatedUserEmail { get; private set; }
         public void SetAuthenticatedUser(NoNameUser user) {
             if (user == null) throw new ArgumentNullException(nameof(user));
 
@@ -18,7 +18,7 @@ namespace API.Infrastructure.Authentication {
         public void ClearAuthenticatedUserInfo() {
             AuthenticatedUserId = Guid.Empty;
             IsAuthenticated = false;
-            AuthenticatedUserEmail = String.Empty;
+            AuthenticatedUserEmail = string.Empty;
         }
     }
 }

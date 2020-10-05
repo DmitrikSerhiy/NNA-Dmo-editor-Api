@@ -31,7 +31,7 @@ namespace API.Mappers {
                 .ReverseMap();
         }
 
-        private BeatDto[] DeserializeBeats(String beatsJson) {
+        private BeatDto[] DeserializeBeats(string beatsJson) {
             return JsonSerializer.Deserialize<BeatDto[]>(beatsJson);
         }
     }

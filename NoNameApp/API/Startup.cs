@@ -11,8 +11,6 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using API.Hubs;
 using Microsoft.AspNetCore.Http.Connections;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API
 {
@@ -52,7 +50,7 @@ namespace API
             services.AddMvcAndFilters();
 
             builder.Populate(services);
-            builder.RegisterModule(new AutofacModule(_configuration));
+            builder.RegisterModule(new AutofacModule());
             var applicationContainer = builder.Build();
             return new AutofacServiceProvider(applicationContainer);
         }

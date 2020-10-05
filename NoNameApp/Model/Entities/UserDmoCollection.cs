@@ -4,7 +4,7 @@ using Model.Entities.Common;
 
 namespace Model.Entities {
     public class UserDmoCollection : Entity {
-        public String CollectionName { get; set; }
+        public string CollectionName { get; set; }
 
         public ICollection<DmoUserDmoCollection> DmoUserDmoCollections { get; set; }
 

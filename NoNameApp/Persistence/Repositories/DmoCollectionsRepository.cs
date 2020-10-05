@@ -37,8 +37,8 @@ namespace Persistence.Repositories {
             return await _context.Dmos.FirstOrDefaultAsync(d => d.Id == dmoId && d.NoNameUserId == userId);
         }
 
-        public async Task<Boolean> IsCollectionExist(Guid userId, String collectionName) {
-            if(String.IsNullOrWhiteSpace(collectionName)) throw new ArgumentNullException(nameof(collectionName));
+        public async Task<bool> IsCollectionExist(Guid userId, string collectionName) {
+            if(string.IsNullOrWhiteSpace(collectionName)) throw new ArgumentNullException(nameof(collectionName));
             return await _context.UserDmoCollections.AnyAsync(udc =>
                 udc.CollectionName.Equals(collectionName, StringComparison.CurrentCultureIgnoreCase) && udc.NoNameUserId == userId);
         }
@@ -87,7 +87,7 @@ namespace Persistence.Repositories {
             }
         }
 
-        public Boolean ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId) {
+        public bool ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId) {
             if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
             if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
 
@@ -106,8 +106,8 @@ namespace Persistence.Repositories {
             if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
             if (dmo == null) throw new ArgumentNullException(nameof(dmo));
 
-            var dmod = dmo.DmoUserDmoCollections.First(d => d.DmoId == dmo.Id);
-            dmod.UserDmoCollection = null;
+            var dmoDmoCollection = dmo.DmoUserDmoCollections.First(d => d.DmoId == dmo.Id);
+            dmoDmoCollection.UserDmoCollection = null;
         }
 
     }

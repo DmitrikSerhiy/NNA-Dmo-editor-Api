@@ -33,7 +33,7 @@ namespace API.Infrastructure.Extensions {
                     RetryAttempts = byte.Parse(awsConfiguration["RetryAttempts"])
                 };
                 var client = new AmazonCloudWatchLogsClient(
-                    //todo: move creds to some aws
+                    //todo: move credentials to some aws
                     new BasicAWSCredentials(awsConfiguration["AccessKey"], awsConfiguration["SecretKey"]),
                     RegionEndpoint.EUCentral1);
 

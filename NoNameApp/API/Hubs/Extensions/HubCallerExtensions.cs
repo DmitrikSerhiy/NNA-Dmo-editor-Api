@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Model;
 using System;
 using System.Linq;
 using API.Infrastructure.Authentication;
@@ -15,14 +14,14 @@ namespace API.Hubs.Extensions {
             return (authProvider as AuthenticatedIdentityProvider).AuthenticatedUserId;
         }
 
-        public static String GetCurrentUserEmail(this HubCallerContext context) {
+        public static string GetCurrentUserEmail(this HubCallerContext context) {
             return context.Items.TryGetValue("user", out var authProvider)
                 // ReSharper disable once PossibleNullReferenceException
                 ? (authProvider as AuthenticatedIdentityProvider).AuthenticatedUserEmail
                 : null;
         }
 
-        public static Boolean ContainsUser(this HubCallerContext context) {
+        public static bool ContainsUser(this HubCallerContext context) {
             return context.Items.Keys.Any(key => key.Equals("user"));
         }
 

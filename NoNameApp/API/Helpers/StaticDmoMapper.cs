@@ -1,18 +1,17 @@
-﻿using System;
-using Model.Enums;
+﻿using Model.Enums;
 
 namespace API.Helpers {
     public static class StaticDmoMapper {
-        public static String GetDmoStatusString(Int16 status) {
+        public static string GetDmoStatusString(short status) {
             switch (status)
             {
-                case (Int16)DmoStatus.Complete:
+                case (short)DmoStatus.Complete:
                     return nameof(DmoStatus.Complete);
-                case (Int16)DmoStatus.InProgress:
+                case (short)DmoStatus.InProgress:
                     return nameof(DmoStatus.InProgress);
-                case (Int16)DmoStatus.New:
+                case (short)DmoStatus.New:
                     return nameof(DmoStatus.New);
-                case (Int16)DmoStatus.NotFinished:
+                case (short)DmoStatus.NotFinished:
                     return nameof(DmoStatus.NotFinished);
                 default:
                     return nameof(DmoStatus.New);

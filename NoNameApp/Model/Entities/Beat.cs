@@ -4,7 +4,10 @@ using Model.Entities.Common;
 namespace Model.Entities {
     public class Beat : Entity {
         public TimeSpan PlotTimeSpot { get; set; }
-        public Int16 Order { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public short Order { get; set; }
+        // ReSharper disable once UnusedMember.Global
+
         public string Description { get; set; }
 
         public Dmo Dmo { get; set; }

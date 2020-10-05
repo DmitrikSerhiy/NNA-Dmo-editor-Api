@@ -2,7 +2,9 @@
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Infrastructure.Authentication {
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class AuthOptions {
+        // ReSharper disable InconsistentNaming
         //todo: locate it to the appsettings.json later or some secure place
         public const string ISSUER = "NoNameAppApi";
         public const string AUDIENCE = "NoNameAppFrontA8";

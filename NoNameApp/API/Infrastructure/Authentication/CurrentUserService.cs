@@ -32,7 +32,7 @@ namespace API.Infrastructure.Authentication {
             return _cachedUser;
         }
 
-        public Boolean IsAuthenticated() {
+        public bool IsAuthenticated() {
             return _authenticatedIdentityProvider.IsAuthenticated;
         } 
 

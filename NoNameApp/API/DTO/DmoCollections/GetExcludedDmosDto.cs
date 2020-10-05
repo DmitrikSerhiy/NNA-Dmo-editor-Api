@@ -3,6 +3,7 @@
 namespace API.DTO.DmoCollections {
     public class GetExcludedDmosDto {
         public Guid? CollectionId { get; set; }
-        public Boolean Excluded { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public bool Excluded { get; set; }
     }
 }

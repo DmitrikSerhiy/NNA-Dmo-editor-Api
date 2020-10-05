@@ -50,7 +50,7 @@ namespace API.Hubs {
 
         public override Task OnDisconnectedAsync(Exception exception) {
             if (exception != null) {
-                Log.Error($"Error on websoket disconnection. User: {Context.GetCurrentUserId()}",
+                Log.Error($"Error on websocket disconnection. User: {Context.GetCurrentUserId()}",
                     exception.Message);
             }
 

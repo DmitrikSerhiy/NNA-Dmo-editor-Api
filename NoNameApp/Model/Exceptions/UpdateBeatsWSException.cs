@@ -2,8 +2,9 @@
 using System;
 
 namespace Model.Exceptions {
-    public class UpdateBeatsWSException : Exception {
-        public UpdateBeatsWSException() {
+    // ReSharper disable once UnusedMember.Global
+    public class UpdateBeatsWsException : Exception {
+        public UpdateBeatsWsException() {
             Log.Error("Failed to update beats json");
         }
     }

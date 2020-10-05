@@ -1,13 +1,14 @@
-﻿using System;
-
-namespace API.DTO.DmoCollections {
+﻿namespace API.DTO.DmoCollections {
     public sealed class DmoShortDto {
-        public String Id { get; set; }
-        public String Name { get; set; }
-        public String MovieTitle { get; set; }
-        public String DmoStatus { get; set; }
-        public Int16 DmoStatusId { get; set; }
-        public String ShortComment { get; set; }
-        public Int16 Mark { get; set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public string MovieTitle { get; set; }
+        public string DmoStatus { get; set; }
+        public short DmoStatusId { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public string ShortComment { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public short Mark { get; set; }
     }
 }

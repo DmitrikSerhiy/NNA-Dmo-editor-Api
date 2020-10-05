@@ -1,10 +1,10 @@
-﻿using System;
-
-namespace API.DTO.DmoCollections {
+﻿namespace API.DTO.DmoCollections {
     public class DmoCollectionDto {
-        public String Id { get; set; }
-        public String CollectionName { get; set; }
-        public Int32 DmoCount { get; set; }
+        public string Id { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public string CollectionName { get; set; }
+        // ReSharper disable once UnusedMember.Global
+        public int DmoCount { get; set; }
         public DmoShortDto[] Dmos { get; set; }
     }
 }

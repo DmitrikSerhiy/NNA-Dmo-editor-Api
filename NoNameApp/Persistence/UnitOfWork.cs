@@ -7,9 +7,11 @@ using Serilog;
 namespace Persistence {
     public class UnitOfWork : IDisposable {
         private readonly NoNameContext _context;
-        private Boolean _disposed;
+        private bool _disposed;
+        // ReSharper disable once UnusedMember.Global
         public UnitOfWork() { }
 
+        // ReSharper disable once UnusedMember.Global
         public UnitOfWork(NoNameContext context) {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
@@ -45,7 +47,7 @@ namespace Persistence {
             });
         }
 
-        public Boolean HasChanges() {
+        public bool HasChanges() {
             return _context.ChangeTracker.HasChanges();
         }
 
@@ -55,7 +57,7 @@ namespace Persistence {
             }
         }
 
-        private void Dispose(Boolean disposing) {
+        private void Dispose(bool disposing) {
             if (_disposed) {
                 return;
             }

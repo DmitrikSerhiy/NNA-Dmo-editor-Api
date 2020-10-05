@@ -20,12 +20,12 @@ namespace API.Controllers {
         [Route("")]
         public ActionResult<string> Hello() {
             Log.Information("hello there");
-            return Ok("Hello from dummy this is update for continuous deliverance. Upadate once more");
+            return Ok("Hello from dummy this is update for continuous deliverance. Update once more");
         }
 
 
         [HttpGet]
-        [Route("firstUserFromdb")]
+        [Route("firstUserFromDb")]
         public async Task<ActionResult<string>> FirstFromDb() {
             var user = await _repository.FirstUser();
             return Ok(user.Email);
