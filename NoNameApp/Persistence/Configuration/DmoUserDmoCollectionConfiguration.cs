@@ -11,13 +11,13 @@ namespace Persistence.Configuration {
                 .HasOne(sc => sc.Dmo)
                 .WithMany(s => s.DmoUserDmoCollections)
                 .HasForeignKey(sc => sc.DmoId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<DmoUserDmoCollection>()
                 .HasOne(sc => sc.UserDmoCollection)
                 .WithMany(s => s.DmoUserDmoCollections)
                 .HasForeignKey(sc => sc.UserDmoCollectionId)
-                .OnDelete(DeleteBehavior.Restrict);
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

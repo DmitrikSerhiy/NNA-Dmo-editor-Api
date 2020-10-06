@@ -207,18 +207,6 @@ namespace Persistence.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DmoUserDmoCollection", x => new { x.DmoId, x.UserDmoCollectionId });
-                    table.ForeignKey(
-                        name: "FK_DmoUserDmoCollection_Dmos_DmoId",
-                        column: x => x.DmoId,
-                        principalTable: "Dmos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_DmoUserDmoCollection_UserDmoCollections_UserDmoCollectionId",
-                        column: x => x.UserDmoCollectionId,
-                        principalTable: "UserDmoCollections",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateIndex(

@@ -11,6 +11,12 @@
     <Compile Remove="Migrations\20200506184328_AddJsonBeats.Designer.cs" />
     <Compile Remove="Migrations\20200506184618_AddJsonBeats.cs" />
     <Compile Remove="Migrations\20200506184618_AddJsonBeats.Designer.cs" />
+    <Compile Remove="Migrations\20201006200416_UpdateCollectionDeletionBehaviour.cs" />
+    <Compile Remove="Migrations\20201006200416_UpdateCollectionDeletionBehaviour.Designer.cs" />
+    <Compile Remove="Migrations\20201006200621_123.cs" />
+    <Compile Remove="Migrations\20201006200621_123.Designer.cs" />
+    <Compile Remove="Migrations\20201006201221_UpdateCollectionDeletionBehaviour.cs" />
+    <Compile Remove="Migrations\20201006201221_UpdateCollectionDeletionBehaviour.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

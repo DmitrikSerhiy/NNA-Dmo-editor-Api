@@ -384,13 +384,13 @@ namespace Persistence.Migrations
                     b.HasOne("Model.Entities.Dmo", "Dmo")
                         .WithMany("DmoUserDmoCollections")
                         .HasForeignKey("DmoId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Model.Entities.UserDmoCollection", "UserDmoCollection")
                         .WithMany("DmoUserDmoCollections")
                         .HasForeignKey("UserDmoCollectionId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
