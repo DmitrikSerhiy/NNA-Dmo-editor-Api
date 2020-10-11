@@ -35,7 +35,7 @@ namespace Persistence.Repositories
                 return await db.QueryFirstAsync<Dmo>(
                     $"SELECT Id, Name, MovieTitle, ShortComment FROM dmos WHERE Id = '{dmoWithIdentity.Id}' and NoNameUserId = '{userId}'");
             } catch (Exception ex) {
-                Log.Error("Error while creating new dmo", ex);
+                Log.Error(ex, "Error while creating new dmo");
                 return null;
             }
         }
@@ -53,7 +53,7 @@ namespace Persistence.Repositories
                     $"SELECT Id, Name, MovieTitle, ShortComment FROM dmos WHERE Id = '{dmoFromClient.Id}' and NoNameUserId = '{userId}'");
             }
             catch (Exception ex) {
-                Log.Error("Error while editing dmo info", ex);
+                Log.Error(ex, "Error while editing dmo info");
                 return null;
             }
         }
@@ -64,7 +64,7 @@ namespace Persistence.Repositories
                 return await db.QueryFirstOrDefaultAsync<Dmo>(
                     $"SELECT Id, Name, MovieTitle, DmoStatus, ShortComment, Mark, BeatsJson FROM dmos WHERE Id = '{dmoId}' and NoNameUserId = '{userId}'");
             } catch (Exception ex) {
-                Log.Error("Error while getting dmo", ex);
+                Log.Error(ex, "Error while getting dmo");
                 return null;
             }
         }
@@ -77,7 +77,7 @@ namespace Persistence.Repositories
                     return BeatUpdateStatus.SqlUpdateInvalid;
                 }
             } catch (Exception ex) {
-                Log.Error("Error while updating beats json", ex);
+                Log.Error(ex, "Error while updating beats json");
                 return BeatUpdateStatus.Failed;
             }
 

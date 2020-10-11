@@ -50,8 +50,7 @@ namespace API.Hubs {
 
         public override Task OnDisconnectedAsync(Exception exception) {
             if (exception != null) {
-                Log.Error($"Error on websocket disconnection. User: {Context.GetCurrentUserId()}",
-                    exception.Message);
+                Log.Error(exception, $"Error on websocket disconnection. User: {Context.GetCurrentUserId()}. Error: {exception.Message}");
             }
 
             Console.WriteLine($"{Context.GetCurrentUserEmail()} disconnected from the editor");
