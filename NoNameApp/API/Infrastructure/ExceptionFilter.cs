@@ -11,10 +11,15 @@ namespace API.Infrastructure {
             if (context.Exception == null) return Task.CompletedTask;
             Log.Error(context.Exception, $"From exception filter: {context.Exception.Message}");
             context.Result = new ObjectResult(new
-                {fromExceptionFilter = true, title = "Internal server error", code = (int)HttpStatusCode.InternalServerError, message = context.Exception.Message}) {
+            {
+                fromExceptionFilter = true, 
+                title = "Internal server error", 
+                code = (int)HttpStatusCode.InternalServerError, 
+                message = context.Exception.Message,
+                exception = context.Exception.StackTrace
+            }) {
                 StatusCode = (int) HttpStatusCode.InternalServerError
             };
-            context.ExceptionHandled = true;
             return Task.CompletedTask;
         }
     }
