@@ -33,8 +33,6 @@ namespace Persistence {
                     await using var transaction = await _context.Database.BeginTransactionAsync();
                     await _context.SaveChangesAsync();
                     await _context.Database.CurrentTransaction.CommitAsync();
-                    //todo: remove it after qa logging is tested
-                    throw new ArgumentException("some shit from transaction manager");
                 }
                 catch (DbUpdateException ex) {
                     Log.Error(ex, "Transaction failed");
