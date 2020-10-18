@@ -26,6 +26,8 @@ namespace API.Hubs {
             IBeatsRepository beatsRepository, 
             IMapper mapper,
             NoNameUserManager userManager) {
+            //temp
+            Log.Information($"from constructor: {beatsRepository == null} {mapper == null} {userManager == null}");
             _beatsRepository = beatsRepository ?? throw new ArgumentNullException(nameof(beatsRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); 
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -33,6 +35,8 @@ namespace API.Hubs {
 
         public override async Task OnConnectedAsync() {
             var userName = Context.User?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
+            //temp
+            Log.Information($"from onConnected: {userName.Value}");
             if (userName == null) {
                 await OnDisconnectedAsync(new AuthenticationException("User is not authenticated [websocket]"));
                 return;
