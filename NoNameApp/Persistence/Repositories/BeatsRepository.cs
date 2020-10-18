@@ -25,7 +25,7 @@ namespace Persistence.Repositories
                 await using var db = GetMySqlConnection();
                 var dmoWithIdentity = new Dmo();
                 var createResult = await db.ExecuteAsync(
-                    "INSERT INTO dmos (Id, DateOfCreation, Name, MovieTitle, DmoStatus, ShortComment, Mark, NoNameUserId) " +
+                    "INSERT INTO Dmos (Id, DateOfCreation, Name, MovieTitle, DmoStatus, ShortComment, Mark, NoNameUserId) " +
                     $"VALUES('{dmoWithIdentity.Id}', {dmoWithIdentity.DateOfCreation}, '{dmoFromClient.Name}', '{dmoFromClient.MovieTitle}', " +
                     $"{(short)DmoStatus.New}, '{dmoFromClient.ShortComment}', {dmoFromClient.Mark}, '{userId}')");
                 if (createResult != 1) {
@@ -33,7 +33,7 @@ namespace Persistence.Repositories
                 }
 
                 return await db.QueryFirstAsync<Dmo>(
-                    $"SELECT Id, Name, MovieTitle, ShortComment FROM dmos WHERE Id = '{dmoWithIdentity.Id}' and NoNameUserId = '{userId}'");
+                    $"SELECT Id, Name, MovieTitle, ShortComment FROM Dmos WHERE Id = '{dmoWithIdentity.Id}' and NoNameUserId = '{userId}'");
             } catch (Exception ex) {
                 Log.Error(ex, "Error while creating new dmo");
                 return null;
@@ -44,13 +44,13 @@ namespace Persistence.Repositories
             try {
                 await using var db = GetMySqlConnection();
                 var editResult = await db.ExecuteAsync(
-                    $"UPDATE dmos set Name = '{dmoFromClient.Name}', MovieTitle = '{dmoFromClient.MovieTitle}', ShortComment = '{dmoFromClient.ShortComment}' " +
+                    $"UPDATE Dmos set Name = '{dmoFromClient.Name}', MovieTitle = '{dmoFromClient.MovieTitle}', ShortComment = '{dmoFromClient.ShortComment}' " +
                     $"WHERE Id = '{dmoFromClient.Id}' and NoNameUserId = '{userId}'");
                 if (editResult != 1) {
                     return null;
                 }
                 return await db.QueryFirstAsync<Dmo>(
-                    $"SELECT Id, Name, MovieTitle, ShortComment FROM dmos WHERE Id = '{dmoFromClient.Id}' and NoNameUserId = '{userId}'");
+                    $"SELECT Id, Name, MovieTitle, ShortComment FROM Dmos WHERE Id = '{dmoFromClient.Id}' and NoNameUserId = '{userId}'");
             }
             catch (Exception ex) {
                 Log.Error(ex, "Error while editing dmo info");
@@ -62,7 +62,7 @@ namespace Persistence.Repositories
             try {
                 await using var db = GetMySqlConnection();
                 return await db.QueryFirstOrDefaultAsync<Dmo>(
-                    $"SELECT Id, Name, MovieTitle, DmoStatus, ShortComment, Mark, BeatsJson FROM dmos WHERE Id = '{dmoId}' and NoNameUserId = '{userId}'");
+                    $"SELECT Id, Name, MovieTitle, DmoStatus, ShortComment, Mark, BeatsJson FROM Dmos WHERE Id = '{dmoId}' and NoNameUserId = '{userId}'");
             } catch (Exception ex) {
                 Log.Error(ex, "Error while getting dmo");
                 return null;
@@ -72,7 +72,7 @@ namespace Persistence.Repositories
         public async Task<BeatUpdateStatus> UpdateBeatsAsync(string jsonBeats, Guid dmoId) {
             try {
                 await using var db = GetMySqlConnection();
-                var result = await db.ExecuteAsync($"update dmos set BeatsJson = '{jsonBeats}' where Id = '{dmoId}'");
+                var result = await db.ExecuteAsync($"update Dmos set BeatsJson = '{jsonBeats}' where Id = '{dmoId}'");
                 if (result != 1) {
                     return BeatUpdateStatus.SqlUpdateInvalid;
                 }
