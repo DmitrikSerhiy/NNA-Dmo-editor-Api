@@ -25,6 +25,10 @@ namespace API.Mappers {
                 .ForMember(udc => udc.Id, dcd => dcd.MapFrom(dd => dd.Id.ToString()))
                 .ReverseMap();
 
+            CreateMap<Dmo, ShortDmoDto>()
+                .ForMember(udc => udc.Id, dcd => dcd.MapFrom(dd => dd.Id.ToString()))
+                .ReverseMap();
+
             CreateMap<Beat, BeatDto>()
                 .ForMember(udc => udc.PlotTimeSpot, dcd => dcd
                     .MapFrom(dd => new TimeSpan(0, dd.PlotTimeSpot.Hours, dd.PlotTimeSpot.Minutes)))

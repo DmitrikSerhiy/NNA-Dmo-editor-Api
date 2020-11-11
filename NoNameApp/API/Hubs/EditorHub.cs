@@ -62,33 +62,33 @@ namespace API.Hubs {
             return base.OnDisconnectedAsync(exception);
         }
 
-        public async Task<CreateDmoDto> CreateDmo(CreateDmoDto dmoDto) {
+        public async Task<ShortDmoDto> CreateDmo(ShortDmoDto dmoDto) {
             if (!Context.ContainsUser()) {
                 return null;
             }
 
             var createdDmo = await _beatsRepository
                 .CreateDmoAsync(_mapper.Map<Dmo>(dmoDto), Context.GetCurrentUserId().GetValueOrDefault());
-            return createdDmo == null ? null : _mapper.Map<CreateDmoDto>(createdDmo);
+            return createdDmo == null ? null : _mapper.Map<ShortDmoDto>(createdDmo);
         }
 
-        public async Task<ShortDmoWithBeatsDto> LoadDmo(string dmoId) {
+        public async Task<ShortDmoDto> LoadDmo(string dmoId) {
             if (!Context.ContainsUser()) {
                 return null;
             }
             var dmo = await _beatsRepository
                 .LoadDmoAsync(Guid.Parse(dmoId), Context.GetCurrentUserId().GetValueOrDefault());
-            return dmo == null ? null : _mapper.Map<ShortDmoWithBeatsDto>(dmo);
+            return dmo == null ? null : _mapper.Map<ShortDmoDto>(dmo);
         }
 
-        public async Task<EditDmoInfoDto> UpdateDmoInfo(EditDmoInfoDto dmoDto) {
+        public async Task<ShortDmoDto> UpdateDmoInfo(ShortDmoDto dmoDto) {
             if (!Context.ContainsUser()) {
                 return null;
             }
 
             var updatedDmo = await _beatsRepository
                 .EditDmoAsync(_mapper.Map<Dmo>(dmoDto), Context.GetCurrentUserId().GetValueOrDefault());
-            return updatedDmo == null ? null : _mapper.Map<EditDmoInfoDto>(updatedDmo);
+            return updatedDmo == null ? null : _mapper.Map<ShortDmoDto>(updatedDmo);
         }
 
 
