@@ -9,8 +9,10 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using API.Hubs;
 using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.SignalR.Protocol;
 
 namespace API
 {
@@ -45,6 +47,7 @@ namespace API
             services.AddAuthenticationOptions();
             services.AddSignalR().AddHubOptions<EditorHub>(o => {
                 o.EnableDetailedErrors = true;
+                o.SupportedProtocols = new List<string>{ new JsonHubProtocol().Name };
             });
             services.AddAutoMapper(typeof(Startup));
             services.AddMvcAndFilters();
@@ -72,7 +75,7 @@ namespace API
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
                 endpoints.MapHub<EditorHub>("api/editor", o => {
-                    o.Transports = HttpTransportType.WebSockets;
+                    o.Transports = HttpTransportType.WebSockets | HttpTransportType.LongPolling | HttpTransportType.ServerSentEvents;
                     //todo: consider use Redis backplane when api is scale out (2 or more EC2)
                 });
             });

@@ -19,7 +19,6 @@ namespace API.Controllers {
         [HttpGet]
         [Route("")]
         public ActionResult<string> Hello() {
-            Log.Information("hello there");
             return Ok("Hello from dummy this is update for continuous deliverance. Update once more");
         }
 
