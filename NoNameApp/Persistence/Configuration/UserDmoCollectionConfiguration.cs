@@ -4,10 +4,10 @@ using Model.Entities;
 namespace Persistence.Configuration {
     public static class UserDmoCollectionConfiguration {
         public static void Configure(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<UserDmoCollection>()
-                .HasOne(s => s.NoNameUser)
-                .WithMany(g => g.UserDmoCollections)
-                .HasForeignKey(s => s.NoNameUserId);
+            modelBuilder.Entity<DmoCollection>()
+                .HasOne(s => s.NnaUser)
+                .WithMany(g => g.DmoCollections)
+                .HasForeignKey(s => s.NnaUserId);
         }
     }
 }

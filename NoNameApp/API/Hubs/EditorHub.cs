@@ -12,6 +12,7 @@ using System.Text.Json;
 using API.Hubs.Extensions;
 using API.Hubs.Helpers;
 using API.Infrastructure.Authentication;
+using API.Services;
 using Model.Enums;
 
 namespace API.Hubs {
@@ -19,24 +20,23 @@ namespace API.Hubs {
     public class EditorHub : Hub {
 
         private readonly IBeatsRepository _beatsRepository;
+        private readonly IEditorService _editorService;
         private readonly IMapper _mapper;
-        private readonly NoNameUserManager _userManager;
+        private readonly NnaUserManager _userManager;
 
         public EditorHub(
             IBeatsRepository beatsRepository, 
             IMapper mapper,
-            NoNameUserManager userManager) {
-            //temp
-            Log.Information($"from constructor: {beatsRepository == null} {mapper == null} {userManager == null}");
+            NnaUserManager userManager, 
+            IEditorService editorService) {
             _beatsRepository = beatsRepository ?? throw new ArgumentNullException(nameof(beatsRepository));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper)); 
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _editorService = editorService ?? throw new ArgumentNullException(nameof(editorService));
         }
 
         public override async Task OnConnectedAsync() {
             var userName = Context.User?.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name");
-            //temp
-            Log.Information($"from onConnected: {userName.Value}");
             if (userName == null) {
                 await OnDisconnectedAsync(new AuthenticationException("User is not authenticated [websocket]"));
                 return;
@@ -67,9 +67,7 @@ namespace API.Hubs {
                 return null;
             }
 
-            var createdDmo = await _beatsRepository
-                .CreateDmoAsync(_mapper.Map<Dmo>(dmoDto), Context.GetCurrentUserId().GetValueOrDefault());
-            return createdDmo == null ? null : _mapper.Map<ShortDmoDto>(createdDmo);
+            return await _editorService.CreateAndLoadAsync(dmoDto, Context.GetCurrentUserId().GetValueOrDefault());
         }
 
         public async Task<ShortDmoDto> LoadDmo(string dmoId) {
@@ -77,7 +75,7 @@ namespace API.Hubs {
                 return null;
             }
             var dmo = await _beatsRepository
-                .LoadDmoAsync(Guid.Parse(dmoId), Context.GetCurrentUserId().GetValueOrDefault());
+                .LoadShortDmoAsync(Guid.Parse(dmoId), Context.GetCurrentUserId().GetValueOrDefault());
             return dmo == null ? null : _mapper.Map<ShortDmoDto>(dmo);
         }
 

@@ -8,7 +8,7 @@ namespace Model {
         // ReSharper disable once UnusedMemberInSuper.Global
         string AuthenticatedUserEmail { get; }
 
-        void SetAuthenticatedUser(NoNameUser user);
+        void SetAuthenticatedUser(NnaUser user);
         // ReSharper disable once UnusedMemberInSuper.Global
 
         void ClearAuthenticatedUserInfo();

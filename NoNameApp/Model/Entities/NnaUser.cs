@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
 namespace Model.Entities {
-    public sealed class NoNameUser : IdentityUser<Guid> {
-        public NoNameUser(string email, string userName) {
+    public sealed class NnaUser : IdentityUser<Guid> {
+        public NnaUser(string email, string userName) {
             if (string.IsNullOrWhiteSpace(email)) {
                 throw new ArgumentNullException(nameof(email));
             }
@@ -18,6 +18,6 @@ namespace Model.Entities {
         }
 
         public ICollection<Dmo> Dmos { get; set; }
-        public ICollection<UserDmoCollection> UserDmoCollections { get; set; }
+        public ICollection<DmoCollection> DmoCollections { get; set; }
     }
 }

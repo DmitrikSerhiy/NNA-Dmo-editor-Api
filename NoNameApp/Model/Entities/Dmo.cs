@@ -8,15 +8,13 @@ namespace Model.Entities {
         public string MovieTitle { get; set; }
         public short DmoStatus { get; set; }
         public string ShortComment { get; set; }
-        public short Mark { get; set; }
-
-
-        public NoNameUser NoNameUser { get; set; }
-        public Guid NoNameUserId { get; set; }
-
-        public ICollection<DmoUserDmoCollection> DmoUserDmoCollections { get; set; }
-
-        public ICollection<Beat> Beats { get; set; }
+        public short? Mark { get; set; }
         public string BeatsJson { get; set; }
+
+
+        public NnaUser NnaUser { get; set; }
+        public Guid NnaUserId { get; set; }
+
+        public ICollection<DmoCollectionDmo> DmoCollectionDmos { get; set; }
     }
 }

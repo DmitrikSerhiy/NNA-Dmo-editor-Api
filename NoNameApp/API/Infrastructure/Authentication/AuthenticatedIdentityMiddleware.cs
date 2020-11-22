@@ -8,9 +8,9 @@ namespace API.Infrastructure.Authentication
 {
     public class AuthenticatedIdentityMiddleware {
         private readonly RequestDelegate _next;
-        private readonly NoNameUserManager _userManager;
+        private readonly NnaUserManager _userManager;
 
-        public AuthenticatedIdentityMiddleware(RequestDelegate next, NoNameUserManager userManager) {
+        public AuthenticatedIdentityMiddleware(RequestDelegate next, NnaUserManager userManager) {
             _next = next ?? throw new ArgumentNullException(nameof(next));
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }

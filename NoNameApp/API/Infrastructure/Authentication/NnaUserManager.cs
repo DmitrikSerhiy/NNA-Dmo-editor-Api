@@ -6,15 +6,15 @@ using Microsoft.Extensions.Options;
 using Model.Entities;
 
 namespace API.Infrastructure.Authentication {
-    public class NoNameUserManager : UserManager<NoNameUser> {
-        public NoNameUserManager(
-            IUserStore<NoNameUser> store, 
+    public class NnaUserManager : UserManager<NnaUser> {
+        public NnaUserManager(
+            IUserStore<NnaUser> store, 
             IOptions<IdentityOptions> optionsAccessor, 
-            IPasswordHasher<NoNameUser> passwordHasher, 
-            IEnumerable<IUserValidator<NoNameUser>> userValidators, 
-            IEnumerable<IPasswordValidator<NoNameUser>> passwordValidators, 
+            IPasswordHasher<NnaUser> passwordHasher, 
+            IEnumerable<IUserValidator<NnaUser>> userValidators, 
+            IEnumerable<IPasswordValidator<NnaUser>> passwordValidators, 
             ILookupNormalizer keyNormalizer, IdentityErrorDescriber errors,
-            IServiceProvider services, ILogger<UserManager<NoNameUser>> logger) 
+            IServiceProvider services, ILogger<UserManager<NnaUser>> logger) 
             : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger) {
         }
     }

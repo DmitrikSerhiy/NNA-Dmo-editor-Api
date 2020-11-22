@@ -10,7 +10,7 @@ namespace API.Infrastructure.Extensions {
     public static class AuthenticationOptions {
         public static void AddAuthenticationOptions(this IServiceCollection services) {
             var identityBuilder = services
-                .AddIdentity<NoNameUser, NoNameRole>(options => {
+                .AddIdentity<NnaUser, NnaRole>(options => {
                     // todo: add some password restrictions later
                     options.User.RequireUniqueEmail = true;
                     options.Password.RequireDigit = false;
@@ -19,9 +19,9 @@ namespace API.Infrastructure.Extensions {
                     options.Password.RequireNonAlphanumeric = false;
                     options.Password.RequireUppercase = false;
                 })
-                .AddEntityFrameworkStores<NoNameContext>();
+                .AddEntityFrameworkStores<NnaContext>();
             //todo: add token provider for future Maybe I should use IdentityServer4 here
-            identityBuilder.AddUserManager<NoNameUserManager>();
+            identityBuilder.AddUserManager<NnaUserManager>();
 
             services.AddAuthentication(options => {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

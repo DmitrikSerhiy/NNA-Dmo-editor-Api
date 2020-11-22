@@ -6,8 +6,8 @@ using Model.Enums;
 namespace Model {
     public interface IBeatsRepository {
         Task<BeatUpdateStatus> UpdateBeatsAsync(string jsonBeats, Guid dmoId);
-        Task<Dmo> LoadDmoAsync(Guid dmoId, Guid userId);
-        Task<Dmo> CreateDmoAsync(Dmo dmoFromClient, Guid userId);
-        Task<Dmo> EditDmoAsync(Dmo dmoFromClient, Guid userId);
+        Task<Dmo> LoadShortDmoAsync(Guid dmoId, Guid userId);
+        Task<bool> CreateDmoAsync(Dmo dmo, Guid userId);
+        Task<Dmo> EditDmoAsync(Dmo dmo, Guid userId);
     }
 }

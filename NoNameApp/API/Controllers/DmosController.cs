@@ -42,12 +42,12 @@ namespace API.Controllers {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
             var user = await _currentUserService.GetAsync();
 
-            var dmo = await _dmosRepository.GetShortDmo(user.Id, dto.DmoId);
+            var dmo = await _dmosRepository.GetDmo(user.Id, dto.DmoId);
             if (dmo == null) {
                 return NotFound();
             }
 
-            _dmosRepository.RemoveDmo(dmo);
+            _dmosRepository.DeleteDmo(dmo);
             return NoContent();
         }
     }

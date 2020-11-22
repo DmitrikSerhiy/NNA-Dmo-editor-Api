@@ -10,7 +10,7 @@ namespace API.Infrastructure.Authentication {
         private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
         private readonly IUserRepository _userRepository;
 
-        private NoNameUser _cachedUser;
+        private NnaUser _cachedUser;
 
         public CurrentUserService(
             IAuthenticatedIdentityProvider authenticatedIdentityProvider, 
@@ -19,7 +19,7 @@ namespace API.Infrastructure.Authentication {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
-        public async Task<NoNameUser> GetAsync() {
+        public async Task<NnaUser> GetAsync() {
             if (!_authenticatedIdentityProvider.IsAuthenticated) {
                 throw new AuthenticationException("User is not authenticated");
             }

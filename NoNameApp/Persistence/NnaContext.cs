@@ -5,17 +5,15 @@ using Model.Entities;
 using Persistence.Configuration;
 
 namespace Persistence {
-    public class NoNameContext : IdentityDbContext<NoNameUser, NoNameRole, Guid> {
+    public class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
 
-        public DbSet<NoNameUser> ApplicationUsers { get; set; }
+        public DbSet<NnaUser> ApplicationUsers { get; set; }
         public DbSet<Dmo> Dmos { get; set; }
-        // ReSharper disable once UnusedMember.Global
-        public DbSet<Beat> Beats { get; set; }
-        public DbSet<UserDmoCollection> UserDmoCollections { get; set; }
+        public DbSet<DmoCollection> DmoCollections { get; set; }
 
-        public NoNameContext() { }
+        public NnaContext() { }
 
-        public NoNameContext(DbContextOptions<NoNameContext> options)
+        public NnaContext(DbContextOptions<NnaContext> options)
             : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
@@ -23,7 +21,6 @@ namespace Persistence {
             DmoConfiguration.Configure(modelBuilder);
             UserDmoCollectionConfiguration.Configure(modelBuilder);
             DmoUserDmoCollectionConfiguration.Configure(modelBuilder);
-            BeatsConfiguration.Configure(modelBuilder);
         }
     }
 }

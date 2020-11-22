@@ -8,6 +8,7 @@ namespace Model
     public interface IDmosRepository {
         Task<List<Dmo>> GetAll(Guid userId);
         Task<Dmo> GetShortDmo(Guid userId, Guid? dmoId);
-        void RemoveDmo(Dmo dmo);
+        Task<Dmo> GetDmo(Guid userId, Guid? dmoId);
+        void DeleteDmo(Dmo dmo);
     }
 }

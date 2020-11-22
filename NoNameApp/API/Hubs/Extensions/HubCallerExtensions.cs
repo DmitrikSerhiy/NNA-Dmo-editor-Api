@@ -25,7 +25,7 @@ namespace API.Hubs.Extensions {
             return context.Items.Keys.Any(key => key.Equals("user"));
         }
 
-        public static void SaveUser(this HubCallerContext context, NoNameUser user) {
+        public static void SaveUser(this HubCallerContext context, NnaUser user) {
             var authenticatedIdentityProvider = new AuthenticatedIdentityProvider();
             authenticatedIdentityProvider.SetAuthenticatedUser(user);
             context.Items.Add("user", authenticatedIdentityProvider);

@@ -5,17 +5,17 @@ using System.Threading.Tasks;
 
 namespace Model {
     public interface IDmoCollectionsRepository {
-        Task<List<UserDmoCollection>> GetCollectionsAsync(Guid userId);
-        Task<UserDmoCollection> GetCollectionAsync(Guid userId, Guid? collectionId);
-        Task AddCollectionAsync(UserDmoCollection dmoCollection);
+        Task<List<DmoCollection>> GetCollectionsAsync(Guid userId);
+        Task<DmoCollection> GetCollectionAsync(Guid userId, Guid? collectionId);
+        Task AddCollectionAsync(DmoCollection dmoCollection);
         Task<bool> IsCollectionExist(Guid userId, string collectionName);
-        void DeleteCollection(UserDmoCollection collection);
-        void UpdateCollectionName(UserDmoCollection oldDmoCollection, UserDmoCollection newDmoCollection);
-        void AddDmoToCollection(UserDmoCollection dmoCollection, List<Dmo> dmos);
-        bool ContainsDmo(UserDmoCollection dmoCollection, Guid? dmoId);
-        Task<UserDmoCollection> GetCollectionWithDmos(Guid userId, Guid? collectionId);
+        void DeleteCollection(DmoCollection collection);
+        void UpdateCollectionName(DmoCollection oldDmoCollection, DmoCollection newDmoCollection);
+        void AddDmoToCollection(DmoCollection dmoCollection, List<Dmo> dmos);
+        bool ContainsDmo(DmoCollection dmoCollection, Guid? dmoId);
+        Task<DmoCollection> GetCollectionWithDmos(Guid userId, Guid? collectionId);
         Task<Dmo> GetDmoAsync(Guid userId, Guid? dmoId);
         Task<List<Dmo>> GetExcludedDmos(Guid userId, Guid? collectionId);
-        void RemoveDmoFromCollection(UserDmoCollection dmoCollection, Dmo dmo);
+        void RemoveDmoFromCollection(DmoCollection dmoCollection, Dmo dmo);
     }
 }

@@ -14,12 +14,12 @@ namespace API.Controllers
     [ApiController]
     [Authorize]
     public class AccountController : ControllerBase {
-        private readonly NoNameUserManager _userManager;
+        private readonly NnaUserManager _userManager;
         private readonly IdentityService _identityService;
         private readonly ResponseBuilder _responseBuilder;
 
         public AccountController(
-            NoNameUserManager userManager, 
+            NnaUserManager userManager, 
             IdentityService identityService, 
             ResponseBuilder responseBuilder) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
@@ -41,7 +41,7 @@ namespace API.Controllers
             }
 
             var result = await _userManager
-                .CreateAsync(new NoNameUser(registerModel.Email, registerModel.UserName), registerModel.Password);
+                .CreateAsync(new NnaUser(registerModel.Email, registerModel.UserName), registerModel.Password);
             if (!result.Succeeded) {
                 return StatusCode((int) HttpStatusCode.InternalServerError);
             }

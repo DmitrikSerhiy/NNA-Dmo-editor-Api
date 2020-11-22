@@ -8,8 +8,8 @@ using Microsoft.IdentityModel.Tokens;
 namespace API.Infrastructure.Authentication
 {
     public class IdentityService {
-        private readonly NoNameUserManager _userManager;
-        public IdentityService(NoNameUserManager userManager) {
+        private readonly NnaUserManager _userManager;
+        public IdentityService(NnaUserManager userManager) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 

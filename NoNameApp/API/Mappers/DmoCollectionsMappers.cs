@@ -9,15 +9,17 @@ namespace API.Mappers {
     public class DmoCollectionsMappers : Profile {
 
         public DmoCollectionsMappers() {
-            CreateMap<UserDmoCollection, DmoCollectionShortDto>()
-                .ForMember(udc => udc.DmoCount, dcd => dcd.MapFrom(dd => dd.DmoUserDmoCollections.Count))
+            CreateMap<DmoCollection, DmoCollectionShortDto>()
+                .ForMember(udc => udc.DmoCount, dcd => dcd.MapFrom(dd => dd.DmoCollectionDmos.Count))
                 .ReverseMap();
             CreateMap<Dmo, DmoShortDto>()
-                .ForMember(udc => udc.DmoStatus, dcd => dcd.MapFrom(dd => StaticDmoMapper.GetDmoStatusString(dd.DmoStatus)))
-                .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus));
-            CreateMap<UserDmoCollection, DmoCollectionDto>()
+                .ForMember(udc => udc.DmoStatus,
+                    dcd => dcd.MapFrom(dd => StaticDmoMapper.GetDmoStatusString(dd.DmoStatus)))
+                .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus))
+                .ReverseMap();
+            CreateMap<DmoCollection, DmoCollectionDto>()
                 .ForMember(udc => udc.Dmos,
-                    dcd => dcd.MapFrom(dd => dd.DmoUserDmoCollections.Select(d => d.Dmo).ToArray()));
+                    dcd => dcd.MapFrom(dd => dd.DmoCollectionDmos.Select(d => d.Dmo).ToArray()));
         }
     }
 }

@@ -55,10 +55,10 @@ namespace API.Controllers {
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"List with name '{dto.CollectionName}' is already exist"));
             }
 
-            await _dmoCollectionsRepository.AddCollectionAsync(new UserDmoCollection
+            await _dmoCollectionsRepository.AddCollectionAsync(new DmoCollection
             {
-                NoNameUser = user,
-                NoNameUserId = user.Id,
+                NnaUser = user,
+                NnaUserId = user.Id,
                 CollectionName = dto.CollectionName
             });
 
@@ -110,7 +110,7 @@ namespace API.Controllers {
                 return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"'{dmoCollectionShort.CollectionName}' has been removed or invalid"));
             }
 
-            _dmoCollectionsRepository.UpdateCollectionName(collectionForUpdate, _mapper.Map<UserDmoCollection>(dmoCollectionShort));
+            _dmoCollectionsRepository.UpdateCollectionName(collectionForUpdate, _mapper.Map<DmoCollection>(dmoCollectionShort));
             return NoContent();
         }
 
@@ -190,7 +190,7 @@ namespace API.Controllers {
                 return NotFound();
             }
 
-            if (dmoCollection.DmoUserDmoCollections.All(d => d.Dmo.Id != dmo.Id)) {
+            if (dmoCollection.DmoCollectionDmos.All(d => d.Dmo.Id != dmo.Id)) {
                 return NotFound();
             }
 

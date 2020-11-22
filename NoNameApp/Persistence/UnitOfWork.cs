@@ -5,17 +5,17 @@ using Serilog;
 
 namespace Persistence {
     public class UnitOfWork : IDisposable {
-        private readonly NoNameContext _context;
+        private readonly NnaContext _context;
         private bool _disposed;
         // ReSharper disable once UnusedMember.Global
         public UnitOfWork() { }
 
         // ReSharper disable once UnusedMember.Global
-        public UnitOfWork(NoNameContext context) {
+        public UnitOfWork(NnaContext context) {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        internal NoNameContext Context {
+        internal NnaContext Context {
             get {
                 ThrowIfDisposed();
                 return _context;

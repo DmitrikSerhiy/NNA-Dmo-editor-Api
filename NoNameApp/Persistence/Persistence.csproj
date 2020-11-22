@@ -5,21 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Migrations\20200506183152_AddJsonBeats.cs" />
-    <Compile Remove="Migrations\20200506183152_AddJsonBeats.Designer.cs" />
-    <Compile Remove="Migrations\20200506184328_AddJsonBeats.cs" />
-    <Compile Remove="Migrations\20200506184328_AddJsonBeats.Designer.cs" />
-    <Compile Remove="Migrations\20200506184618_AddJsonBeats.cs" />
-    <Compile Remove="Migrations\20200506184618_AddJsonBeats.Designer.cs" />
-    <Compile Remove="Migrations\20201006200416_UpdateCollectionDeletionBehaviour.cs" />
-    <Compile Remove="Migrations\20201006200416_UpdateCollectionDeletionBehaviour.Designer.cs" />
-    <Compile Remove="Migrations\20201006200621_123.cs" />
-    <Compile Remove="Migrations\20201006200621_123.Designer.cs" />
-    <Compile Remove="Migrations\20201006201221_UpdateCollectionDeletionBehaviour.cs" />
-    <Compile Remove="Migrations\20201006201221_UpdateCollectionDeletionBehaviour.Designer.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Dapper" Version="2.0.35" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.0" />
     <PackageReference Include="Microsoft.Data.SqlClient" Version="2.0.0-preview3.20122.2" />
@@ -29,6 +14,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.0-preview1.19506.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

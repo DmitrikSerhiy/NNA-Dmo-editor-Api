@@ -1,23 +1,25 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
 using Model.Entities;
 
 namespace Persistence.Configuration {
     public static class DmoUserDmoCollectionConfiguration {
         public static void Configure(ModelBuilder modelBuilder) {
-            modelBuilder.Entity<DmoUserDmoCollection>()
-                .HasKey(dc => new { dc.DmoId, dc.UserDmoCollectionId });
 
-            modelBuilder.Entity<DmoUserDmoCollection>()
-                .HasOne(sc => sc.Dmo)
-                .WithMany(s => s.DmoUserDmoCollections)
+            modelBuilder.Entity<DmoCollectionDmo>()
+                .HasKey(dc => new { dc.DmoId, dc.DmoCollectionId });
+
+            modelBuilder.Entity<DmoCollectionDmo>()
+                .HasOne(dc => dc.Dmo)
+                .WithMany(dc => dc.DmoCollectionDmos)
                 .HasForeignKey(sc => sc.DmoId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
-            modelBuilder.Entity<DmoUserDmoCollection>()
-                .HasOne(sc => sc.UserDmoCollection)
-                .WithMany(s => s.DmoUserDmoCollections)
-                .HasForeignKey(sc => sc.UserDmoCollectionId)
-                .OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<DmoCollectionDmo>()
+                .HasOne(dc => dc.DmoCollection)
+                .WithMany(dc => dc.DmoCollectionDmos)
+                .HasForeignKey(sc => sc.DmoCollectionId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

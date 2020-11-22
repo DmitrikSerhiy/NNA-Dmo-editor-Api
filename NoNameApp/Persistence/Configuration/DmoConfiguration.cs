@@ -5,9 +5,9 @@ namespace Persistence.Configuration {
     public static class DmoConfiguration {
         public static void Configure(ModelBuilder modelBuilder) {
             modelBuilder.Entity<Dmo>()
-                .HasOne(d => d.NoNameUser)
+                .HasOne(d => d.NnaUser)
                 .WithMany(dc => dc.Dmos)
-                .HasForeignKey(d => d.NoNameUserId);
+                .HasForeignKey(d => d.NnaUserId);
         }
     }
 }

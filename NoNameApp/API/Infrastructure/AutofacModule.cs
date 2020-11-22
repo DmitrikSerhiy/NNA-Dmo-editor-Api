@@ -1,9 +1,11 @@
 ﻿using API.Infrastructure.Authentication;
+using API.Services;
 using Autofac;
 using Autofac.Features.ResolveAnything;
 using Microsoft.Extensions.Logging;
 using Model;
 using Persistence;
+using IEditorService = API.Services.IEditorService;
 
 namespace API.Infrastructure
 {
@@ -27,7 +29,12 @@ namespace API.Infrastructure
                 .InstancePerLifetimeScope();
 
             builder
-                .RegisterAssemblyTypes(typeof(NoNameContext).Assembly)
+                .RegisterType<EditorService>()
+                .As<IEditorService>()
+                .InstancePerLifetimeScope();
+
+            builder
+                .RegisterAssemblyTypes(typeof(NnaContext).Assembly)
                 .Where(t => t.Name.EndsWith("Repository"))
                 .AsImplementedInterfaces()
                 .InstancePerLifetimeScope();
