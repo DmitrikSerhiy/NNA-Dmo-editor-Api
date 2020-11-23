@@ -1,12 +1,6 @@
 version: 0.2
 
 phases:
-  pre_build:
-    commands:
-      - dotnet nuget locals --clear all
-      - dotnet restore ./API/API.csproj
-      - dotnet restore ./Model/Model.csproj
-      - dotnet restore ./Persistence/Persistence.csproj
   build:
     commands:
       - dotnet build NoNameApp.sln
