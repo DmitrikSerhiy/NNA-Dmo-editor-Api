@@ -3,6 +3,7 @@ version: 0.2
 phases:
   pre_build:
     commands:
+      - dotnet nuget locals --clear all
       - dotnet restore NoNameApp/API/API.csproj
   build:
     commands:
