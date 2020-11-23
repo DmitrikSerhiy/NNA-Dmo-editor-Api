@@ -4,10 +4,10 @@ phases:
   pre_build:
     commands:
       - dotnet nuget locals --clear all
-      - dotnet restore NoNameApp/API/API.csproj
+      - dotnet restore
   build:
     commands:
-      - dotnet build NoNameApp/API/API.csproj
+      - dotnet build NoNameApp.sln
       - dotnet publish -c release -o ./build_output NoNameApp/API/API.csproj
   post_build:
     commands:
