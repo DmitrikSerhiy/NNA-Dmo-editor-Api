@@ -5,6 +5,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
+    <StartupObject>API.Program</StartupObject>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(Configuration)' == '' Or '$(Configuration)' == 'Debug'">
