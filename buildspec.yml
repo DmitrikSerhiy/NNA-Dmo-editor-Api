@@ -3,7 +3,7 @@ version: 0.2
 phases:
   build:
     commands:
-      - dotnet build NoNameApp.sln
+      - dotnet build NoNameApp/NoNameApp.sln
       - dotnet publish -c release -o ./build_output NoNameApp/API/API.csproj
   post_build:
     commands:
