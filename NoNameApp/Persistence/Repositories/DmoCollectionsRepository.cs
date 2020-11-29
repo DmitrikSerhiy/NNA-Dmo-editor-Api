@@ -1,12 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Model;
 using Model.Entities;
+using Model.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Persistence.Repositories {
+namespace Persistence.Repositories
+{
     // ReSharper disable once UnusedMember.Global
     public class DmoCollectionsRepository : IDmoCollectionsRepository {
 

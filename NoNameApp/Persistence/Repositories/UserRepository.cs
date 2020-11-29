@@ -1,10 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using Model;
+﻿using Microsoft.EntityFrameworkCore;
 using Model.Entities;
+using Model.Interfaces.Repositories;
+using System;
+using System.Threading.Tasks;
 
-namespace Persistence.Repositories {
+namespace Persistence.Repositories
+{
     // ReSharper disable once UnusedMember.Global
     public class UserRepository : IUserRepository
     {

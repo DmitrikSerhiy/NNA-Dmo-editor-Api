@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Model;
 using Model.Entities;
+using Model.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;

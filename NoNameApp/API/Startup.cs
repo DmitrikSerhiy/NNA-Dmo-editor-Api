@@ -1,18 +1,16 @@
-﻿using API.Infrastructure;
-using API.Infrastructure.Authentication;
-using API.Infrastructure.Extensions;
+﻿using API.Features.Account.Services;
+using API.Features.Editor.Hubs;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using API.Hubs;
-using Microsoft.AspNetCore.Http.Connections;
-using Microsoft.AspNetCore.SignalR.Protocol;
+using API.Helpers.Extensions;
+using Infrastructure;
 
 namespace API
 {
@@ -52,7 +50,8 @@ namespace API
             services.AddMvcAndFilters();
 
             builder.Populate(services);
-            builder.RegisterModule(new AutofacModule());
+            builder.RegisterModule(new GlobalModule());
+            builder.RegisterModule(new ApiModule());
             var applicationContainer = builder.Build();
             return new AutofacServiceProvider(applicationContainer);
         }

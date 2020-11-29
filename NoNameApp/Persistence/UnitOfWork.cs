@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Model.Interfaces;
 using Serilog;
 
 namespace Persistence {
-    public class UnitOfWork : IDisposable {
+    public class UnitOfWork : IUnitOfWork {
         private readonly NnaContext _context;
         private bool _disposed;
         // ReSharper disable once UnusedMember.Global
