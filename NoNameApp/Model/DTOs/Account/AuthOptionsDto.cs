@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace Model.DTOs.Account {
     // ReSharper disable once ClassNeverInstantiated.Global
-    public class AuthOptionsModel {
+    public class AuthOptionsDto : BaseDto {
         // ReSharper disable InconsistentNaming
         //todo: locate it to the appsettings.json later or some secure place
         public const string ISSUER = "NoNameAppApi";

@@ -1,9 +1,7 @@
 ﻿namespace Model.DTOs.DmoCollections {
-    public class DmoCollectionDto {
+    public class DmoCollectionDto : BaseDto {
         public string Id { get; set; }
-        // ReSharper disable once UnusedMember.Global
         public string CollectionName { get; set; }
-        // ReSharper disable once UnusedMember.Global
         public int DmoCount { get; set; }
         public DmoShortDto[] Dmos { get; set; }
     }

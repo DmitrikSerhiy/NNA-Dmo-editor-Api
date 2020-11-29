@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Model.DTOs.Dmos;
+using Model.DTOs.Editor;
 
 namespace Model.Interfaces
 {
     public interface IEditorService {
-        Task<ShortDmoDto> CreateAndLoadAsync(ShortDmoDto dto, Guid userId);
+        Task<CreatedDmoDto> CreateAndLoadAsync(CreateDmoDto dto, Guid userId);
     }
 }

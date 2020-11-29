@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using AutoMapper;
 using Model.DTOs.Dmos;
+using Model.DTOs.Editor;
 using Model.Entities;
 
 namespace API.Features.Dmos.Mappers {
@@ -16,9 +17,7 @@ namespace API.Features.Dmos.Mappers {
                     .MapFrom(dd => DeserializeBeats(dd.BeatsJson)))
                 .ReverseMap();
 
-            CreateMap<Dmo, CreateDmoDto>()
-                .ForMember(udc => udc.Id, dcd => dcd.MapFrom(dd => dd.Id.ToString()))
-                .ReverseMap();
+
             CreateMap<Dmo, EditDmoInfoDto>()
                 .ForMember(udc => udc.Id, dcd => dcd.MapFrom(dd => dd.Id.ToString()))
                 .ReverseMap();

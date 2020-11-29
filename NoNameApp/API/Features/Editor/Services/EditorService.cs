@@ -1,11 +1,11 @@
-﻿using System;
-using System.Threading.Tasks;
-using AutoMapper;
-using Model;
-using Model.DTOs.Dmos;
+﻿using AutoMapper;
+using Model.DTOs.Editor;
 using Model.Entities;
+using Model.Exceptions.Editor;
 using Model.Interfaces;
 using Model.Interfaces.Repositories;
+using System;
+using System.Threading.Tasks;
 
 namespace API.Features.Editor.Services
 {
@@ -21,24 +21,28 @@ namespace API.Features.Editor.Services
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<ShortDmoDto> CreateAndLoadAsync(ShortDmoDto dmoDto, Guid userId) {
-            //todo: check entry params
-            //todo: pass and return different dto types!
-            var initialDmo = _mapper.Map<Dmo>(dmoDto);
+        public async Task<CreatedDmoDto> CreateAndLoadAsync(CreateDmoDto dmoDto, Guid userId) {
+            if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
+            if(userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
 
-            //todo: fix this in automapper
-            initialDmo.Id = Guid.NewGuid();
-            initialDmo.DateOfCreation = DateTimeOffset.UtcNow.UtcTicks;
-            var created = await _editorRepository.CreateDmoAsync(initialDmo, userId);
-            
+            //todo: validate dmo
+            //todo: add unit tests
+
+            var initialDmo = _mapper.Map<Dmo>(dmoDto);
+            initialDmo.NnaUserId = userId;
+
+            var created = await _editorRepository.CreateDmoAsync(initialDmo);
             if (!created) {
-                //todo: add logger
-                //todo: return some responseDto
-                return null;
+                throw new CreateDmoException();
             }
 
+
             var dmo = await _editorRepository.LoadShortDmoAsync(initialDmo.Id, userId);
-            return dmo == null ? null : _mapper.Map<ShortDmoDto>(dmo);
+            if (dmo == null) {
+                throw new LoadDmoException(initialDmo.Id);
+            }
+
+            return _mapper.Map<CreatedDmoDto>(dmo);
         }
     }
 }

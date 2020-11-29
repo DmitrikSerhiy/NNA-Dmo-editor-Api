@@ -1,10 +1,9 @@
-﻿namespace Model.DTOs.Dmos {
-    public class CreateDmoDto {
+﻿namespace Model.DTOs.Editor
+{
+    public class CreatedDmoDto : BaseDto {
         public string Id { get; set; }
         public string Name { get; set; }
-        // ReSharper disable once UnusedMember.Global
         public string MovieTitle { get; set; }
-        // ReSharper disable once UnusedMember.Global
         public string ShortComment { get; set; }
     }
 }

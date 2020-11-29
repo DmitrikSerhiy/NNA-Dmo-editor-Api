@@ -33,12 +33,12 @@ namespace API.Helpers.Extensions {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = true,
-                        ValidIssuer = AuthOptionsModel.ISSUER,
+                        ValidIssuer = AuthOptionsDto.ISSUER,
                         ValidateAudience = true,
-                        ValidAudience = AuthOptionsModel.AUDIENCE,
+                        ValidAudience = AuthOptionsDto.AUDIENCE,
                         ValidateLifetime = false,
                         //todo: change it later
-                        IssuerSigningKey = AuthOptionsModel.GetSymmetricSecurityKey(),
+                        IssuerSigningKey = AuthOptionsDto.GetSymmetricSecurityKey(),
                         ValidateIssuerSigningKey = true,
                     };
                     options.Events = new JwtBearerEvents

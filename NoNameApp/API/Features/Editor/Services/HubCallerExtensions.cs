@@ -25,13 +25,13 @@ namespace API.Features.Editor.Services {
             return context.Items.Keys.Any(key => key.Equals("user"));
         }
 
-        public static void SaveUser(this HubCallerContext context, NnaUser user) {
+        public static void AuthenticateUser(this HubCallerContext context, NnaUser user) {
             var authenticatedIdentityProvider = new AuthenticatedIdentityProvider();
             authenticatedIdentityProvider.SetAuthenticatedUser(user);
             context.Items.Add("user", authenticatedIdentityProvider);
         }
 
-        public static void RemoveUser(this HubCallerContext context) {
+        public static void LogoutUser(this HubCallerContext context) {
             context.Items.Remove("user");
         }
 

@@ -42,12 +42,12 @@ namespace API.Features.Account.Services
         {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
-                issuer: AuthOptionsModel.ISSUER,
-                audience: AuthOptionsModel.AUDIENCE,
+                issuer: AuthOptionsDto.ISSUER,
+                audience: AuthOptionsDto.AUDIENCE,
                 notBefore: now,
                 claims: identity.Claims,
-                expires: now.Add(TimeSpan.FromMinutes(AuthOptionsModel.LIFETIME)),
-                signingCredentials: new SigningCredentials(AuthOptionsModel.GetSymmetricSecurityKey(),
+                expires: now.Add(TimeSpan.FromMinutes(AuthOptionsDto.LIFETIME)),
+                signingCredentials: new SigningCredentials(AuthOptionsDto.GetSymmetricSecurityKey(),
                     SecurityAlgorithms.HmacSha256));
 
             return new JwtSecurityTokenHandler().WriteToken(jwt);

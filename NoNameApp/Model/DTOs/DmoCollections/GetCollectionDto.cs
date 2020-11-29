@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Model.DTOs.DmoCollections {
-    public class GetCollectionDto {
+    public class GetCollectionDto : BaseDto {
         public Guid? CollectionId { get; set; }
     }
 }

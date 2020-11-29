@@ -1,8 +1,7 @@
 ﻿using System;
 
 namespace Model.DTOs.Dmos {
-    // ReSharper disable UnusedMember.Global
-    public class GetDmoDto {
+    public class GetDmoDto : BaseDto {
         public Guid? DmoId { get; set; }
     }
 }

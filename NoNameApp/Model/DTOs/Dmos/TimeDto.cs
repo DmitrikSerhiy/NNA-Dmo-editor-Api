@@ -1,8 +1,6 @@
 ﻿namespace Model.DTOs.Dmos {
-    public class TimeDto {
-        // ReSharper disable once UnusedMember.Global
+    public class TimeDto : BaseDto {
         public short Hours { get; set; }
-        // ReSharper disable once UnusedMember.Global
         public short Minutes { get; set; }
     }
 }

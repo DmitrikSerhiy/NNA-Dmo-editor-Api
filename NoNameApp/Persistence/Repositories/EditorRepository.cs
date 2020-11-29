@@ -21,11 +21,11 @@ namespace Persistence.Repositories
             _dapperConnectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public async Task<bool> CreateDmoAsync(Dmo dmo, Guid userId) {
+        public async Task<bool> CreateDmoAsync(Dmo dmo) {
             await using var db = await OpenAndGetConnection();
             var createResult = await db.ExecuteAsync(
                 "INSERT INTO [dbo].[Dmos] ([Id],[DateOfCreation],[Name],[MovieTitle] ,[DmoStatus],[ShortComment],[NnaUserId])" +
-                $"VALUES('{dmo.Id}','{dmo.DateOfCreation}', '{dmo.Name}', '{dmo.MovieTitle}', '{(short) DmoStatus.New}', '{dmo.ShortComment}', '{userId}')");
+                $"VALUES('{dmo.Id}','{dmo.DateOfCreation}', '{dmo.Name}', '{dmo.MovieTitle}', '{(short) DmoStatus.New}', '{dmo.ShortComment}', '{dmo.NnaUserId}')");
             return createResult == 1;
         }
 

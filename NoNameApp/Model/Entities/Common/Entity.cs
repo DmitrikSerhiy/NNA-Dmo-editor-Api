@@ -8,10 +8,8 @@ namespace Model.Entities.Common {
             DateOfCreation = DateTimeOffset.UtcNow.UtcTicks;
         }
 
-        //todo: make these with privat set
-        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
-        public Guid Id { get; set; }
-        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Local
-        public long DateOfCreation { get; set; }
+        public Guid Id { get; private set; }
+
+        public long DateOfCreation { get; private set; }
     }
 }
