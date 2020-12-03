@@ -1,19 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using API.Features.Account.Services;
+﻿using API.Features.Account.Services;
 using API.Helpers;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Model;
 using Model.DTOs.DmoCollections;
 using Model.Entities;
-using Model.Interfaces;
 using Model.Interfaces.Repositories;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace API.Features.DmoCollections.Controllers {
+namespace API.Features.DmoCollections.Controllers
+{
 
     [Route("api/[controller]")]
     [ApiController]
@@ -163,7 +162,7 @@ namespace API.Features.DmoCollections.Controllers {
                 }
             }
 
-            var dmos = new List<Model.Entities.Dmo>();
+            var dmos = new List<Dmo>();
             foreach (var dmoInCollection in dto.Dmos) {
                 var dmo = await _dmoCollectionsRepository.GetDmoAsync(user.Id, dmoInCollection.Id);
                 if (dmo == null) {

@@ -1,8 +1,7 @@
 ﻿using Autofac;
 using Autofac.Features.ResolveAnything;
 
-namespace Model
-{
+namespace Model {
     public class ModelModule : Module {
 
         protected override void Load(ContainerBuilder builder) {

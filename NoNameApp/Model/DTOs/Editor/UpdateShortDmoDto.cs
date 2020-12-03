@@ -1,7 +1,5 @@
-﻿namespace Model.DTOs.Dmos
-{
-    public class ShortDmoDto : BaseDto
-    {
+﻿namespace Model.DTOs.Editor {
+    public class UpdateShortDmoDto : BaseDto {
         public string Id { get; set; }
         public string Name { get; set; }
         public string MovieTitle { get; set; }

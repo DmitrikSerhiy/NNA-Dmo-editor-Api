@@ -1,5 +1,4 @@
-﻿namespace Model.DTOs
-{
+﻿namespace Model.DTOs {
     public abstract class BaseDto
     { }
 }

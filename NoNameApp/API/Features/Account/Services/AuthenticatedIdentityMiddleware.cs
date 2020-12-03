@@ -2,11 +2,9 @@
 using System.Security.Authentication;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Model;
 using Model.Interfaces;
 
-namespace API.Features.Account.Services
-{
+namespace API.Features.Account.Services {
     public class AuthenticatedIdentityMiddleware {
         private readonly RequestDelegate _next;
         private readonly NnaUserManager _userManager;

@@ -1,87 +1,94 @@
 ﻿using API.Features.Account.Services;
 using API.Features.Editor.Services;
+using API.Features.Editor.Validators;
 using AutoMapper;
-using Microsoft.AspNetCore.SignalR;
-using Model.DTOs.Dmos;
-using Model.Entities;
-using Model.Enums;
-using Model.Interfaces;
-using Model.Interfaces.Repositories;
-using System;
-using System.Text.Json;
-using System.Threading.Tasks;
 using Model.DTOs.Editor;
+using Model.DTOs.Editor.Response;
 using Model.Exceptions.Editor;
+using Model.Interfaces;
 using Serilog;
+using System;
+using System.Threading.Tasks;
 
-namespace API.Features.Editor.Hubs
-{
-
+namespace API.Features.Editor.Hubs {
     public class EditorHub : BaseEditorHub {
 
-        public EditorHub(IEditorRepository editorRepository, IMapper mapper, NnaUserManager userManager, IEditorService editorService) 
-            : base(editorRepository, mapper, userManager, editorService) { }
+        public EditorHub(IMapper mapper, NnaUserManager userManager, IEditorService editorService) 
+            : base(mapper, userManager, editorService) { }
 
 
-        public async Task<BaseEditorResponseDto<CreatedDmoDto>> CreateDmo(CreateDmoDto dmoDto) {
+        public async Task<BaseEditorResponseDto> LoadShortDmo(LoadShortDmoDto dmoDto) {
+            if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
+
             if (!Context.ContainsUser()) {
-                return null;
+                return NotAuthorized();
+            }
+
+            var validationResult = await new LoadShortDmoDtoValidator().ValidateAsync(dmoDto);
+            if (!validationResult.IsValid) {
+                return NotValid(validationResult);
             }
 
             try {
-                var result =
+                var dmo = await EditorService.LoadShortDmo(dmoDto, Context.GetCurrentUserId().GetValueOrDefault());
+                return new EditorResponseDto<LoadedShortDmoDto>(dmo);
+            }
+            catch (LoadShortDmoException ex) {
+                Log.Error(ex.InnerException, ex.Message);
+                return InternalServerError(ex.Message);
+            }
+        }
+
+
+        public async Task<BaseEditorResponseDto> CreateDmo(CreateDmoDto dmoDto) {
+            if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
+
+            if (!Context.ContainsUser()) {
+                return NotAuthorized();
+            }
+
+            var validationResult = await new CreateDmoValidator().ValidateAsync(dmoDto);
+            if (!validationResult.IsValid) {
+                return NotValid(validationResult);
+            }
+
+            try {
+                var dmo =
                     await EditorService.CreateAndLoadAsync(dmoDto, Context.GetCurrentUserId().GetValueOrDefault());
-                return new BaseEditorResponseDto<CreatedDmoDto>(result);
+                return new EditorResponseDto<CreatedDmoDto>(dmo);
             }
             catch (CreateDmoException ex) {
-                Log.Error(ex, $"UserId: {Context.GetCurrentUserId().GetValueOrDefault()}");
-                return new BaseEditorResponseDto<CreatedDmoDto>()
-                    .AttachErrorDetails(new EditorErrorDetailsDto(ex.Message)
-                        .CreateInternalServerError());
+                Log.Error(ex.InnerException, ex.Message);
+                return InternalServerError(ex.Message);
             }
-            catch (LoadDmoException ex) {
-                Log.Error(ex, $"UserId: {Context.GetCurrentUserId().GetValueOrDefault()}");
-                return new BaseEditorResponseDto<CreatedDmoDto>()
-                    .AttachErrorDetails(new EditorErrorDetailsDto(ex.Message)
-                        .CreateInternalServerError());
+            catch (LoadShortDmoException ex) {
+                Log.Error(ex.InnerException, ex.Message);
+                return InternalServerError(ex.Message);
             }
         }
 
-        public async Task<ShortDmoDto> LoadDmo(string dmoId) {
+
+        public async Task<BaseEditorResponseDto> UpdateShortDmo(UpdateShortDmoDto dmoDto) {
+            if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
+
             if (!Context.ContainsUser()) {
-                return null;
+                return NotAuthorized();
             }
-            var dmo = await EditorRepository
-                .LoadShortDmoAsync(Guid.Parse(dmoId), Context.GetCurrentUserId().GetValueOrDefault());
-            return dmo == null ? null : Mapper.Map<ShortDmoDto>(dmo);
+
+            var validationResult = await new UpdateShortDmoDtoValidator().ValidateAsync(dmoDto);
+            if (!validationResult.IsValid) {
+                return NotValid(validationResult);
+            }
+
+            try {
+                await EditorService.UpdateShortDmo(dmoDto, Context.GetCurrentUserId().GetValueOrDefault());
+            }
+            catch (UpdateShortDmoException ex) {
+                Log.Error(ex.InnerException, ex.Message);
+                return InternalServerError(ex.Message);
+            }
+
+            return NoContent();
         }
-
-        public async Task<ShortDmoDto> UpdateDmoInfo(ShortDmoDto dmoDto) {
-            if (!Context.ContainsUser()) {
-                return null;
-            }
-
-            var updatedDmo = await EditorRepository
-                .EditDmoAsync(Mapper.Map<Dmo>(dmoDto), Context.GetCurrentUserId().GetValueOrDefault());
-            return updatedDmo == null ? null : Mapper.Map<ShortDmoDto>(updatedDmo);
-        }
-
-
-
-
-        public async Task DmoUpdate(ShortDmoWithBeatsDto dmoUpdate) {
-            var dmoId = Guid.Parse(dmoUpdate.Id);
-            var result = await EditorRepository.UpdateBeatsAsync(
-                JsonSerializer.Serialize(BeatsIdGenerator.GenerateMissingBeatsIds(dmoUpdate.Beats)), dmoId);
-
-            if (result == BeatUpdateStatus.Success) {
-                await Clients.Caller.SendAsync("PartialDmoUpdateResult", $"{BeatUpdateStatus.Success}");
-            }
-            else {
-                await Clients.Caller.SendAsync("PartialDmoUpdateResult", $"{BeatUpdateStatus.Failed}");
-            }
-        }
-
-
     }
 }

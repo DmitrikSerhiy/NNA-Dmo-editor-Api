@@ -1,10 +1,8 @@
 ﻿using Autofac;
 using Model.Interfaces;
 
-namespace Persistence
-{
-    public class PersistenceModule : Module
-    {
+namespace Persistence {
+    public class PersistenceModule : Module {
         protected override void Load(ContainerBuilder builder) {
 
             builder

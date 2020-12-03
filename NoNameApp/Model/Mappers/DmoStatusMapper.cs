@@ -1,7 +1,7 @@
 ﻿using Model.Enums;
 
-namespace API.Features.Dmos.Mappers {
-    public static class StaticDmoMapper {
+namespace Model.Mappers {
+    public static class DmoStatusMapper {
         public static string GetDmoStatusString(short status) {
             switch (status)
             {

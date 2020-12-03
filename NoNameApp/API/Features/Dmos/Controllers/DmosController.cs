@@ -1,17 +1,16 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using API.Features.Account.Services;
+﻿using API.Features.Account.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Model;
 using Model.DTOs.DmoCollections;
 using Model.DTOs.Dmos;
-using Model.Interfaces;
 using Model.Interfaces.Repositories;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace API.Features.Dmos.Controllers {
+namespace API.Features.Dmos.Controllers
+{
 
     [Route("api/[controller]")]
     [ApiController]

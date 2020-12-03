@@ -7,7 +7,7 @@ namespace API.Features.Account.Validators {
     public class LoginValidator : AbstractValidator<LoginDto> {
         public LoginValidator() {
             //regex html5 standard. Took from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-            //so it fit angular built in validation
+            //it fit angular built in validation
             RuleFor(u => u.Email)
                 .NotEmpty().WithMessage("Email is missing")
                 .Matches(@"^[a-zA-Z0-9.!#$%&'*+\/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")

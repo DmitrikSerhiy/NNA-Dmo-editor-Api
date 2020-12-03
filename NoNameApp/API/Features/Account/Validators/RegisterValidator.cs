@@ -8,7 +8,7 @@ namespace API.Features.Account.Validators {
         public RegisterValidator() {
             RuleFor(u => u.UserName).NotEmpty().WithMessage("Username is missing");
             //regex html5 standard. Took from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
-            //so it fit angular built in validation
+            //it fit angular built in validation
             RuleFor(u => u.Email)
                 .NotEmpty()
                     .WithMessage("Email is missing")

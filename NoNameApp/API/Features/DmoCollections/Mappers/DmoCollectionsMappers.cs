@@ -1,8 +1,8 @@
 ﻿using System.Linq;
-using API.Features.Dmos.Mappers;
 using AutoMapper;
 using Model.DTOs.DmoCollections;
 using Model.Entities;
+using Model.Mappers;
 
 namespace API.Features.DmoCollections.Mappers {
     // ReSharper disable once UnusedMember.Global
@@ -14,7 +14,7 @@ namespace API.Features.DmoCollections.Mappers {
                 .ReverseMap();
             CreateMap<Dmo, DmoShortDto>()
                 .ForMember(udc => udc.DmoStatus,
-                    dcd => dcd.MapFrom(dd => StaticDmoMapper.GetDmoStatusString(dd.DmoStatus)))
+                    dcd => dcd.MapFrom(dd => DmoStatusMapper.GetDmoStatusString(dd.DmoStatus)))
                 .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus))
                 .ReverseMap();
             CreateMap<DmoCollection, DmoCollectionDto>()

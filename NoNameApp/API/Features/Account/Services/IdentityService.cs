@@ -6,16 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.IdentityModel.Tokens;
 using Model.DTOs.Account;
 
-namespace API.Features.Account.Services
-{
+namespace API.Features.Account.Services {
     public class IdentityService {
         private readonly NnaUserManager _userManager;
         public IdentityService(NnaUserManager userManager) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
 
-        public async Task<ClaimsIdentity> GetIdentity(string email, string password)
-        {
+        public async Task<ClaimsIdentity> GetIdentity(string email, string password) {
             var user = await _userManager.FindByEmailAsync(email);
             if (user == null)
             {
@@ -38,8 +36,7 @@ namespace API.Features.Account.Services
             return claimsIdentity;
         }
 
-        public string CreateJwt(ClaimsIdentity identity)
-        {
+        public string CreateJwt(ClaimsIdentity identity) {
             var now = DateTime.UtcNow;
             var jwt = new JwtSecurityToken(
                 issuer: AuthOptionsDto.ISSUER,
