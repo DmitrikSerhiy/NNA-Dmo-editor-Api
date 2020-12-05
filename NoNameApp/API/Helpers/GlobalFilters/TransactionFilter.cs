@@ -22,8 +22,7 @@ namespace API.Helpers.GlobalFilters
             //before each action
             var executedContext = await next();
             //after each action
-            if (executedContext.Exception == null && _unitOfWork.HasChanges())
-            {
+            if (executedContext.Exception == null && _unitOfWork.HasChanges()) {
                 await _unitOfWork.CommitChangesAsync();
             }
         }

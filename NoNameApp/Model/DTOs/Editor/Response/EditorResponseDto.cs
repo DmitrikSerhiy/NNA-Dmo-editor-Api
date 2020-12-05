@@ -1,11 +1,11 @@
 ﻿namespace Model.DTOs.Editor.Response {
     public class EditorResponseDto<T> : BaseEditorResponseDto where T : BaseDto {
 
-        public EditorResponseDto(T result) {
-            Result = result;
+        public EditorResponseDto(T data) {
+            Data = data;
             CreateSuccessfulResult();
         }
 
-        public T Result { get; }
+        public T Data { get; }
     }
 }

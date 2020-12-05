@@ -9,6 +9,7 @@ namespace Model.DTOs.Editor.Response {
         public int HttpCode { get; private set; }
         public string Header { get; private set; }
         public string Message { get; private set; }
+        public bool IsSuccessful { get; private set; }
 
         public List<EditorErrorDetailsDto> Errors { get; } = new List<EditorErrorDetailsDto>();
         public List<EditorValidationDetailsDto> Warnings { get; } = new List<EditorValidationDetailsDto>();
@@ -19,6 +20,7 @@ namespace Model.DTOs.Editor.Response {
             HttpCode = StatusCodes.Status500InternalServerError;
             Header = "Error";
             Message = "Internal Server Error";
+            IsSuccessful = false;
             return this;
         }
 
@@ -27,6 +29,7 @@ namespace Model.DTOs.Editor.Response {
             HttpCode = StatusCodes.Status422UnprocessableEntity;
             Header = "Warning";
             Message = "Validation failed";
+            IsSuccessful = false;
             return this;
         }
 
@@ -35,18 +38,21 @@ namespace Model.DTOs.Editor.Response {
             HttpCode = StatusCodes.Status401Unauthorized;
             Header = "Error";
             Message = "User is not authorized";
+            IsSuccessful = false;
             return this;
         }
 
         public BaseEditorResponseDto CreateNoContentResponse() {
             HttpCode = StatusCodes.Status204NoContent;
             Header = "Ok";
+            IsSuccessful = true;
             return this;
         }
 
         protected BaseEditorResponseDto CreateSuccessfulResult() {
             HttpCode = StatusCodes.Status200OK;
             Header = "Ok";
+            IsSuccessful = true;
             return this;
         }
 
