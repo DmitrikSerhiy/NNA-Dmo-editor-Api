@@ -3,6 +3,7 @@
 namespace Model.Exceptions.Editor {
     public class LoadShortDmoException : Exception {
         private const string InnerMessage = "Failed to load short dmo.";
+        public static string CustomMessage { get; } = InnerMessage;
         public LoadShortDmoException() { }
 
         public LoadShortDmoException(string message) : base($"{InnerMessage} {message}") { }

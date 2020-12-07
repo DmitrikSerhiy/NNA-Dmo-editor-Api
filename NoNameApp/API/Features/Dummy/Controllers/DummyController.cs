@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Model;
-using Model.Interfaces;
 using Model.Interfaces.Repositories;
 
 namespace API.Features.Dummy.Controllers {

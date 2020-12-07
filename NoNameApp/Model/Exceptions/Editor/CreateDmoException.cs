@@ -4,7 +4,7 @@ namespace Model.Exceptions.Editor {
     public class CreateDmoException : Exception {
 
         private const string InnerMessage = "Failed to create dmo.";
-
+        public static string CustomMessage { get; } = InnerMessage;
         public CreateDmoException() { }
 
         public CreateDmoException(string message) : base($"{InnerMessage} {message}") { }

@@ -86,8 +86,10 @@ namespace Persistence.Repositories {
 
         private async Task<SqlConnection> OpenAndGetConnection() {
             var builder = Factory.CreateConnectionStringBuilder();
+            // ReSharper disable once PossibleNullReferenceException
             builder.ConnectionString = _dapperConnectionString;
             var connection = Factory.CreateConnection();
+            // ReSharper disable once PossibleNullReferenceException
             connection.ConnectionString = builder.ConnectionString;
             await connection.OpenAsync();
             return (SqlConnection)connection;

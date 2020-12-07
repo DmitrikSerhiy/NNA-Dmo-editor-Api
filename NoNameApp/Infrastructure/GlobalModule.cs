@@ -2,10 +2,8 @@
 using Model;
 using Persistence;
 
-namespace Infrastructure
-{
-    public class GlobalModule : Module
-    {
+namespace Infrastructure {
+    public class GlobalModule : Module {
         protected override void Load(ContainerBuilder builder) {
 
             builder.RegisterModule(new ModelModule());
