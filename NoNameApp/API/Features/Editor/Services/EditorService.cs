@@ -20,7 +20,7 @@ namespace API.Features.Editor.Services {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-        public async Task<CreatedDmoDto> CreateAndLoadAsync(CreateDmoDto dmoDto, Guid userId) {
+        public async Task<CreatedDmoDto> CreateAndLoadDmo(CreateDmoDto dmoDto, Guid userId) {
             if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
             if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
 

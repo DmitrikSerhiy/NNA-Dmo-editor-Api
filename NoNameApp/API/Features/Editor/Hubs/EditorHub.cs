@@ -54,7 +54,7 @@ namespace API.Features.Editor.Hubs {
 
             try {
                 var dmo =
-                    await EditorService.CreateAndLoadAsync(dmoDto, Context.GetCurrentUserId().GetValueOrDefault());
+                    await EditorService.CreateAndLoadDmo(dmoDto, Context.GetCurrentUserId().GetValueOrDefault());
                 return new EditorResponseDto<CreatedDmoDto>(dmo);
             }
             catch (CreateDmoException ex) {

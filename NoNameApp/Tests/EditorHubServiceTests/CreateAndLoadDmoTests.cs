@@ -1,31 +1,29 @@
-﻿using API.Features.Editor.Services;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Threading.Tasks;
+using API.Features.Editor.Services;
 using FluentAssertions;
 using Model.DTOs.Editor;
-using Moq;
-using System;
-using System.Threading.Tasks;
 using Model.Entities;
 using Model.Exceptions.Editor;
+using Moq;
 using Xunit;
 
 namespace Tests.EditorHubServiceTests {
-    public class LoadShortDmoTests : BaseHubServiceTests {
+    public class CreateAndLoadDmoTests : BaseHubServiceTests {
+
 
         // ReSharper disable once InconsistentNaming
         private Guid userId { get; set; }
         // ReSharper disable once InconsistentNaming
-        private LoadShortDmoDto dmoDto { get; set; }
+        private CreateDmoDto dmoDto { get; set; }
         private Dmo InitialDmo { get; set; }
-
-        //todo: add test which check all types in model assembly which ends on Dto is derived from BaseDto class
-        //todo: same for entity
-        //todo: assembly.Should().NotReference(otherAssembly); and vice-versa
-        //todo: add tests to pipeline
 
         private void SetupMocksAndVariables() {
             SetupConstructorMocks();
             userId = Guid.NewGuid();
-            dmoDto = new LoadShortDmoDto();
+            dmoDto = new CreateDmoDto();
             InitialDmo = new Dmo();
         }
 
@@ -36,8 +34,8 @@ namespace Tests.EditorHubServiceTests {
             Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
             //Act
-            Func<Task> act1 = async () => await Subject.LoadShortDmo(null, userId);
-            Func<Task> act2 = async () => await Subject.LoadShortDmo(dmoDto, Guid.Empty);
+            Func<Task> act1 = async () => await Subject.CreateAndLoadDmo(null, userId);
+            Func<Task> act2 = async () => await Subject.CreateAndLoadDmo(dmoDto, Guid.Empty);
 
             //Assert
             act1.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be(nameof(dmoDto));
@@ -49,70 +47,95 @@ namespace Tests.EditorHubServiceTests {
             //Arrange
             SetupMocksAndVariables();
             MapperMock.Setup(m => m.Map<Dmo>(dmoDto)).Returns(InitialDmo);
+            RepositoryMock.Setup(rm => rm.CreateDmoAsync(InitialDmo)).ReturnsAsync(true);
             RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId)).ReturnsAsync(new Dmo());
             Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
             //Act
-            await Subject.LoadShortDmo(dmoDto, userId);
+            await Subject.CreateAndLoadDmo(dmoDto, userId);
 
             //Assert
             InitialDmo.NnaUserId.Should().Be(userId);
         }
 
         [Fact]
-        public void ShouldHandleRepositoryExceptionTest() {
+        public void ShouldThrowIfDmoWasNotCreatedTest() {
+            //Arrange
+            SetupMocksAndVariables();
+            MapperMock.Setup(m => m.Map<Dmo>(dmoDto)).Returns(InitialDmo);
+            RepositoryMock.Setup(rm => rm.CreateDmoAsync(InitialDmo)).ReturnsAsync(false);
+            RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId)).ReturnsAsync(new Dmo());
+
+            var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
+
+            //Act
+            async Task Act() => await subject.CreateAndLoadDmo(dmoDto, userId);
+
+            //Assert
+            FluentActions.Awaiting(Act).Should().ThrowExactly<CreateDmoException>()
+                .And.InnerException.Should().BeNull();
+        }
+
+
+        [Fact]
+        public void ShouldHandleRepositoryExceptionOnDmoCreateTest() {
             //Arrange
             SetupMocksAndVariables();
             var repositoryExceptionMessage = "some message from repository";
             MapperMock.Setup(m => m.Map<Dmo>(dmoDto)).Returns(InitialDmo);
-            RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId))
+            RepositoryMock.Setup(rm => rm.CreateDmoAsync(InitialDmo))
                 .ThrowsAsync(new Exception(repositoryExceptionMessage));
+            RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId)).ReturnsAsync(new Dmo());
             var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
             //Act
-            async Task Act() => await subject.LoadShortDmo(dmoDto, userId);
+            async Task Act() => await subject.CreateAndLoadDmo(dmoDto, userId);
 
             //Assert
             // ReSharper disable once PossibleNullReferenceException
-            FluentActions.Awaiting(Act).Should().ThrowExactly<LoadShortDmoException>()
+            FluentActions.Awaiting(Act).Should().ThrowExactly<CreateDmoException>()
                 .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
         }
 
         [Fact]
-        public void ShouldThrowIfDmoWasNotFoundTest() {
+        public void ShouldThrowIfDmoWasNotFoundAfterCreationTest() {
             //Arrange
             SetupMocksAndVariables();
             static Dmo Dmo() => null;
             MapperMock.Setup(m => m.Map<Dmo>(dmoDto)).Returns(InitialDmo);
+            RepositoryMock.Setup(rm => rm.CreateDmoAsync(InitialDmo)).ReturnsAsync(true);
             RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId)).ReturnsAsync(Dmo);
 
             var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
             //Act
-            async Task Act() => await subject.LoadShortDmo(dmoDto, userId);
+            async Task Act() => await subject.CreateAndLoadDmo(dmoDto, userId);
 
             //Assert
             FluentActions.Awaiting(Act).Should().ThrowExactly<LoadShortDmoException>()
                 .And.InnerException.Should().BeNull();
         }
 
+
         [Fact]
-        public void ShouldReturnDmoTest() {
+        public void ShouldHandleRepositoryExceptionOnDmoLoadAfterCreationTest() {
             //Arrange
             SetupMocksAndVariables();
-            var dmo = new Dmo();
-            var searchedDmoDto = new LoadedShortDmoDto();
+            var repositoryExceptionMessage = "some message from repository";
             MapperMock.Setup(m => m.Map<Dmo>(dmoDto)).Returns(InitialDmo);
-            RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId)).ReturnsAsync(dmo);
-            MapperMock.Setup(m => m.Map<LoadedShortDmoDto>(dmo)).Returns(searchedDmoDto);
+            RepositoryMock.Setup(rm => rm.CreateDmoAsync(InitialDmo)).ReturnsAsync(true);
+            RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId))
+                .ThrowsAsync(new Exception(repositoryExceptionMessage));
+
             var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
             //Act
-            Func<Task> act = async () => await subject.LoadShortDmo(dmoDto, userId);
+            async Task Act() => await subject.CreateAndLoadDmo(dmoDto, userId);
 
             //Assert
-            act.Should().NotThrow();
-            MapperMock.Verify(mm => mm.Map<LoadedShortDmoDto>(dmo), Times.Once);
+            // ReSharper disable once PossibleNullReferenceException
+            FluentActions.Awaiting(Act).Should().ThrowExactly<LoadShortDmoException>()
+                .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
         }
     }
 }
