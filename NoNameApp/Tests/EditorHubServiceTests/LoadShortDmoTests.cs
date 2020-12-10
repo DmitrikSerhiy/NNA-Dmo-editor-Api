@@ -17,11 +17,6 @@ namespace Tests.EditorHubServiceTests {
         private LoadShortDmoDto dmoDto { get; set; }
         private Dmo InitialDmo { get; set; }
 
-        //todo: add test which check all types in model assembly which ends on Dto is derived from BaseDto class
-        //todo: same for entity
-        //todo: assembly.Should().NotReference(otherAssembly); and vice-versa
-        //todo: add tests to pipeline
-
         private void SetupMocksAndVariables() {
             SetupConstructorMocks();
             userId = Guid.NewGuid();

@@ -1,6 +1,5 @@
 ﻿using API.Features.Account.Services;
 using API.Features.Editor.Services;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using Model.Interfaces;
@@ -10,21 +9,18 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
 using FluentValidation.Results;
+using Model.DTOs;
 using Model.DTOs.Editor.Response;
 
 namespace API.Features.Editor.Hubs {
     [Authorize]
     public class BaseEditorHub : Hub {
         protected readonly IEditorService EditorService;
-        protected readonly IMapper Mapper;
         protected readonly NnaUserManager UserManager;
 
         public BaseEditorHub(
-            IMapper mapper,
             NnaUserManager userManager,
-            IEditorService editorService)
-        {
-            Mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
+            IEditorService editorService) {
             UserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             EditorService = editorService ?? throw new ArgumentNullException(nameof(editorService));
         }
@@ -57,21 +53,29 @@ namespace API.Features.Editor.Hubs {
             return base.OnDisconnectedAsync(exception);
         }
 
-        protected BaseEditorResponseDto NotValid(ValidationResult validationResult) {
-            return new BaseEditorResponseDto().CreateFailedValidationResponse(validationResult.Errors.Select(err =>
+        protected static BaseEditorResponseDto NotValid(ValidationResult validationResult) {
+            return BaseEditorResponseDto.CreateFailedValidationResponse(validationResult.Errors.Select(err =>
                 new Tuple<string, string>(err.ErrorMessage, err.PropertyName)).ToList());
         }
 
-        protected BaseEditorResponseDto NotAuthorized() {
-            return new BaseEditorResponseDto().CreateFailedAuthResponse();
+        protected static BaseEditorResponseDto BadRequest() {
+            return BaseEditorResponseDto.CreateBadRequestResponse();
         }
 
-        protected BaseEditorResponseDto InternalServerError(string errorMessage) {
-            return new BaseEditorResponseDto().CreateInternalServerErrorResponse(errorMessage);
+        protected static BaseEditorResponseDto NotAuthorized() {
+            return BaseEditorResponseDto.CreateFailedAuthResponse();
         }
 
-        protected BaseEditorResponseDto NoContent() {
-            return new BaseEditorResponseDto().CreateNoContentResponse();
+        protected static BaseEditorResponseDto InternalServerError(string errorMessage) {
+            return BaseEditorResponseDto.CreateInternalServerErrorResponse(errorMessage);
+        }
+
+        protected static BaseEditorResponseDto NoContent() {
+            return BaseEditorResponseDto.CreateNoContentResponse();
+        }
+
+        protected static EditorResponseDto<T> Ok<T>(T data) where T: BaseDto {
+            return EditorResponseDto<T>.Ok(data);
         }
     }
 }

@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
 namespace Model.Entities {
-    public sealed class NnaUser : IdentityUser<Guid> {
+    public class NnaUser : IdentityUser<Guid> {
+        public NnaUser() { }
         public NnaUser(string email, string userName) {
             if (string.IsNullOrWhiteSpace(email)) {
                 throw new ArgumentNullException(nameof(email));
@@ -13,6 +14,7 @@ namespace Model.Entities {
                 throw new ArgumentNullException(nameof(userName));
             }
 
+            // ReSharper disable VirtualMemberCallInConstructor
             Email = email;
             UserName = userName;
         }
