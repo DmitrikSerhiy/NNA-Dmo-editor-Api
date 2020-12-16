@@ -12,14 +12,14 @@ namespace API.Features.Editor.Validators {
             RuleFor(d => d.Name)
                 .NotEmpty()
                 .WithMessage("Dmo name is missing")
-                .MaximumLength(ApplicationConstants.MaxEntityNameLength)
-                .WithMessage($"Maximum dmo name length is {ApplicationConstants.MaxEntityNameLength}");
+                .MaximumLength(ApplicationConstants.MaxDmoNameLength)
+                .WithMessage($"Maximum dmo name length is {ApplicationConstants.MaxDmoNameLength}");
 
             RuleFor(d => d.MovieTitle)
                 .NotEmpty()
                 .WithMessage("Movie title is missing")
-                .MaximumLength(ApplicationConstants.MaxEntityNameLength)
-                .WithMessage($"Maximum movie title length is {ApplicationConstants.MaxEntityNameLength}");
+                .MaximumLength(ApplicationConstants.MaxMovieTitleLength)
+                .WithMessage($"Maximum movie title length is {ApplicationConstants.MaxMovieTitleLength}");
 
             RuleFor(d => d.ShortComment)
                 .MaximumLength(ApplicationConstants.MaxShortCommentLength)

@@ -9,8 +9,8 @@ namespace API.Features.DmoCollections.Validators {
             RuleFor(d => d.Id).NotEmpty().WithMessage("Collection id is missing");
             RuleFor(d => d.CollectionName)
                 .NotEmpty().WithMessage("Collection id is missing")
-                .MaximumLength(ApplicationConstants.MaxEntityNameLength)
-                .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxEntityNameLength}");
+                .MaximumLength(ApplicationConstants.MaxCollectionNameLength)
+                .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxCollectionNameLength}");
         }
     }
 }

@@ -8,8 +8,8 @@ namespace API.Features.DmoCollections.Validators {
         public DmoCollectionsValidator() {
             RuleFor(d => d.CollectionName)
                 .NotEmpty().WithMessage("Name of collection is missing")
-                .MaximumLength(ApplicationConstants.MaxEntityNameLength)
-                .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxEntityNameLength}");
+                .MaximumLength(ApplicationConstants.MaxCollectionNameLength)
+                .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxCollectionNameLength}");
         }
     }
 }

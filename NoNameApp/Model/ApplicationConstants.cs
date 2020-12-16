@@ -1,6 +1,8 @@
 ﻿namespace Model {
     public static class ApplicationConstants {
-        public const short MaxEntityNameLength = 20;
+        public const short MaxCollectionNameLength = 20;
+        public const short MaxDmoNameLength = 50;
+        public const short MaxMovieTitleLength = 50;
         public const short MaxShortCommentLength = 100;
         
         public const short MaxUserEmailLength = 40;
