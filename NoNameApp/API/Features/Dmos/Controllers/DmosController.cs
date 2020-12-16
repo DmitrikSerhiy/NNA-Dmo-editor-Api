@@ -9,8 +9,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace API.Features.Dmos.Controllers
-{
+namespace API.Features.Dmos.Controllers {
 
     [Route("api/[controller]")]
     [ApiController]
