@@ -9,5 +9,6 @@ namespace Model.Interfaces.Repositories {
         Task<Dmo> GetShortDmo(Guid userId, Guid? dmoId);
         Task<Dmo> GetDmo(Guid userId, Guid? dmoId);
         void DeleteDmo(Dmo dmo);
+        Task<string> GetBeatsJson(Guid userId, Guid dmoId);
     }
 }

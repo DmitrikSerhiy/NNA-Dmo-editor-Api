@@ -42,5 +42,13 @@ namespace Persistence.Repositories {
             dmo.DmoCollectionDmos.Clear();
             _context.Dmos.Remove(dmo);
         }
+
+        public async Task<string> GetBeatsJson(Guid userId, Guid dmoId) {
+            return await _context.Dmos
+                .AsNoTracking()
+                .Where(d => d.NnaUserId == userId && d.Id == dmoId)
+                .Select(d => d.BeatsJson)
+                .FirstOrDefaultAsync();
+        }
     }
 }

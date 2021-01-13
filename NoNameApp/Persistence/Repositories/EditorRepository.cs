@@ -22,7 +22,8 @@ namespace Persistence.Repositories {
             "VALUES(@id, @dateOfCreation, @name, @movieTitle, @dmoStatus, @shortComment, @userId)";
 
         private const string LoadShortDmoScript =
-            "SELECT Id, Name, MovieTitle, ShortComment FROM Dmos WHERE Id = @id and NnaUserId = @userId";
+            "SELECT Id, Name, MovieTitle, ShortComment, BeatsJson FROM Dmos WHERE Id = @id and NnaUserId = @userId";
+        //todo: refactor to do not load beatsJson here 
 
         private const string LoadDmoScript =
             "SELECT * FROM Dmos WHERE Id = @id and NnaUserId = @userId";

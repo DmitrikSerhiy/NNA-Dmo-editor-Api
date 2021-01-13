@@ -13,7 +13,9 @@ namespace API.Features.Editor.Mappers {
             CreateMap<UpdateShortDmoDto, Dmo>();
 
             CreateMap<LoadShortDmoDto, Dmo>();
-            CreateMap<Dmo, LoadedShortDmoDto>();  
+            CreateMap<Dmo, LoadedShortDmoDto>()
+                .ForMember(d => d.HasBeats, ld => ld
+                    .MapFrom(lsd => !string.IsNullOrEmpty(lsd.BeatsJson)));
         }
     }
 }
