@@ -7,6 +7,6 @@ namespace Model.Interfaces {
         Task<CreatedDmoDto> CreateAndLoadDmo(CreateDmoDto dto, Guid userId);
         Task UpdateShortDmo(UpdateShortDmoDto dmoDto, Guid userId);
         Task<LoadedShortDmoDto> LoadShortDmo(LoadShortDmoDto dmoDto, Guid userId);
-        Task UpdateDmoBeatsAsJson(UpdateDmoBeatsAsJsonDto dto, Guid userId);
+        Task UpdateDmoBeatsAsJson(UpdateDmoBeatsAsJsonDto dmoDto, Guid userId);
     }
 }

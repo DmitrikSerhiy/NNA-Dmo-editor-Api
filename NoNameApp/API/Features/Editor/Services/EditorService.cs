@@ -96,21 +96,23 @@ namespace API.Features.Editor.Services {
             return _mapper.Map<LoadedShortDmoDto>(loadedDmo);
         }
 
-        public async Task UpdateDmoBeatsAsJson(UpdateDmoBeatsAsJsonDto dto, Guid userId) {
+        public async Task UpdateDmoBeatsAsJson(UpdateDmoBeatsAsJsonDto dmoDto, Guid userId) {
             if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
-            if (dto == null) throw new ArgumentNullException(nameof(dto));
+            if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
 
-            var beatId = Guid.Parse(dto.BeatId);
+            if (!Guid.TryParse(dmoDto.DmoId, out var dmoId)) {
+                throw new UpdateDmoBeatsAsJsonException($"Failed to parse dmoId to GUID: {dmoDto.DmoId}");
+            }
             bool isUpdated;
             try {
-                isUpdated = await _editorRepository.UpdateJsonBeatsAsync(dto.Json, beatId, userId);
+                isUpdated = await _editorRepository.UpdateJsonBeatsAsync(dmoDto.Json, dmoId, userId);
             }
             catch (Exception ex) {
-                throw new UpdateDmoBeatsAsJsonException(ex, beatId, userId);
+                throw new UpdateDmoBeatsAsJsonException(ex, dmoId, userId);
             }
 
             if (!isUpdated) {
-                throw new UpdateDmoBeatsAsJsonException(beatId, userId);
+                throw new UpdateDmoBeatsAsJsonException(dmoId, userId);
             }
         }
 
