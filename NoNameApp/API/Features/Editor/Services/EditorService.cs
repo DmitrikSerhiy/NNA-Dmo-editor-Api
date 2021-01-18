@@ -96,7 +96,23 @@ namespace API.Features.Editor.Services {
             return _mapper.Map<LoadedShortDmoDto>(loadedDmo);
         }
 
+        public async Task UpdateDmoBeatsAsJson(UpdateDmoBeatsAsJsonDto dto, Guid userId) {
+            if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+            if (dto == null) throw new ArgumentNullException(nameof(dto));
 
+            var beatId = Guid.Parse(dto.BeatId);
+            bool isUpdated;
+            try {
+                isUpdated = await _editorRepository.UpdateJsonBeatsAsync(dto.Json, beatId, userId);
+            }
+            catch (Exception ex) {
+                throw new UpdateDmoBeatsAsJsonException(ex, beatId, userId);
+            }
+
+            if (!isUpdated) {
+                throw new UpdateDmoBeatsAsJsonException(beatId, userId);
+            }
+        }
 
     }
 }

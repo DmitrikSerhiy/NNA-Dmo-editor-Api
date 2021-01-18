@@ -48,7 +48,7 @@ namespace Persistence.Repositories {
                 dateOfCreation = dmo.DateOfCreation,
                 name = dmo.Name,
                 movieTitle = dmo.MovieTitle,
-                dmoStatus = (short) DmoStatus.New,
+                dmoStatus = (short) DmoStatus.InProgress,
                 shortComment = dmo.ShortComment,
                 userId = dmo.NnaUserId
             });

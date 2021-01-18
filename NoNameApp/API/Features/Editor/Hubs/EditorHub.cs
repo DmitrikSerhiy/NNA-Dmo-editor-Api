@@ -1,4 +1,5 @@
-﻿using API.Features.Account.Services;
+﻿using System;
+using API.Features.Account.Services;
 using API.Features.Editor.Services;
 using API.Features.Editor.Validators;
 using Model.DTOs.Editor;
@@ -82,6 +83,30 @@ namespace API.Features.Editor.Hubs {
                 await EditorService.UpdateShortDmo(dmoDto, Context.GetCurrentUserId().GetValueOrDefault());
             }
             catch (UpdateShortDmoException ex) {
+                Log.Error(ex.InnerException, ex.Message);
+                return InternalServerError(ex.Message);
+            }
+
+            return NoContent();
+        }
+
+
+        public async Task<BaseEditorResponseDto> UpdateDmosJson(UpdateDmoBeatsAsJsonDto update) {
+            if (update == null) return BadRequest();
+
+            if (!Context.ContainsUser()) {
+                return NotAuthorized();
+            }
+
+            var validationResult = await new UpdateDmoBeatsAsJsonDtoValidator().ValidateAsync(update);
+            if (!validationResult.IsValid) {
+                return NotValid(validationResult);
+            }
+
+            try {
+                await EditorService.UpdateDmoBeatsAsJson(update, Context.GetCurrentUserId().GetValueOrDefault());
+            }
+            catch (UpdateDmoBeatsAsJsonException ex) {
                 Log.Error(ex.InnerException, ex.Message);
                 return InternalServerError(ex.Message);
             }
