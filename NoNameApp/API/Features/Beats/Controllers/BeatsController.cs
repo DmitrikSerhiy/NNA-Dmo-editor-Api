@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using API.Features.Account.Services;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.DTOs.Beats;
@@ -15,23 +16,26 @@ namespace API.Features.Beats.Controllers {
 
         private readonly IDmosRepository _dmosRepository; //todo: move to beats repository with diff lib
         private readonly CurrentUserService _currentUserService;
+        private readonly IMapper _mapper;
 
         public BeatsController(
             IDmosRepository dmosRepository, 
-            CurrentUserService currentUserService) {
+            CurrentUserService currentUserService, 
+            IMapper mapper) {
             _dmosRepository = dmosRepository ?? throw new ArgumentNullException(nameof(dmosRepository));
             _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+            _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
 
         [HttpGet]
         [Route("initial/{dmoId}")]
-        public async Task<BeatsDto> InitialLoad(Guid dmoId) {
+        public async Task<DmoWithBeatsJsonDto> InitialLoad(Guid dmoId) {
             var user = await _currentUserService.GetAsync();
 
-            var beatsJson = await _dmosRepository.GetBeatsJson(user.Id, dmoId);
+            var dmo = await _dmosRepository.GetDmoWithBeatsJson(user.Id, dmoId);
 
-            return new BeatsDto { DmoId = dmoId, BeatsJson = beatsJson };
+            return _mapper.Map<DmoWithBeatsJsonDto>(dmo);
         }
     }
 }
