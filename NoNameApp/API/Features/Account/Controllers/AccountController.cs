@@ -29,10 +29,20 @@ namespace API.Features.Account.Controllers
         }
 
         [HttpPost]
-        [Route("")]
+        [Route("email")]
         [AllowAnonymous]
         public async Task<IActionResult> IsEmailExists(CheckEmailDto checkEmailDto) {
             return (await _userManager.FindByEmailAsync(checkEmailDto.Email) != null)
+                ? Ok(true)
+                : Ok(false);
+        }
+
+        [HttpPost]
+        [Route("name")]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsNameExists(CheckNameDto checkNameDto)
+        {
+            return (await _userManager.FindByNameAsync(checkNameDto.Name) != null)
                 ? Ok(true)
                 : Ok(false);
         }
