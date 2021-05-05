@@ -28,6 +28,14 @@ namespace API.Features.Account.Controllers
             _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
         }
 
+        [HttpPost]
+        [Route("")]
+        [AllowAnonymous]
+        public async Task<IActionResult> IsEmailExists(CheckEmailDto checkEmailDto) {
+            return (await _userManager.FindByEmailAsync(checkEmailDto.Email) != null)
+                ? Ok(true)
+                : Ok(false);
+        }
 
         [HttpPost]
         [Route("register")]
@@ -64,7 +72,8 @@ namespace API.Features.Account.Controllers
         public async Task<IActionResult> Login(LoginDto loginDto) {
             var identity = await _identityService.GetIdentity(loginDto.Email, loginDto.Password);
             if (identity == null) {
-                return BadRequest(_responseBuilder.AppendBadRequestErrorMessage("Invalid email or password"));
+                return Forbid();
+                //return BadRequest(_responseBuilder.AppendBadRequestErrorMessage("Invalid email or password"));
             }
 
             var jwt = _identityService.CreateJwt(identity);
