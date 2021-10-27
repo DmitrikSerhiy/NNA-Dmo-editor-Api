@@ -2,7 +2,6 @@
 using API.Features.Editor.Hubs;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
-using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
@@ -36,16 +35,18 @@ namespace API
             services.AddDbOptions(_configuration);
             services.AddCors(o => {
                 o.AddPolicy(angularClientOrigin, policyBuilder => {
-                    policyBuilder.WithOrigins("http://localhost:4200", "http://nna-front-bucket1.s3-website.eu-central-1.amazonaws.com", "http://nna-front-v2.s3-website.eu-central-1.amazonaws.com");
+                    policyBuilder.WithOrigins("http://localhost:4200");
                     policyBuilder.AllowAnyMethod();
                     policyBuilder.AllowAnyHeader();
                     policyBuilder.AllowCredentials();
                 });
             });
             services.AddAuthenticationOptions();
-            services.AddSignalR().AddHubOptions<EditorHub>(o => {
-                o.EnableDetailedErrors = true;
-            });
+            services
+                .AddSignalR()
+                .AddHubOptions<EditorHub>(o => {
+                    o.EnableDetailedErrors = true;
+                });
             services.AddAutoMapper(typeof(Startup));
             services.AddMvcAndFilters();
 
@@ -72,9 +73,8 @@ namespace API
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
-                endpoints.MapHub<EditorHub>("api/editor", o => {
-                    o.Transports = HttpTransportType.WebSockets;
-                    //todo: consider use Redis backplane when api is scale out (2 or more EC2)
+                endpoints.MapHub<EditorHub>("api/editor", options => {
+                    options.Transports = HttpTransportType.WebSockets;
                 });
             });
         }
