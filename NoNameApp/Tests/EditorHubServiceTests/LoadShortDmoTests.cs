@@ -35,8 +35,8 @@ namespace Tests.EditorHubServiceTests {
             Func<Task> act2 = async () => await Subject.LoadShortDmo(dmoDto, Guid.Empty);
 
             //Assert
-            act1.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be(nameof(dmoDto));
-            act2.Should().Throw<ArgumentNullException>().And.ParamName.Should().Be(nameof(userId));
+            act1.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(dmoDto));
+            act2.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(userId));
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace Tests.EditorHubServiceTests {
 
             //Assert
             // ReSharper disable once PossibleNullReferenceException
-            FluentActions.Awaiting(Act).Should().ThrowExactly<LoadShortDmoException>()
+            FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<LoadShortDmoException>().Result
                 .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
         }
 
@@ -87,7 +87,7 @@ namespace Tests.EditorHubServiceTests {
             async Task Act() => await subject.LoadShortDmo(dmoDto, userId);
 
             //Assert
-            FluentActions.Awaiting(Act).Should().ThrowExactly<LoadShortDmoException>()
+            FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<LoadShortDmoException>().Result
                 .And.InnerException.Should().BeNull();
         }
 
@@ -106,7 +106,7 @@ namespace Tests.EditorHubServiceTests {
             Func<Task> act = async () => await subject.LoadShortDmo(dmoDto, userId);
 
             //Assert
-            act.Should().NotThrow();
+            act.Should().NotThrowAsync();
             MapperMock.Verify(mm => mm.Map<LoadedShortDmoDto>(dmo), Times.Once);
         }
     }
