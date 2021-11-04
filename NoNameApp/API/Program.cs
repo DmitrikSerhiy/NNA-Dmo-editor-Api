@@ -23,7 +23,7 @@ namespace API
                         var secretClient = new SecretClient(
                             new Uri($"https://{builtConfig["az-key-vault"]}.vault.azure.net/"),
                             new DefaultAzureCredential());
-                            // new AzureCliCredential());
+                            // new AzureCliCredential()); //for local debugging with dev db
                         config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
                     }
                 })                

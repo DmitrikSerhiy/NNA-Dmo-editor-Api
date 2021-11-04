@@ -31,7 +31,7 @@ namespace API
             services.AddDbOptions(_configuration);
             services.AddCors(o => {
                 o.AddPolicy(angularClientOrigin, policyBuilder => {
-                    policyBuilder.WithOrigins("http://localhost:4200");
+                    policyBuilder.WithOrigins("http://localhost:4200", "https://nna-dev-ui.azurewebsites.net");
                     policyBuilder.AllowAnyMethod();
                     policyBuilder.AllowAnyHeader();
                     policyBuilder.AllowCredentials();
