@@ -19,14 +19,10 @@ namespace API
         private readonly IWebHostEnvironment _environment;
         private readonly string angularClientOrigin = "angularClient";
         public Startup(
-            IWebHostEnvironment environment) {
+            IWebHostEnvironment environment,
+            IConfiguration configuration) {
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(_environment.ContentRootPath)
-                .AddJsonFile("appsettings.json", true, true)
-                .AddJsonFile($"appsettings.{_environment.EnvironmentName}.json", true)
-                .AddEnvironmentVariables();
-            _configuration = builder.Build();
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public IServiceProvider ConfigureServices(IServiceCollection services) {
