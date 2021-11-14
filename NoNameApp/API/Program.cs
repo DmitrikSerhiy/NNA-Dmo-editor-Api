@@ -1,4 +1,5 @@
 using System;
+using API.Helpers.Extensions;
 using Autofac.Extensions.DependencyInjection;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
@@ -18,13 +19,17 @@ namespace API
                 .UseStartup<Startup>()
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    if (context.HostingEnvironment.EnvironmentName.Equals("Development")) {
+                    if (!context.HostingEnvironment.IsLocal()) {
                         var builtConfig = config.Build();
                         var secretClient = new SecretClient(
                             new Uri($"https://{builtConfig["az-key-vault"]}.vault.azure.net/"),
                             new DefaultAzureCredential());
-                            // new AzureCliCredential()); //for local debugging with dev db
+                            // new AzureCliCredential()); // for local debugging with dev db
                         config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+                    }
+
+                    if (context.HostingEnvironment.IsLocal()) {
+                        config.AddUserSecrets("9287554d-fee5-4c75-8bd9-0ecbd051c423");
                     }
                 })                
                 .ConfigureServices(services => services.AddAutofac())

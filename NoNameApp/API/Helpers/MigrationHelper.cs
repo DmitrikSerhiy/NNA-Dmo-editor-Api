@@ -1,17 +1,16 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Persistence;
 
 namespace API.Helpers {
-    // ReSharper disable once UnusedMember.Global
-    // this is for manual migrations
     public class MigrationHelper : IDesignTimeDbContextFactory<NnaContext> {
         public NnaContext CreateDbContext(string[] args) {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../API"))
-                .AddJsonFile("appsettings.Development.json");
+                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json");
             var configuration = builder.Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<NnaContext>();

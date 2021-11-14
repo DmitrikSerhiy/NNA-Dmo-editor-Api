@@ -7,12 +7,13 @@ using Model.Exceptions.Editor;
 using Model.Interfaces;
 using Serilog;
 using System.Threading.Tasks;
+using API.Features.Account.Services.Local;
 
 namespace API.Features.Editor.Hubs {
     public class EditorHub : BaseEditorHub {
 
-        public EditorHub(NnaUserManager userManager, IEditorService editorService) 
-            : base(userManager, editorService) { }
+        public EditorHub(NnaLocalUserManager localUserManager, IEditorService editorService) 
+            : base(localUserManager, editorService) { }
 
 
         public async Task<BaseEditorResponseDto> LoadShortDmo(LoadShortDmoDto dmoDto) {

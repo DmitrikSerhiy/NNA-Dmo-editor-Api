@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Security.Authentication;
 using System.Threading.Tasks;
+using API.Features.Account.Services.Local;
 using FluentValidation.Results;
 using Model.DTOs;
 using Model.DTOs.Editor.Response;
@@ -16,12 +17,12 @@ namespace API.Features.Editor.Hubs {
     [Authorize]
     public class BaseEditorHub : Hub {
         protected readonly IEditorService EditorService;
-        protected readonly NnaUserManager UserManager;
+        protected readonly NnaLocalUserManager LocalUserManager;
 
         public BaseEditorHub(
-            NnaUserManager userManager,
+            NnaLocalUserManager localUserManager,
             IEditorService editorService) {
-            UserManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            LocalUserManager = localUserManager ?? throw new ArgumentNullException(nameof(localUserManager));
             EditorService = editorService ?? throw new ArgumentNullException(nameof(editorService));
         }
 
@@ -33,7 +34,7 @@ namespace API.Features.Editor.Hubs {
                 return;
             }
 
-            var user = await UserManager.FindByNameAsync(userName.Value);
+            var user = await LocalUserManager.FindByNameAsync(userName.Value);
             if (user == null) {
                 await OnDisconnectedAsync(new AuthenticationException("User not found [websocket]"));
                 return;

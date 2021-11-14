@@ -1,5 +1,4 @@
-﻿using API.Features.Account.Services;
-using API.Features.Editor.Hubs;
+﻿using API.Features.Editor.Hubs;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
@@ -8,16 +7,17 @@ using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
+using API.Features.Account.Services.Local;
+using API.Helpers;
 using API.Helpers.Extensions;
 using Infrastructure;
 
-namespace API
-{
+namespace API {
     public class Startup {
 
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _environment;
-        private readonly string angularClientOrigin = "angularClient";
+
         public Startup(
             IWebHostEnvironment environment,
             IConfiguration configuration) {
@@ -27,48 +27,49 @@ namespace API
 
         public IServiceProvider ConfigureServices(IServiceCollection services) {
             var builder = new ContainerBuilder();
-            services.AddLoggerOptions(_environment, _configuration);
-            services.AddDbOptions(_configuration);
-            services.AddCors(o => {
-                o.AddPolicy(angularClientOrigin, policyBuilder => {
-                    policyBuilder.WithOrigins("http://localhost:4200", "https://nna-dev-ui.azurewebsites.net");
-                    policyBuilder.AllowAnyMethod();
-                    policyBuilder.AllowAnyHeader();
-                    policyBuilder.AllowCredentials();
-                });
-            });
-            services.AddAuthenticationOptions();
+            services.AddNnaDbOptions(_configuration);
+            services.AddNnaCorsOptions(_configuration);
+            services.Configure<JwtOptions>(_configuration.GetSection(nameof(JwtOptions)));
+            
+            if (_environment.IsLocal()) {
+                services.AddNnaLocalLoggerOptions(_environment, _configuration);
+                services.AddNnaLocalAuthenticationOptions(_configuration);
+            } else {
+                services.AddNnaAuthenticationOptions();
+            }
+            
             services
                 .AddSignalR()
                 .AddHubOptions<EditorHub>(o => {
                     o.EnableDetailedErrors = true;
                 });
             services.AddAutoMapper(typeof(Startup));
-            services.AddMvcAndFilters();
+            services.AddNnaMvcAndFilters();
 
             builder.Populate(services);
             builder.RegisterModule(new GlobalModule());
             builder.RegisterModule(new ApiModule());
-            var applicationContainer = builder.Build();
-            return new AutofacServiceProvider(applicationContainer);
+            return new AutofacServiceProvider(builder.Build());
         }
 
         public void Configure(IApplicationBuilder app) {
             app.UseDeveloperExceptionPage();
-            //app.UseHttpsRedirection();
+            app.UseHttpsRedirection();
             //app.UseHsts();
 
+            if (_environment.IsLocal()) {
+                app.UseNnaAccountRewriteOptions();
+            }
+            
             app.UseRouting();
-            app.UseCors(angularClientOrigin);
+            app.UseNnaCorsOptions();
 
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<AuthenticatedIdentityMiddleware>();
-
+            
             app.UseEndpoints(endpoints => {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllers();
                 endpoints.MapHub<EditorHub>("api/editor", options => {
                     options.Transports = HttpTransportType.WebSockets;
                 });

@@ -6,6 +6,7 @@ using Model.Interfaces;
 using Moq;
 using System;
 using System.Collections.Generic;
+using API.Features.Account.Services.Local;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Tests.EditorHubTests
@@ -13,7 +14,7 @@ namespace Tests.EditorHubTests
     public class BaseEditorTests {
         protected EditorHub Subject { get; set; }
         protected Mock<IEditorService> EditorServiceMock { get; private set; }
-        protected Mock<NnaUserManager> UserManagerMock { get; private set; }
+        protected Mock<NnaLocalUserManager> UserManagerMock { get; private set; }
 
         protected string UserName { get; } = "UserName";
         protected string UserEmail { get; } = "User@gmail.com";
@@ -22,7 +23,7 @@ namespace Tests.EditorHubTests
         protected void SetupConstructorMocks() {
             EditorServiceMock = new Mock<IEditorService>();
 
-            UserManagerMock = new Mock<NnaUserManager>(Mock.Of<IUserStore<NnaUser>>(), null, null, null, null, null, null, null, null);
+            UserManagerMock = new Mock<NnaLocalUserManager>(Mock.Of<IUserStore<NnaUser>>(), null, null, null, null, null, null, null, null);
             UserManagerMock.Object.UserValidators.Add(new UserValidator<NnaUser>());
             UserManagerMock.Object.PasswordValidators.Add(new PasswordValidator<NnaUser>());
             UserManagerMock.Setup(x => x.DeleteAsync(It.IsAny<NnaUser>())).ReturnsAsync(IdentityResult.Success);

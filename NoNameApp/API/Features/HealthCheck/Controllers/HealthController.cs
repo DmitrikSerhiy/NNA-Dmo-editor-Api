@@ -7,17 +7,17 @@ using System.Threading.Tasks;
 namespace API.Features.HealthCheck.Controllers {
 
     [Route("api/[controller]")]
-    [AllowAnonymous]
     [ApiController]
-    public class Health : ControllerBase {
+    public class HealthController : ControllerBase {
 
         private readonly IUserRepository _repository;
         
-        public Health(IUserRepository repository) {
+        public HealthController(IUserRepository repository) {
             _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("")]
         public ActionResult<string> Check() {
             return Ok("App is ok");
@@ -25,10 +25,18 @@ namespace API.Features.HealthCheck.Controllers {
 
 
         [HttpGet]
+        [AllowAnonymous]
         [Route("database")]
         public async Task<ActionResult<string>> CheckDb() {
             var user = await _repository.FirstUser();
             return Ok($"Db is ok. First user: {user.Email}");
+        }
+        
+        [HttpGet]
+        [Authorize]
+        [Route("security")]
+        public async Task<ActionResult<string>> CheckToken() {
+            return Ok("Token is valid");
         }
     }
 }

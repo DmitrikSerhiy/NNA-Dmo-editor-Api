@@ -1,4 +1,5 @@
 ﻿using API.Features.Account.Services;
+using API.Features.Account.Services.Local;
 using API.Features.Editor.Services;
 using Autofac;
 using Autofac.Features.ResolveAnything;
