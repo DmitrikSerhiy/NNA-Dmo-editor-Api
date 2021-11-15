@@ -23,9 +23,10 @@ namespace API.Features.Account.Services.Local {
                 ? serviceProvider.GetService<NnaLocalUserManager>()
                 : serviceProvider.GetService<NnaUserManager>();
         }
-        
+        // todo: cover with unit tests
         public async Task InvokeAsync(HttpContext context, IAuthenticatedIdentityProvider authenticatedIdentityProvider) {
-            if (!context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.Email) && claim.Type.Equals(ClaimTypes.NameIdentifier))) {
+            if (!(context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.Email)) && 
+                context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)))) {
                 // for not secured end-points
                 await _next.Invoke(context);
                 return;
@@ -50,7 +51,6 @@ namespace API.Features.Account.Services.Local {
             if (!user.Email.Equals(userEmail, StringComparison.InvariantCultureIgnoreCase)) {
                 throw new AuthenticationException($"User email '{userEmail}' does not correspond to user id: '{userId}'");
             } 
-
             
             authenticatedIdentityProvider.SetAuthenticatedUser(user);
             await _next.Invoke(context);

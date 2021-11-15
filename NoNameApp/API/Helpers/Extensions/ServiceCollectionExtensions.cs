@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
 using System.Threading.Tasks;
 using API.Features.Account.Services;
 using API.Features.Account.Services.Local;
@@ -165,13 +166,11 @@ namespace API.Helpers.Extensions {
                     options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
-                        ValidateIssuer = true,
-                        ValidIssuer = jwtOptions.Issuer,
-                        ValidateAudience = true,
-                        ValidAudience = jwtOptions.Audience,
+                        ValidateIssuer = false,
+                        ValidateAudience = false,
                         ValidateLifetime = false,
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(jwtOptions.Key)),
-                        ValidateIssuerSigningKey = true,
+                        ValidateIssuerSigningKey = true
                     };
                     options.Events = new JwtBearerEvents
                     {
@@ -186,7 +185,21 @@ namespace API.Helpers.Extensions {
                             }
 
                             return Task.CompletedTask;
-                        }
+                        }//,
+                        // OnTokenValidated = context => {
+                        //     Console.WriteLine("Token is valid!!!");
+                        //     return Task.CompletedTask;
+                        // },
+                        // OnChallenge = context => {
+                        //     Console.WriteLine("Challenging token");
+                        //     return Task.CompletedTask;
+                        // },
+                        // OnAuthenticationFailed = context => {
+                        //     
+                        //     Console.WriteLine("Failed to validate token");
+                        //     Console.WriteLine(context.Exception);
+                        //     return Task.CompletedTask;
+                        // }
                     };
                 });
         }

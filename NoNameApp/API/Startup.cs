@@ -63,11 +63,11 @@ namespace API {
             
             app.UseRouting();
             app.UseNnaCorsOptions();
-
+            
             app.UseAuthentication();
             app.UseAuthorization();
             app.UseMiddleware<AuthenticatedIdentityMiddleware>();
-            
+
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllers();
                 endpoints.MapHub<EditorHub>("api/editor", options => {

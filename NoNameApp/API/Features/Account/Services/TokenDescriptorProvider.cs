@@ -26,7 +26,7 @@ namespace API.Features.Account.Services {
                 BuildDescriptor();
             }
             
-            var key = new SymmetricSecurityKey(Encoding.Default.GetBytes(_jwtOptions.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtOptions.Key));
             _descriptor.SigningCredentials = new SigningCredentials(key, _jwtOptions.SigningAlg);
         }
 
