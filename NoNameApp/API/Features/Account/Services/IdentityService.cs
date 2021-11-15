@@ -7,7 +7,7 @@ namespace API.Features.Account.Services {
         
         private readonly NnaUserManager _userManager;
         private readonly TokenDescriptorProvider _descriptorProvider;
-            private readonly JsonWebTokenHandler _tokenHandler;
+        private readonly JsonWebTokenHandler _tokenHandler;
 
         public IdentityService(NnaUserManager userManager, TokenDescriptorProvider descriptorProvider) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));

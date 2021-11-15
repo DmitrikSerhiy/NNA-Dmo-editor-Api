@@ -48,6 +48,7 @@ namespace API.Features.Account.Services {
                 Issuer = _jwtOptions.Issuer,
                 NotBefore = DateTime.UtcNow,
                 IssuedAt = DateTime.UtcNow,
+                TokenType = "JWT"
             };
         }
     }
