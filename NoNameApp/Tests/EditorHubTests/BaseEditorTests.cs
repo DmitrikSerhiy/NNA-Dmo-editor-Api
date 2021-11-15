@@ -1,5 +1,4 @@
-﻿using API.Features.Account.Services;
-using API.Features.Editor.Hubs;
+﻿using API.Features.Editor.Hubs;
 using Microsoft.AspNetCore.Identity;
 using Model.Entities;
 using Model.Interfaces;
@@ -7,6 +6,7 @@ using Moq;
 using System;
 using System.Collections.Generic;
 using API.Features.Account.Services.Local;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
 
 namespace Tests.EditorHubTests
@@ -15,6 +15,7 @@ namespace Tests.EditorHubTests
         protected EditorHub Subject { get; set; }
         protected Mock<IEditorService> EditorServiceMock { get; private set; }
         protected Mock<NnaLocalUserManager> UserManagerMock { get; private set; }
+        protected Mock<IWebHostEnvironment> EnvironmentMock { get; private set; }
 
         protected string UserName { get; } = "UserName";
         protected string UserEmail { get; } = "User@gmail.com";
@@ -29,6 +30,7 @@ namespace Tests.EditorHubTests
             UserManagerMock.Setup(x => x.DeleteAsync(It.IsAny<NnaUser>())).ReturnsAsync(IdentityResult.Success);
             UserManagerMock.Setup(x => x.CreateAsync(It.IsAny<NnaUser>(), It.IsAny<string>())).ReturnsAsync(IdentityResult.Success);
             UserManagerMock.Setup(x => x.UpdateAsync(It.IsAny<NnaUser>())).ReturnsAsync(IdentityResult.Success);
+            EnvironmentMock = new Mock<IWebHostEnvironment>();
         }
 
         protected void SetupHubContext() {
