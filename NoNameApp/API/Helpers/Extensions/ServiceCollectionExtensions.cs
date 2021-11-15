@@ -96,7 +96,6 @@ namespace API.Helpers.Extensions {
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options => {
-                    options.RequireHttpsMetadata = true;
                     options.TokenValidationParameters = new TokenValidationParameters {
                         RequireAudience = true,
                         RequireSignedTokens = true,
@@ -163,7 +162,6 @@ namespace API.Helpers.Extensions {
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options => {
-                    options.RequireHttpsMetadata = false;
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuer = false,

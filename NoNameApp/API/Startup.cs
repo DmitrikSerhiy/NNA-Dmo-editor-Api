@@ -55,7 +55,7 @@ namespace API {
         public void Configure(IApplicationBuilder app) {
             app.UseDeveloperExceptionPage();
             app.UseHttpsRedirection();
-            //app.UseHsts();
+            app.UseHsts();
 
             if (_environment.IsLocal()) {
                 app.UseNnaAccountRewriteOptions();
