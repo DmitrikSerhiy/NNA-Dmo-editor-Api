@@ -1,5 +1,4 @@
-﻿using API.Features.Account.Services;
-using API.Features.Editor.Services;
+﻿using API.Features.Editor.Services;
 using API.Features.Editor.Validators;
 using Model.DTOs.Editor;
 using Model.DTOs.Editor.Response;
@@ -8,12 +7,16 @@ using Model.Interfaces;
 using Serilog;
 using System.Threading.Tasks;
 using API.Features.Account.Services.Local;
+using Microsoft.AspNetCore.Hosting;
 
 namespace API.Features.Editor.Hubs {
     public class EditorHub : BaseEditorHub {
 
-        public EditorHub(NnaLocalUserManager localUserManager, IEditorService editorService) 
-            : base(localUserManager, editorService) { }
+        public EditorHub(
+            NnaLocalUserManager localUserManager,
+            IEditorService editorService,
+            IWebHostEnvironment webHostEnvironment) 
+            : base(localUserManager, editorService, webHostEnvironment) { }
 
 
         public async Task<BaseEditorResponseDto> LoadShortDmo(LoadShortDmoDto dmoDto) {

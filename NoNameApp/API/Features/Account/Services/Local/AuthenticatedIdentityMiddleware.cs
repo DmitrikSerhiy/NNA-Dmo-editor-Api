@@ -36,20 +36,20 @@ namespace API.Features.Account.Services.Local {
             var userEmail = context.User.Claims.First(claim => claim.Type.Equals(ClaimTypes.Email)).Value;
 
             if (string.IsNullOrWhiteSpace(userId)) {
-                throw new AuthenticationException($"Invalid user id: '{userId}'");
+                throw new AuthenticationException($"Invalid user id claim: '{userId}'");
             }
             
             if (string.IsNullOrWhiteSpace(userEmail)) {
-                throw new AuthenticationException($"Invalid user email: '{userEmail}'");
+                throw new AuthenticationException($"Invalid user email claim: '{userEmail}'");
             }
             
             var user = await _userManager.FindByIdAsync(userId);
             if (user == null) {
-                throw new AuthenticationException($"Unknown user with id: '{userId}'");
+                throw new AuthenticationException($"Unknown user with id claim: '{userId}'");
             }
 
             if (!user.Email.Equals(userEmail, StringComparison.InvariantCultureIgnoreCase)) {
-                throw new AuthenticationException($"User email '{userEmail}' does not correspond to user id: '{userId}'");
+                throw new AuthenticationException($"User email claim '{userEmail}' does not correspond to user id claim: '{userId}'");
             } 
             
             authenticatedIdentityProvider.SetAuthenticatedUser(user);
