@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repositories {
     // ReSharper disable once UnusedMember.Global
-    public class EditorRepository : IEditorRepository {
+    internal sealed class EditorRepository : IEditorRepository {
         private readonly string _dapperConnectionString;
         private DbProviderFactory Factory => SqlClientFactory.Instance;
 

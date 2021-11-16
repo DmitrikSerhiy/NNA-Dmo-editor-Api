@@ -10,7 +10,7 @@ namespace API.Helpers {
         public NnaContext CreateDbContext(string[] args) {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../API"))
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json");
+                .AddJsonFile($"appsettings.Local.json");
             var configuration = builder.Build();
 
             var optionsBuilder = new DbContextOptionsBuilder<NnaContext>();

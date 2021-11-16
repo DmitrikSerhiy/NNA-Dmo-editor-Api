@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Persistence.Repositories {
     // ReSharper disable once UnusedMember.Global
-    public class DmosRepository : IDmosRepository {
+    internal sealed class DmosRepository : IDmosRepository {
 
         private readonly NnaContext _context;
         public DmosRepository(UnitOfWork unitOfWork) {

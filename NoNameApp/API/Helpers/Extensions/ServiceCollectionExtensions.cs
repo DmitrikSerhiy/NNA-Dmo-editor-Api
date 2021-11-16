@@ -73,10 +73,10 @@ namespace API.Helpers.Extensions {
         }
 
         public static void AddNnaAuthenticationOptions(this IServiceCollection services) {
-            var tokenDescriptorProvider = new TokenDescriptorProvider(
-                services.BuildServiceProvider().GetService<IOptions<JwtOptions>>());
-            tokenDescriptorProvider.AddSigningCredentials();
-            var tokenDescriptor = tokenDescriptorProvider.Provide();
+            var jwtOptions = services.BuildServiceProvider().GetService<IOptions<JwtOptions>>();
+            var tokenDescriptorProvider = new TokenDescriptorProvider(jwtOptions);
+            var tokenDescriptor = tokenDescriptorProvider.ProvideForAccessToken();
+            tokenDescriptor.AddSigningCredentials(jwtOptions.Value);
 
             var identityBuilder = services
                 .AddIdentity<NnaUser, NnaRole>(options => {

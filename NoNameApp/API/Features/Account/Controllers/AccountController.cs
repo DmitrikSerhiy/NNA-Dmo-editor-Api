@@ -65,8 +65,10 @@ namespace API.Features.Account.Controllers {
                     _responseBuilder.AppendBadRequestErrorMessage($"Failed to create user with name: {registerDto.UserName} and email: {registerDto.Email}"));
             }
             
+            var tokens = await _identityService.CreateTokensAsync(registerDto.Email);
             return new JsonResult(new {
-                accessToken = await _identityService.CreateJwtAsync(registerDto.Email),
+                accessToken = tokens.AccessToken,
+                refreshToken = tokens.RefreshToken,
                 userName = registerDto.UserName,
                 email = registerDto.Email,
             });
@@ -86,9 +88,11 @@ namespace API.Features.Account.Controllers {
                 return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
                     _responseBuilder.AppendBadRequestErrorMessage("Password is not correct"));
             }
-            
+
+            var tokens = await _identityService.CreateTokensAsync(user.Email);
             return new JsonResult(new {
-                accessToken = await _identityService.CreateJwtAsync(user.Email),
+                accessToken = tokens.AccessToken,
+                refreshToken = tokens.RefreshToken,
                 userName = user.UserName,
                 email = user.Email
             });
