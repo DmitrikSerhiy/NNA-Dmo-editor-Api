@@ -9,8 +9,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Serilog;
 
-namespace API
-{
+namespace API {
     public class Program {
         public static void Main(string[] args) {
             WebHost.CreateDefaultBuilder(args)
@@ -25,7 +24,7 @@ namespace API
                             new DefaultAzureCredential());
                             //new AzureCliCredential()); // for local debugging with dev db
                         config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
-                    }
+                    } 
 
                     if (context.HostingEnvironment.IsLocal()) {
                         config.AddUserSecrets("9287554d-fee5-4c75-8bd9-0ecbd051c423");

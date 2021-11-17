@@ -34,7 +34,7 @@ namespace API.Helpers.Extensions {
         public static void AddNnaCorsOptions(this IServiceCollection services, IConfiguration configuration) {
             services.AddCors(o => {
                 o.AddPolicy(angularClientOrigin, policyBuilder => {
-                    policyBuilder.WithOrigins(configuration["CorsUrl"]);
+                    policyBuilder.WithOrigins(configuration["CorsUrls"].Split(","));
                     policyBuilder.AllowAnyMethod();
                     policyBuilder.AllowAnyHeader();
                     policyBuilder.AllowCredentials();

@@ -4,8 +4,8 @@ using Model.Entities;
 using Model.Enums;
 
 namespace API.Features.Account.Services {
-    public class DbTokenDescriptor {
-        private const string PasswordLoginProvider = "password";
+    public class TokenMapper {
+        public static readonly string PasswordLoginProvider = "password";
 
         public static NnaToken MapToAccessTokenByPasswordAuth(Guid userId, TokensDto tokensDto) {
             return new NnaToken {

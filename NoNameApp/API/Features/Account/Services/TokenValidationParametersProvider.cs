@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Tokens;
+﻿using System;
+using Microsoft.IdentityModel.Tokens;
 
 namespace API.Features.Account.Services {
     internal sealed class TokenValidationParametersProvider {
@@ -16,7 +17,9 @@ namespace API.Features.Account.Services {
                 ValidateLifetime = true,
                 RequireExpirationTime = true,
 
-                ValidTypes = new[] { tokenDescriptor.TokenType }
+                ValidTypes = new[] { tokenDescriptor.TokenType },
+                ClockSkew = TimeSpan.Zero,
+                
             };
         }
 

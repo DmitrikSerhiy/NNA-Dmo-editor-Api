@@ -65,7 +65,7 @@ namespace API.Features.Account.Controllers {
                     _responseBuilder.AppendBadRequestErrorMessage($"Failed to create user with name: {registerDto.UserName} and email: {registerDto.Email}"));
             }
             
-            var tokens = await _identityService.GetOrCreateTokensAsync(registerDto.Email);
+            var tokens = await _identityService.CreateTokens(registerDto.Email);
             return new JsonResult(new {
                 accessToken = tokens.AccessToken,
                 refreshToken = tokens.RefreshToken,
@@ -96,6 +96,32 @@ namespace API.Features.Account.Controllers {
                 userName = user.UserName,
                 email = user.Email
             });
+        }
+
+        [HttpPost]
+        [Route("refresh")]
+        [AllowAnonymous]
+        public async Task<IActionResult> Refresh(RefreshDto refreshDto) {
+            var tokensDto = await _identityService.RefreshTokens(refreshDto);
+
+            if (tokensDto is null) {
+                return StatusCode((int)HttpStatusCode.Unauthorized, 
+                    _responseBuilder.Append401RedirectToLoginMessage());
+            }
+
+            return new JsonResult(new {
+                accessToken = tokensDto.AccessToken,
+                refreshToken = tokensDto.RefreshToken
+            });
+        }
+        
+        [HttpDelete]
+        [Route("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout(LogoutDto logoutDto) {
+            await _identityService.ClearTokens(logoutDto.Email);
+
+            return NoContent();
         }
     }
 }

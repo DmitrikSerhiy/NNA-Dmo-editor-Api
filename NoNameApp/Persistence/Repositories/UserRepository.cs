@@ -17,14 +17,14 @@ namespace Persistence.Repositories {
             _context = unitOfWork.Context;
         }
 
-        public async Task<bool> IsAccessTokenExist(Guid userId, string accessTokenId, string loginProvider) {
+        public async Task<bool> IsAccessTokenExists(Guid userId, string accessTokenId, string loginProvider) {
             return await _context.Tokens.AnyAsync(tkn => tkn.UserId == userId && 
                                                          tkn.TokenKeyId == accessTokenId && 
                                                          tkn.LoginProvider == loginProvider &&
                                                          tkn.Name == nameof(TokenName.Access));
         }
         
-        public async Task<bool> IsRefreshTokenExist(Guid userId, string refreshTokenId, string loginProvider) {
+        public async Task<bool> IsRefreshTokenExists(Guid userId, string refreshTokenId, string loginProvider) {
             return await _context.Tokens.AnyAsync(tkn => tkn.UserId == userId &&
                                                          tkn.TokenKeyId == refreshTokenId &&
                                                          tkn.LoginProvider == loginProvider &&
@@ -38,6 +38,12 @@ namespace Persistence.Repositories {
             await _context.AddRangeAsync(accessToken, refreshToken);
         }
 
+        public async Task ClearTokens(NnaUser user) {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            var tokens = await _context.Tokens.Where(token => token.UserId == user.Id).ToListAsync();
+            _context.Tokens.RemoveRange(tokens);
+        }
+
         public void UpdateTokens(NnaToken accessToken, NnaToken refreshToken) {
             if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
             if (refreshToken == null) throw new ArgumentNullException(nameof(refreshToken));
@@ -47,7 +53,11 @@ namespace Persistence.Repositories {
         }
 
         public async Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId) {
-            var tokens = await _context.Tokens.Where(token => token.UserId == userId).ToListAsync();
+            var tokens = await _context.Tokens
+                .Where(token => token.UserId == userId)
+                .AsNoTracking()
+                .ToListAsync();
+            
             if (tokens.Count != 0 && tokens.Count != 2) {
                 throw new InconsistentDataException(
                     $"Expected to get 2 tokens [access and refresh] for user {userId}. But found: {tokens.Count} amount");

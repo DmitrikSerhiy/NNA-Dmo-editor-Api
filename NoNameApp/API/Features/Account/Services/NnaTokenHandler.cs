@@ -8,5 +8,10 @@ namespace API.Features.Account.Services {
             return ReadJsonWebToken(token).Claims
                 .FirstOrDefault(claim => claim.Type == nameof(NnaCustomTokenClaims.oid))?.Value;
         }
+        
+        public string GetUserEmail(string token) {
+            return ReadJsonWebToken(token).Claims
+                .FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Email)?.Value;
+        }
     }
 }
