@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Model.Entities.Common;
 
 namespace Model.Entities {
-    public class DmoCollection : Entity {
+    public sealed class DmoCollection : Entity {
         public string CollectionName { get; set; }
 
         public ICollection<DmoCollectionDmo> DmoCollectionDmos { get; set; }

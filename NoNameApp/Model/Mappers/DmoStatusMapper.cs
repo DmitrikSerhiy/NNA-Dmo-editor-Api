@@ -3,17 +3,12 @@
 namespace Model.Mappers {
     public static class DmoStatusMapper {
         public static string GetDmoStatusString(short status) {
-            switch (status)
-            {
-                case (short)DmoStatus.InProgress:
-                    return nameof(DmoStatus.InProgress);
-                case (short)DmoStatus.Completed:
-                    return nameof(DmoStatus.Completed);
-                case (short)DmoStatus.NotFinished:
-                    return nameof(DmoStatus.NotFinished);
-                default:
-                    return nameof(DmoStatus.InProgress);
-            }
+            return status switch {
+                (short)DmoStatus.InProgress => nameof(DmoStatus.InProgress),
+                (short)DmoStatus.Completed => nameof(DmoStatus.Completed),
+                (short)DmoStatus.NotFinished => nameof(DmoStatus.NotFinished),
+                _ => nameof(DmoStatus.InProgress)
+            };
         }
     }
 }

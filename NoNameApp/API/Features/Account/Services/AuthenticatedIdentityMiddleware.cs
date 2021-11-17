@@ -3,6 +3,7 @@ using System.Linq;
 using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using API.Features.Account.Services.Local;
 using API.Helpers.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -11,7 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Model.Entities;
 using Model.Interfaces;
 
-namespace API.Features.Account.Services.Local {
+namespace API.Features.Account.Services {
     public class AuthenticatedIdentityMiddleware {
         private readonly RequestDelegate _next;
         private readonly UserManager<NnaUser> _userManager;

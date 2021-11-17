@@ -65,7 +65,7 @@ namespace API.Features.Account.Controllers {
                     _responseBuilder.AppendBadRequestErrorMessage($"Failed to create user with name: {registerDto.UserName} and email: {registerDto.Email}"));
             }
             
-            var tokens = await _identityService.CreateTokensAsync(registerDto.Email);
+            var tokens = await _identityService.GetOrCreateTokensAsync(registerDto.Email);
             return new JsonResult(new {
                 accessToken = tokens.AccessToken,
                 refreshToken = tokens.RefreshToken,
@@ -89,7 +89,7 @@ namespace API.Features.Account.Controllers {
                     _responseBuilder.AppendBadRequestErrorMessage("Password is not correct"));
             }
 
-            var tokens = await _identityService.CreateTokensAsync(user.Email);
+            var tokens = await _identityService.GetOrCreateTokensAsync(user.Email);
             return new JsonResult(new {
                 accessToken = tokens.AccessToken,
                 refreshToken = tokens.RefreshToken,

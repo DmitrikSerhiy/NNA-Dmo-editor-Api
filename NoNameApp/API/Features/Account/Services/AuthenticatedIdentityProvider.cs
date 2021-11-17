@@ -2,7 +2,7 @@
 using Model.Entities;
 using Model.Interfaces;
 
-namespace API.Features.Account.Services.Local {
+namespace API.Features.Account.Services {
     public class AuthenticatedIdentityProvider : IAuthenticatedIdentityProvider {
         public Guid AuthenticatedUserId { get; private set; }
         public bool IsAuthenticated { get; private set; }

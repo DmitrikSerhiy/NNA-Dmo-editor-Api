@@ -24,9 +24,5 @@ namespace API.Features.Account.Services {
             _passwordHasher = passwordHasher;
             _userStore = store;
         }
-
-        // public override void RegisterTokenProvider(string providerName, IUserTwoFactorTokenProvider<NnaUser> provider) {
-        //     base.RegisterTokenProvider(providerName, provider);
-        // }
     }
 }

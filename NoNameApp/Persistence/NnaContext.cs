@@ -12,6 +12,7 @@ namespace Persistence {
         public DbSet<DmoCollection> DmoCollections { get; set; }
         
         public DbSet<NnaLogin> Logins { get; set; }
+        public DbSet<NnaToken> Tokens { get; set; }
 
         public NnaContext() { }
 

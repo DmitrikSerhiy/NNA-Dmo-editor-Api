@@ -97,24 +97,9 @@ namespace API.Helpers.Extensions {
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })
                 .AddJwtBearer(options => {
-                    options.IncludeErrorDetails = true;
-                    options.SaveToken = false;
-                    options.TokenValidationParameters = new TokenValidationParameters {
-                        ValidAlgorithms = new []{tokenDescriptor.SigningCredentials.Algorithm},
-                        ValidAudience = tokenDescriptor.Audience,
-                        ValidIssuer = tokenDescriptor.Issuer,
-                        
-                        ValidateIssuerSigningKey = true,
-                        RequireSignedTokens = true,
-                        IssuerSigningKey = tokenDescriptor.SigningCredentials.Key,
-                        
-                        ValidateLifetime = true,
-                        RequireExpirationTime = true,
-                        
-                        ValidTypes = new []{tokenDescriptor.TokenType},
-                    };
+                    options.TokenValidationParameters = TokenValidationParametersProvider.Provide(tokenDescriptor);
+                    
                     options.Events = new JwtBearerEvents {
-                        
                         OnMessageReceived = context => {
                             var accessToken = context.Request.Query["access_token"];
                             var path = context.HttpContext.Request.Path;
@@ -127,22 +112,9 @@ namespace API.Helpers.Extensions {
                             Console.WriteLine("Token is valid!!!");
                             return Task.CompletedTask;
                         },
-                        OnChallenge = context => {
-                            Console.WriteLine("Challenging token");
-                            return Task.CompletedTask;
-                        },
                         OnAuthenticationFailed = context => {
                             Console.WriteLine("Failed to validate token");
-                            Console.WriteLine("11111111");
                             Console.WriteLine(context.Exception);
-                            Console.WriteLine("22222222");
-                            Console.WriteLine(context.Options);
-                            Console.WriteLine("33333333");
-                            Console.WriteLine(context.Principal);
-                            Console.WriteLine("44444444");
-                            Console.WriteLine(context.Properties);
-                            Console.WriteLine("55555555");
-                            Console.WriteLine(context.Result);
                             return Task.CompletedTask;
                         }
                     };

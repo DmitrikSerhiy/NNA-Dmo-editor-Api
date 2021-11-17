@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using API.Helpers;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Model.Enums;
 
 namespace API.Features.Account.Services {
     public class TokenDescriptorProvider {
@@ -20,10 +20,9 @@ namespace API.Features.Account.Services {
         public SecurityTokenDescriptor ProvideForRefreshToken() {
             var descriptor = BuildDescriptor();
             descriptor.Expires = DateTime.UtcNow + TimeSpan.FromHours(_jwtOptions.TokenLifetimeInHours * 2);
-            descriptor.Claims = new Dictionary<string, object> {
-                { "gtyp", "refresh_token" }
-            };
-
+            descriptor.Claims.Add(
+                nameof(NnaCustomTokenClaims.gTyp),
+                NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.gTyp));
             return descriptor;
         }
 
@@ -35,8 +34,8 @@ namespace API.Features.Account.Services {
                 NotBefore = DateTime.UtcNow,
                 IssuedAt = DateTime.UtcNow,
                 TokenType = "JWT",
-                AdditionalHeaderClaims = new Dictionary<string, object> {
-                    { JwtHeaderParameterNames.Kid, Guid.NewGuid().ToString() }
+                Claims = new Dictionary<string, object> {
+                    { nameof(NnaCustomTokenClaims.oid), Guid.NewGuid() }
                 }
             };
         }

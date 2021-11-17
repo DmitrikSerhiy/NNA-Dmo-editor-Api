@@ -2,5 +2,5 @@
 using Microsoft.AspNetCore.Identity;
 
 namespace Model.Entities {
-    public class NnaRole : IdentityRole<Guid> { }
+    public sealed class NnaRole : IdentityRole<Guid> { }
 }

@@ -10,6 +10,6 @@
 
         public const short MaxUserNameLength = 20;
         public const short MaxPasswordLength = 30;
-        public const short MinPasswordLength = 8;
+        public const short MinPasswordLength = 10;
     }
 }

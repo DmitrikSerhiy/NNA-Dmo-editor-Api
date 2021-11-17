@@ -7,7 +7,6 @@ using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
 using Serilog;
 
 namespace API
@@ -24,7 +23,7 @@ namespace API
                         var secretClient = new SecretClient(
                             new Uri($"https://{builtConfig["az-key-vault"]}.vault.azure.net/"),
                             new DefaultAzureCredential());
-                            // new AzureCliCredential()); // for local debugging with dev db
+                            //new AzureCliCredential()); // for local debugging with dev db
                         config.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
                     }
 

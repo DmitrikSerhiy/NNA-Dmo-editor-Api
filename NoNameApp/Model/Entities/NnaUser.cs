@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Identity;
 
 namespace Model.Entities {
-    public class NnaUser : IdentityUser<Guid> {
+    public sealed class NnaUser : IdentityUser<Guid> {
         public NnaUser() { }
         public NnaUser(string email, string userName) {
             if (string.IsNullOrWhiteSpace(email)) {
