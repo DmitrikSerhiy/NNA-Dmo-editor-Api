@@ -20,6 +20,7 @@ namespace API.Features.Account.Services {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
+        // todo: remove and use authenticatedIdentityProvider
         public async Task<NnaUser> GetAsync() {
             if (!_authenticatedIdentityProvider.IsAuthenticated) {
                 throw new AuthenticationException("User is not authenticated");

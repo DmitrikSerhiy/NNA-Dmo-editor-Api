@@ -25,10 +25,14 @@ namespace API.Features.Account.Services {
                 : serviceProvider.GetService<NnaUserManager>();
         }
         // todo: cover with unit tests
+        // todo: check if it's not refresh token
+        // todo: create indexed view 
+        // todo: check kId from view
+        // todo: add rate-limit for non secured end-points
         public async Task InvokeAsync(HttpContext context, IAuthenticatedIdentityProvider authenticatedIdentityProvider) {
             if (!(context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.Email)) && 
                 context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)))) {
-                // for not secured end-points
+                // for non secured end-points
                 await _next.Invoke(context);
                 return;
             }

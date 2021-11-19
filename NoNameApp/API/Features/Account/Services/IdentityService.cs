@@ -131,9 +131,13 @@ namespace API.Features.Account.Services {
         public async Task<TokensDto> RefreshTokens(RefreshDto refreshDto) {
             if (string.IsNullOrWhiteSpace(refreshDto.AccessToken)) throw new ArgumentNullException(nameof(refreshDto.AccessToken));
             if (string.IsNullOrWhiteSpace(refreshDto.RefreshToken)) throw new ArgumentNullException(nameof(refreshDto.RefreshToken));
+            if (refreshDto.AccessToken == refreshDto.RefreshToken) throw new ArgumentException();
 
             var userEmailFromRefreshToken = _tokenHandler.GetUserEmail(refreshDto.RefreshToken);
             var userEmailFromAccessToken = _tokenHandler.GetUserEmail(refreshDto.AccessToken);
+            if (userEmailFromRefreshToken is null || userEmailFromAccessToken is null) {
+                return null;
+            }
             if (userEmailFromRefreshToken != userEmailFromAccessToken) {
                 return null;
             }

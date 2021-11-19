@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using API.Features.Account.Services;
@@ -13,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Model.Entities;
 using Persistence;
@@ -35,6 +38,9 @@ namespace API.Helpers.Extensions {
             services.AddCors(o => {
                 o.AddPolicy(angularClientOrigin, policyBuilder => {
                     policyBuilder.WithOrigins(configuration["CorsUrls"].Split(","));
+                    policyBuilder.WithExposedHeaders(
+                        nameof(NnaHeaderNames.ExpiredToken), 
+                        nameof(NnaHeaderNames.RedirectToLogin));
                     policyBuilder.AllowAnyMethod();
                     policyBuilder.AllowAnyHeader();
                     policyBuilder.AllowCredentials();
@@ -113,6 +119,10 @@ namespace API.Helpers.Extensions {
                             return Task.CompletedTask;
                         },
                         OnAuthenticationFailed = context => {
+                            // expiration error code toke from Microsoft.IdentityModel.Tokens.LogMessages
+                            if (context.Exception.Message.StartsWith("IDX10223")) {
+                                context.Response.Headers.Add(NnaHeaders.Get(NnaHeaderNames.ExpiredToken));
+                            }
                             Console.WriteLine("Failed to validate token");
                             Console.WriteLine(context.Exception);
                             return Task.CompletedTask;

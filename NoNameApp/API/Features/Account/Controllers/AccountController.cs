@@ -105,8 +105,8 @@ namespace API.Features.Account.Controllers {
             var tokensDto = await _identityService.RefreshTokens(refreshDto);
 
             if (tokensDto is null) {
-                return StatusCode((int)HttpStatusCode.Unauthorized, 
-                    _responseBuilder.Append401RedirectToLoginMessage());
+                HttpContext.Response.Headers.Add(NnaHeaders.Get(NnaHeaderNames.RedirectToLogin));
+                return StatusCode((int)HttpStatusCode.BadRequest);
             }
 
             return new JsonResult(new {
