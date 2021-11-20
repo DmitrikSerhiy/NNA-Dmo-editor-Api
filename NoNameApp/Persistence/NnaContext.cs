@@ -31,6 +31,7 @@ namespace Persistence {
             DmoConfiguration.Configure(modelBuilder);
             UserDmoCollectionConfiguration.Configure(modelBuilder);
             DmoUserDmoCollectionConfiguration.Configure(modelBuilder);
+            UsersTokensConfiguration.Configure(modelBuilder);
         }
     }
 }

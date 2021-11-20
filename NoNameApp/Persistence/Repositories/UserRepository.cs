@@ -17,18 +17,8 @@ namespace Persistence.Repositories {
             _context = unitOfWork.Context;
         }
 
-        public async Task<bool> IsAccessTokenExists(Guid userId, string accessTokenId, string loginProvider) {
-            return await _context.Tokens.AnyAsync(tkn => tkn.UserId == userId && 
-                                                         tkn.TokenKeyId == accessTokenId && 
-                                                         tkn.LoginProvider == loginProvider &&
-                                                         tkn.Name == nameof(TokenName.Access));
-        }
-        
-        public async Task<bool> IsRefreshTokenExists(Guid userId, string refreshTokenId, string loginProvider) {
-            return await _context.Tokens.AnyAsync(tkn => tkn.UserId == userId &&
-                                                         tkn.TokenKeyId == refreshTokenId &&
-                                                         tkn.LoginProvider == loginProvider &&
-                                                         tkn.Name == nameof(TokenName.Refresh));
+        public async Task<UsersTokens> GetAuthenticatedUserDataAsync(string email) {
+            return await _context.Set<UsersTokens>().SingleOrDefaultAsync(ut => ut.Email == email);
         }
 
         public async Task SaveTokens(NnaToken accessToken, NnaToken refreshToken) {

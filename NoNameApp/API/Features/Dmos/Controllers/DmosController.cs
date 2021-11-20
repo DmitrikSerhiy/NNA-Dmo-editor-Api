@@ -1,5 +1,4 @@
-﻿using API.Features.Account.Services;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.DTOs.DmoCollections;
@@ -8,6 +7,7 @@ using Model.Interfaces.Repositories;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Model.Interfaces;
 
 namespace API.Features.Dmos.Controllers {
 
@@ -15,24 +15,24 @@ namespace API.Features.Dmos.Controllers {
     [ApiController]
     [Authorize]
     public class DmosController : ControllerBase {
-        private readonly CurrentUserService _currentUserService;
         private readonly IMapper _mapper;
+        private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
         private readonly IDmosRepository _dmosRepository;
 
         public DmosController(
-            CurrentUserService currentUserService, 
             IMapper mapper, 
-            IDmosRepository dmosRepository) {
-            _currentUserService = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
+            IDmosRepository dmosRepository,
+            IAuthenticatedIdentityProvider authenticatedIdentityProvider) {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _dmosRepository = dmosRepository ?? throw new ArgumentNullException(nameof(dmosRepository));
+            _authenticatedIdentityProvider = authenticatedIdentityProvider 
+                                             ?? throw new ArgumentNullException(nameof(authenticatedIdentityProvider));
         }
 
         [HttpGet]
         [Route("")]
         public async Task<ActionResult<DmoShortDto[]>> GetDmos() {
-            var user = await _currentUserService.GetAsync();
-            var dmos = await _dmosRepository.GetAll(user.Id);
+            var dmos = await _dmosRepository.GetAll(_authenticatedIdentityProvider.AuthenticatedUserId);
             return Ok(dmos.Select(_mapper.Map<DmoShortDto>).ToArray());
         }
 
@@ -40,9 +40,8 @@ namespace API.Features.Dmos.Controllers {
         [Route("")]
         public async Task<ActionResult<DmoShortDto[]>> RemoveDmo([FromQuery]RemoveDmoDto dto) {
             if (dto == null) throw new ArgumentNullException(nameof(dto));
-            var user = await _currentUserService.GetAsync();
 
-            var dmo = await _dmosRepository.GetDmo(user.Id, dto.DmoId);
+            var dmo = await _dmosRepository.GetDmo(_authenticatedIdentityProvider.AuthenticatedUserId, dto.DmoId);
             if (dmo == null) {
                 return NotFound();
             }

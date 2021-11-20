@@ -142,10 +142,20 @@ namespace API.Features.Account.Services {
                 return null;
             }
 
-            var user = await _userManager.FindByEmailAsync(userEmailFromRefreshToken);
-            if (user is null) {
+            var authData = await _userRepository.GetAuthenticatedUserDataAsync(userEmailFromRefreshToken);
+            if (authData is null) {
                 return null;
             }
+            
+            if (_tokenHandler.GetTokenKeyId(refreshDto.AccessToken) != authData.AccessTokenId ||
+                _tokenHandler.GetTokenKeyId(refreshDto.RefreshToken) != authData.RefreshTokenId) {
+                return null;
+            }
+
+            var user = new NnaUser {
+                Email = authData.Email,
+                Id = authData.UserId
+            };
 
             var refreshValidationResult = _tokenHandler.ValidateToken(
                 refreshDto.RefreshToken, 
@@ -154,23 +164,7 @@ namespace API.Features.Account.Services {
             if (!refreshValidationResult.IsValid) {
                 return null;
             }
-            
-            var isRefreshTokenExists = await _userRepository.IsRefreshTokenExists(
-                user.Id,
-                _tokenHandler.GetTokenKeyId(refreshDto.RefreshToken),
-                TokenMapper.PasswordLoginProvider);
-            if (!isRefreshTokenExists) {
-                return null;
-            }
-            
-            var isAccessTokenExists = await _userRepository.IsAccessTokenExists(
-                user.Id,
-                _tokenHandler.GetTokenKeyId(refreshDto.AccessToken),
-                TokenMapper.PasswordLoginProvider);
-            if (!isAccessTokenExists) {
-                return null;
-            } 
-            
+
             var newTokens = GenerateNewTokenPair(user);
             _userRepository.UpdateTokens( 
                 TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),

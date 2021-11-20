@@ -21,8 +21,8 @@ namespace API.Features.Account.Services {
             var descriptor = BuildDescriptor();
             descriptor.Expires = DateTime.UtcNow + TimeSpan.FromHours(_jwtOptions.TokenLifetimeInHours * 2);
             descriptor.Claims.Add(
-                nameof(NnaCustomTokenClaims.gTyp),
-                NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.gTyp));
+                nameof(NnaCustomTokenClaims.gtyp),
+                NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.gtyp));
             return descriptor;
         }
 

@@ -7,8 +7,10 @@ namespace Model.Interfaces {
         bool IsAuthenticated { get; }
         // ReSharper disable once UnusedMemberInSuper.Global
         string AuthenticatedUserEmail { get; }
+        string AuthenticatedTokenId { get; }
 
-        void SetAuthenticatedUser(NnaUser user);
+
+        void SetAuthenticatedUser(UsersTokens authData);
         // ReSharper disable once UnusedMemberInSuper.Global
 
         void ClearAuthenticatedUserInfo();

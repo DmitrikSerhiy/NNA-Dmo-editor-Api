@@ -4,8 +4,8 @@ namespace Model.Enums {
     public class NnaCustomTokenClaimsDictionary {
 
         private static readonly Dictionary<NnaCustomTokenClaims, string> Dictionary = new() {
-                { NnaCustomTokenClaims.gTyp, "refresh_token" },
-                { NnaCustomTokenClaims.oid, "" }
+                { NnaCustomTokenClaims.gtyp, "refresh_token" },
+                { NnaCustomTokenClaims.oid, "http://schemas.microsoft.com/identity/claims/objectidentifier" }
             };
 
         public static string GetValue(NnaCustomTokenClaims name) {

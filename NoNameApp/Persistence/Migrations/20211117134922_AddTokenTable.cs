@@ -25,7 +25,7 @@ namespace Persistence.Migrations
                 name: "TokenKeyId",
                 table: "AspNetUserTokens",
                 type: "nvarchar(max)",
-                nullable: true);
+                nullable: false);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

@@ -28,7 +28,7 @@ namespace API.Features.Editor.Services {
 
         public static void AuthenticateUser(this HubCallerContext context, NnaUser user) {
             var authenticatedIdentityProvider = new AuthenticatedIdentityProvider();
-            authenticatedIdentityProvider.SetAuthenticatedUser(user);
+            // authenticatedIdentityProvider.SetAuthenticatedUser(user);
             context.Items.Add("user", authenticatedIdentityProvider);
         }
 
