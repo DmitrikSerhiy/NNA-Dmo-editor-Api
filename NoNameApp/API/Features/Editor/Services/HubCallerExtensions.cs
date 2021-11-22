@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Linq;
 using API.Features.Account.Services;
-using API.Features.Account.Services.Local;
 using Microsoft.AspNetCore.SignalR;
 using Model.Entities;
 
@@ -26,9 +25,9 @@ namespace API.Features.Editor.Services {
             return context.Items.Keys.Any(key => key.Equals("user"));
         }
 
-        public static void AuthenticateUser(this HubCallerContext context, NnaUser user) {
+        public static void AuthenticateUser(this HubCallerContext context, UsersTokens authData) {
             var authenticatedIdentityProvider = new AuthenticatedIdentityProvider();
-            // authenticatedIdentityProvider.SetAuthenticatedUser(user);
+            authenticatedIdentityProvider.SetAuthenticatedUser(authData);
             context.Items.Add("user", authenticatedIdentityProvider);
         }
 

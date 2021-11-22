@@ -1,22 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using API.Features.Account.Services;
-using API.Features.Account.Services.Local;
 using API.Helpers.GlobalFilters;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Microsoft.Extensions.Primitives;
-using Microsoft.IdentityModel.Tokens;
 using Model.Entities;
 using Persistence;
 using Serilog;
@@ -52,14 +45,14 @@ namespace API.Helpers.Extensions {
             app.UseCors(angularClientOrigin);
         }
         
-        public static void UseNnaAccountRewriteOptions(this IApplicationBuilder app) {
-            var options = new RewriteOptions()
-                .AddRewrite("api/account/register", "api/local/account/register", skipRemainingRules: false)
-                .AddRewrite("api/account/token", "api/local/account/token", skipRemainingRules: false)
-                .AddRewrite("api/account/name", "api/local/account/name", skipRemainingRules: false)
-                .AddRewrite("api/account/email", "api/local/account/email", skipRemainingRules: false);
-            app.UseRewriter(options);
-        }
+        // public static void UseNnaAccountRewriteOptions(this IApplicationBuilder app) {
+        //     var options = new RewriteOptions()
+        //         .AddRewrite("api/account/register", "api/local/account/register", skipRemainingRules: false)
+        //         .AddRewrite("api/account/token", "api/local/account/token", skipRemainingRules: false)
+        //         .AddRewrite("api/account/name", "api/local/account/name", skipRemainingRules: false)
+        //         .AddRewrite("api/account/email", "api/local/account/email", skipRemainingRules: false);
+        //     app.UseRewriter(options);
+        // }
 
         
         public static void AddNnaLocalLoggerOptions(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration) {
@@ -125,55 +118,6 @@ namespace API.Helpers.Extensions {
                             }
                             Console.WriteLine("Failed to validate token");
                             Console.WriteLine(context.Exception);
-                            return Task.CompletedTask;
-                        }
-                    };
-                });
-        }
-        
-        
-        public static void AddNnaLocalAuthenticationOptions(this IServiceCollection services, IConfiguration configuration) {
-            
-            var jwtOptions = new JwtOptions();
-            configuration.GetSection(nameof(JwtOptions)).Bind(jwtOptions);
-            
-            var identityBuilder = services
-                .AddIdentity<NnaUser, NnaRole>(options => {
-                    options.User.RequireUniqueEmail = true;
-                    options.Password.RequireDigit = false;
-                    options.Password.RequireLowercase = false;
-                    options.Password.RequiredLength = 3;
-                    options.Password.RequireNonAlphanumeric = false;
-                    options.Password.RequireUppercase = false;
-                })
-                .AddEntityFrameworkStores<NnaContext>();
-            identityBuilder.AddUserManager<NnaLocalUserManager>();
-
-            services.AddAuthentication(options => {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
-                .AddJwtBearer(options => {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = false,
-                        ValidateAudience = false,
-                        ValidateLifetime = false,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.Default.GetBytes(jwtOptions.Key)),
-                        ValidateIssuerSigningKey = true
-                    };
-                    options.Events = new JwtBearerEvents
-                    {
-                        OnMessageReceived = context =>
-                        {
-                            var accessToken = context.Request.Query["access_token"];
-                            var path = context.HttpContext.Request.Path;
-
-                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/api/editor")))
-                            {
-                                context.Token = accessToken;
-                            }
-
                             return Task.CompletedTask;
                         }
                     };

@@ -8,7 +8,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using API.Features.Account.Services;
-using API.Features.Account.Services.Local;
 using API.Helpers;
 using API.Helpers.Extensions;
 using Infrastructure;
@@ -32,12 +31,10 @@ namespace API {
             services.AddNnaCorsOptions(_configuration);
             services.Configure<JwtOptions>(_configuration.GetSection(nameof(JwtOptions)));
             
+            services.AddNnaAuthenticationOptions();
             if (_environment.IsLocal()) {
                 services.AddNnaLocalLoggerOptions(_environment, _configuration);
-                services.AddNnaLocalAuthenticationOptions(_configuration);
-            } else {
-                services.AddNnaAuthenticationOptions();
-            }
+            } 
             
             services
                 .AddSignalR()
@@ -58,10 +55,6 @@ namespace API {
             app.UseHttpsRedirection();
             app.UseHsts();
 
-            if (_environment.IsLocal()) {
-                app.UseNnaAccountRewriteOptions();
-            }
-            
             app.UseRouting();
             app.UseNnaCorsOptions();
             

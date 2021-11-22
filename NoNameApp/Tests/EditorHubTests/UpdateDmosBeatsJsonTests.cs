@@ -28,7 +28,7 @@ namespace Tests.EditorHubTests
         public async Task ShouldReturnBadRequestIfEntryDtoIsEmptyTest() {
             //Arrange
             SetMockAndVariables();
-            Subject = new EditorHub(UserManagerMock.Object, EditorServiceMock.Object, EnvironmentMock.Object);
+            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
             SetupHubContext();
 
             //Act
@@ -44,7 +44,7 @@ namespace Tests.EditorHubTests
         public async Task ShouldReturnNotAuthorizedIfNoUserInContextTest() {
             //Arrange
             SetMockAndVariables();
-            Subject = new EditorHub(UserManagerMock.Object, EditorServiceMock.Object, EnvironmentMock.Object);
+            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
             var hubContext = new Mock<HubCallerContext>();
             hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object>());
             Subject.Context = hubContext.Object;
@@ -62,7 +62,7 @@ namespace Tests.EditorHubTests
             //Arrange
             SetMockAndVariables();
             update.DmoId = null;
-            Subject = new EditorHub(UserManagerMock.Object, EditorServiceMock.Object, EnvironmentMock.Object);
+            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
             SetupHubContext();
 
             //Act
@@ -79,7 +79,7 @@ namespace Tests.EditorHubTests
             SetMockAndVariables();
 
             EditorServiceMock.Setup(esm => esm.UpdateDmoBeatsAsJson(update, UserId)).Verifiable();
-            Subject = new EditorHub(UserManagerMock.Object, EditorServiceMock.Object, EnvironmentMock.Object);
+            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
             SetupHubContext();
 
             //Act
@@ -100,7 +100,7 @@ namespace Tests.EditorHubTests
 
             EditorServiceMock.Setup(esm => esm.UpdateDmoBeatsAsJson(update, UserId))
                 .ThrowsAsync(new UpdateDmoBeatsAsJsonException(exceptionMessage, new Exception("exception from repository")));
-            Subject = new EditorHub(UserManagerMock.Object, EditorServiceMock.Object, EnvironmentMock.Object);
+            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
             SetupHubContext();
 
             //Act

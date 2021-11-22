@@ -6,19 +6,18 @@ using Model.Exceptions.Editor;
 using Model.Interfaces;
 using Serilog;
 using System.Threading.Tasks;
-using API.Features.Account.Services.Local;
+using API.Helpers;
 using Microsoft.AspNetCore.Hosting;
 
 namespace API.Features.Editor.Hubs {
     public class EditorHub : BaseEditorHub {
 
         public EditorHub(
-            NnaLocalUserManager localUserManager,
             IEditorService editorService,
-            IWebHostEnvironment webHostEnvironment) 
-            : base(localUserManager, editorService, webHostEnvironment) { }
-
-
+            IWebHostEnvironment webHostEnvironment,
+            ClaimsValidator claimsValidator) 
+                : base(editorService, webHostEnvironment, claimsValidator) { }
+        
         public async Task<BaseEditorResponseDto> LoadShortDmo(LoadShortDmoDto dmoDto) {
             if (dmoDto == null) return BadRequest();
 

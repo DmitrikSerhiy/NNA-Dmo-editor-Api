@@ -1,23 +1,22 @@
 ﻿using System;
 using System.Linq;
-using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using API.Helpers;
 using Microsoft.AspNetCore.Http;
 using Model.Enums;
 using Model.Interfaces;
-using Model.Interfaces.Repositories;
 
 namespace API.Features.Account.Services {
     public class AuthenticatedIdentityMiddleware {
         private readonly RequestDelegate _next;
-        private readonly IUserRepository _repository;
+        private readonly ClaimsValidator _claimsValidator;
 
         public AuthenticatedIdentityMiddleware(
-            RequestDelegate next,
-            IUserRepository repository) {
+            RequestDelegate next, 
+            ClaimsValidator claimsValidator) {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+            _claimsValidator = claimsValidator ?? throw new ArgumentNullException(nameof(claimsValidator));
         }
         
         // todo: cover with unit tests
@@ -31,40 +30,8 @@ namespace API.Features.Account.Services {
                 await _next.Invoke(context);
                 return;
             }
-            
 
-            if (context.User.Claims.Any(claim => claim.Type == nameof(NnaCustomTokenClaims.gtyp))) {
-                throw new AuthenticationException($"Invalid token. Refresh token should not be used as authentication key.");
-            }
-            
-            var userId = context.User.Claims.First(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)).Value;
-            var userEmail = context.User.Claims.First(claim => claim.Type.Equals(ClaimTypes.Email)).Value;
-            var tokenId = context.User.Claims.First(claim => 
-                claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid))).Value;
-            
-            if (string.IsNullOrWhiteSpace(userId)) {
-                throw new AuthenticationException($"Invalid user id claim: '{userId}'");
-            }
-            
-            if (string.IsNullOrWhiteSpace(userEmail)) {
-                throw new AuthenticationException($"Invalid user email claim: '{userEmail}'");
-            }
-
-            if (string.IsNullOrWhiteSpace(tokenId)) {
-                throw new AuthenticationException($"Invalid user oid claim: '{tokenId}'");
-            }
-            
-            var authData = await _repository.GetAuthenticatedUserDataAsync(userEmail);
-            if (authData is null) {
-                throw new AuthenticationException($"Missing auth data for user: '{userEmail}'");
-            }
-            
-            if (authData.Email != userEmail ||
-                authData.UserId.ToString() != userId ||
-                authData.AccessTokenId != tokenId) {
-                throw new AuthenticationException($"Inconsistent auth data for user: '{userEmail}'");
-            }
-            
+            var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(context.User.Claims.ToList());
             authenticatedIdentityProvider.SetAuthenticatedUser(authData);
             await _next.Invoke(context);
         }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Model.Entities.Common;
 
 namespace Model.Entities {
+    // todo: create base class for entity and cover it with unit test just like dto
     public sealed class Dmo : Entity {
         public string Name { get; set; }
         public string MovieTitle { get; set; }

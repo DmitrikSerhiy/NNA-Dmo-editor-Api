@@ -19,20 +19,20 @@ namespace Persistence.Repositories {
 
         private const string CreateDmoScript = 
             "INSERT INTO [dbo].[Dmos] ([Id],[DateOfCreation],[Name],[MovieTitle] ,[DmoStatus],[ShortComment],[NnaUserId]) " +
-            "VALUES(@id, @dateOfCreation, @name, @movieTitle, @dmoStatus, @shortComment, @userId)";
+            "VALUES(@id, @dateOfCreation, @name, @movieTitle, @dmoStatus, @shortComment, @nnaUserId)";
 
         private const string LoadShortDmoScript =
-            "SELECT Id, Name, MovieTitle, ShortComment, BeatsJson FROM Dmos WHERE Id = @id and NnaUserId = @userId";
+            "SELECT Id, Name, MovieTitle, ShortComment, BeatsJson FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
         //todo: refactor to do not load beatsJson here 
 
         private const string LoadDmoScript =
-            "SELECT * FROM Dmos WHERE Id = @id and NnaUserId = @userId";
+            "SELECT * FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string UpdateShortDmoScript =
-            "UPDATE Dmos set Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment WHERE Id = @id and NnaUserId = @userId";
+            "UPDATE Dmos set Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string UpdateBeatsJsonScript =
-            "UPDATE Dmos set BeatsJson = @jsonBeats where Id = @id and NnaUserId = @userId";
+            "UPDATE Dmos set BeatsJson = @jsonBeats where Id = @id and NnaUserId = @nnaUserId";
 
         #endregion
 
@@ -43,26 +43,27 @@ namespace Persistence.Repositories {
 
         public async Task<bool> CreateDmoAsync(Dmo dmo) {
             await using var db = await OpenAndGetConnection();
+
             var result = await db.ExecuteAsync(CreateDmoScript, new {
                 id = dmo.Id,
                 dateOfCreation = dmo.DateOfCreation,
                 name = dmo.Name,
                 movieTitle = dmo.MovieTitle,
                 dmoStatus = (short) DmoStatus.InProgress,
-                shortComment = dmo.ShortComment,
-                userId = dmo.NnaUserId
+                shortComment = string.IsNullOrWhiteSpace(dmo.ShortComment) ? null : dmo.ShortComment,
+                nnaUserId = dmo.NnaUserId
             });
             return result >= 1;
         }
 
-        public async Task<Dmo> LoadShortDmoAsync(Guid id, Guid userId) {
+        public async Task<Dmo> LoadShortDmoAsync(Guid id, Guid nnaUserId) {
             await using var db = await OpenAndGetConnection();
-            return await db.QueryFirstOrDefaultAsync<Dmo>(LoadShortDmoScript, new { id, userId });
+            return await db.QueryFirstOrDefaultAsync<Dmo>(LoadShortDmoScript, new { id, nnaUserId });
         }
 
-        public async Task<Dmo> LoadDmoAsync(Guid id, Guid userId) {
+        public async Task<Dmo> LoadDmoAsync(Guid id, Guid nnaUserId) {
             await using var db = await OpenAndGetConnection();
-            return await db.QueryFirstOrDefaultAsync<Dmo>(LoadDmoScript, new { id, userId });
+            return await db.QueryFirstOrDefaultAsync<Dmo>(LoadDmoScript, new { id, nnaUserId });
         }
 
         public async Task<bool> UpdateShortDmoAsync(Dmo dmo) {
@@ -72,15 +73,15 @@ namespace Persistence.Repositories {
                 movieTitle = dmo.MovieTitle,
                 shortComment = dmo.ShortComment,
                 id = dmo.Id,
-                userId = dmo.NnaUserId
+                nnaUserId = dmo.NnaUserId
             });
 
             return result >= 1;
         }
 
-        public async Task<bool> UpdateJsonBeatsAsync(string jsonBeats, Guid id, Guid userId) {
+        public async Task<bool> UpdateJsonBeatsAsync(string jsonBeats, Guid id, Guid nnaUserId) {
             await using var db = await OpenAndGetConnection();
-            var result = await db.ExecuteAsync(UpdateBeatsJsonScript, new {jsonBeats, id, userId});
+            var result = await db.ExecuteAsync(UpdateBeatsJsonScript, new {jsonBeats, id, nnaUserId});
             return result >= 1;
         }
 
