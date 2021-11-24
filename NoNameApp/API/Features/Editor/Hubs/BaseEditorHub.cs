@@ -41,13 +41,13 @@ namespace API.Features.Editor.Hubs {
                 return;
             }
 
-            // todo: check if same user is already connected
-            // todo: refresh token
+            // todo: check if same user is already connected. I should not allow two connections for one user.
+            // todo: if token is expired then return 401.
             // todo: disconnect on exception OR not?
             var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(Context.User.Claims.ToList());
             
             Context.AuthenticateUser(authData);
-            if (!WebHostEnvironment.IsLocal()) {
+            if (WebHostEnvironment.IsLocal()) {
                 Console.WriteLine($"{Context.GetCurrentUserEmail()} just connected to the editor");
             }
 
@@ -59,7 +59,7 @@ namespace API.Features.Editor.Hubs {
                 Log.Error(exception, $"Error on websocket disconnection. User: {Context.GetCurrentUserId()}. Error: {exception.Message}");
             }
 
-            if (!WebHostEnvironment.IsLocal()) {
+            if (WebHostEnvironment.IsLocal()) {
                 Console.WriteLine($"{Context.GetCurrentUserEmail()} disconnected from the editor");
             }
 

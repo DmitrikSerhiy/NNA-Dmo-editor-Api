@@ -35,8 +35,8 @@ namespace API.Features.HealthCheck.Controllers {
         [HttpGet]
         [Authorize]
         [Route("security")]
-        public async Task<IActionResult> CheckToken() {
-            return Ok();
+        public IActionResult CheckToken() {
+            return new JsonResult(new {message = "Token is valid"});
         }
     }
 }
