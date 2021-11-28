@@ -8,6 +8,7 @@ using API.Features.Account.Services;
 using API.Helpers;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
+using Model.Interfaces.Repositories;
 
 namespace Tests.EditorHubTests
 {
@@ -16,6 +17,8 @@ namespace Tests.EditorHubTests
         protected Mock<IEditorService> EditorServiceMock { get; private set; }
         protected Mock<IWebHostEnvironment> EnvironmentMock { get; private set; }
         protected Mock<ClaimsValidator> ClaimsValidatorMock { get; private set; }
+        
+        protected Mock<IUserRepository> UserRepositoryMock { get; private set; }
 
 
         protected string UserName { get; } = "UserName";
@@ -26,6 +29,7 @@ namespace Tests.EditorHubTests
             EditorServiceMock = new Mock<IEditorService>();
             EnvironmentMock = new Mock<IWebHostEnvironment>();
             ClaimsValidatorMock = new Mock<ClaimsValidator>();
+            UserRepositoryMock = new Mock<IUserRepository>();
         }
 
         protected void SetupHubContext() {

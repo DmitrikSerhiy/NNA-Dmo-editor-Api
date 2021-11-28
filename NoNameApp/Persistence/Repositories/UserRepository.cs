@@ -17,6 +17,22 @@ namespace Persistence.Repositories {
             _context = unitOfWork.Context;
         }
 
+        public async Task SyncContextImmediatelyAsync() {
+            await _context.SaveChangesAsync();
+        }
+        
+        public async Task<bool> HasEditorConnectionAsync(Guid userId) {
+            return await _context.EditorConnections.AnyAsync(ec => ec.UserId == userId);
+        }
+
+        public async Task AddEditorConnectionAsync(EditorConnection connection) {
+            await _context.EditorConnections.AddAsync(connection);
+        }
+
+        public void RemoveEditorConnection(EditorConnection connection) {
+            _context.EditorConnections.Remove(connection);
+        }
+
         public async Task<UsersTokens> GetAuthenticatedUserDataAsync(string email) {
             return await _context.Set<UsersTokens>().SingleOrDefaultAsync(ut => ut.Email == email);
         }

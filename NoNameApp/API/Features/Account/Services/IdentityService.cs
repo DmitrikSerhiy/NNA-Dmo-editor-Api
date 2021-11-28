@@ -84,6 +84,19 @@ namespace API.Features.Account.Services {
         }
 
         /// <summary>
+        /// Check whether current user has tokens.
+        /// </summary>
+        /// <returns></returns>
+        public async Task<bool> VerifyTokenAsync() {
+            var tokens = await _userRepository.GetTokens(_identityProvider.AuthenticatedUserId);
+            if (tokens is null) {
+                return false;
+            }
+
+            return true;
+        }
+        
+        /// <summary>
         /// Load existing tokens or generate new if tokens are missing.
         /// If tokens exist but are invalid then new tokens are created 
         /// </summary>

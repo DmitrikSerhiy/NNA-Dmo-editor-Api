@@ -26,7 +26,11 @@ namespace Tests.EditorHubTests {
         public async Task ShouldReturnBadRequestIfEntryDtoIsEmptyTest() {
             //Arrange
             SetMockAndVariables();
-            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
+            Subject = new EditorHub(
+                EditorServiceMock.Object, 
+                EnvironmentMock.Object,
+                ClaimsValidatorMock.Object,
+                UserRepositoryMock.Object);
             SetupHubContext();
 
             //Act
@@ -41,7 +45,11 @@ namespace Tests.EditorHubTests {
         public async Task ShouldReturnNotAuthorizedIfNoUserInContextTest() {
             //Arrange
             SetMockAndVariables();
-            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
+            Subject = new EditorHub(
+                EditorServiceMock.Object, 
+                EnvironmentMock.Object,
+                ClaimsValidatorMock.Object,
+                UserRepositoryMock.Object);
             var hubContext = new Mock<HubCallerContext>();
             hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object>());
             Subject.Context = hubContext.Object;
@@ -59,7 +67,11 @@ namespace Tests.EditorHubTests {
             //Arrange
             SetMockAndVariables();
             DmoDto.Id = null;
-            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
+            Subject = new EditorHub(
+                EditorServiceMock.Object, 
+                EnvironmentMock.Object,
+                ClaimsValidatorMock.Object,
+                UserRepositoryMock.Object);
             SetupHubContext();
 
             //Act
@@ -77,7 +89,11 @@ namespace Tests.EditorHubTests {
             var loadedDmo = new LoadedShortDmoDto();
 
             EditorServiceMock.Setup(esm => esm.LoadShortDmo(DmoDto, UserId)).ReturnsAsync(loadedDmo);
-            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
+            Subject = new EditorHub(
+                EditorServiceMock.Object, 
+                EnvironmentMock.Object,
+                ClaimsValidatorMock.Object,
+                UserRepositoryMock.Object);
             SetupHubContext();
 
             //Act
@@ -96,7 +112,11 @@ namespace Tests.EditorHubTests {
 
             EditorServiceMock.Setup(esm => esm.LoadShortDmo(DmoDto, UserId))
                 .ThrowsAsync(new LoadShortDmoException(exceptionMessage, new Exception("exception from repository")));
-            Subject = new EditorHub(EditorServiceMock.Object, EnvironmentMock.Object, ClaimsValidatorMock.Object);
+            Subject = new EditorHub(
+                EditorServiceMock.Object, 
+                EnvironmentMock.Object,
+                ClaimsValidatorMock.Object,
+                UserRepositoryMock.Object);
             SetupHubContext();
 
             //Act

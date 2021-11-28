@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading.Tasks;
-using Model.DTOs.Account;
 using Model.Entities;
 
 namespace Model.Interfaces.Repositories {
@@ -12,5 +11,9 @@ namespace Model.Interfaces.Repositories {
         void UpdateTokens(NnaToken accessToken, NnaToken refreshToken);
         Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId);
         Task<UsersTokens> GetAuthenticatedUserDataAsync(string email);
+        Task<bool> HasEditorConnectionAsync(Guid userId);
+        Task AddEditorConnectionAsync(EditorConnection connection);
+        void RemoveEditorConnection(EditorConnection connection);
+        Task SyncContextImmediatelyAsync();
     }
 }

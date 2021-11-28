@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Persistence;
 
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NnaContext))]
-    partial class NnaContextModelSnapshot : ModelSnapshot
+    [Migration("20211128173619_AddTableForEditorConnections")]
+    partial class AddTableForEditorConnections
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,8 +210,8 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Model.Entities.EditorConnection", b =>
                 {
-                    b.Property<string>("ConnectionId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("ConnectionId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");

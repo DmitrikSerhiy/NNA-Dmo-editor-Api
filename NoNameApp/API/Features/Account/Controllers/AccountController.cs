@@ -30,6 +30,7 @@ namespace API.Features.Account.Controllers {
         [Route("email")]
         [AllowAnonymous]
         public async Task<IActionResult> IsEmailExists(CheckEmailDto checkEmailDto) {
+            if (checkEmailDto is null) BadRequest();
             return (await _userManager.FindByEmailAsync(checkEmailDto.Email) != null)
                 ? Ok(true)
                 : Ok(false);
@@ -39,6 +40,7 @@ namespace API.Features.Account.Controllers {
         [Route("name")]
         [AllowAnonymous]
         public async Task<IActionResult> IsNameExists(CheckNameDto checkNameDto) {
+            if (checkNameDto is null) BadRequest();
             return (await _userManager.FindByNameAsync(checkNameDto.Name) != null)
                 ? Ok(true)
                 : Ok(false);
@@ -48,6 +50,7 @@ namespace API.Features.Account.Controllers {
         [Route("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterDto registerDto) {
+            if (registerDto is null) BadRequest();
             if (await _userManager.FindByEmailAsync(registerDto.Email) != null) {
                 return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
                     _responseBuilder.AppendBadRequestErrorMessage("Email is already taken"));
@@ -78,6 +81,7 @@ namespace API.Features.Account.Controllers {
         [Route("token")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginDto loginDto) {
+            if (loginDto is null) BadRequest();
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null) {
                 return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
@@ -97,11 +101,23 @@ namespace API.Features.Account.Controllers {
                 email = user.Email
             });
         }
+        
+        [HttpGet]
+        [Route("verify")]
+        [Authorize]
+        public async Task<IActionResult> ValidateToken() {
+            var isVerified = await _identityService.VerifyTokenAsync();
+            return isVerified
+                ? NoContent()
+                : Unauthorized();
+        }
+        
 
         [HttpPost]
         [Route("refresh")]
         [AllowAnonymous]
         public async Task<IActionResult> Refresh(RefreshDto refreshDto) {
+            if (refreshDto is null) BadRequest();
             var tokensDto = await _identityService.RefreshTokens(refreshDto);
 
             if (tokensDto is null) {
@@ -119,6 +135,8 @@ namespace API.Features.Account.Controllers {
         [Route("logout")]
         [Authorize]
         public async Task<IActionResult> Logout(LogoutDto logoutDto) {
+            if (logoutDto is null) BadRequest();
+            
             await _identityService.ClearTokens(logoutDto.Email);
 
             return NoContent();

@@ -90,7 +90,6 @@ namespace API.Helpers.Extensions {
                 .AddEntityFrameworkStores<NnaContext>();
             identityBuilder.AddUserManager<NnaUserManager>();
 
-
             services.AddAuthentication(options => {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -101,10 +100,11 @@ namespace API.Helpers.Extensions {
                     options.Events = new JwtBearerEvents {
                         OnMessageReceived = context => {
                             var accessToken = context.Request.Query["access_token"];
-                            var path = context.HttpContext.Request.Path;
-                            if (!string.IsNullOrEmpty(accessToken) && (path.StartsWithSegments("/api/editor"))) {
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                                context.HttpContext.Request.Path.StartsWithSegments("/api/editor")) {
                                 context.Token = accessToken;
                             }
+
                             return Task.CompletedTask;
                         },
                         OnTokenValidated = context => {

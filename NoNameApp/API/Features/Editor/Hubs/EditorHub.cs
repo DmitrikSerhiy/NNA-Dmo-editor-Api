@@ -7,7 +7,9 @@ using Model.Interfaces;
 using Serilog;
 using System.Threading.Tasks;
 using API.Helpers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
+using Model.Interfaces.Repositories;
 
 namespace API.Features.Editor.Hubs {
     public class EditorHub : BaseEditorHub {
@@ -15,8 +17,9 @@ namespace API.Features.Editor.Hubs {
         public EditorHub(
             IEditorService editorService,
             IWebHostEnvironment webHostEnvironment,
-            ClaimsValidator claimsValidator) 
-                : base(editorService, webHostEnvironment, claimsValidator) { }
+            ClaimsValidator claimsValidator,
+            IUserRepository userRepository) 
+                : base(editorService, webHostEnvironment, claimsValidator, userRepository) { }
         
         public async Task<BaseEditorResponseDto> LoadShortDmo(LoadShortDmoDto dmoDto) {
             if (dmoDto == null) return BadRequest();
@@ -91,7 +94,6 @@ namespace API.Features.Editor.Hubs {
 
             return NoContent();
         }
-
 
         public async Task<BaseEditorResponseDto> UpdateDmosJson(UpdateDmoBeatsAsJsonDto update) {
             if (update == null) return BadRequest();
