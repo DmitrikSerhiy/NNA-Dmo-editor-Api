@@ -3,9 +3,11 @@ using System.Threading.Tasks;
 using API.Features.Account.Services;
 using API.Helpers.GlobalFilters;
 using FluentValidation.AspNetCore;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -90,7 +92,8 @@ namespace API.Helpers.Extensions {
                 .AddEntityFrameworkStores<NnaContext>();
             identityBuilder.AddUserManager<NnaUserManager>();
 
-            services.AddAuthentication(options => {
+            services
+                .AddAuthentication(options => {
                     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 })

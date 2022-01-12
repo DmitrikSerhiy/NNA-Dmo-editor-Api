@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using API.Helpers;
 using API.Helpers.Extensions;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Model.DTOs.Account;
@@ -10,7 +11,7 @@ using Model.Interfaces;
 using Model.Interfaces.Repositories;
 
 namespace API.Features.Account.Services {
-    public sealed class IdentityService {
+    public sealed class NnaTokenManager {
         
         private readonly NnaUserManager _userManager;
         private readonly IUserRepository _userRepository;
@@ -40,7 +41,7 @@ namespace API.Features.Account.Services {
 
         #endregion
 
-        public IdentityService(
+        public NnaTokenManager(
             NnaUserManager userManager, 
             TokenDescriptorProvider descriptorProvider,
             IOptions<JwtOptions> jwtOptions, 
@@ -67,20 +68,14 @@ namespace API.Features.Account.Services {
         }
 
         /// <summary>
-        /// Creates new valid pair of access/refresh tokens for user with specified token.
+        /// Creates new valid pair of access/refresh tokens for user with specified email.
         /// All previous tokens for that user become invalid.
         /// </summary>
         public async Task<TokensDto> CreateTokens(string email) {
             if (email == null) throw new ArgumentNullException(nameof(email));
 
             var user = await _userManager.FindByEmailAsync(email);
-            var newTokens = GenerateNewTokenPair(user);
-            
-            await _userRepository.SaveTokens(                  
-                TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),
-                TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens));
-
-            return newTokens;
+            return await GenerateAndSaveTokensAsync(user);
         }
 
         /// <summary>
@@ -100,19 +95,12 @@ namespace API.Features.Account.Services {
         /// Load existing tokens or generate new if tokens are missing.
         /// If tokens exist but are invalid then new tokens are created 
         /// </summary>
-        public async Task<TokensDto> GetOrCreateTokensAsync(string email) {
-            if (email == null) throw new ArgumentNullException(nameof(email));
-            
-            var user = await _userManager.FindByEmailAsync(email);
+        public async Task<TokensDto> GetOrCreateTokensAsync(NnaUser user) {
+            if (user == null) throw new ArgumentNullException(nameof(user));
             var tokens = await _userRepository.GetTokens(user.Id);
             
              if (tokens is null) {
-                 var newTokens = GenerateNewTokenPair(user);
-                 await _userRepository.SaveTokens(                  
-                     TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),
-                     TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens));
-            
-                 return newTokens;
+                 return await GenerateAndSaveTokensAsync(user);
              }
             
             var accessTokenValidation = _tokenHandler.ValidateToken(tokens.Value.accessToken.Value,
@@ -122,12 +110,7 @@ namespace API.Features.Account.Services {
                 TokenValidationParametersProvider.Provide(RefreshTokenDescriptor.Invoke(_jwtOptions, user)));
             
             if (!accessTokenValidation.IsValid || !refreshTokenValidation.IsValid) {
-                var newTokens = GenerateNewTokenPair(user);
-                _userRepository.UpdateTokens( 
-                    TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),
-                    TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens));
-                
-                return newTokens;
+                return GenerateAndUpdateTokens(user);
             } 
             
             return new TokensDto {
@@ -177,13 +160,8 @@ namespace API.Features.Account.Services {
             if (!refreshValidationResult.IsValid) {
                 return null;
             }
-
-            var newTokens = GenerateNewTokenPair(user);
-            _userRepository.UpdateTokens( 
-                TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),
-                TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens));
             
-            return newTokens;
+            return GenerateAndUpdateTokens(user);
         }
 
         public async Task ClearTokens(string email) {
@@ -202,6 +180,43 @@ namespace API.Features.Account.Services {
             _identityProvider.ClearAuthenticatedUserInfo();
         }
 
+        public async Task<bool> ValidateGoogleTokenAsync(AuthGoogleDto authGoogleDto) {
+            if (authGoogleDto is null) throw new ArgumentNullException(nameof(authGoogleDto));
+            if (authGoogleDto.Email is null) throw new ArgumentNullException(nameof(authGoogleDto.Email));
+            
+            try {
+                var payload = await GoogleJsonWebSignature.ValidateAsync(authGoogleDto.GoogleToken);
+                if (!payload.EmailVerified || payload.Email != authGoogleDto.Email) {
+                    return false;
+                }
+            }
+            catch (InvalidJwtException) {
+                return false;
+            }
+
+            return true;
+        }
+
+        private TokensDto GenerateAndUpdateTokens(NnaUser user) {
+            var newTokens = GenerateNewTokenPair(user);
+            
+            _userRepository.UpdateTokens( 
+                TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),
+                TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens));
+            
+            return newTokens;
+        }
+
+        private async Task<TokensDto> GenerateAndSaveTokensAsync(NnaUser user) {
+            var newTokens = GenerateNewTokenPair(user);
+            
+            await _userRepository.SaveTokens(                  
+                TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),
+                TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens));
+
+            return newTokens;
+        }
+        
         private TokensDto GenerateNewTokenPair(NnaUser user) {
             var accessToken = CreateAccessJwt(user);
             var refreshToken = CreateRefreshJwt(user);
