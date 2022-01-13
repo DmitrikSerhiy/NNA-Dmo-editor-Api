@@ -10,7 +10,7 @@ namespace Persistence.Configuration {
                 .ToView(nameof(UsersTokens))
                 .HasNoKey();
 
-            //not working for some reason. Migration file was edited manually.
+            // not working for some reason. Migration file was edited manually.
             modelBuilder
                 .Entity<NnaToken>(token => {
                     token.Property(p => p.TokenKeyId).IsRequired(true);

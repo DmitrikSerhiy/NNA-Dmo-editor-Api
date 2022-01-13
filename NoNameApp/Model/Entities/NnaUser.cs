@@ -19,6 +19,7 @@ namespace Model.Entities {
             UserName = userName;
         }
 
+        public string AuthProvider { get; set; }
         public ICollection<Dmo> Dmos { get; set; }
         public ICollection<DmoCollection> DmoCollections { get; set; }
     }

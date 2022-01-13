@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Model.DTOs.Account;
 using Model.Entities;
+using Model.Enums;
 using Model.Interfaces;
 using Model.Interfaces.Repositories;
 
@@ -71,11 +72,11 @@ namespace API.Features.Account.Services {
         /// Creates new valid pair of access/refresh tokens for user with specified email.
         /// All previous tokens for that user become invalid.
         /// </summary>
-        public async Task<TokensDto> CreateTokens(string email) {
+        public async Task<TokensDto> CreateTokens(string email, LoginProviderName loginProviderName = LoginProviderName.password) {
             if (email == null) throw new ArgumentNullException(nameof(email));
 
             var user = await _userManager.FindByEmailAsync(email);
-            return await GenerateAndSaveTokensAsync(user);
+            return await GenerateAndSaveTokensAsync(user, loginProviderName);
         }
 
         /// <summary>
@@ -95,12 +96,12 @@ namespace API.Features.Account.Services {
         /// Load existing tokens or generate new if tokens are missing.
         /// If tokens exist but are invalid then new tokens are created 
         /// </summary>
-        public async Task<TokensDto> GetOrCreateTokensAsync(NnaUser user) {
+        public async Task<TokensDto> GetOrCreateTokensAsync(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
             if (user == null) throw new ArgumentNullException(nameof(user));
             var tokens = await _userRepository.GetTokens(user.Id);
             
              if (tokens is null) {
-                 return await GenerateAndSaveTokensAsync(user);
+                 return await GenerateAndSaveTokensAsync(user, loginProviderName);
              }
             
             var accessTokenValidation = _tokenHandler.ValidateToken(tokens.Value.accessToken.Value,
@@ -110,7 +111,7 @@ namespace API.Features.Account.Services {
                 TokenValidationParametersProvider.Provide(RefreshTokenDescriptor.Invoke(_jwtOptions, user)));
             
             if (!accessTokenValidation.IsValid || !refreshTokenValidation.IsValid) {
-                return GenerateAndUpdateTokens(user);
+                return GenerateAndUpdateTokens(user, loginProviderName);
             } 
             
             return new TokensDto {
@@ -161,7 +162,7 @@ namespace API.Features.Account.Services {
                 return null;
             }
             
-            return GenerateAndUpdateTokens(user);
+            return GenerateAndUpdateTokens(user, Enum.Parse<LoginProviderName>(authData.LoginProvider));
         }
 
         public async Task ClearTokens(string email) {
@@ -197,22 +198,22 @@ namespace API.Features.Account.Services {
             return true;
         }
 
-        private TokensDto GenerateAndUpdateTokens(NnaUser user) {
+        private TokensDto GenerateAndUpdateTokens(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
             var newTokens = GenerateNewTokenPair(user);
             
             _userRepository.UpdateTokens( 
-                TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),
-                TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens));
+                TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens, loginProviderName),
+                TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens, loginProviderName));
             
             return newTokens;
         }
 
-        private async Task<TokensDto> GenerateAndSaveTokensAsync(NnaUser user) {
+        private async Task<TokensDto> GenerateAndSaveTokensAsync(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
             var newTokens = GenerateNewTokenPair(user);
             
             await _userRepository.SaveTokens(                  
-                TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens),
-                TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens));
+                TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens, loginProviderName),
+                TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens, loginProviderName));
 
             return newTokens;
         }

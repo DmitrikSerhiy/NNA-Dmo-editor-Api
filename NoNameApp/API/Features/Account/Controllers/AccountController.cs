@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Model.DTOs.Account;
 using Model.Entities;
+using Model.Enums;
 
 namespace API.Features.Account.Controllers {
     
@@ -111,13 +112,13 @@ namespace API.Features.Account.Controllers {
                 ? NoContent()
                 : Unauthorized();
         }
-        
 
         [HttpPost]
         [Route("refresh")]
         [AllowAnonymous]
         public async Task<IActionResult> Refresh(RefreshDto refreshDto) {
             if (refreshDto is null) return BadRequest();
+            
             var tokensDto = await _nnaTokenManager.RefreshTokens(refreshDto);
 
             if (tokensDto is null) {
@@ -151,13 +152,17 @@ namespace API.Features.Account.Controllers {
             
             var isValid = await _nnaTokenManager.ValidateGoogleTokenAsync(authGoogleDto);
             if (!isValid) {
-                return StatusCode((int)HttpStatusCode.BadRequest);
+                return StatusCode((int)HttpStatusCode.UnprocessableEntity);
             }
 
             var user = await _userManager.FindByEmailAsync(authGoogleDto.Email);
             if (user is not null) {
-                // todo: add login provider. [AspNetUserTokens]
-                var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user);
+                if (await _userManager.HasPasswordAsync(user)) {
+                    return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
+                        _responseBuilder.AppendBadRequestErrorMessage("Email is already taken"));
+                }
+                
+                var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, LoginProviderName.google);
                 return new JsonResult(new {
                     accessToken = tokens.AccessToken,
                     refreshToken = tokens.RefreshToken,
@@ -171,15 +176,19 @@ namespace API.Features.Account.Controllers {
                 authGoogleDto.Name = authGoogleDto.Email;
             }
 
-            var result = await _userManager.CreateAsync(new NnaUser(authGoogleDto.Email, authGoogleDto.Name));
+            var result = await _userManager.CreateAsync(
+                new NnaUser(authGoogleDto.Email, authGoogleDto.Name) {
+                    AuthProvider = Enum.GetName(LoginProviderName.google)
+                });
+            
             if (!result.Succeeded) {
                 return StatusCode((int)HttpStatusCode.InternalServerError);
             }
             
             var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
             
-            // todo: add login provider. [AspNetUserTokens]
-            var tokensForNewUser = await _nnaTokenManager.CreateTokens(newUser.Email);
+            var tokensForNewUser = await _nnaTokenManager
+                .CreateTokens(newUser.Email, LoginProviderName.google);
             return new JsonResult(new {
                 accessToken = tokensForNewUser.AccessToken,
                 refreshToken = tokensForNewUser.RefreshToken,

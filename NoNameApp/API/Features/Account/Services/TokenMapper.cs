@@ -5,27 +5,30 @@ using Model.Enums;
 
 namespace API.Features.Account.Services {
     public class TokenMapper {
-        public static readonly string PasswordLoginProvider = "password";
-
-        public static NnaToken MapToAccessTokenByPasswordAuth(Guid userId, TokensDto tokensDto) {
+        public static NnaToken MapToAccessTokenByPasswordAuth(
+            Guid userId, 
+            TokensDto tokensDto, 
+            LoginProviderName loginProviderName = LoginProviderName.password) {
             return new NnaToken {
                 UserId = userId,
                 Name = nameof(TokenName.Access),
-                LoginProvider = PasswordLoginProvider,
+                LoginProvider = Enum.GetName(loginProviderName),
                 Value = tokensDto.AccessToken,
                 TokenKeyId = tokensDto.AccessTokenKeyId
             };
         }
 
-        public static NnaToken MapToRefreshTokenByPasswordAuth(Guid userId, TokensDto tokensDto) {
+        public static NnaToken MapToRefreshTokenByPasswordAuth(
+            Guid userId, 
+            TokensDto tokensDto, 
+            LoginProviderName loginProviderName = LoginProviderName.password) {
             return new NnaToken {
                 UserId = userId,
                 Name = nameof(TokenName.Refresh),
-                LoginProvider = PasswordLoginProvider,
+                LoginProvider = Enum.GetName(loginProviderName),
                 Value = tokensDto.RefreshToken,
                 TokenKeyId = tokensDto.RefreshTokenKeyId
             };
         }
-        
     }
 }
