@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Model.Entities;
+using Model.Enums;
 
 namespace API.Features.Account.Services {
     public sealed class NnaUserManager: UserManager<NnaUser> {
@@ -24,6 +25,10 @@ namespace API.Features.Account.Services {
             : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger) {
             _passwordHasher = passwordHasher;
             _userStore = store;
+        }
+
+        public bool HasSso(NnaUser user) {
+            return user.AuthProvider != null;
         }
     }
 }

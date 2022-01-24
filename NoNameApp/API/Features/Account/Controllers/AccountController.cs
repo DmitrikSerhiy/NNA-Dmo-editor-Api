@@ -26,7 +26,7 @@ namespace API.Features.Account.Controllers {
             _nnaTokenManager = nnaTokenManager ?? throw new ArgumentNullException(nameof(nnaTokenManager));
             _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
         }
-        
+
         [HttpPost]
         [Route("email")]
         [AllowAnonymous]
@@ -37,6 +37,25 @@ namespace API.Features.Account.Controllers {
                 : Ok(false);
         }
 
+        [HttpPost]
+        [Route("authprovider")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetAuthProviderForPasswordlessEmail(SsoCheckDto ssoCheckDto) {
+            if (ssoCheckDto is null) return BadRequest();
+            var user = await _userManager.FindByEmailAsync(ssoCheckDto.Email);
+
+            if (user is null) {
+                return BadRequest();
+            }
+            var hasPassword = await _userManager.HasPasswordAsync(user);
+
+            if (user.AuthProvider != null && hasPassword == false) {
+                return new JsonResult(user.AuthProvider);
+            }
+
+            return new JsonResult("");
+        }
+        
         [HttpPost]
         [Route("name")]
         [AllowAnonymous]
@@ -143,7 +162,13 @@ namespace API.Features.Account.Controllers {
             return NoContent();
         }
         
-        // todo: check whether user with password uses google and vise versa
+        /// <summary>
+        /// Validate google trusted jwt tokens.
+        /// If user with such email exists then login
+        /// otherwise create new.
+        /// </summary>
+        /// <param name="authGoogleDto"></param>
+        /// <returns></returns>
         [HttpPost]
         [Route("google")]
         [AllowAnonymous]
@@ -157,11 +182,6 @@ namespace API.Features.Account.Controllers {
 
             var user = await _userManager.FindByEmailAsync(authGoogleDto.Email);
             if (user is not null) {
-                if (await _userManager.HasPasswordAsync(user)) {
-                    return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
-                        _responseBuilder.AppendBadRequestErrorMessage("Email is already taken"));
-                }
-                
                 var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, LoginProviderName.google);
                 return new JsonResult(new {
                     accessToken = tokens.AccessToken,
@@ -173,7 +193,17 @@ namespace API.Features.Account.Controllers {
             
             var userWithTakenName = await _userManager.FindByNameAsync(authGoogleDto.Name);
             if (userWithTakenName is not null) {
-                authGoogleDto.Name = authGoogleDto.Email;
+                var isNameUnique = false;
+                string newName;
+                do {
+                    newName = $"{authGoogleDto.Name}{new Random().Next(1000, 9999)}";
+                    var nnaUser = await _userManager.FindByNameAsync(newName);
+                    if (nnaUser is null) {
+                        isNameUnique = true;
+                    }
+                } while (!isNameUnique);
+
+                authGoogleDto.Name = newName;
             }
 
             var result = await _userManager.CreateAsync(
@@ -186,9 +216,9 @@ namespace API.Features.Account.Controllers {
             }
             
             var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
-            
             var tokensForNewUser = await _nnaTokenManager
                 .CreateTokens(newUser.Email, LoginProviderName.google);
+            
             return new JsonResult(new {
                 accessToken = tokensForNewUser.AccessToken,
                 refreshToken = tokensForNewUser.RefreshToken,
