@@ -11,6 +11,7 @@ using API.Features.Account.Services;
 using API.Helpers;
 using API.Helpers.Extensions;
 using Infrastructure;
+using SendGrid.Extensions.DependencyInjection;
 
 namespace API {
     public class Startup {
@@ -42,6 +43,9 @@ namespace API {
                     o.EnableDetailedErrors = true;
                 });
             services.AddAutoMapper(typeof(Startup));
+            services.AddSendGrid(options => {
+                options.ApiKey = _configuration.GetValue<string>("SendGridConfiguration:ApiKey");
+            });
             services.AddNnaMvcAndFilters();
 
             builder.Populate(services);

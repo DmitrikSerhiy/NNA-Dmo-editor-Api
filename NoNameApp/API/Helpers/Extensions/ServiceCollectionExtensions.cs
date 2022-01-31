@@ -3,11 +3,9 @@ using System.Threading.Tasks;
 using API.Features.Account.Services;
 using API.Helpers.GlobalFilters;
 using FluentValidation.AspNetCore;
-using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -119,8 +117,6 @@ namespace API.Helpers.Extensions {
                             if (context.Exception.Message.StartsWith("IDX10223")) {
                                 context.Response.Headers.Add(NnaHeaders.Get(NnaHeaderNames.ExpiredToken));
                             }
-                            Console.WriteLine("Failed to validate token");
-                            Console.WriteLine(context.Exception);
                             return Task.CompletedTask;
                         }
                     };

@@ -17,14 +17,17 @@ namespace API.Features.Account.Controllers {
         private readonly NnaUserManager _userManager;
         private readonly NnaTokenManager _nnaTokenManager;
         private readonly ResponseBuilder _responseBuilder;
+        private readonly MailService _mailService;
 
         public AccountController(
             NnaUserManager userManager,
             NnaTokenManager nnaTokenManager, 
-            ResponseBuilder responseBuilder) {
+            ResponseBuilder responseBuilder, 
+            MailService mailService) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _nnaTokenManager = nnaTokenManager ?? throw new ArgumentNullException(nameof(nnaTokenManager));
             _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
+            _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));
         }
 
         [HttpPost]
@@ -225,6 +228,33 @@ namespace API.Features.Account.Controllers {
                 userName = newUser.UserName,
                 email = newUser.Email,
             });
+        }
+        
+        
+        [HttpPost]
+        [Route("mail")]
+        [AllowAnonymous]
+        public async Task<IActionResult> SendMail([FromBody]SendMailDto update) {
+            var user = await _userManager.FindByEmailAsync(update.Email);
+            if (user is null) {
+                return NotFound();
+            }
+
+            bool isSent;
+            switch (update.Reason) {
+                case SendMailReason.resetPassword:
+                    isSent = await _mailService.SendResetPasswordEmailAsync(user);
+                    break;
+                case SendMailReason.setPassword:
+                    isSent = await _mailService.SendSetPasswordEmailAsync(user);
+                    break;
+                default:
+                    return BadRequest();
+            }
+
+            return isSent
+                ? StatusCode((int)HttpStatusCode.Created)
+                : StatusCode((int)HttpStatusCode.InternalServerError);
         }
     }
 }
