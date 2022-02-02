@@ -31,7 +31,8 @@ namespace API {
             services.AddNnaDbOptions(_configuration);
             services.AddNnaCorsOptions(_configuration);
             services.Configure<JwtOptions>(_configuration.GetSection(nameof(JwtOptions)));
-            
+            services.Configure<SendGridConfiguration>(_configuration.GetSection(nameof(SendGridConfiguration)));
+
             services.AddNnaAuthenticationOptions();
             if (_environment.IsLocal()) {
                 services.AddNnaLocalLoggerOptions(_environment, _configuration);

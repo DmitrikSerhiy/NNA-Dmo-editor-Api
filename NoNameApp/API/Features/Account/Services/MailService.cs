@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Net;
+using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using System.Web;
+using API.Helpers;
+using Microsoft.Extensions.Options;
 using Model.Entities;
+using Model.Enums;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using Serilog;
@@ -11,20 +15,26 @@ namespace API.Features.Account.Services {
     public class MailService {
 
         private readonly ISendGridClient _sendGridClient;
-        private readonly IConfiguration _configuration;
+        private readonly SendGridConfiguration _sendGridConfiguration;
+        private readonly NnaUserManager _nnaUserManager;
         
-        public MailService(ISendGridClient sendGridClient,
-            IConfiguration configuration) {
+        public MailService(
+            ISendGridClient sendGridClient,
+            IOptions<SendGridConfiguration> sendGridConfiguration, 
+            NnaUserManager nnaUserManager) {
             _sendGridClient = sendGridClient ?? throw new ArgumentNullException(nameof(sendGridClient));
-            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
+            _sendGridConfiguration = sendGridConfiguration?.Value ?? throw new ArgumentNullException(nameof(sendGridConfiguration));
+            _nnaUserManager = nnaUserManager ?? throw new ArgumentNullException(nameof(nnaUserManager));
         }
 
-        public async Task<bool> SendSetPasswordEmailAsync(NnaUser user) {
-            var from = new EmailAddress(_configuration.GetValue<string>("SendGridConfiguration:SenderEmail"), "Dmo Editor");
-            var subject = "Set new password";
+        public async Task<bool> SendSetOrResetPasswordEmailAsync(NnaUser user, SendMailReason reason) {
+            var from = new EmailAddress(_sendGridConfiguration.SenderEmail, "Dmo Editor");
+            var subject = reason == SendMailReason.NnaSetPassword ? "Set new password" : "Reset your password";
             var to = new EmailAddress(user.Email, user.UserName);
-            var plainTextContent = "Follow the link to set new password";
+            var token = await _nnaUserManager.GenerateNnaTokenForSetOrResetPasswordAsync(user, reason);
+            var plainTextContent = GenerateMessageWithLink(token, reason);
             var message = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, "");
+            
             Response response = null;
             try {
                 response = await _sendGridClient.SendEmailAsync(message);
@@ -37,8 +47,15 @@ namespace API.Features.Account.Services {
             return response.StatusCode == HttpStatusCode.Accepted;
         }
 
-        public async Task<bool> SendResetPasswordEmailAsync(NnaUser user) {
-            return true;
+        private string GenerateMessageWithLink(string token, SendMailReason reason) {
+            var link = new StringBuilder();
+            link.Append(reason == SendMailReason.NnaSetPassword
+                ? "Follow the link to set new password: "
+                : "Follow the link to reset your password: ");
+            link.Append(_sendGridConfiguration.FormUrl);
+            link.Append($"?token={HttpUtility.UrlEncode(token)}");
+            link.Append($"&reason={(int)reason}");
+            return link.ToString();
         }
     }
 }

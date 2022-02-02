@@ -6,6 +6,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -89,6 +90,7 @@ namespace API.Helpers.Extensions {
                 })
                 .AddEntityFrameworkStores<NnaContext>();
             identityBuilder.AddUserManager<NnaUserManager>();
+                identityBuilder.AddTokenProvider<DataProtectorTokenProvider<NnaUser>>("");
 
             services
                 .AddAuthentication(options => {
