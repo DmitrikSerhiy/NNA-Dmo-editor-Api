@@ -17,6 +17,11 @@ namespace API.Features.Account.Validators {
                 .MaximumLength(ApplicationConstants.MaxUserEmailLength)
                     .WithMessage($"Maximum email length is {ApplicationConstants.MaxUserEmailLength}");
 
+            RuleFor(u => u.UserName)
+                .NotEmpty().WithMessage("UserName is missing")
+                .MaximumLength(ApplicationConstants.MaxUserNameLength)
+                .WithMessage($"Maximum user name length is {ApplicationConstants.MaxUserNameLength}");
+            
             RuleFor(u => u.Password)
                 .NotEmpty()
                     .WithMessage("Password is missing")

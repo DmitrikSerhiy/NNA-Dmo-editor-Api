@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using System.Web;
 using API.Features.Account.Services;
 using API.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -126,7 +127,7 @@ namespace API.Features.Account.Controllers {
         }
         
         [HttpGet]
-        [Route("verify")] // todo: rename
+        [Route("ping")]
         [Authorize]
         public async Task<IActionResult> ValidateToken() {
             var isVerified = await _nnaTokenManager.VerifyTokenAsync();
@@ -139,7 +140,6 @@ namespace API.Features.Account.Controllers {
         [Route("refresh")]
         [AllowAnonymous]
         public async Task<IActionResult> Refresh(RefreshDto refreshDto) {
-            // todo: validators
             if (refreshDto is null) return BadRequest();
             
             var tokensDto = await _nnaTokenManager.RefreshTokens(refreshDto);
@@ -159,7 +159,6 @@ namespace API.Features.Account.Controllers {
         [Route("logout")]
         [Authorize]
         public async Task<IActionResult> Logout(LogoutDto logoutDto) {
-            // todo: validators
             if (logoutDto is null) return BadRequest();
             
             await _nnaTokenManager.ClearTokens(logoutDto.Email);
@@ -178,7 +177,6 @@ namespace API.Features.Account.Controllers {
         [Route("google")]
         [AllowAnonymous]
         public async Task<IActionResult> Google(AuthGoogleDto authGoogleDto) {
-            // todo: validators
             if (authGoogleDto is null) return BadRequest();
             
             var isValid = await _nnaTokenManager.ValidateGoogleTokenAsync(authGoogleDto);
@@ -239,7 +237,6 @@ namespace API.Features.Account.Controllers {
         [AllowAnonymous]
         public async Task<IActionResult> SendMail([FromBody]SendMailDto update) {
             if (update is null) return BadRequest();
-            // todo: validators
             var user = await _userManager.FindByEmailAsync(update.Email);
             if (user is null) {
                 return NotFound();
@@ -251,12 +248,11 @@ namespace API.Features.Account.Controllers {
         }
 
         [HttpPost]
-        [Route("password/token")]
+        [Route("validate/tokenFromMail")]
         [AllowAnonymous]
         public async Task<IActionResult> ValidateTokenForPasswordChange(
             [FromBody] ValidateNnaTokenForSetOrResetPasswordDto nnaTokenDto) {
             if (nnaTokenDto is null) return BadRequest();
-            // todo: validators
             var user = await _userManager.FindByEmailAsync(nnaTokenDto.Email);
             if (user is null) {
                 return NotFound();
@@ -275,7 +271,6 @@ namespace API.Features.Account.Controllers {
         public async Task<IActionResult> SetOrResetPassword(
             [FromBody] SetOrResetPasswordDto newPasswordDto) {
             if (newPasswordDto is null) return BadRequest();
-            // todo: validators
             var user = await _userManager.FindByEmailAsync(newPasswordDto.Email);
             if (user is null) {
                 return NotFound();
@@ -289,12 +284,19 @@ namespace API.Features.Account.Controllers {
             }
 
             switch (newPasswordDto.Reason) {
-                case SendMailReason.NnaSetPassword:
-                    await _userManager.AddPasswordAsync(user, newPasswordDto.NewPassword);
+                case SendMailReason.NnaSetPassword: {
+                    if (await _userManager.HasPasswordAsync(user)) {
+                        await _userManager.ResetNnaPassword(user, newPasswordDto.NewPassword);
+                    } else {
+                        await _userManager.AddPasswordAsync(user, newPasswordDto.NewPassword);
+                    }
                     break;
+                }
                 case SendMailReason.NnaResetPassword:
                     await _userManager.ResetNnaPassword(user, newPasswordDto.NewPassword);
                     break;
+                default:
+                    return BadRequest();
             }
             return NoContent();
         }

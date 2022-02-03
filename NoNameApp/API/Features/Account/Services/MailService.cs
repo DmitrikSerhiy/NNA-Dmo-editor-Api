@@ -32,7 +32,7 @@ namespace API.Features.Account.Services {
             var subject = reason == SendMailReason.NnaSetPassword ? "Set new password" : "Reset your password";
             var to = new EmailAddress(user.Email, user.UserName);
             var token = await _nnaUserManager.GenerateNnaTokenForSetOrResetPasswordAsync(user, reason);
-            var plainTextContent = GenerateMessageWithLink(token, reason);
+            var plainTextContent = GenerateMessageWithLink(user.Email, token, reason);
             var message = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, "");
             
             Response response = null;
@@ -47,7 +47,7 @@ namespace API.Features.Account.Services {
             return response.StatusCode == HttpStatusCode.Accepted;
         }
 
-        private string GenerateMessageWithLink(string token, SendMailReason reason) {
+        private string GenerateMessageWithLink(string email, string token, SendMailReason reason) {
             var link = new StringBuilder();
             link.Append(reason == SendMailReason.NnaSetPassword
                 ? "Follow the link to set new password: "
@@ -55,6 +55,7 @@ namespace API.Features.Account.Services {
             link.Append(_sendGridConfiguration.FormUrl);
             link.Append($"?token={HttpUtility.UrlEncode(token)}");
             link.Append($"&reason={(int)reason}");
+            link.Append($"&user={email}");
             return link.ToString();
         }
     }

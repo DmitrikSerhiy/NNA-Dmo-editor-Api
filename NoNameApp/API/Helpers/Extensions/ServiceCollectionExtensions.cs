@@ -81,7 +81,7 @@ namespace API.Helpers.Extensions {
             var identityBuilder = services
                 .AddIdentity<NnaUser, NnaRole>(options => {
                     options.User.RequireUniqueEmail = true;
-                    options.Password.RequiredLength = 10;
+                    options.Password.RequiredLength = 10; // todo: sync with front-end
                     options.Password.RequireDigit = true;
                     options.Password.RequireUppercase = true;
                     options.Password.RequireLowercase = true;
