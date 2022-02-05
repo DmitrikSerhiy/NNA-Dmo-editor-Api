@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Model;
 using Model.Entities;
 using Persistence;
 using Serilog;
@@ -81,12 +82,13 @@ namespace API.Helpers.Extensions {
             var identityBuilder = services
                 .AddIdentity<NnaUser, NnaRole>(options => {
                     options.User.RequireUniqueEmail = true;
-                    options.Password.RequiredLength = 10; // todo: sync with front-end
+                    options.User.AllowedUserNameCharacters = new UserOptions().AllowedUserNameCharacters += " ";
+                    options.Password.RequiredLength = ApplicationConstants.MinPasswordLength; // todo: sync with front-end
                     options.Password.RequireDigit = true;
                     options.Password.RequireUppercase = true;
                     options.Password.RequireLowercase = true;
-                    options.Password.RequiredUniqueChars = 5; // todo: cover with front-end logic
-                    options.Password.RequireNonAlphanumeric = true;
+                    options.Password.RequiredUniqueChars = ApplicationConstants.MinPasswordLength / 2;
+                    options.Password.RequireNonAlphanumeric = false;
                 })
                 .AddEntityFrameworkStores<NnaContext>();
             identityBuilder.AddUserManager<NnaUserManager>();

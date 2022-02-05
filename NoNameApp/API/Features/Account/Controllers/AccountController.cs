@@ -187,6 +187,10 @@ namespace API.Features.Account.Controllers {
             var user = await _userManager.FindByEmailAsync(authGoogleDto.Email);
             if (user is not null) {
                 var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, LoginProviderName.google);
+                if (!_userManager.HasAuthProvider(user)) {
+                    _userManager.UpdateAuthProvider(user, LoginProviderName.google);
+                }
+
                 return new JsonResult(new {
                     accessToken = tokens.AccessToken,
                     refreshToken = tokens.RefreshToken,

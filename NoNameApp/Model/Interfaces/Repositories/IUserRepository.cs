@@ -5,6 +5,7 @@ using Model.Entities;
 namespace Model.Interfaces.Repositories {
     public interface IUserRepository {
         Task<NnaUser> WithId(Guid id);
+        void UpdateUser(NnaUser user);
         Task<NnaUser> FirstUser();
         Task SaveTokens(NnaToken accessToken, NnaToken refreshToken);
         Task ClearTokens(NnaUser user);

@@ -17,6 +17,11 @@ namespace Persistence.Repositories {
             _context = unitOfWork.Context;
         }
 
+        public void UpdateUser(NnaUser user) {
+            _context.Set<NnaUser>().Attach(user);
+            _context.Update(user);
+        }
+        
         public async Task SyncContextImmediatelyAsync() {
             await _context.SaveChangesAsync();
         }
