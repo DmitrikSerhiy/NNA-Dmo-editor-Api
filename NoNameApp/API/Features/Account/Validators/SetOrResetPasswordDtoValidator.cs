@@ -1,11 +1,14 @@
-﻿using FluentValidation;
+﻿using System.Linq;
+using FluentValidation;
+using Microsoft.AspNetCore.Identity;
 using Model;
 using Model.DTOs.Account;
+using Model.Entities;
 
 namespace API.Features.Account.Validators {
     public class SetOrResetPasswordDtoValidator: AbstractValidator<SetOrResetPasswordDto> {
 
-        public SetOrResetPasswordDtoValidator() {
+        public SetOrResetPasswordDtoValidator(PasswordValidator<NnaUser> passwordValidator) {
             
             RuleFor(u => u.Email)
                 .NotEmpty().WithMessage("Email is missing")
@@ -20,7 +23,15 @@ namespace API.Features.Account.Validators {
                 .MinimumLength(ApplicationConstants.MinPasswordLength)
                 .WithMessage($"Password must contain at least {ApplicationConstants.MinPasswordLength} symbols")
                 .MaximumLength(ApplicationConstants.MaxPasswordLength)
-                .WithMessage($"Maximum password length is {ApplicationConstants.MaxPasswordLength}");
+                .WithMessage($"Maximum password length is {ApplicationConstants.MaxPasswordLength}")
+                .Must(password => password.Distinct().Count() > ApplicationConstants.MinPasswordLength / 2)
+                .WithMessage($"Password must not contain {ApplicationConstants.MinPasswordLength / 2} repeating symbols")
+                .Must(password => password.Any(passwordValidator.IsDigit))
+                .WithMessage("Password must contain at least one number")
+                .Must(password => password.Any(passwordValidator.IsLower))
+                .WithMessage("Password must contain at least one symbol in lower case")
+                .Must(password => password.Any(passwordValidator.IsUpper))
+                .WithMessage("Password must contain at least one symbol in upper case");
 
             RuleFor(u => u.Token)
                 .NotEmpty()

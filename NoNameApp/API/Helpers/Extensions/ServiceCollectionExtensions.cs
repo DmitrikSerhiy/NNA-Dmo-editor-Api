@@ -47,23 +47,12 @@ namespace API.Helpers.Extensions {
             app.UseCors(angularClientOrigin);
         }
         
-        // public static void UseNnaAccountRewriteOptions(this IApplicationBuilder app) {
-        //     var options = new RewriteOptions()
-        //         .AddRewrite("api/account/register", "api/local/account/register", skipRemainingRules: false)
-        //         .AddRewrite("api/account/token", "api/local/account/token", skipRemainingRules: false)
-        //         .AddRewrite("api/account/name", "api/local/account/name", skipRemainingRules: false)
-        //         .AddRewrite("api/account/email", "api/local/account/email", skipRemainingRules: false);
-        //     app.UseRewriter(options);
-        // }
-
-        
         public static void AddNnaLocalLoggerOptions(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration) {
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();
         }
-        
-        
+
         public static void AddNnaMvcAndFilters(this IServiceCollection services) {
             services
                 .AddControllersWithViews(options => {
@@ -109,11 +98,6 @@ namespace API.Helpers.Extensions {
                                 context.HttpContext.Request.Path.StartsWithSegments("/api/editor")) {
                                 context.Token = accessToken;
                             }
-
-                            return Task.CompletedTask;
-                        },
-                        OnTokenValidated = context => {
-                            Console.WriteLine("Token is valid!!!");
                             return Task.CompletedTask;
                         },
                         OnAuthenticationFailed = context => {
