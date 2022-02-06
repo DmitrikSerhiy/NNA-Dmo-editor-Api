@@ -12,13 +12,6 @@ namespace API.Helpers.GlobalFilters
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next) {
-            //if (!context.ModelState.IsValid) {
-            //    context.Result = new BadRequestObjectResult(
-            //        context.ModelState);
-            //    return;
-            //    //todo: Disable automatic 400 response and add some custom global invalidModel response
-            //}
-
             //before each action
             var executedContext = await next();
             //after each action

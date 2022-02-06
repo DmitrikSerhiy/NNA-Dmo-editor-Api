@@ -21,12 +21,11 @@ namespace API.Features.Account.Services {
         
         // todo: cover with unit tests
         // todo: add rate-limit for non secured end-points
-        // todo: return 403 if token is invalid. Create special token.
         public async Task InvokeAsync(HttpContext context, IAuthenticatedIdentityProvider authenticatedIdentityProvider) {
             if (!(context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.Email)) && 
                 context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)) &&
                 context.User.Claims.Any(claim => claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid))))) {
-                // for non secured end-points
+                // for non-secured end-points
                 await _next.Invoke(context);
                 return;
             }

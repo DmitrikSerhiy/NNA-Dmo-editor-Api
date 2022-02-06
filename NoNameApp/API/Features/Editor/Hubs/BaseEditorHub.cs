@@ -45,7 +45,6 @@ namespace API.Features.Editor.Hubs {
                 throw new AuthenticationException("Missing user claims");
             }
 
-            // todo: if token is expired then return 401.
             var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(Context.User.Claims.ToList());
             if (await _userRepository.HasEditorConnectionAsync(authData.UserId)) {
                 throw new AuthenticationException("User already have active connection.");

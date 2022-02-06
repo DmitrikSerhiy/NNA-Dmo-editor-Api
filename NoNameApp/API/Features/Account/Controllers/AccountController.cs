@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using System.Web;
 using API.Features.Account.Services;
 using API.Helpers;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +34,6 @@ namespace API.Features.Account.Controllers {
         [Route("email")]
         [AllowAnonymous]
         public async Task<IActionResult> IsEmailExists(CheckEmailDto checkEmailDto) {
-            if (checkEmailDto is null) return BadRequest();
             return (await _userManager.FindByEmailAsync(checkEmailDto.Email) != null)
                 ? Ok(true)
                 : Ok(false);
@@ -45,11 +43,9 @@ namespace API.Features.Account.Controllers {
         [Route("authprovider")]
         [AllowAnonymous]
         public async Task<IActionResult> GetAuthProviderForPasswordlessEmail(SsoCheckDto ssoCheckDto) {
-            if (ssoCheckDto is null) return BadRequest();
             var user = await _userManager.FindByEmailAsync(ssoCheckDto.Email);
-
             if (user is null) {
-                return BadRequest();
+                return NoContent();
             }
             var hasPassword = await _userManager.HasPasswordAsync(user);
 
@@ -57,14 +53,13 @@ namespace API.Features.Account.Controllers {
                 return new JsonResult(user.AuthProvider);
             }
 
-            return new JsonResult("");
+            return NoContent();
         }
         
         [HttpPost]
         [Route("name")]
         [AllowAnonymous]
         public async Task<IActionResult> IsNameExists(CheckNameDto checkNameDto) {
-            if (checkNameDto is null) return BadRequest();
             return (await _userManager.FindByNameAsync(checkNameDto.Name) != null)
                 ? Ok(true)
                 : Ok(false);
@@ -74,22 +69,21 @@ namespace API.Features.Account.Controllers {
         [Route("register")]
         [AllowAnonymous]
         public async Task<IActionResult> Register(RegisterDto registerDto) {
-            if (registerDto is null) return BadRequest();
             if (await _userManager.FindByEmailAsync(registerDto.Email) != null) {
-                return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
-                    _responseBuilder.AppendBadRequestErrorMessage("Email is already taken"));
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessageToForm("Email is already taken"));
             }
 
             if (await _userManager.FindByNameAsync(registerDto.UserName) != null) {
-                return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
-                    _responseBuilder.AppendBadRequestErrorMessage("Username is already taken"));
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessageToForm("Username is already taken"));
             }
 
             var result = await _userManager
                 .CreateAsync(new NnaUser(registerDto.Email, registerDto.UserName), registerDto.Password);
             if (!result.Succeeded) {
-                return StatusCode((int) HttpStatusCode.InternalServerError, 
-                    _responseBuilder.AppendBadRequestErrorMessage($"Failed to create user with name: {registerDto.UserName} and email: {registerDto.Email}"));
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessage($"Failed to create account with name: {registerDto.UserName} and email: {registerDto.Email}"));
             }
             
             var tokens = await _nnaTokenManager.CreateTokens(registerDto.Email);
@@ -105,16 +99,15 @@ namespace API.Features.Account.Controllers {
         [Route("token")]
         [AllowAnonymous]
         public async Task<IActionResult> Login(LoginDto loginDto) {
-            if (loginDto is null) return BadRequest();
             var user = await _userManager.FindByEmailAsync(loginDto.Email);
             if (user is null) {
-                return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
-                    _responseBuilder.AppendBadRequestErrorMessage("User with this email is not found"));
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessageToForm("User with this email is not found"));
             }
 
             if (!await _userManager.CheckPasswordAsync(user, loginDto.Password)) {
-                return StatusCode((int) HttpStatusCode.UnprocessableEntity, 
-                    _responseBuilder.AppendBadRequestErrorMessage("Password is not correct"));
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessageToForm("Password is not correct"));
             }
 
             var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user);
@@ -140,13 +133,11 @@ namespace API.Features.Account.Controllers {
         [Route("refresh")]
         [AllowAnonymous]
         public async Task<IActionResult> Refresh(RefreshDto refreshDto) {
-            if (refreshDto is null) return BadRequest();
-            
             var tokensDto = await _nnaTokenManager.RefreshTokens(refreshDto);
 
             if (tokensDto is null) {
                 HttpContext.Response.Headers.Add(NnaHeaders.Get(NnaHeaderNames.RedirectToLogin));
-                return StatusCode((int)HttpStatusCode.BadRequest);
+                return Unauthorized();
             }
 
             return new JsonResult(new {
@@ -159,10 +150,7 @@ namespace API.Features.Account.Controllers {
         [Route("logout")]
         [Authorize]
         public async Task<IActionResult> Logout(LogoutDto logoutDto) {
-            if (logoutDto is null) return BadRequest();
-            
             await _nnaTokenManager.ClearTokens(logoutDto.Email);
-
             return NoContent();
         }
         
@@ -177,11 +165,10 @@ namespace API.Features.Account.Controllers {
         [Route("google")]
         [AllowAnonymous]
         public async Task<IActionResult> Google(AuthGoogleDto authGoogleDto) {
-            if (authGoogleDto is null) return BadRequest();
-            
             var isValid = await _nnaTokenManager.ValidateGoogleTokenAsync(authGoogleDto);
             if (!isValid) {
-                return StatusCode((int)HttpStatusCode.UnprocessableEntity);
+                return StatusCode((int)HttpStatusCode.UnprocessableEntity, 
+                    _responseBuilder.AppendValidationErrorMessage(nameof(AuthGoogleDto.GoogleToken), "Token is invalid"));
             }
 
             var user = await _userManager.FindByEmailAsync(authGoogleDto.Email);
@@ -219,8 +206,12 @@ namespace API.Features.Account.Controllers {
                     AuthProvider = Enum.GetName(LoginProviderName.google)
                 });
             
+            
+            
             if (!result.Succeeded) {
-                return StatusCode((int)HttpStatusCode.InternalServerError);
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder
+                        .AppendBadRequestErrorMessage($"Failed to create account from Google data with name: {authGoogleDto.Name} and email: {authGoogleDto.Email}"));
             }
             
             var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
@@ -240,15 +231,14 @@ namespace API.Features.Account.Controllers {
         [Route("mail")]
         [AllowAnonymous]
         public async Task<IActionResult> SendMail([FromBody]SendMailDto update) {
-            if (update is null) return BadRequest();
             var user = await _userManager.FindByEmailAsync(update.Email);
             if (user is null) {
-                return NotFound();
+                return Ok(false);
             }
 
             return await _mailService.SendSetOrResetPasswordEmailAsync(user, update.Reason)
-                ? StatusCode((int)HttpStatusCode.Created)
-                : StatusCode((int)HttpStatusCode.InternalServerError);
+                ? Ok(true)
+                : Ok(false);
         }
 
         [HttpPost]
@@ -256,10 +246,9 @@ namespace API.Features.Account.Controllers {
         [AllowAnonymous]
         public async Task<IActionResult> ValidateTokenForPasswordChange(
             [FromBody] ValidateNnaTokenForSetOrResetPasswordDto nnaTokenDto) {
-            if (nnaTokenDto is null) return BadRequest();
             var user = await _userManager.FindByEmailAsync(nnaTokenDto.Email);
             if (user is null) {
-                return NotFound();
+                return new JsonResult(new { valid = false });
             }
 
             return new JsonResult(
@@ -274,17 +263,17 @@ namespace API.Features.Account.Controllers {
         [AllowAnonymous]
         public async Task<IActionResult> SetOrResetPassword(
             [FromBody] SetOrResetPasswordDto newPasswordDto) {
-            if (newPasswordDto is null) return BadRequest();
             var user = await _userManager.FindByEmailAsync(newPasswordDto.Email);
             if (user is null) {
-                return NotFound();
+                return BadRequest();
             }
 
             var isTokenValid = await _userManager
                 .ValidateNnaTokenForSetOrResetPasswordAsync(user, newPasswordDto.Token, newPasswordDto.Reason);
 
             if (!isTokenValid) {
-                return BadRequest();
+                return StatusCode((int)HttpStatusCode.UnprocessableEntity, 
+                    _responseBuilder.AppendValidationErrorMessage(nameof(SetOrResetPasswordDto.Token), "Token is invalid"));
             }
 
             switch (newPasswordDto.Reason) {

@@ -56,8 +56,12 @@ namespace API.Helpers.Extensions {
         public static void AddNnaMvcAndFilters(this IServiceCollection services) {
             services
                 .AddControllersWithViews(options => {
+                    options.Filters.Add(typeof(ValidationFilter));
                     options.Filters.Add(typeof(ExceptionFilter));
                     options.Filters.Add(typeof(TransactionFilter));
+                })
+                .ConfigureApiBehaviorOptions(options => {
+                    options.SuppressModelStateInvalidFilter = true;
                 })
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Startup>());
         }
@@ -72,7 +76,7 @@ namespace API.Helpers.Extensions {
                 .AddIdentity<NnaUser, NnaRole>(options => {
                     options.User.RequireUniqueEmail = true;
                     options.User.AllowedUserNameCharacters = new UserOptions().AllowedUserNameCharacters += " ";
-                    options.Password.RequiredLength = ApplicationConstants.MinPasswordLength; // todo: sync with front-end
+                    options.Password.RequiredLength = ApplicationConstants.MinPasswordLength;
                     options.Password.RequireDigit = true;
                     options.Password.RequireUppercase = true;
                     options.Password.RequireLowercase = true;
