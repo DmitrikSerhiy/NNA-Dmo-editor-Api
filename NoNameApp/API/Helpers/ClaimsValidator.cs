@@ -21,35 +21,29 @@ namespace API.Helpers {
         
         public async Task<UsersTokens> ValidateAndGetAuthDataAsync(List<Claim> claims) {
             if (claims.Any(claim => claim.Type == nameof(NnaCustomTokenClaims.gtyp))) {
-                throw new AuthenticationException($"Invalid token. Refresh token should not be used as authentication key.");
+                throw new AuthenticationException("Invalid token. Refresh token should not be used as authentication key");
             }
             
-            var userId = claims.First(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)).Value;
-            var userEmail = claims.First(claim => claim.Type.Equals(ClaimTypes.Email)).Value;
-            var tokenId = claims.First(claim => 
-                claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid))).Value;
-            
+            var userId = claims.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.NameIdentifier))?.Value;
             if (string.IsNullOrWhiteSpace(userId)) {
-                throw new AuthenticationException($"Invalid user id claim: '{userId}'");
+                throw new AuthenticationException("User id claim is missing");
             }
             
+            var userEmail = claims.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.Email))?.Value;
             if (string.IsNullOrWhiteSpace(userEmail)) {
-                throw new AuthenticationException($"Invalid user email claim: '{userEmail}'");
+                throw new AuthenticationException("User email claim is missing");
             }
-
+            
+            var tokenId = claims.FirstOrDefault(claim => claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid)))?.Value;
             if (string.IsNullOrWhiteSpace(tokenId)) {
-                throw new AuthenticationException($"Invalid user oid claim: '{tokenId}'");
+                throw new AuthenticationException("User oid claim is missing");
             }
             
             var authData = await _repository.GetAuthenticatedUserDataAsync(userEmail);
             if (authData is null) {
-                throw new AuthenticationException($"Missing auth data for user: '{userEmail}'");
+                throw new AuthenticationException($"Authentication data for '{userEmail}' is not saved");
             }
-            
-            if (authData is null) {
-                throw new AuthenticationException($"Missing auth data for user: '{userEmail}'");
-            }
-            
+
             if (authData.Email != userEmail ||
                 authData.UserId.ToString() != userId ||
                 authData.AccessTokenId != tokenId) {
