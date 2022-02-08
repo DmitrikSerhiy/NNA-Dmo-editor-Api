@@ -15,19 +15,24 @@ namespace Tests.AccountTests {
     public class ClaimsValidatorTests {
 
         private readonly List<Claim> _claimsToValidate;
+        private Mock<IUserRepository> _userRepositoryMock;
         
         public ClaimsValidatorTests() {
             _claimsToValidate = new List<Claim>();
         }
 
+        private ClaimsValidator SetupSubjectMock() {
+            _userRepositoryMock = new Mock<IUserRepository>();
+            return new ClaimsValidator(_userRepositoryMock.Object);
+        }
+        
         private static readonly NnaUser NnaUser = new() {
             Id = Guid.NewGuid(),
             UserName = "User Name",
             Email = "UserEmail@gmail.com"
         };
+        
         private static readonly string AccessTokenId = Guid.NewGuid().ToString();
-        
-        
         private readonly Claim _claimForRefreshToken = new (nameof(NnaCustomTokenClaims.gtyp), NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.gtyp));
         private readonly Claim _userIdClaim = new(ClaimTypes.NameIdentifier, NnaUser.Id.ToString());
         private readonly Claim _userEmailClaim = new(ClaimTypes.Email, NnaUser.Email);
@@ -59,10 +64,9 @@ namespace Tests.AccountTests {
         
         
         [Fact]
-        public async Task  ShouldThrowExceptionIfRefreshTokenIsPassed() {
+        public async Task ShouldThrowExceptionIfRefreshTokenIsPassed() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
+            var subject = SetupSubjectMock();
             _claimsToValidate.Add(_claimForRefreshToken);
 
             // Act
@@ -78,9 +82,8 @@ namespace Tests.AccountTests {
         [Fact]
         public async Task  ShouldThrowExceptionIfUserIdClaimIsMissing() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
-            
+            var subject = SetupSubjectMock();
+
             // Act
             async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
 
@@ -94,8 +97,7 @@ namespace Tests.AccountTests {
         [Fact]
         public async Task  ShouldThrowExceptionIfUserEmailClaimIsMissing() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
+            var subject = SetupSubjectMock();
             _claimsToValidate.Add(_userIdClaim);
                 
             // Act
@@ -111,8 +113,7 @@ namespace Tests.AccountTests {
         [Fact]
         public async Task  ShouldThrowExceptionIfTokenIdClaimIsMissing() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
+            var subject = SetupSubjectMock();
             _claimsToValidate.Add(_userIdClaim);
             _claimsToValidate.Add(_userEmailClaim);
 
@@ -129,12 +130,11 @@ namespace Tests.AccountTests {
         [Fact]
         public async Task  ShouldThrowExceptionIfUserAuthenticationIsMissing() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
+            var subject = SetupSubjectMock();
             _claimsToValidate.Add(_userIdClaim);
             _claimsToValidate.Add(_userEmailClaim);
             _claimsToValidate.Add(_tokenIdClaim);
-            userRepository.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+            _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
                 .ReturnsAsync((UsersTokens)null);
             
             // Act
@@ -150,12 +150,11 @@ namespace Tests.AccountTests {
         [Fact]
         public async Task  ShouldThrowExceptionIfUserAuthenticationHasWrongEmail() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
+            var subject = SetupSubjectMock();
             _claimsToValidate.Add(_userIdClaim);
             _claimsToValidate.Add(_userEmailClaim);
             _claimsToValidate.Add(_tokenIdClaim);
-            userRepository.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+            _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
                 .ReturnsAsync(UserTokensWithWrongEmail);
             
             // Act
@@ -171,12 +170,11 @@ namespace Tests.AccountTests {
         [Fact]
         public async Task  ShouldThrowExceptionIfUserAuthenticationHasWrongUserId() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
+            var subject = SetupSubjectMock();
             _claimsToValidate.Add(_userIdClaim);
             _claimsToValidate.Add(_userEmailClaim);
             _claimsToValidate.Add(_tokenIdClaim);
-            userRepository.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+            _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
                 .ReturnsAsync(UserTokensWithWrongUserId);
             
             // Act
@@ -192,12 +190,11 @@ namespace Tests.AccountTests {
         [Fact]
         public async Task  ShouldThrowExceptionIfUserAuthenticationHasWrongAccessTokenId() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
+            var subject = SetupSubjectMock();
             _claimsToValidate.Add(_userIdClaim);
             _claimsToValidate.Add(_userEmailClaim);
             _claimsToValidate.Add(_tokenIdClaim);
-            userRepository.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+            _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
                 .ReturnsAsync(UserTokensWithWrongAccessTokenId);
             
             // Act
@@ -213,12 +210,11 @@ namespace Tests.AccountTests {
         [Fact]
         public async Task  ShouldReturnValidatedUserTokens() {
             // Arrange
-            var userRepository = new Mock<IUserRepository>();
-            var subject = new ClaimsValidator(userRepository.Object);
+            var subject = SetupSubjectMock();
             _claimsToValidate.Add(_userIdClaim);
             _claimsToValidate.Add(_userEmailClaim);
             _claimsToValidate.Add(_tokenIdClaim);
-            userRepository.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+            _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
                 .ReturnsAsync(_userTokens);
             
             // Act
@@ -227,7 +223,7 @@ namespace Tests.AccountTests {
             
             // Assert
             result.Should().Be(_userTokens);
-            userRepository.Verify(u => u.GetAuthenticatedUserDataAsync(_userEmailClaim.Value), Times.Once);
+            _userRepositoryMock.Verify(u => u.GetAuthenticatedUserDataAsync(_userEmailClaim.Value), Times.Once);
         }
     }
 }

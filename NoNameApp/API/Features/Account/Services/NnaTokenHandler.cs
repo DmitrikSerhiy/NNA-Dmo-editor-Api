@@ -8,8 +8,10 @@ using Model.Entities;
 using Model.Enums;
 
 namespace API.Features.Account.Services {
-    public sealed class NnaTokenHandler : JsonWebTokenHandler {
+    public class NnaTokenHandler : JsonWebTokenHandler {
         private readonly TokenDescriptorProvider _descriptorProvider;
+
+        public NnaTokenHandler() { }
         
         public NnaTokenHandler(IOptions<JwtOptions> jwtOptions) {
             if (jwtOptions?.Value is null) throw new ArgumentNullException(nameof(jwtOptions));
