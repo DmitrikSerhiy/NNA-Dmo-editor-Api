@@ -1,6 +1,5 @@
 using API.Helpers.Extensions;
 using Autofac.Extensions.DependencyInjection;
-using Azure.Core;
 using Azure.Identity;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;

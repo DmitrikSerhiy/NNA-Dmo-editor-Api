@@ -85,8 +85,9 @@ namespace API.Features.Account.Controllers {
                 return StatusCode((int) HttpStatusCode.BadRequest, 
                     _responseBuilder.AppendBadRequestErrorMessage($"Failed to create account with name: {registerDto.UserName} and email: {registerDto.Email}"));
             }
-            
-            var tokens = await _nnaTokenManager.CreateTokens(registerDto.Email);
+
+            var newlyCreatedUser = await _userManager.FindByEmailAsync(registerDto.Email);
+            var tokens = await _nnaTokenManager.CreateTokens(newlyCreatedUser);
             return new JsonResult(new {
                 accessToken = tokens.AccessToken,
                 refreshToken = tokens.RefreshToken,
@@ -150,7 +151,9 @@ namespace API.Features.Account.Controllers {
         [Route("logout")]
         [Authorize]
         public async Task<IActionResult> Logout(LogoutDto logoutDto) {
-            await _nnaTokenManager.ClearTokens(logoutDto.Email);
+            var user = await _userManager.FindByEmailAsync(logoutDto.Email);
+
+            await _nnaTokenManager.ClearTokens(user);
             return NoContent();
         }
         
@@ -207,7 +210,6 @@ namespace API.Features.Account.Controllers {
                 });
             
             
-            
             if (!result.Succeeded) {
                 return StatusCode((int) HttpStatusCode.BadRequest, 
                     _responseBuilder
@@ -215,8 +217,7 @@ namespace API.Features.Account.Controllers {
             }
             
             var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
-            var tokensForNewUser = await _nnaTokenManager
-                .CreateTokens(newUser.Email, LoginProviderName.google);
+            var tokensForNewUser = await _nnaTokenManager.CreateTokens(newUser, LoginProviderName.google);
             
             return new JsonResult(new {
                 accessToken = tokensForNewUser.AccessToken,

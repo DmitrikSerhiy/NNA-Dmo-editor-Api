@@ -13,6 +13,7 @@ namespace Persistence.Configuration {
             // not working for some reason. Migration file was edited manually.
             modelBuilder
                 .Entity<NnaToken>(token => {
+                    // ReSharper disable once RedundantArgumentDefaultValue
                     token.Property(p => p.TokenKeyId).IsRequired(true);
                 });
         }

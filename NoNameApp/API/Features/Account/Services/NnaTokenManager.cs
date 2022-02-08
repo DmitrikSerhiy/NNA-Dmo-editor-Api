@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
-using API.Helpers;
-using API.Helpers.Extensions;
 using Google.Apis.Auth;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using Model.DTOs.Account;
 using Model.Entities;
 using Model.Enums;
@@ -14,75 +10,33 @@ using Model.Interfaces.Repositories;
 namespace API.Features.Account.Services {
     public sealed class NnaTokenManager {
         
-        private readonly NnaUserManager _userManager;
         private readonly IUserRepository _userRepository;
         private readonly NnaTokenHandler _tokenHandler;
-        private readonly JwtOptions _jwtOptions;
-        private readonly IAuthenticatedIdentityProvider _identityProvider; 
-
-        private static TokenDescriptorProvider _descriptorProvider;
-        
-        #region Descriptors
-        
-        private static readonly Func<JwtOptions, NnaUser, SecurityTokenDescriptor> AccessTokenDescriptor = (jwtOptions, user) => {
-            var accessTokenDescriptor = _descriptorProvider.ProvideForAccessToken();
-            accessTokenDescriptor.AddSigningCredentials(jwtOptions);
-            accessTokenDescriptor.AddSubjectClaims(user.Email, user.Id);
-
-            return accessTokenDescriptor;
-        };
-        
-        private static readonly Func<JwtOptions, NnaUser, SecurityTokenDescriptor> RefreshTokenDescriptor = (jwtOptions, user) => {
-            var refreshTokenDescriptor = _descriptorProvider.ProvideForRefreshToken();
-            refreshTokenDescriptor.AddSigningCredentials(jwtOptions);
-            refreshTokenDescriptor.AddSubjectClaims(user.Email, user.Id);
-
-            return refreshTokenDescriptor;
-        };
-
-        #endregion
+        private readonly IAuthenticatedIdentityProvider _identityProvider;
 
         public NnaTokenManager(
-            NnaUserManager userManager, 
-            TokenDescriptorProvider descriptorProvider,
-            IOptions<JwtOptions> jwtOptions, 
             IUserRepository userRepository, 
+            NnaTokenHandler nnaTokenHandler,
             IAuthenticatedIdentityProvider identityProvider) {
-            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
-            _descriptorProvider = descriptorProvider ?? throw new ArgumentNullException(nameof(descriptorProvider));
+
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _identityProvider = identityProvider ?? throw new ArgumentNullException(nameof(identityProvider));
-            _jwtOptions = jwtOptions?.Value ?? throw new ArgumentNullException(nameof(jwtOptions));
-            _tokenHandler = new NnaTokenHandler();
-        }
-        
-        public string CreateAccessJwt(NnaUser user) {
-            if (user == null) throw new ArgumentNullException(nameof(user));
-            
-            return _tokenHandler.CreateToken(AccessTokenDescriptor.Invoke(_jwtOptions, user));
-        }
-        
-        public string CreateRefreshJwt(NnaUser user) {
-            if (user == null) throw new ArgumentNullException(nameof(user));
-            
-            return _tokenHandler.CreateToken(RefreshTokenDescriptor.Invoke(_jwtOptions, user));
+            _tokenHandler = nnaTokenHandler ?? throw new ArgumentNullException(nameof(nnaTokenHandler));
         }
 
         /// <summary>
         /// Creates new valid pair of access/refresh tokens for user with specified email.
         /// All previous tokens for that user become invalid.
         /// </summary>
-        public async Task<TokensDto> CreateTokens(string email, LoginProviderName loginProviderName = LoginProviderName.password) {
-            if (email == null) throw new ArgumentNullException(nameof(email));
-
-            var user = await _userManager.FindByEmailAsync(email);
+        public async Task<TokensDto> CreateTokens(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            
             return await GenerateAndSaveTokensAsync(user, loginProviderName);
         }
 
         /// <summary>
         /// Check whether current user has tokens.
         /// </summary>
-        /// <returns></returns>
         public async Task<bool> VerifyTokenAsync() {
             var tokens = await _userRepository.GetTokens(_identityProvider.AuthenticatedUserId);
             if (tokens is null) {
@@ -103,12 +57,9 @@ namespace API.Features.Account.Services {
              if (tokens is null) {
                  return await GenerateAndSaveTokensAsync(user, loginProviderName);
              }
-            
-            var accessTokenValidation = _tokenHandler.ValidateToken(tokens.Value.accessToken.Value,
-                TokenValidationParametersProvider.Provide(AccessTokenDescriptor.Invoke(_jwtOptions, user)));
-            
-            var refreshTokenValidation = _tokenHandler.ValidateToken(tokens.Value.refreshToken.Value,
-                TokenValidationParametersProvider.Provide(RefreshTokenDescriptor.Invoke(_jwtOptions, user)));
+
+             var accessTokenValidation = _tokenHandler.ValidateAccessToken(tokens.Value.accessToken.Value, user);
+             var refreshTokenValidation = _tokenHandler.ValidateRefreshToken(tokens.Value.refreshToken.Value, user);
             
             if (!accessTokenValidation.IsValid || !refreshTokenValidation.IsValid) {
                 return GenerateAndUpdateTokens(user, loginProviderName);
@@ -154,10 +105,7 @@ namespace API.Features.Account.Services {
                 Id = authData.UserId
             };
 
-            var refreshValidationResult = _tokenHandler.ValidateToken(
-                refreshDto.RefreshToken, 
-                TokenValidationParametersProvider.Provide(RefreshTokenDescriptor.Invoke(_jwtOptions, user)));
-
+            var refreshValidationResult = _tokenHandler.ValidateRefreshToken(refreshDto.RefreshToken, user);
             if (!refreshValidationResult.IsValid) {
                 return null;
             }
@@ -165,14 +113,11 @@ namespace API.Features.Account.Services {
             return GenerateAndUpdateTokens(user, Enum.Parse<LoginProviderName>(authData.LoginProvider));
         }
 
-        public async Task ClearTokens(string email) {
-            if (email == null) throw new ArgumentNullException(nameof(email));
-            var user = await _userManager.FindByEmailAsync(email);
-
-            if (user is null) {
-                return;
-            }
-            
+        /// <summary>
+        /// Remove all user tokens. Clear authenticated data.
+        /// </summary>
+        public async Task ClearTokens(NnaUser user) {
+            if (user == null) throw new ArgumentNullException(nameof(user));
             if (_identityProvider.AuthenticatedUserEmail != user.Email) {
                 return;
             }
@@ -181,6 +126,9 @@ namespace API.Features.Account.Services {
             _identityProvider.ClearAuthenticatedUserInfo();
         }
 
+        /// <summary>
+        /// Validate token provided by Google
+        /// </summary>
         public async Task<bool> ValidateGoogleTokenAsync(AuthGoogleDto authGoogleDto) {
             if (authGoogleDto is null) throw new ArgumentNullException(nameof(authGoogleDto));
             if (authGoogleDto.Email is null) throw new ArgumentNullException(nameof(authGoogleDto.Email));
@@ -197,6 +145,9 @@ namespace API.Features.Account.Services {
 
             return true;
         }
+        
+        
+        
 
         private TokensDto GenerateAndUpdateTokens(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
             var newTokens = GenerateNewTokenPair(user);
@@ -219,8 +170,8 @@ namespace API.Features.Account.Services {
         }
         
         private TokensDto GenerateNewTokenPair(NnaUser user) {
-            var accessToken = CreateAccessJwt(user);
-            var refreshToken = CreateRefreshJwt(user);
+            var accessToken = _tokenHandler.CreateNnaAccessToken(user);
+            var refreshToken = _tokenHandler.CreateNnaRefreshToken(user);
                 
             return new TokensDto {
                 AccessToken = accessToken,

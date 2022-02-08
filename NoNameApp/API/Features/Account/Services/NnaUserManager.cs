@@ -11,9 +11,7 @@ using Model.Interfaces.Repositories;
 
 namespace API.Features.Account.Services {
     public sealed class NnaUserManager: UserManager<NnaUser> {
-
-        private readonly IPasswordHasher<NnaUser> _passwordHasher;
-        private readonly IUserStore<NnaUser> _userStore;
+        
         private readonly IServiceProvider _serviceProvider;
         private readonly IUserRepository _userRepository; 
 
@@ -35,8 +33,6 @@ namespace API.Features.Account.Services {
             IServiceProvider services,
             ILogger<NnaUserManager> logger) 
             : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger) {
-            _passwordHasher = passwordHasher;
-            _userStore = store;
             _serviceProvider = services;
             _userRepository = _serviceProvider.GetService<IUserRepository>();
             RegisterTokenProvider(NnaTokenProviderName, GetNnaDataProtectorTokenProvider());

@@ -1,16 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using API.Helpers;
-using Microsoft.Extensions.Options;
+using API.Helpers.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Model.Entities;
 using Model.Enums;
 
 namespace API.Features.Account.Services {
     public class TokenDescriptorProvider {
 
         private readonly JwtOptions _jwtOptions;
-        public TokenDescriptorProvider(IOptions<JwtOptions> jwtOptions) {
-            _jwtOptions = jwtOptions?.Value ?? throw new ArgumentNullException(nameof(jwtOptions));
+        public TokenDescriptorProvider(JwtOptions jwtOptions) {
+            _jwtOptions = jwtOptions ?? throw new ArgumentNullException(nameof(jwtOptions));
+        }
+
+        public SecurityTokenDescriptor ProvideForAccessTokenWithCredentialsAndSubject(NnaUser user) {
+            var accessTokenDescriptor = ProvideForAccessToken();
+            accessTokenDescriptor.AddSigningCredentials(_jwtOptions);
+            accessTokenDescriptor.AddSubjectClaims(user.Email, user.Id);
+
+            return accessTokenDescriptor;
+        }
+        
+        public SecurityTokenDescriptor ProvideForRefreshTokenWithCredentialsAndSubject(NnaUser user) {
+            var refreshTokenDescriptor = ProvideForRefreshToken();
+            refreshTokenDescriptor.AddSigningCredentials(_jwtOptions);
+            refreshTokenDescriptor.AddSubjectClaims(user.Email, user.Id);
+
+            return refreshTokenDescriptor;
         }
 
         public SecurityTokenDescriptor ProvideForAccessToken() {

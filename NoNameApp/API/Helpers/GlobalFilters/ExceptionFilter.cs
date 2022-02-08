@@ -9,9 +9,7 @@ namespace API.Helpers.GlobalFilters {
     public class ExceptionFilter : IAsyncExceptionFilter {
 
         public Task OnExceptionAsync(ExceptionContext context) {
-            if (context.Exception == null) return Task.CompletedTask;
             Log.Error(context.Exception, $"From exception filter: {context.Exception.Message}");
-
             ObjectResult result;
             if (context.Exception is AuthenticationException) {
                 result = new ObjectResult(new

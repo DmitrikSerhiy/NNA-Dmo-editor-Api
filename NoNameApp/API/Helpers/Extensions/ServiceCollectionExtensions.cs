@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using API.Features.Account.Services;
 using API.Helpers.GlobalFilters;
 using FluentValidation.AspNetCore;
@@ -68,9 +67,9 @@ namespace API.Helpers.Extensions {
 
         public static void AddNnaAuthenticationOptions(this IServiceCollection services) {
             var jwtOptions = services.BuildServiceProvider().GetService<IOptions<JwtOptions>>();
-            var tokenDescriptorProvider = new TokenDescriptorProvider(jwtOptions);
+            var tokenDescriptorProvider = new TokenDescriptorProvider(jwtOptions?.Value);
             var tokenDescriptor = tokenDescriptorProvider.ProvideForAccessToken();
-            tokenDescriptor.AddSigningCredentials(jwtOptions.Value);
+            tokenDescriptor.AddSigningCredentials(jwtOptions?.Value);
 
             var identityBuilder = services
                 .AddIdentity<NnaUser, NnaRole>(options => {

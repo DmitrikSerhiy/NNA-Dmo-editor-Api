@@ -7,7 +7,6 @@ using Model.Interfaces;
 using Serilog;
 using System.Threading.Tasks;
 using API.Helpers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Model.Interfaces.Repositories;
 

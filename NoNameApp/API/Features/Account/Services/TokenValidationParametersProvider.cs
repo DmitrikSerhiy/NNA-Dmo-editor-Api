@@ -18,10 +18,8 @@ namespace API.Features.Account.Services {
                 RequireExpirationTime = true,
 
                 ValidTypes = new[] { tokenDescriptor.TokenType },
-                ClockSkew = TimeSpan.Zero,
-                
+                ClockSkew = TimeSpan.Zero
             };
         }
-
     }
 }

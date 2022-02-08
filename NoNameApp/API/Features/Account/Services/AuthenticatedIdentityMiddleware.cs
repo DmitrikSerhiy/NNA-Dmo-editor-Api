@@ -19,8 +19,6 @@ namespace API.Features.Account.Services {
             _claimsValidator = claimsValidator ?? throw new ArgumentNullException(nameof(claimsValidator));
         }
         
-        // todo: cover with unit tests
-        // todo: add rate-limit for non secured end-points
         public async Task InvokeAsync(HttpContext context, IAuthenticatedIdentityProvider authenticatedIdentityProvider) {
             if (!(context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.Email)) && 
                 context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)) &&
