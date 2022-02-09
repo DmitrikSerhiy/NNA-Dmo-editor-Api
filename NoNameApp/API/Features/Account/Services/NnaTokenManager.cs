@@ -28,7 +28,7 @@ namespace API.Features.Account.Services {
         /// Creates new valid pair of access/refresh tokens for user with specified email.
         /// All previous tokens for that user become invalid.
         /// </summary>
-        public async Task<TokensDto> CreateTokens(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
+        public async Task<TokensDto> CreateTokensAsync(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
             if (user == null) throw new ArgumentNullException(nameof(user));
             
             return await GenerateAndSaveTokensAsync(user, loginProviderName);
@@ -76,16 +76,21 @@ namespace API.Features.Account.Services {
         /// <summary>
         /// Creates or Updates new access/refresh tokens pair if old access/refresh pair corresponds to each other.
         /// </summary>
-        public async Task<TokensDto> RefreshTokens(RefreshDto refreshDto) {
+        public async Task<TokensDto> RefreshTokensAsync(RefreshDto refreshDto) {
             if (string.IsNullOrWhiteSpace(refreshDto.AccessToken)) throw new ArgumentNullException(nameof(refreshDto.AccessToken));
             if (string.IsNullOrWhiteSpace(refreshDto.RefreshToken)) throw new ArgumentNullException(nameof(refreshDto.RefreshToken));
             if (refreshDto.AccessToken == refreshDto.RefreshToken) throw new ArgumentException();
 
-            var userEmailFromRefreshToken = _nnaTokenHandler.GetUserEmail(refreshDto.RefreshToken);
             var userEmailFromAccessToken = _nnaTokenHandler.GetUserEmail(refreshDto.AccessToken);
-            if (userEmailFromRefreshToken is null || userEmailFromAccessToken is null) {
+            if (userEmailFromAccessToken is null) {
                 return null;
             }
+            
+            var userEmailFromRefreshToken = _nnaTokenHandler.GetUserEmail(refreshDto.RefreshToken);
+            if (userEmailFromRefreshToken is null) {
+                return null;
+            }
+            
             if (userEmailFromRefreshToken != userEmailFromAccessToken) {
                 return null;
             }
@@ -94,9 +99,12 @@ namespace API.Features.Account.Services {
             if (authData is null) {
                 return null;
             }
-            
-            if (_nnaTokenHandler.GetTokenKeyId(refreshDto.AccessToken) != authData.AccessTokenId ||
-                _nnaTokenHandler.GetTokenKeyId(refreshDto.RefreshToken) != authData.RefreshTokenId) {
+
+            if (_nnaTokenHandler.GetTokenKeyId(refreshDto.AccessToken) != authData.AccessTokenId) {
+                return null;
+            }
+                
+            if (_nnaTokenHandler.GetTokenKeyId(refreshDto.RefreshToken) != authData.RefreshTokenId) {
                 return null;
             }
 
@@ -116,7 +124,7 @@ namespace API.Features.Account.Services {
         /// <summary>
         /// Remove all user tokens. Clear authenticated data.
         /// </summary>
-        public async Task ClearTokens(NnaUser user) {
+        public async Task ClearTokensAsync(NnaUser user) {
             if (user == null) throw new ArgumentNullException(nameof(user));
             if (_identityProvider.AuthenticatedUserEmail != user.Email) {
                 return;
@@ -133,19 +141,18 @@ namespace API.Features.Account.Services {
             if (authGoogleDto?.Email is null) throw new ArgumentNullException(nameof(authGoogleDto.Email));
             
             try {
-                var payload = await GoogleJsonWebSignature.ValidateAsync(authGoogleDto.GoogleToken);
+                var payload = await _nnaTokenHandler.ValidateGoogleTokenAsync(authGoogleDto.GoogleToken);
                 if (!payload.EmailVerified || payload.Email != authGoogleDto.Email) {
                     return false;
                 }
-            }
-            catch (InvalidJwtException) {
+            } catch (InvalidJwtException) {
                 return false;
             }
 
             return true;
         }
-        
-        
+
+
         
 
         private TokensDto GenerateAndUpdateTokens(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
@@ -178,6 +185,8 @@ namespace API.Features.Account.Services {
                 AccessTokenKeyId = _nnaTokenHandler.GetTokenKeyId(accessToken),
                 RefreshTokenKeyId = _nnaTokenHandler.GetTokenKeyId(refreshToken)
             };
+            
+            
         }
     }
 }

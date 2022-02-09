@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using API.Helpers;
+using Google.Apis.Auth;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
@@ -18,27 +20,27 @@ namespace API.Features.Account.Services {
             _descriptorProvider = new TokenDescriptorProvider(jwtOptions.Value);
         }
 
-        internal string CreateNnaAccessToken(NnaUser user) {
+        public virtual string CreateNnaAccessToken(NnaUser user) {
             var accessTokenDescriptor = _descriptorProvider.ProvideForAccessTokenWithCredentialsAndSubject(user);
             return CreateToken(accessTokenDescriptor);
         }
 
-        internal string CreateNnaRefreshToken(NnaUser user) {
+        public virtual string CreateNnaRefreshToken(NnaUser user) {
             var refreshTokenDescriptor = _descriptorProvider.ProvideForRefreshTokenWithCredentialsAndSubject(user);
             return CreateToken(refreshTokenDescriptor);
         }
 
-        internal TokenValidationResult ValidateAccessToken(string token, NnaUser user) {
+        public virtual TokenValidationResult ValidateAccessToken(string token, NnaUser user) {
             var accessTokenDescriptor = _descriptorProvider.ProvideForAccessTokenWithCredentialsAndSubject(user);
             return ValidateToken(token, TokenValidationParametersProvider.Provide(accessTokenDescriptor));
         }
 
-        internal TokenValidationResult ValidateRefreshToken(string token, NnaUser user) {
+        public virtual TokenValidationResult ValidateRefreshToken(string token, NnaUser user) {
             var refreshTokenDescriptor = _descriptorProvider.ProvideForRefreshTokenWithCredentialsAndSubject(user);
             return ValidateToken(token, TokenValidationParametersProvider.Provide(refreshTokenDescriptor));
         }
 
-        internal string GetTokenKeyId(string token) {
+        public virtual string GetTokenKeyId(string token) {
             if (!CanReadToken(token)) {
                 return null;
             }
@@ -47,13 +49,17 @@ namespace API.Features.Account.Services {
                 .FirstOrDefault(claim => claim.Type == nameof(NnaCustomTokenClaims.oid))?.Value;
         }
         
-        internal string GetUserEmail(string token) {
+        public virtual string GetUserEmail(string token) {
             if (!CanReadToken(token)) {
                 return null;
             }
             
             return ReadJsonWebToken(token).Claims
                 .FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Email)?.Value;
+        }
+        
+        public virtual async Task<GoogleJsonWebSignature.Payload> ValidateGoogleTokenAsync(string token) {
+            return await GoogleJsonWebSignature.ValidateAsync(token);
         }
     }
 }

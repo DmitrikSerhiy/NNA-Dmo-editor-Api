@@ -87,7 +87,7 @@ namespace API.Features.Account.Controllers {
             }
 
             var newlyCreatedUser = await _userManager.FindByEmailAsync(registerDto.Email);
-            var tokens = await _nnaTokenManager.CreateTokens(newlyCreatedUser);
+            var tokens = await _nnaTokenManager.CreateTokensAsync(newlyCreatedUser);
             return new JsonResult(new {
                 accessToken = tokens.AccessToken,
                 refreshToken = tokens.RefreshToken,
@@ -134,7 +134,7 @@ namespace API.Features.Account.Controllers {
         [Route("refresh")]
         [AllowAnonymous]
         public async Task<IActionResult> Refresh(RefreshDto refreshDto) {
-            var tokensDto = await _nnaTokenManager.RefreshTokens(refreshDto);
+            var tokensDto = await _nnaTokenManager.RefreshTokensAsync(refreshDto);
 
             if (tokensDto is null) {
                 HttpContext.Response.Headers.Add(NnaHeaders.Get(NnaHeaderNames.RedirectToLogin));
@@ -153,7 +153,7 @@ namespace API.Features.Account.Controllers {
         public async Task<IActionResult> Logout(LogoutDto logoutDto) {
             var user = await _userManager.FindByEmailAsync(logoutDto.Email);
 
-            await _nnaTokenManager.ClearTokens(user);
+            await _nnaTokenManager.ClearTokensAsync(user);
             return NoContent();
         }
         
@@ -217,7 +217,7 @@ namespace API.Features.Account.Controllers {
             }
             
             var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
-            var tokensForNewUser = await _nnaTokenManager.CreateTokens(newUser, LoginProviderName.google);
+            var tokensForNewUser = await _nnaTokenManager.CreateTokensAsync(newUser, LoginProviderName.google);
             
             return new JsonResult(new {
                 accessToken = tokensForNewUser.AccessToken,
