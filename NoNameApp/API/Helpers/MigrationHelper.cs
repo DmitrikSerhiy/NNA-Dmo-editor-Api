@@ -15,7 +15,7 @@ namespace API.Helpers {
             var optionsBuilder = new DbContextOptionsBuilder<NnaContext>();
             optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"),
                 mySqlOptions => {
-                    mySqlOptions.EnableRetryOnFailure(1);
+                    mySqlOptions.EnableRetryOnFailure(2);
                     mySqlOptions.MigrationsAssembly("Persistence");
                 });
             return new NnaContext(optionsBuilder.Options);
