@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Model.DTOs.Account;
 using Model.Entities;
 using Model.Enums;
+using Model.Interfaces;
+using Model.Interfaces.Repositories;
 
 namespace API.Features.Account.Controllers {
     
@@ -18,16 +20,22 @@ namespace API.Features.Account.Controllers {
         private readonly NnaTokenManager _nnaTokenManager;
         private readonly ResponseBuilder _responseBuilder;
         private readonly MailService _mailService;
+        private readonly IAuthenticatedIdentityProvider _identityProvider;
+        private readonly IUserRepository _userRepository;
 
         public AccountController(
             NnaUserManager userManager,
             NnaTokenManager nnaTokenManager, 
             ResponseBuilder responseBuilder, 
-            MailService mailService) {
+            MailService mailService,
+            IAuthenticatedIdentityProvider identityProvider, 
+            IUserRepository userRepository) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _nnaTokenManager = nnaTokenManager ?? throw new ArgumentNullException(nameof(nnaTokenManager));
             _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
             _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));
+            _identityProvider = identityProvider ?? throw new ArgumentNullException(nameof(identityProvider));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         [HttpPost]
@@ -63,6 +71,41 @@ namespace API.Features.Account.Controllers {
             return (await _userManager.FindByNameAsync(checkNameDto.Name) != null)
                 ? Ok(true)
                 : Ok(false);
+        }
+        
+        [HttpGet]
+        [Route("personalInfo")]
+        [Authorize]
+        public async Task<ActionResult<PersonalInfoDto>> GetPersonalInfo() {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+
+            if (user is null) {
+                return NoContent();
+            }
+
+            return new ObjectResult(new PersonalInfoDto{
+                AuthProviders = user.AuthProvider is null ? Array.Empty<string>() : new []{ user.AuthProvider },
+                UserEmail = user.Email,
+                UserId = user.Id.ToString(),
+                UserName = user.UserName,
+                IsEmailVerified = true
+            });
+        }
+        
+        [HttpPut]
+        [Route("name")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserName(UpdateUserNameDto updateUserNameDto) {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+            
+            if (user is null) {
+                return Ok(false);
+            }
+
+            user.UserName = updateUserNameDto.UserName;
+            _userRepository.UpdateUser(user);
+            
+            return Ok(true);
         }
         
         [HttpPost]
@@ -150,8 +193,8 @@ namespace API.Features.Account.Controllers {
         [HttpDelete]
         [Route("logout")]
         [Authorize]
-        public async Task<IActionResult> Logout(LogoutDto logoutDto) {
-            var user = await _userManager.FindByEmailAsync(logoutDto.Email);
+        public async Task<IActionResult> Logout() {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
 
             await _nnaTokenManager.ClearTokensAsync(user);
             return NoContent();
