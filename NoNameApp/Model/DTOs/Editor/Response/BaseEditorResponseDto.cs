@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Http;
+using System.Net;
 
 namespace Model.DTOs.Editor.Response {
     public class BaseEditorResponseDto : BaseDto {
@@ -18,7 +18,7 @@ namespace Model.DTOs.Editor.Response {
         public static BaseEditorResponseDto CreateInternalServerErrorResponse(string errorMessage) {
             return new BaseEditorResponseDto {
                 Errors = new List<EditorErrorDetailsDto> {new EditorErrorDetailsDto(errorMessage)},
-                HttpCode = StatusCodes.Status500InternalServerError,
+                HttpCode = (int)HttpStatusCode.InternalServerError,
                 Header = "Error",
                 Message = "Internal Server Error",
                 IsSuccessful = false
@@ -28,7 +28,7 @@ namespace Model.DTOs.Editor.Response {
         public static BaseEditorResponseDto CreateFailedValidationResponse(List<Tuple<string, string>> validationDetails) {
             return new BaseEditorResponseDto {
                 Warnings = validationDetails.Select(v => new EditorValidationDetailsDto(v.Item1, v.Item2)).ToList(),
-                HttpCode = StatusCodes.Status422UnprocessableEntity,
+                HttpCode = (int)HttpStatusCode.UnprocessableEntity,
                 Header = "Warning",
                 Message = "Validation failed",
                 IsSuccessful = false
@@ -39,7 +39,7 @@ namespace Model.DTOs.Editor.Response {
             return new BaseEditorResponseDto {
                 Errors = new List<EditorErrorDetailsDto>
                     {new EditorErrorDetailsDto("Hub context does not contain auth token")},
-                HttpCode = StatusCodes.Status401Unauthorized,
+                HttpCode = (int)HttpStatusCode.Unauthorized,
                 Header = "Error",
                 Message = "User is not authorized",
                 IsSuccessful = false
@@ -48,7 +48,7 @@ namespace Model.DTOs.Editor.Response {
 
         public static BaseEditorResponseDto CreateBadRequestResponse() {
             return new BaseEditorResponseDto {
-                HttpCode = StatusCodes.Status400BadRequest, 
+                HttpCode = (int)HttpStatusCode.BadRequest, 
                 Header = "Bad request",
                 IsSuccessful = false
             };
@@ -56,7 +56,7 @@ namespace Model.DTOs.Editor.Response {
 
         public static BaseEditorResponseDto CreateNoContentResponse() {
             return new BaseEditorResponseDto {
-                HttpCode = StatusCodes.Status204NoContent, 
+                HttpCode = (int)HttpStatusCode.NoContent, 
                 Header = "Ok", 
                 IsSuccessful = true
             };
@@ -64,7 +64,7 @@ namespace Model.DTOs.Editor.Response {
 
         protected static BaseEditorResponseDto CreateSuccessfulResult() {
             return new BaseEditorResponseDto {
-                HttpCode = StatusCodes.Status200OK, 
+                HttpCode = (int)HttpStatusCode.OK, 
                 Header = "Ok",
                 IsSuccessful = true
             };

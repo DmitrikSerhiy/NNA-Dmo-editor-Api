@@ -42,6 +42,7 @@ namespace Tests.AccountTests {
         };
         
         
+        // ReSharper disable once EmptyConstructor
         public NnaTokenManagerTests() { }
 
         private NnaTokenManager SetupSubjectMock() {

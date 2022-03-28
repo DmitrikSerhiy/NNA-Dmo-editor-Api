@@ -1,5 +1,5 @@
 ﻿namespace Model.DTOs.Account {
-    public class PersonalInfoDto {
+    public class PersonalInfoDto: BaseDto {
         public string UserName { get; set; }
         public string UserEmail { get; set; }
         public string UserId { get; set; }
