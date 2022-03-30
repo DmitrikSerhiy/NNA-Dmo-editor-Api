@@ -5,5 +5,6 @@
         public string UserId { get; set; }
         public string[] AuthProviders { get; set; }
         public bool IsEmailVerified { get; set; }
+        public bool HasPassword { get; set; }
     }
 }

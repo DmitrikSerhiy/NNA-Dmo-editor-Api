@@ -88,7 +88,8 @@ namespace API.Features.Account.Controllers {
                 UserEmail = user.Email,
                 UserId = user.Id.ToString(),
                 UserName = user.UserName,
-                IsEmailVerified = true
+                IsEmailVerified = true,
+                HasPassword = !string.IsNullOrEmpty(user.PasswordHash)
             });
         }
         
