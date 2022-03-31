@@ -108,7 +108,38 @@ namespace API.Features.Account.Controllers {
             
             return Ok(true);
         }
+
+        [HttpPut]
+        [Route("password")]
+        [Authorize]
+        public async Task<IActionResult> UpdatePassword(ChangePasswordDto changePasswordDto) {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+            if (user is null || user.Id != changePasswordDto.UserId) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessageToForm("Invalid user"));
+            }
+
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, changePasswordDto.CurrentPassword);
+            if (!isPasswordValid) {
+                return StatusCode((int)HttpStatusCode.UnprocessableEntity, 
+                    _responseBuilder.AppendValidationErrorMessage( "Current password","Current password is wrong")); 
+            }
+
+            if (changePasswordDto.CurrentPassword == changePasswordDto.NewPassword) {
+                return StatusCode((int)HttpStatusCode.UnprocessableEntity, 
+                    _responseBuilder.AppendValidationErrorMessage("Current password & New password","New password and your current password must be different")); 
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+            if (!result.Succeeded) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessage($"Failed to change password"));
+            }
+            
+            return NoContent();
+        }
         
+
         [HttpPost]
         [Route("register")]
         [AllowAnonymous]
@@ -303,7 +334,7 @@ namespace API.Features.Account.Controllers {
                 });
         }
         
-        [HttpPut]
+        [HttpPost]
         [Route("password")]
         [AllowAnonymous]
         public async Task<IActionResult> SetOrResetPassword(
