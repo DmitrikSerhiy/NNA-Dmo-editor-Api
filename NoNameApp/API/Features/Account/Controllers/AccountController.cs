@@ -162,7 +162,9 @@ namespace API.Features.Account.Controllers {
             }
 
             var newlyCreatedUser = await _userManager.FindByEmailAsync(registerDto.Email);
+            await _mailService.SendConfirmAccountEmailAsync(newlyCreatedUser);
             var tokens = await _nnaTokenManager.CreateTokensAsync(newlyCreatedUser);
+            
             return new JsonResult(new {
                 accessToken = tokens.AccessToken,
                 refreshToken = tokens.RefreshToken,
@@ -292,6 +294,7 @@ namespace API.Features.Account.Controllers {
             }
             
             var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
+            await _mailService.SendConfirmAccountEmailAsync(newUser);
             var tokensForNewUser = await _nnaTokenManager.CreateTokensAsync(newUser, LoginProviderName.google);
             
             return new JsonResult(new {

@@ -38,6 +38,10 @@ namespace API.Features.Account.Services {
             RegisterTokenProvider(NnaTokenProviderName, GetNnaDataProtectorTokenProvider());
         }
 
+        public async Task<string> GenerateNnaUserTokenAsync(NnaUser user, string reason) {
+            return await GenerateUserTokenAsync(user, NnaTokenProviderName, reason);
+        }
+        
         public async Task<string> GenerateNnaTokenForSetOrResetPasswordAsync(NnaUser user, SendMailReason reason) {
             return reason switch {
                 SendMailReason.NnaSetPassword => await GenerateUserTokenAsync(

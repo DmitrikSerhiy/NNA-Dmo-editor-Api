@@ -17,6 +17,7 @@ namespace API.Features.Account.Services {
         private readonly ISendGridClient _sendGridClient;
         private readonly SendGridConfiguration _sendGridConfiguration;
         private readonly NnaUserManager _nnaUserManager;
+        private readonly EmailAddress _nnaFromEmail;
         
         public MailService(
             ISendGridClient sendGridClient,
@@ -25,15 +26,35 @@ namespace API.Features.Account.Services {
             _sendGridClient = sendGridClient ?? throw new ArgumentNullException(nameof(sendGridClient));
             _sendGridConfiguration = sendGridConfiguration?.Value ?? throw new ArgumentNullException(nameof(sendGridConfiguration));
             _nnaUserManager = nnaUserManager ?? throw new ArgumentNullException(nameof(nnaUserManager));
+            _nnaFromEmail = new EmailAddress(_sendGridConfiguration.SenderEmail, "Dmo Editor");
         }
 
+        public async Task<bool> SendConfirmAccountEmailAsync(NnaUser user) {
+            var to = new EmailAddress(user.Email, user.UserName);
+            var token = await _nnaUserManager.GenerateNnaUserTokenAsync(
+                user,
+                Enum.GetName(typeof(TokenGenerationReasons), TokenGenerationReasons.NnaConfirmEmail));
+            var plainTextContent = GenerateMessageForConfirmEmailActionWithLink(token);
+            var message = MailHelper.CreateSingleEmail(_nnaFromEmail, to, "Confirm your account", plainTextContent, "");
+            
+            Response response = null;
+            try {
+                response = await _sendGridClient.SendEmailAsync(message);
+            }
+            catch (Exception ex) {
+                var responseString = await response?.Body?.ReadAsStringAsync() ?? "Response is null";
+                Log.Error(ex, responseString);
+                return false;
+            }
+            return response.StatusCode == HttpStatusCode.Accepted;
+        }
+        
         public async Task<bool> SendSetOrResetPasswordEmailAsync(NnaUser user, SendMailReason reason) {
-            var from = new EmailAddress(_sendGridConfiguration.SenderEmail, "Dmo Editor");
             var subject = reason == SendMailReason.NnaSetPassword ? "Set new password" : "Reset your password";
             var to = new EmailAddress(user.Email, user.UserName);
             var token = await _nnaUserManager.GenerateNnaTokenForSetOrResetPasswordAsync(user, reason);
-            var plainTextContent = GenerateMessageWithLink(user, token, reason);
-            var message = MailHelper.CreateSingleEmail(from, to, subject, plainTextContent, "");
+            var plainTextContent = GenerateMessageForPasswordActionWithLink(user, token, reason);
+            var message = MailHelper.CreateSingleEmail(_nnaFromEmail, to, subject, plainTextContent, "");
             
             Response response = null;
             try {
@@ -47,7 +68,25 @@ namespace API.Features.Account.Services {
             return response.StatusCode == HttpStatusCode.Accepted;
         }
 
-        private string GenerateMessageWithLink(NnaUser user, string token, SendMailReason reason) {
+        private string GenerateMessageForConfirmEmailActionWithLink(string token) {
+            var welcomeMessage = new StringBuilder();
+            welcomeMessage.AppendLine("Welcome to Dmo Editor!");
+            welcomeMessage.AppendLine("To activate your account please follow the link to verify your email address:");
+            welcomeMessage.AppendLine("");
+            
+            var link = new StringBuilder();
+            link.Append(_sendGridConfiguration.ConfirmAccountUrl);
+            link.Append($"?token={HttpUtility.UrlEncode(token)}");
+            link.AppendLine("");
+            
+            var goodbyeMessage = new StringBuilder();
+            goodbyeMessage.AppendLine("");
+            goodbyeMessage.AppendLine("Happy DMOing!");
+            
+            return $"{welcomeMessage}{link}{goodbyeMessage}";
+        }
+        
+        private string GenerateMessageForPasswordActionWithLink(NnaUser user, string token, SendMailReason reason) {
             var reasonString = reason == SendMailReason.NnaSetPassword ? "set" : "reset";
             
             var welcomeMessage = new StringBuilder();
@@ -57,9 +96,9 @@ namespace API.Features.Account.Services {
             welcomeMessage.AppendLine("");
             
             var link = new StringBuilder();
-            link.Append($"To {reasonString} your password follow the link :");
+            link.Append($"To {reasonString} your password follow the link:");
             link.AppendLine("");
-            link.Append(_sendGridConfiguration.FormUrl);
+            link.Append(_sendGridConfiguration.PasswordFormUrl);
             link.Append($"?token={HttpUtility.UrlEncode(token)}");
             link.Append($"&reason={(int)reason}");
             link.Append($"&user={user.Email}");
