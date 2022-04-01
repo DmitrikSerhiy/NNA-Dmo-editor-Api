@@ -9,7 +9,6 @@ using Model.DTOs.Account;
 using Model.Entities;
 using Model.Enums;
 using Model.Interfaces;
-using Model.Interfaces.Repositories;
 
 namespace API.Features.Account.Controllers {
     
@@ -21,21 +20,18 @@ namespace API.Features.Account.Controllers {
         private readonly ResponseBuilder _responseBuilder;
         private readonly MailService _mailService;
         private readonly IAuthenticatedIdentityProvider _identityProvider;
-        private readonly IUserRepository _userRepository;
 
         public AccountController(
             NnaUserManager userManager,
             NnaTokenManager nnaTokenManager, 
             ResponseBuilder responseBuilder, 
             MailService mailService,
-            IAuthenticatedIdentityProvider identityProvider, 
-            IUserRepository userRepository) {
+            IAuthenticatedIdentityProvider identityProvider) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _nnaTokenManager = nnaTokenManager ?? throw new ArgumentNullException(nameof(nnaTokenManager));
             _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
             _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));
             _identityProvider = identityProvider ?? throw new ArgumentNullException(nameof(identityProvider));
-            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         [HttpPost]
@@ -58,7 +54,7 @@ namespace API.Features.Account.Controllers {
             var hasPassword = await _userManager.HasPasswordAsync(user);
 
             if (user.AuthProvider != null && hasPassword == false) {
-                return new JsonResult(user.AuthProvider);
+                return new JsonResult(user.AuthProvider); // todo: change it to array. Maybe save it as string[] withing one column
             }
 
             return NoContent();
@@ -71,72 +67,6 @@ namespace API.Features.Account.Controllers {
             return (await _userManager.FindByNameAsync(checkNameDto.Name) != null)
                 ? Ok(true)
                 : Ok(false);
-        }
-        
-        [HttpGet]
-        [Route("personalInfo")]
-        [Authorize]
-        public async Task<ActionResult<PersonalInfoDto>> GetPersonalInfo() {
-            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
-
-            if (user is null) {
-                return NoContent();
-            }
-
-            return new ObjectResult(new PersonalInfoDto{
-                AuthProviders = user.AuthProvider is null ? Array.Empty<string>() : new []{ user.AuthProvider },
-                UserEmail = user.Email,
-                UserId = user.Id.ToString(),
-                UserName = user.UserName,
-                IsEmailVerified = true,
-                HasPassword = !string.IsNullOrEmpty(user.PasswordHash)
-            });
-        }
-        
-        [HttpPut]
-        [Route("name")]
-        [Authorize]
-        public async Task<IActionResult> UpdateUserName(UpdateUserNameDto updateUserNameDto) {
-            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
-            
-            if (user is null) {
-                return Ok(false);
-            }
-
-            user.UserName = updateUserNameDto.UserName;
-            _userRepository.UpdateUser(user);
-            
-            return Ok(true);
-        }
-
-        [HttpPut]
-        [Route("password")]
-        [Authorize]
-        public async Task<IActionResult> UpdatePassword(ChangePasswordDto changePasswordDto) {
-            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
-            if (user is null || user.Id != changePasswordDto.UserId) {
-                return StatusCode((int) HttpStatusCode.BadRequest, 
-                    _responseBuilder.AppendBadRequestErrorMessageToForm("Invalid user"));
-            }
-
-            var isPasswordValid = await _userManager.CheckPasswordAsync(user, changePasswordDto.CurrentPassword);
-            if (!isPasswordValid) {
-                return StatusCode((int)HttpStatusCode.UnprocessableEntity, 
-                    _responseBuilder.AppendValidationErrorMessage( "Current password","Current password is wrong")); 
-            }
-
-            if (changePasswordDto.CurrentPassword == changePasswordDto.NewPassword) {
-                return StatusCode((int)HttpStatusCode.UnprocessableEntity, 
-                    _responseBuilder.AppendValidationErrorMessage("Current password & New password","New password and your current password must be different")); 
-            }
-
-            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
-            if (!result.Succeeded) {
-                return StatusCode((int) HttpStatusCode.BadRequest, 
-                    _responseBuilder.AppendBadRequestErrorMessage($"Failed to change password"));
-            }
-            
-            return NoContent();
         }
         
 
@@ -197,15 +127,7 @@ namespace API.Features.Account.Controllers {
             });
         }
         
-        [HttpGet]
-        [Route("ping")]
-        [Authorize]
-        public async Task<IActionResult> ValidateToken() {
-            var isVerified = await _nnaTokenManager.VerifyTokenAsync();
-            return isVerified
-                ? NoContent()
-                : Unauthorized();
-        }
+    
 
         [HttpPost]
         [Route("refresh")]
@@ -223,17 +145,7 @@ namespace API.Features.Account.Controllers {
                 refreshToken = tokensDto.RefreshToken
             });
         }
-        
-        [HttpDelete]
-        [Route("logout")]
-        [Authorize]
-        public async Task<IActionResult> Logout() {
-            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
 
-            await _nnaTokenManager.ClearTokensAsync(user);
-            return NoContent();
-        }
-        
         /// <summary>
         /// Validate google trusted jwt tokens.
         /// If user with such email exists then login
@@ -309,7 +221,7 @@ namespace API.Features.Account.Controllers {
         [HttpPost]
         [Route("mail")]
         [AllowAnonymous]
-        public async Task<IActionResult> SendMail([FromBody]SendMailDto update) {
+        public async Task<IActionResult> SendMail(SendMailDto update) {
             var user = await _userManager.FindByEmailAsync(update.Email);
             if (user is null) {
                 return Ok(false);
@@ -323,8 +235,7 @@ namespace API.Features.Account.Controllers {
         [HttpPost]
         [Route("validate/tokenFromMail")]
         [AllowAnonymous]
-        public async Task<IActionResult> ValidateTokenForPasswordChange(
-            [FromBody] ValidateNnaTokenForSetOrResetPasswordDto nnaTokenDto) {
+        public async Task<IActionResult> ValidateTokenForPasswordChange(ValidateNnaTokenForSetOrResetPasswordDto nnaTokenDto) {
             var user = await _userManager.FindByEmailAsync(nnaTokenDto.Email);
             if (user is null) {
                 return new JsonResult(new { valid = false });
@@ -340,8 +251,7 @@ namespace API.Features.Account.Controllers {
         [HttpPost]
         [Route("password")]
         [AllowAnonymous]
-        public async Task<IActionResult> SetOrResetPassword(
-            [FromBody] SetOrResetPasswordDto newPasswordDto) {
+        public async Task<IActionResult> SetOrResetPassword(SetOrResetPasswordDto newPasswordDto) {
             var user = await _userManager.FindByEmailAsync(newPasswordDto.Email);
             if (user is null) {
                 return BadRequest();
@@ -372,5 +282,142 @@ namespace API.Features.Account.Controllers {
             }
             return NoContent();
         }
+
+
+        
+        
+        #region Authorized end-points
+        
+        [HttpGet]
+        [Route("personalInfo")]
+        [Authorize]
+        public async Task<ActionResult<PersonalInfoDto>> GetPersonalInfo() {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+            if (user is null) {
+                return NoContent();
+            }
+
+            return new ObjectResult(new PersonalInfoDto{
+                AuthProviders = user.AuthProvider is null ? Array.Empty<string>() : new []{ user.AuthProvider },
+                UserEmail = user.Email,
+                UserId = user.Id.ToString(),
+                UserName = user.UserName,
+                IsEmailVerified = user.EmailConfirmed,
+                HasPassword = !string.IsNullOrEmpty(user.PasswordHash)
+            });
+        }
+        
+        [HttpPost]
+        [Route("mail/confirmation")]
+        [Authorize]
+        public async Task<IActionResult> SendEmailForAccountConfirmation(SendMailDto update) {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+            if (user.Email != update.Email) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessage("Wrong email address."));
+            }
+
+            await _mailService.SendConfirmAccountEmailAsync(user);
+            return NoContent();
+        }
+        
+        [HttpPut]
+        [Route("name")]
+        [Authorize]
+        public async Task<IActionResult> UpdateUserName(UpdateUserNameDto updateUserNameDto) {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+            if (user.Email != updateUserNameDto.Email) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessage("Wrong email address"));
+            }
+            
+            var userWithNewName = await _userManager.FindByNameAsync(updateUserNameDto.UserName);
+            if (userWithNewName != null) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessageToForm("User with such name is already registered"));
+            }
+
+            await _userManager.SetUserNameAsync(user, updateUserNameDto.UserName);
+            return NoContent();
+        }
+
+        [HttpPut]
+        [Route("password")]
+        [Authorize]
+        public async Task<IActionResult> UpdatePassword(ChangePasswordDto changePasswordDto) {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+            if (user.Email != changePasswordDto.Email) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessage("Wrong email address"));
+            }
+
+            var isPasswordValid = await _userManager.CheckPasswordAsync(user, changePasswordDto.CurrentPassword);
+            if (!isPasswordValid) {
+                return StatusCode((int)HttpStatusCode.UnprocessableEntity, 
+                    _responseBuilder.AppendValidationErrorMessage( "Current password","Current password is wrong")); 
+            }
+
+            if (changePasswordDto.CurrentPassword == changePasswordDto.NewPassword) {
+                return StatusCode((int)HttpStatusCode.UnprocessableEntity, 
+                    _responseBuilder.AppendValidationErrorMessage("Current password & New password","New password and your current password must be different")); 
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+            if (!result.Succeeded) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessage("Failed to change password"));
+            }
+            return NoContent();
+        }
+        
+        [HttpPost]
+        [Route("")]
+        [Authorize]
+        public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto changePasswordDto) {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+            if (user.Email != changePasswordDto.Email) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessage("Wrong email address"));
+            }
+
+            if (await _userManager.IsEmailConfirmedAsync(user)) {
+                return NoContent();
+            }
+            
+            var isEmailConfirmed = await _userManager.ConfirmEmailAsync(user, changePasswordDto.Token);
+            if (!isEmailConfirmed.Succeeded) {
+                return StatusCode((int) HttpStatusCode.BadRequest, 
+                    _responseBuilder.AppendBadRequestErrorMessageToForm("Failed to confirm email. Try again."));
+            }
+            return NoContent();
+        }
+
+        [HttpGet]
+        [Route("ping")]
+        [Authorize]
+        public async Task<IActionResult> ValidateToken() {
+            var isVerified = await _nnaTokenManager.VerifyTokenAsync();
+            return isVerified
+                ? NoContent()
+                : Unauthorized();
+        }
+        
+        [HttpDelete]
+        [Route("logout")]
+        [Authorize]
+        public async Task<IActionResult> Logout(LogoutDto logoutDto) {
+            var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
+
+            if (user.Email != logoutDto.Email) {
+                if (user.Email != logoutDto.Email) {
+                    return StatusCode((int) HttpStatusCode.BadRequest, 
+                        _responseBuilder.AppendBadRequestErrorMessage("Wrong email address"));
+                }
+            }
+            await _nnaTokenManager.ClearTokensAsync(user);
+            return NoContent();
+        }
+        
+        #endregion
     }
 }

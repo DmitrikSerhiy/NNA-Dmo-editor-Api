@@ -38,6 +38,22 @@ namespace API.Features.Account.Services {
             RegisterTokenProvider(NnaTokenProviderName, GetNnaDataProtectorTokenProvider());
         }
 
+        public override async Task<IdentityResult> ConfirmEmailAsync(NnaUser user, string token) {
+            if (user == null) {
+                throw new ArgumentNullException(nameof(user));
+            }
+
+            var isValid = await GetNnaDataProtectorTokenProvider().ValidateAsync(
+                Enum.GetName(typeof(TokenGenerationReasons), TokenGenerationReasons.NnaConfirmEmail), token, this, user);
+
+            if (!isValid) {
+                return IdentityResult.Failed(new IdentityError { Code = "", Description = "Invalid confirm email nna token" });
+            }
+            
+            _userRepository.ConfirmUserEmail(user);
+            return IdentityResult.Success;
+        }
+
         public async Task<string> GenerateNnaUserTokenAsync(NnaUser user, string reason) {
             return await GenerateUserTokenAsync(user, NnaTokenProviderName, reason);
         }

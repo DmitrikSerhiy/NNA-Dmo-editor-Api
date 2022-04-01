@@ -63,6 +63,13 @@ namespace Persistence.Repositories {
             _context.Tokens.UpdateRange(accessToken, refreshToken);
         }
 
+        public void ConfirmUserEmail(NnaUser user) {
+            if (user == null) throw new ArgumentNullException(nameof(user));
+            _context.Attach(user);
+            user.EmailConfirmed = true;
+            _context.Update(user);
+        }
+
         public async Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId) {
             var tokens = await _context.Tokens
                 .Where(token => token.UserId == userId)

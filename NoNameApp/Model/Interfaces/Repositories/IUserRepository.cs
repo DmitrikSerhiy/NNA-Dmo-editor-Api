@@ -10,6 +10,7 @@ namespace Model.Interfaces.Repositories {
         Task SaveTokens(NnaToken accessToken, NnaToken refreshToken);
         Task ClearTokens(NnaUser user);
         void UpdateTokens(NnaToken accessToken, NnaToken refreshToken);
+        void ConfirmUserEmail(NnaUser user);
         Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId);
         Task<UsersTokens> GetAuthenticatedUserDataAsync(string email);
         Task<bool> HasEditorConnectionAsync(Guid userId);
