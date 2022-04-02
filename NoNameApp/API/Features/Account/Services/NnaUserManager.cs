@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Model.Entities;
 using Model.Enums;
+using Model.Extensions;
 using Model.Interfaces.Repositories;
 
 namespace API.Features.Account.Services {
@@ -87,15 +88,6 @@ namespace API.Features.Account.Services {
             await UpdateUserAsync(user);
         }
 
-        public void UpdateAuthProvider(NnaUser user, LoginProviderName providerName) {
-            user.AuthProvider = Enum.GetName(providerName);
-            _userRepository.UpdateUser(user);
-        }
-        
-        public bool HasAuthProvider(NnaUser user) {
-            return user.AuthProvider != null;
-        }
-        
         private IUserTwoFactorTokenProvider<NnaUser> GetNnaDataProtectorTokenProvider() {
             return _serviceProvider.GetService<DataProtectorTokenProvider<NnaUser>>();
         }
