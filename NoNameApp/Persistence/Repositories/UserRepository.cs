@@ -38,6 +38,18 @@ namespace Persistence.Repositories {
             _context.EditorConnections.Remove(connection);
         }
 
+        public async Task RemoveEditorConnectionOnLogout(Guid userId) {
+            var connections = await _context.EditorConnections
+                .Where(ec => ec.UserId == userId)
+                .ToListAsync();
+            
+            if (connections.Count == 0) {
+                return;
+            }
+            
+            _context.EditorConnections.RemoveRange(connections);
+        }
+
         public async Task<UsersTokens> GetAuthenticatedUserDataAsync(string email) {
             return await _context.Set<UsersTokens>().SingleOrDefaultAsync(ut => ut.Email == email);
         }

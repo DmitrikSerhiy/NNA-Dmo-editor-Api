@@ -16,6 +16,7 @@ namespace Model.Interfaces.Repositories {
         Task<bool> HasEditorConnectionAsync(Guid userId);
         Task AddEditorConnectionAsync(EditorConnection connection);
         void RemoveEditorConnection(EditorConnection connection);
+        Task RemoveEditorConnectionOnLogout(Guid userId);
         Task SyncContextImmediatelyAsync();
     }
 }

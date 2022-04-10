@@ -11,6 +11,7 @@ namespace Model.Entities {
         public string ShortComment { get; set; }
         public short? Mark { get; set; }
         public string BeatsJson { get; set; }
+        public bool HasBeats { get; set; }
 
 
         public NnaUser NnaUser { get; set; }

@@ -72,15 +72,19 @@ namespace API.Features.Editor.Hubs {
                 Console.WriteLine($"{Context.GetCurrentUserEmail()} disconnected from the editor");
             }
 
+            await DisconnectUser();
+            await base.OnDisconnectedAsync(exception);
+        }
+
+        protected async Task DisconnectUser() {
             _userRepository.RemoveEditorConnection(new EditorConnection {
                 UserId = Context.GetCurrentUserId().GetValueOrDefault(),
                 ConnectionId = Context.ConnectionId
             });
             await _userRepository.SyncContextImmediatelyAsync();
             Context.LogoutUser();
-            await base.OnDisconnectedAsync(exception);
         }
-
+        
         protected static BaseEditorResponseDto NotValid(ValidationResult validationResult) {
             return BaseEditorResponseDto.CreateFailedValidationResponse(validationResult.Errors.Select(err =>
                 new Tuple<string, string>(err.ErrorMessage, err.PropertyName)).ToList());

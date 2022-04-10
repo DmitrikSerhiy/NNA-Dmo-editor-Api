@@ -9,6 +9,7 @@ using Model.Entities;
 using Model.Enums;
 using Model.Extensions;
 using Model.Interfaces;
+using Model.Interfaces.Repositories;
 
 namespace API.Features.Account.Controllers {
     
@@ -19,17 +20,20 @@ namespace API.Features.Account.Controllers {
         private readonly NnaTokenManager _nnaTokenManager;
         private readonly MailService _mailService;
         private readonly IAuthenticatedIdentityProvider _identityProvider;
+        private readonly IUserRepository _userRepository;
 
         public AccountController(
             NnaUserManager userManager,
             NnaTokenManager nnaTokenManager, 
             ResponseBuilder responseBuilder, 
             MailService mailService,
-            IAuthenticatedIdentityProvider identityProvider): base(responseBuilder) {
+            IAuthenticatedIdentityProvider identityProvider, 
+            IUserRepository userRepository): base(responseBuilder) {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _nnaTokenManager = nnaTokenManager ?? throw new ArgumentNullException(nameof(nnaTokenManager));
             _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));
             _identityProvider = identityProvider ?? throw new ArgumentNullException(nameof(identityProvider));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
 
         [HttpPost]
@@ -383,6 +387,7 @@ namespace API.Features.Account.Controllers {
             }
             
             await _nnaTokenManager.ClearTokensAsync(user);
+            await _userRepository.RemoveEditorConnectionOnLogout(user.Id);
             return NoContent();
         }
         

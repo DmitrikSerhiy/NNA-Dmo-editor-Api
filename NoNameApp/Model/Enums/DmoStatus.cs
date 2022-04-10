@@ -1,6 +1,6 @@
 ﻿namespace Model.Enums {
     public enum DmoStatus {
-        InProgress,
+        InProgress = 0,
         Completed,
         NotFinished
     }

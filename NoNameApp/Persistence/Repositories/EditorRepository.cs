@@ -18,21 +18,20 @@ namespace Persistence.Repositories {
         #region sqlScripts
 
         private const string CreateDmoScript = 
-            "INSERT INTO [dbo].[Dmos] ([Id],[DateOfCreation],[Name],[MovieTitle] ,[DmoStatus],[ShortComment],[NnaUserId]) " +
-            "VALUES(@id, @dateOfCreation, @name, @movieTitle, @dmoStatus, @shortComment, @nnaUserId)";
+            "INSERT INTO [dbo].[Dmos] ([Id],[DateOfCreation],[Name],[MovieTitle],[DmoStatus],[ShortComment],[NnaUserId],[HasBeats]) " +
+            "VALUES(@id, @dateOfCreation, @name, @movieTitle, @dmoStatus, @shortComment, @nnaUserId, @hasBeats)";
 
         private const string LoadShortDmoScript =
-            "SELECT Id, Name, MovieTitle, ShortComment, BeatsJson FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
-        //todo: refactor to do not load beatsJson here 
+            "SELECT Id, Name, MovieTitle, ShortComment, DmoStatus, HasBeats FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string LoadDmoScript =
             "SELECT * FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string UpdateShortDmoScript =
-            "UPDATE Dmos set Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment WHERE Id = @id and NnaUserId = @nnaUserId";
+            "UPDATE Dmos set Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment, DmoStatus = @DmoStatus WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string UpdateBeatsJsonScript =
-            "UPDATE Dmos set BeatsJson = @jsonBeats where Id = @id and NnaUserId = @nnaUserId";
+            "UPDATE Dmos set BeatsJson = @jsonBeats, HasBeats = @HasBeats where Id = @id and NnaUserId = @nnaUserId";
 
         #endregion
 
@@ -51,7 +50,8 @@ namespace Persistence.Repositories {
                 movieTitle = dmo.MovieTitle,
                 dmoStatus = (short) DmoStatus.InProgress,
                 shortComment = string.IsNullOrWhiteSpace(dmo.ShortComment) ? null : dmo.ShortComment,
-                nnaUserId = dmo.NnaUserId
+                nnaUserId = dmo.NnaUserId,
+                hasBeats = false
             });
             return result >= 1;
         }
@@ -73,7 +73,8 @@ namespace Persistence.Repositories {
                 movieTitle = dmo.MovieTitle,
                 shortComment = dmo.ShortComment,
                 id = dmo.Id,
-                nnaUserId = dmo.NnaUserId
+                nnaUserId = dmo.NnaUserId,
+                DmoStatus = dmo.DmoStatus
             });
 
             return result >= 1;
@@ -81,7 +82,7 @@ namespace Persistence.Repositories {
 
         public async Task<bool> UpdateJsonBeatsAsync(string jsonBeats, Guid id, Guid nnaUserId) {
             await using var db = await OpenAndGetConnection();
-            var result = await db.ExecuteAsync(UpdateBeatsJsonScript, new {jsonBeats, id, nnaUserId});
+            var result = await db.ExecuteAsync(UpdateBeatsJsonScript, new {jsonBeats, id, nnaUserId, HasBeats = jsonBeats.Length > 0});
             return result >= 1;
         }
 

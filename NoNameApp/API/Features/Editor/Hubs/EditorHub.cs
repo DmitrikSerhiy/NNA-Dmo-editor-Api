@@ -38,6 +38,7 @@ namespace API.Features.Editor.Hubs {
             }
             catch (LoadShortDmoException ex) {
                 Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
                 return InternalServerError(ex.Message);
             }
         }
@@ -62,10 +63,12 @@ namespace API.Features.Editor.Hubs {
             }
             catch (CreateDmoException ex) {
                 Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
                 return InternalServerError(ex.Message);
             }
             catch (LoadShortDmoException ex) {
                 Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
                 return InternalServerError(ex.Message);
             }
         }
@@ -88,9 +91,10 @@ namespace API.Features.Editor.Hubs {
             }
             catch (UpdateShortDmoException ex) {
                 Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
                 return InternalServerError(ex.Message);
             }
-
+            
             return NoContent();
         }
 
@@ -111,6 +115,7 @@ namespace API.Features.Editor.Hubs {
             }
             catch (UpdateDmoBeatsAsJsonException ex) {
                 Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
                 return InternalServerError(ex.Message);
             }
 
