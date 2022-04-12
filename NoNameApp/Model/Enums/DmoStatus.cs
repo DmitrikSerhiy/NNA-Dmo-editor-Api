@@ -1,7 +1,7 @@
 ﻿namespace Model.Enums {
-    public enum DmoStatus {
+    public enum DmoStatus: short {
         InProgress = 0,
-        Completed,
-        NotFinished
+        Completed = 1,
+        NotFinished = 2
     }
 }

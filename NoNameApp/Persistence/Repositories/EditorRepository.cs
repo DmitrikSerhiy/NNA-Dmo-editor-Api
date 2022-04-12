@@ -28,7 +28,7 @@ namespace Persistence.Repositories {
             "SELECT * FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string UpdateShortDmoScript =
-            "UPDATE Dmos set Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment, DmoStatus = @DmoStatus WHERE Id = @id and NnaUserId = @nnaUserId";
+            "UPDATE Dmos set Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment, DmoStatus = @dmoStatus WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string UpdateBeatsJsonScript =
             "UPDATE Dmos set BeatsJson = @jsonBeats, HasBeats = @HasBeats where Id = @id and NnaUserId = @nnaUserId";
@@ -74,7 +74,7 @@ namespace Persistence.Repositories {
                 shortComment = dmo.ShortComment,
                 id = dmo.Id,
                 nnaUserId = dmo.NnaUserId,
-                DmoStatus = dmo.DmoStatus
+                dmoStatus = dmo.DmoStatus
             });
 
             return result >= 1;
