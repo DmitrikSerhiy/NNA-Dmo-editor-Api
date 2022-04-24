@@ -1,7 +1,6 @@
 ﻿using API.Features.Editor.Services;
 using API.Features.Editor.Validators;
 using Model.DTOs.Editor;
-using Model.DTOs.Editor.Response;
 using Model.Exceptions.Editor;
 using Model.Interfaces;
 using Serilog;
@@ -20,7 +19,7 @@ namespace API.Features.Editor.Hubs {
             IUserRepository userRepository) 
                 : base(editorService, webHostEnvironment, claimsValidator, userRepository) { }
         
-        public async Task<BaseEditorResponseDto> LoadShortDmo(LoadShortDmoDto dmoDto) {
+        public async Task<object> LoadShortDmo(LoadShortDmoDto dmoDto) {
             if (dmoDto == null) return BadRequest();
 
             if (!Context.ContainsUser()) {
@@ -44,7 +43,7 @@ namespace API.Features.Editor.Hubs {
         }
 
 
-        public async Task<BaseEditorResponseDto> CreateDmo(CreateDmoDto dmoDto) {
+        public async Task<object> CreateDmo(CreateDmoDto dmoDto) {
             if (dmoDto == null) return BadRequest();
 
             if (!Context.ContainsUser()) {
@@ -74,7 +73,7 @@ namespace API.Features.Editor.Hubs {
         }
 
 
-        public async Task<BaseEditorResponseDto> UpdateShortDmo(UpdateShortDmoDto dmoDto) {
+        public async Task<object> UpdateShortDmo(UpdateShortDmoDto dmoDto) {
             if (dmoDto == null) return BadRequest();
 
             if (!Context.ContainsUser()) {
@@ -97,8 +96,8 @@ namespace API.Features.Editor.Hubs {
             
             return NoContent();
         }
-
-        public async Task<BaseEditorResponseDto> UpdateDmosJson(UpdateDmoBeatsAsJsonDto update) {
+        
+        public async Task<object> UpdateDmosJson(UpdateDmoBeatsAsJsonDto update) {
             if (update == null) return BadRequest();
 
             if (!Context.ContainsUser()) {

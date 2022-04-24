@@ -17,7 +17,7 @@ namespace Model.DTOs.Editor.Response {
 
         public static BaseEditorResponseDto CreateInternalServerErrorResponse(string errorMessage) {
             return new BaseEditorResponseDto {
-                Errors = new List<EditorErrorDetailsDto> {new EditorErrorDetailsDto(errorMessage)},
+                Errors = new List<EditorErrorDetailsDto> { new (errorMessage) },
                 HttpCode = (int)HttpStatusCode.InternalServerError,
                 Header = "Error",
                 Message = "Internal Server Error",

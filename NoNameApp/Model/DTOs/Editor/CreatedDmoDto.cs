@@ -1,11 +1,11 @@
-﻿namespace Model.DTOs.Editor
-{
+﻿namespace Model.DTOs.Editor {
     public class CreatedDmoDto : BaseDto {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public string MovieTitle { get; set; }
-        public string ShortComment { get; set; }
-        public bool HasBeats { get; set; }
-        public short DmoStatus { get; set; }
+        // ReSharper disable InconsistentNaming
+        public string id { get; set; }
+        public string name { get; set; }
+        public string movieTitle { get; set; }
+        public string shortComment { get; set; }
+        public bool hasBeats { get; set; }
+        public short dmoStatus { get; set; }
     }
 }

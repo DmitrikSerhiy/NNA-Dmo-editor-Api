@@ -40,6 +40,7 @@ namespace API {
             
             services
                 .AddSignalR()
+                .AddMessagePackProtocol()
                 .AddHubOptions<EditorHub>(o => {
                     o.EnableDetailedErrors = true;
                 });

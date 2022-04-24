@@ -85,29 +85,67 @@ namespace API.Features.Editor.Hubs {
             Context.LogoutUser();
         }
         
-        protected static BaseEditorResponseDto NotValid(ValidationResult validationResult) {
-            return BaseEditorResponseDto.CreateFailedValidationResponse(validationResult.Errors.Select(err =>
+        protected static object NotValid(ValidationResult validationResult) {
+            var result = BaseEditorResponseDto.CreateFailedValidationResponse(validationResult.Errors.Select(err =>
                 new Tuple<string, string>(err.ErrorMessage, err.PropertyName)).ToList());
+
+            return new {
+                httpCode = result.HttpCode,
+                header = result.Header,
+                message = result.Message,
+                isSuccessful = result.IsSuccessful,
+                warnings = result.Warnings.Select(warning => new { fieldName = warning.FieldName, validationMessage = warning.ValidationMessage }).ToArray()
+            };
         }
 
-        protected static BaseEditorResponseDto BadRequest() {
-            return BaseEditorResponseDto.CreateBadRequestResponse();
+        protected static object BadRequest() {
+            var result = BaseEditorResponseDto.CreateBadRequestResponse();
+            return new {
+                httpCode = result.HttpCode,
+                header = result.Header,
+                isSuccessful = result.IsSuccessful
+            };
         }
 
-        protected static BaseEditorResponseDto NotAuthorized() {
-            return BaseEditorResponseDto.CreateFailedAuthResponse();
+        protected static object NotAuthorized() {
+            var result = BaseEditorResponseDto.CreateFailedAuthResponse();
+            return new {
+                header = result.Header,
+                message = result.Message,
+                isSuccessful = result.IsSuccessful,
+                httpCode = result.HttpCode,
+                errors = new object[] { new { errorMessage = result.Errors.First().ErrorMessage } },
+            };
         }
 
-        protected static BaseEditorResponseDto InternalServerError(string errorMessage) {
-            return BaseEditorResponseDto.CreateInternalServerErrorResponse(errorMessage);
+        protected static object InternalServerError(string errorMessage) {
+            var result = BaseEditorResponseDto.CreateInternalServerErrorResponse(errorMessage);
+            return new {
+                errors = new object[] { new { errorMessage }},
+                header = result.Header,
+                message = result.Message,
+                httpCode = result.HttpCode,
+                isSuccessful = result.IsSuccessful
+            };
         }
 
-        protected static BaseEditorResponseDto NoContent() {
-            return BaseEditorResponseDto.CreateNoContentResponse();
+        protected static object NoContent() {
+            var result = BaseEditorResponseDto.CreateNoContentResponse();
+            return new {
+                header = result.Header,
+                httpCode = result.HttpCode,
+                isSuccessful = result.IsSuccessful
+            };
         }
 
-        protected static EditorResponseDto<T> Ok<T>(T data) where T: BaseDto {
-            return EditorResponseDto<T>.Ok(data);
+        protected static object Ok<T>(T data) where T: BaseDto {
+            var result = EditorResponseDto<T>.Ok(data);
+            return new {
+                data = result.Data,
+                header = result.Header,
+                httpCode = result.HttpCode,
+                isSuccessful = result.IsSuccessful
+            };
         }
     }
 }

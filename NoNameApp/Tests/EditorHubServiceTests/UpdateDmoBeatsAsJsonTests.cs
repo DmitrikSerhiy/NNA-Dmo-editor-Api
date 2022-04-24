@@ -17,7 +17,7 @@ namespace Tests.EditorHubServiceTests {
         private void SetupMocksAndVariables() {
             SetupConstructorMocks();
             userId = Guid.NewGuid();
-            dmoDto = new UpdateDmoBeatsAsJsonDto {DmoId = Guid.NewGuid().ToString(), Json = "{}"};
+            dmoDto = new UpdateDmoBeatsAsJsonDto {DmoId = Guid.NewGuid().ToString(), Data = "{}"};
         }
 
 
@@ -58,7 +58,7 @@ namespace Tests.EditorHubServiceTests {
             //Arrange
             SetupMocksAndVariables();
             var repositoryExceptionMessage = "some message from repository";
-            RepositoryMock.Setup(rm => rm.UpdateJsonBeatsAsync(dmoDto.Json, Guid.Parse(dmoDto.DmoId), userId))
+            RepositoryMock.Setup(rm => rm.UpdateJsonBeatsAsync(dmoDto.Data, Guid.Parse(dmoDto.DmoId), userId))
                 .ThrowsAsync(new Exception(repositoryExceptionMessage));
             var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
@@ -75,7 +75,7 @@ namespace Tests.EditorHubServiceTests {
         public void ShouldThrowIfDmoWasNotUpdatedTest() {
             //Arrange
             SetupMocksAndVariables();
-            RepositoryMock.Setup(rm => rm.UpdateJsonBeatsAsync(dmoDto.Json, Guid.Parse(dmoDto.DmoId), userId))
+            RepositoryMock.Setup(rm => rm.UpdateJsonBeatsAsync(dmoDto.Data, Guid.Parse(dmoDto.DmoId), userId))
                 .ReturnsAsync(false);
 
             var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);

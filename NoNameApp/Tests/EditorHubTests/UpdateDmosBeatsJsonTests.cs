@@ -20,7 +20,7 @@ namespace Tests.EditorHubTests
 
         private void SetMockAndVariables() {
             SetupConstructorMocks();
-            update = new UpdateDmoBeatsAsJsonDto { DmoId = Guid.NewGuid().ToString(), Json = "{}"};
+            update = new UpdateDmoBeatsAsJsonDto { DmoId = Guid.NewGuid().ToString(), Data = "{}"};
         }
 
 

@@ -105,7 +105,7 @@ namespace API.Features.Editor.Services {
             }
             bool isUpdated;
             try {
-                isUpdated = await _editorRepository.UpdateJsonBeatsAsync(dmoDto.Json, dmoId, userId);
+                isUpdated = await _editorRepository.UpdateJsonBeatsAsync(dmoDto.Data, dmoId, userId);
             }
             catch (Exception ex) {
                 throw new UpdateDmoBeatsAsJsonException(ex, dmoId, userId);
