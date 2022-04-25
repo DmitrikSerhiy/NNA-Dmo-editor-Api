@@ -7,7 +7,6 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Model.Entities;
 using Model.Enums;
-using Model.Extensions;
 using Model.Interfaces.Repositories;
 
 namespace API.Features.Account.Services {

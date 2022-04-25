@@ -2,9 +2,10 @@
 {
     public class EditorErrorDetailsDto : BaseDto {
         public EditorErrorDetailsDto(string errorMessage) {
-            ErrorMessage = errorMessage;
+            this.errorMessage = errorMessage;
         }
 
-        public string ErrorMessage { get; }
+        // ReSharper disable once InconsistentNaming
+        public string errorMessage { get; }
     }
 }

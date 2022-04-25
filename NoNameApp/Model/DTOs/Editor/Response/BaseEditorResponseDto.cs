@@ -6,67 +6,67 @@ using System.Net;
 namespace Model.DTOs.Editor.Response {
     public class BaseEditorResponseDto : BaseDto {
 
-        public int HttpCode { get; private set; }
-        public string Header { get; private set; }
-        public string Message { get; private set; }
-        public bool IsSuccessful { get; private set; }
+        // ReSharper disable InconsistentNaming
+        public int httpCode { get; private set; }
+        public string header { get; private set; }
+        public string message { get; private set; }
+        public bool isSuccessful { get; private set; }
 
-        public List<EditorErrorDetailsDto> Errors { get; private set; } = new List<EditorErrorDetailsDto>();
-        public List<EditorValidationDetailsDto> Warnings { get; private set; } = new List<EditorValidationDetailsDto>();
+        public List<EditorErrorDetailsDto> errors { get; private set; } = new ();
+        public List<EditorValidationDetailsDto> warnings { get; private set; } = new ();
 
 
         public static BaseEditorResponseDto CreateInternalServerErrorResponse(string errorMessage) {
             return new BaseEditorResponseDto {
-                Errors = new List<EditorErrorDetailsDto> { new (errorMessage) },
-                HttpCode = (int)HttpStatusCode.InternalServerError,
-                Header = "Error",
-                Message = "Internal Server Error",
-                IsSuccessful = false
+                errors = new List<EditorErrorDetailsDto> { new (errorMessage) },
+                httpCode = (int)HttpStatusCode.InternalServerError,
+                header = "Error",
+                message = "Internal Server Error",
+                isSuccessful = false
             };
         }
 
         public static BaseEditorResponseDto CreateFailedValidationResponse(List<Tuple<string, string>> validationDetails) {
             return new BaseEditorResponseDto {
-                Warnings = validationDetails.Select(v => new EditorValidationDetailsDto(v.Item1, v.Item2)).ToList(),
-                HttpCode = (int)HttpStatusCode.UnprocessableEntity,
-                Header = "Warning",
-                Message = "Validation failed",
-                IsSuccessful = false
+                warnings = validationDetails.Select(v => new EditorValidationDetailsDto(v.Item1, v.Item2)).ToList(),
+                httpCode = (int)HttpStatusCode.UnprocessableEntity,
+                header = "Warning",
+                message = "Validation failed",
+                isSuccessful = false
             };
         }
 
         public static BaseEditorResponseDto CreateFailedAuthResponse() {
             return new BaseEditorResponseDto {
-                Errors = new List<EditorErrorDetailsDto>
-                    {new EditorErrorDetailsDto("Hub context does not contain auth token")},
-                HttpCode = (int)HttpStatusCode.Unauthorized,
-                Header = "Error",
-                Message = "User is not authorized",
-                IsSuccessful = false
+                errors = new List<EditorErrorDetailsDto> { new ("Hub context does not contain auth token") },
+                httpCode = (int)HttpStatusCode.Unauthorized,
+                header = "Error",
+                message = "User is not authorized",
+                isSuccessful = false
             };
         }
 
         public static BaseEditorResponseDto CreateBadRequestResponse() {
             return new BaseEditorResponseDto {
-                HttpCode = (int)HttpStatusCode.BadRequest, 
-                Header = "Bad request",
-                IsSuccessful = false
+                httpCode = (int)HttpStatusCode.BadRequest, 
+                header = "Bad request",
+                isSuccessful = false
             };
         }
 
         public static BaseEditorResponseDto CreateNoContentResponse() {
             return new BaseEditorResponseDto {
-                HttpCode = (int)HttpStatusCode.NoContent, 
-                Header = "Ok", 
-                IsSuccessful = true
+                httpCode = (int)HttpStatusCode.NoContent, 
+                header = "Ok", 
+                isSuccessful = true
             };
         }
 
-        protected static BaseEditorResponseDto CreateSuccessfulResult() {
+        public static BaseEditorResponseDto CreateSuccessfulResult() {
             return new BaseEditorResponseDto {
-                HttpCode = (int)HttpStatusCode.OK, 
-                Header = "Ok",
-                IsSuccessful = true
+                httpCode = (int)HttpStatusCode.OK, 
+                header = "Ok",
+                isSuccessful = true
             };
         }
     }

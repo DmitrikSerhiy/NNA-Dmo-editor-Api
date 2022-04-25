@@ -1,6 +1,5 @@
 ﻿using API.Features.Editor.Hubs;
 using FluentAssertions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.SignalR;
 using Model.DTOs.Editor;
 using Model.DTOs.Editor.Response;
@@ -34,11 +33,15 @@ namespace Tests.EditorHubTests {
             SetupHubContext();
 
             //Act
-            Func<Task<BaseEditorResponseDto>> act = async () => await Subject.LoadShortDmo(null);
+            Func<Task<object>> act = async () => await Subject.LoadShortDmo(null);
             var response = await act.Invoke();
 
             //Assert
-            response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateBadRequestResponse());
+            response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateBadRequestResponse(),
+                config => config
+                    .Excluding(exclude => exclude.errors)
+                    .Excluding(exclude => exclude.warnings)
+                    .Excluding(exclude => exclude.message));
         }
 
         [Fact]
@@ -55,11 +58,13 @@ namespace Tests.EditorHubTests {
             Subject.Context = hubContext.Object;
 
             //Act
-            Func<Task<BaseEditorResponseDto>> act = async () => await Subject.LoadShortDmo(DmoDto);
+            Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
             var response = await act.Invoke();
 
             //Assert
-            response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateFailedAuthResponse());
+            response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateFailedAuthResponse(),
+                config => config
+                    .Excluding(exclude => exclude.warnings));
         }
 
         [Fact]
@@ -75,18 +80,29 @@ namespace Tests.EditorHubTests {
             SetupHubContext();
 
             //Act
-            Func<Task<BaseEditorResponseDto>> act = async () => await Subject.LoadShortDmo(DmoDto);
+            Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
             var response = await act.Invoke();
 
             //Assert
-            response.HttpCode.Should().Be(StatusCodes.Status422UnprocessableEntity);
+            response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateFailedValidationResponse(new List<Tuple<string, string>>()),
+                config => config
+                    .Including(include => include.httpCode)
+                    .Including(include => include.header)
+                    .Including(include => include.message)
+                    .Including(include => include.isSuccessful));
         }
 
         [Fact]
         public async Task ShouldReturnShortDmoTest() {
             //Arrange
             SetMockAndVariables();
-            var loadedDmo = new LoadedShortDmoDto();
+            var loadedDmo = new LoadedShortDmoDto {
+                id = "test dmo id",
+                name = "test dmo name",
+                dmoStatus = 1,
+                movieTitle = "Some test movie",
+                shortComment = "Short comment"
+            };
 
             EditorServiceMock.Setup(esm => esm.LoadShortDmo(DmoDto, UserId)).ReturnsAsync(loadedDmo);
             Subject = new EditorHub(
@@ -97,11 +113,18 @@ namespace Tests.EditorHubTests {
             SetupHubContext();
 
             //Act
-            Func<Task<BaseEditorResponseDto>> act = async () => await Subject.LoadShortDmo(DmoDto);
+            Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
             var response = await act.Invoke();
 
             //Assert
-            response.Should().BeEquivalentTo(EditorResponseDto<LoadedShortDmoDto>.Ok(loadedDmo));
+            response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateSuccessfulResult(),
+                config => config
+                    .Excluding(exclude => exclude.errors)
+                    .Excluding(exclude => exclude.warnings)
+                    .Excluding(exclude => exclude.message));
+
+            // ReSharper disable once PossibleNullReferenceException
+            response.GetType().GetProperty("data").GetValue(response).Should().BeEquivalentTo(loadedDmo);
         }
 
         [Fact]
@@ -120,11 +143,13 @@ namespace Tests.EditorHubTests {
             SetupHubContext();
 
             //Act
-            Func<Task<BaseEditorResponseDto>> act = async () => await Subject.LoadShortDmo(DmoDto);
+            Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
             var response = await act.Invoke();
 
             //Assert
-            response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateInternalServerErrorResponse($"{LoadShortDmoException.CustomMessage} {exceptionMessage}"));
+                response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateInternalServerErrorResponse($"{LoadShortDmoException.CustomMessage} {exceptionMessage}"),
+                    config => config
+                        .Excluding(exclude => exclude.warnings));
         }
     }
 }

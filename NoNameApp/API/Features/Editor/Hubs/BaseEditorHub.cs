@@ -90,31 +90,31 @@ namespace API.Features.Editor.Hubs {
                 new Tuple<string, string>(err.ErrorMessage, err.PropertyName)).ToList());
 
             return new {
-                httpCode = result.HttpCode,
-                header = result.Header,
-                message = result.Message,
-                isSuccessful = result.IsSuccessful,
-                warnings = result.Warnings.Select(warning => new { fieldName = warning.FieldName, validationMessage = warning.ValidationMessage }).ToArray()
+                result.httpCode,
+                result.header,
+                result.message,
+                result.isSuccessful,
+                warnings = result.warnings.Select(warning => new { fieldName = warning.FieldName, validationMessage = warning.ValidationMessage }).ToArray()
             };
         }
 
         protected static object BadRequest() {
             var result = BaseEditorResponseDto.CreateBadRequestResponse();
             return new {
-                httpCode = result.HttpCode,
-                header = result.Header,
-                isSuccessful = result.IsSuccessful
+                result.httpCode,
+                result.header,
+                result.isSuccessful
             };
         }
 
         protected static object NotAuthorized() {
             var result = BaseEditorResponseDto.CreateFailedAuthResponse();
             return new {
-                header = result.Header,
-                message = result.Message,
-                isSuccessful = result.IsSuccessful,
-                httpCode = result.HttpCode,
-                errors = new object[] { new { errorMessage = result.Errors.First().ErrorMessage } },
+                result.header,
+                result.message,
+                result.isSuccessful,
+                result.httpCode,
+                errors = new object[] { new { result.errors.First().errorMessage } },
             };
         }
 
@@ -122,29 +122,29 @@ namespace API.Features.Editor.Hubs {
             var result = BaseEditorResponseDto.CreateInternalServerErrorResponse(errorMessage);
             return new {
                 errors = new object[] { new { errorMessage }},
-                header = result.Header,
-                message = result.Message,
-                httpCode = result.HttpCode,
-                isSuccessful = result.IsSuccessful
+                result.header,
+                result.message,
+                result.httpCode,
+                result.isSuccessful
             };
         }
 
         protected static object NoContent() {
             var result = BaseEditorResponseDto.CreateNoContentResponse();
             return new {
-                header = result.Header,
-                httpCode = result.HttpCode,
-                isSuccessful = result.IsSuccessful
+                result.header,
+                result.httpCode,
+                result.isSuccessful
             };
         }
 
         protected static object Ok<T>(T data) where T: BaseDto {
             var result = EditorResponseDto<T>.Ok(data);
             return new {
-                data = result.Data,
-                header = result.Header,
-                httpCode = result.HttpCode,
-                isSuccessful = result.IsSuccessful
+                result.data,
+                result.header,
+                result.httpCode,
+                result.isSuccessful
             };
         }
     }

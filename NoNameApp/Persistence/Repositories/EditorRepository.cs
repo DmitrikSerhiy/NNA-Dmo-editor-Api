@@ -36,7 +36,7 @@ namespace Persistence.Repositories {
         #endregion
 
         public EditorRepository(IConfiguration configuration) {
-            if(configuration == null) throw new ArgumentNullException(nameof(configuration));
+            if (configuration == null) throw new ArgumentNullException(nameof(configuration));
             _dapperConnectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
