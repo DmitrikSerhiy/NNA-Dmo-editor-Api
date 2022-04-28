@@ -11,10 +11,10 @@ namespace Persistence.Repositories {
     // ReSharper disable once UnusedMember.Global
     internal sealed class UserRepository : IUserRepository {
         private readonly NnaContext _context;
-        public UserRepository(UnitOfWork unitOfWork) {
-            if (unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
+        public UserRepository(ContextOrchestrator contextOrchestrator) {
+            if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
-            _context = unitOfWork.Context;
+            _context = contextOrchestrator.Context;
         }
 
         public void UpdateUser(NnaUser user) {

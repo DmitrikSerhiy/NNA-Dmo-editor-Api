@@ -11,10 +11,10 @@ namespace Persistence.Repositories {
     internal sealed class DmosRepository : IDmosRepository {
 
         private readonly NnaContext _context;
-        public DmosRepository(UnitOfWork unitOfWork) {
-            if (unitOfWork == null) throw new ArgumentNullException(nameof(unitOfWork));
+        public DmosRepository(ContextOrchestrator contextOrchestrator) {
+            if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
-            _context = unitOfWork.Context;
+            _context = contextOrchestrator.Context;
         }
 
         public async Task<List<Dmo>> GetAll(Guid userId) {

@@ -12,9 +12,9 @@ namespace Persistence {
                 .InstancePerLifetimeScope();
 
             builder
-                .RegisterType<UnitOfWork>()
-                .As<IUnitOfWork>()
-                .InstancePerLifetimeScope();
+                .RegisterType<ContextOrchestrator>()
+                .As<IContextOrchestrator>()
+                .InstancePerRequest();
         }
     }
 }

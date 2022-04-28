@@ -5,14 +5,15 @@ using Model.Interfaces;
 using Serilog;
 
 namespace Persistence {
-    public class UnitOfWork : IUnitOfWork {
+    // Unit of work
+    public class ContextOrchestrator : IContextOrchestrator {
         private readonly NnaContext _context;
         private bool _disposed;
         // ReSharper disable once UnusedMember.Global
-        public UnitOfWork() { }
+        public ContextOrchestrator() { }
 
         // ReSharper disable once UnusedMember.Global
-        public UnitOfWork(NnaContext context) {
+        public ContextOrchestrator(NnaContext context) {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
@@ -68,7 +69,7 @@ namespace Persistence {
             GC.SuppressFinalize(this);
         }
 
-        ~UnitOfWork() {
+        ~ContextOrchestrator() {
             Dispose(false);
         }
     }

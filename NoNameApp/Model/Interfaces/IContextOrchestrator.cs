@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 
 namespace Model.Interfaces {
-    public interface IUnitOfWork : IDisposable {
+    public interface IContextOrchestrator : IDisposable {
         Task CommitChangesAsync();
         bool HasChanges();
     }

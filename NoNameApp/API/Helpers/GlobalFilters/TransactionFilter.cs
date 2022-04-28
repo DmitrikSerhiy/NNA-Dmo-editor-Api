@@ -6,17 +6,17 @@ using Model.Interfaces;
 namespace API.Helpers.GlobalFilters
 {
     public class TransactionFilter : IAsyncActionFilter {
-        private readonly IUnitOfWork _unitOfWork;
-        public TransactionFilter(IUnitOfWork unitOfWork) {
-            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+        private readonly IContextOrchestrator _contextOrchestrator;
+        public TransactionFilter(IContextOrchestrator contextOrchestrator) {
+            _contextOrchestrator = contextOrchestrator ?? throw new ArgumentNullException(nameof(contextOrchestrator));
         }
 
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next) {
             //before each action
             var executedContext = await next();
             //after each action
-            if (executedContext.Exception == null && _unitOfWork.HasChanges()) {
-                await _unitOfWork.CommitChangesAsync();
+            if (executedContext.Exception == null && _contextOrchestrator.HasChanges()) {
+                await _contextOrchestrator.CommitChangesAsync();
             }
         }
     }
