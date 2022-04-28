@@ -126,5 +126,32 @@ namespace API.Features.Editor.Hubs {
                 await SendBackErrorResponse(InternalServerError(ex.Message));
             }
         }
+
+        public async Task SetBeatsId(SetBeatsIdDto update) {
+            if (update == null) {
+                await SendBackErrorResponse(BadRequest());
+                return;
+            }
+            
+            if (!Context.ContainsUser()) {
+                await SendBackErrorResponse(NotAuthorized());
+                return;
+            }
+            
+            var validationResult = await new SetBeatsIdDtoValidator().ValidateAsync(update);
+            if (!validationResult.IsValid) {
+                await SendBackErrorResponse(NotValid(validationResult));
+                return;
+            }
+            
+            try {
+                await EditorService.SetBeatsId(update, Context.GetCurrentUserId().GetValueOrDefault());
+            }
+            catch (UpdateDmoBeatsAsJsonException ex) {
+                Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
+                await SendBackErrorResponse(InternalServerError(ex.Message));
+            }
+        }
     }
 }

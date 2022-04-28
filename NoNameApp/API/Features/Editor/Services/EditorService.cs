@@ -116,5 +116,8 @@ namespace API.Features.Editor.Services {
             }
         }
 
+        public Task SetBeatsId(SetBeatsIdDto dmoDto, Guid userId) {
+            throw new NotImplementedException();
+        }
     }
 }
