@@ -14,7 +14,7 @@ namespace Persistence {
             builder
                 .RegisterType<ContextOrchestrator>()
                 .As<IContextOrchestrator>()
-                .InstancePerRequest();
+                .InstancePerLifetimeScope();
         }
     }
 }

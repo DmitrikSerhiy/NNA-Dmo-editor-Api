@@ -4,6 +4,8 @@ using Model.Interfaces;
 using Moq;
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using API.Features.Account.Services;
 using API.Helpers;
 using Microsoft.AspNetCore.Hosting;
@@ -17,13 +19,15 @@ namespace Tests.EditorHubTests
         protected Mock<IEditorService> EditorServiceMock { get; private set; }
         protected Mock<IWebHostEnvironment> EnvironmentMock { get; private set; }
         protected Mock<ClaimsValidator> ClaimsValidatorMock { get; private set; }
-        
         protected Mock<IUserRepository> UserRepositoryMock { get; private set; }
+
+        protected Mock<IHubCallerClients<IEditorClient>> EditorClientsMock { get; private set; }
 
 
         protected string UserName { get; } = "UserName";
         protected string UserEmail { get; } = "User@gmail.com";
         protected Guid UserId { get; } = Guid.NewGuid();
+        
 
         protected void SetupConstructorMocks() {
             EditorServiceMock = new Mock<IEditorService>();
@@ -51,6 +55,16 @@ namespace Tests.EditorHubTests
             var items = new Dictionary<object, object> { { "user", authProvider } };
             hubContext.Setup(hm => hm.Items).Returns(items);
             Subject.Context = hubContext.Object;
+            
+            EditorClientsMock = new Mock<IHubCallerClients<IEditorClient>>();
+            EditorClientsMock.Setup(client => client.Caller).Returns(new Mock<EditorClient>().Object);
+            Subject.Clients = EditorClientsMock.Object;
+        }
+        
+        public class EditorClient : IEditorClient {
+            public virtual Task OnServerError(object notificationBody) {
+                return Task.CompletedTask;
+            }
         }
     }
 }

@@ -73,16 +73,21 @@ namespace API.Features.Editor.Hubs {
         }
 
 
-        public async Task<object> UpdateShortDmo(UpdateShortDmoDto dmoDto) {
-            if (dmoDto == null) return BadRequest();
+        public async Task UpdateShortDmo(UpdateShortDmoDto dmoDto) {
+            if (dmoDto == null) {
+                await SendBackErrorResponse(BadRequest());
+                return;
+            }
 
             if (!Context.ContainsUser()) {
-                return NotAuthorized();
+                await SendBackErrorResponse(NotAuthorized());
+                return;
             }
 
             var validationResult = await new UpdateShortDmoDtoValidator().ValidateAsync(dmoDto);
             if (!validationResult.IsValid) {
-                return NotValid(validationResult);
+                await SendBackErrorResponse(validationResult);
+                return;
             }
 
             try {
@@ -91,22 +96,25 @@ namespace API.Features.Editor.Hubs {
             catch (UpdateShortDmoException ex) {
                 Log.Error(ex.InnerException, ex.Message);
                 await DisconnectUser();
-                return InternalServerError(ex.Message);
+                await SendBackErrorResponse(InternalServerError(ex.Message));
             }
-            
-            return NoContent();
         }
         
-        public async Task<object> UpdateDmosJson(UpdateDmoBeatsAsJsonDto update) {
-            if (update == null) return BadRequest();
+        public async Task UpdateDmosJson(UpdateDmoBeatsAsJsonDto update) {
+            if (update == null) {
+                await SendBackErrorResponse(BadRequest());
+                return;
+            }
 
             if (!Context.ContainsUser()) {
-                return NotAuthorized();
+                await SendBackErrorResponse(NotAuthorized());
+                return;
             }
 
             var validationResult = await new UpdateDmoBeatsAsJsonDtoValidator().ValidateAsync(update);
             if (!validationResult.IsValid) {
-                return NotValid(validationResult);
+                await SendBackErrorResponse(NotValid(validationResult));
+                return;
             }
 
             try {
@@ -115,10 +123,8 @@ namespace API.Features.Editor.Hubs {
             catch (UpdateDmoBeatsAsJsonException ex) {
                 Log.Error(ex.InnerException, ex.Message);
                 await DisconnectUser();
-                return InternalServerError(ex.Message);
+                await SendBackErrorResponse(InternalServerError(ex.Message));
             }
-
-            return NoContent();
         }
     }
 }

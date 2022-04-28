@@ -20,7 +20,7 @@ using Model.Interfaces.Repositories;
 
 namespace API.Features.Editor.Hubs {
     [Authorize]
-    public class BaseEditorHub : Hub {
+    public class BaseEditorHub : Hub<IEditorClient> {
         protected readonly IEditorService EditorService;
         protected readonly IWebHostEnvironment WebHostEnvironment;
         
@@ -83,6 +83,10 @@ namespace API.Features.Editor.Hubs {
             });
             await _userRepository.SyncContextImmediatelyAsync();
             Context.LogoutUser();
+        }
+
+        public virtual async Task SendBackErrorResponse(object response) {
+            await Clients.Caller.OnServerError(response);
         }
         
         protected static object NotValid(ValidationResult validationResult) {
