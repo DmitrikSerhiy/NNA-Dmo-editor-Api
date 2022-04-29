@@ -18,5 +18,7 @@ namespace Model.Entities {
         public Guid NnaUserId { get; set; }
 
         public ICollection<DmoCollectionDmo> DmoCollectionDmos { get; set; }
+        public ICollection<Beat> Beats { get; set; }
+
     }
 }

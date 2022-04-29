@@ -8,6 +8,12 @@ namespace Persistence.Configuration {
                 .HasOne(d => d.NnaUser)
                 .WithMany(dc => dc.Dmos)
                 .HasForeignKey(d => d.NnaUserId);
+            
+            modelBuilder.Entity<Dmo>()
+                .HasMany(d => d.Beats)
+                .WithOne(d => d.Dmo)
+                .HasForeignKey(d => d.DmoId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

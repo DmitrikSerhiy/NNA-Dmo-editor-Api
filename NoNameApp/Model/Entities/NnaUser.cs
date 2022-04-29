@@ -22,5 +22,6 @@ namespace Model.Entities {
         public string AuthProviders { get; set; }
         public ICollection<Dmo> Dmos { get; set; }
         public ICollection<DmoCollection> DmoCollections { get; set; }
+        public ICollection<Beat> Beats { get; set; }
     }
 }

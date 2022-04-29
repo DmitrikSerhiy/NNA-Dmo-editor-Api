@@ -12,9 +12,10 @@ namespace Persistence {
         public DbSet<DmoCollection> DmoCollections { get; set; }
         
         public DbSet<NnaLogin> Logins { get; set; }
-        
         public DbSet<EditorConnection> EditorConnections { get; set; }
         public DbSet<NnaToken> Tokens { get; set; }
+        
+        public DbSet<Beat> Beats { get; set; }
 
         public NnaContext() { }
 
@@ -28,6 +29,7 @@ namespace Persistence {
             DmoUserDmoCollectionConfiguration.Configure(modelBuilder);
             UsersTokensConfiguration.Configure(modelBuilder);
             EditorConnectionConfiguration.Configure(modelBuilder);
+            BeatConfiguration.Configure(modelBuilder);
         }
     }
 }
