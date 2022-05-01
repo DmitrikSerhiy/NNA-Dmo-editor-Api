@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Model.DTOs.Beats;
+using Model.DTOs.Editor;
 using Model.Entities;
 using Model.Mappers;
 
@@ -16,6 +17,11 @@ namespace API.Features.Beats.Mappers
                 .ForMember(udc => udc.BeatsJson, dcd => dcd
                     .MapFrom(dd => dd.BeatsJson))
                 .ReverseMap();
+
+            CreateMap<Beat, CreateBeatDto>()
+                .ForMember(b => b.DmoId, bb => bb.MapFrom(bbb => bbb.DmoId.ToString()))
+                .ReverseMap();
+
         }
     }
 }

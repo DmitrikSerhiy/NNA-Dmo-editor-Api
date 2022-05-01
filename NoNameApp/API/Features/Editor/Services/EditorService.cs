@@ -116,8 +116,57 @@ namespace API.Features.Editor.Services {
             }
         }
 
+        public async Task CreateBeat(CreateBeatDto beatDto, Guid userId) {
+            if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+            if (beatDto == null) throw new ArgumentNullException(nameof(beatDto));
+            
+            var newBeat = _mapper.Map<Beat>(beatDto);
+            newBeat.UserId = userId;
+            newBeat.BeatTimeView = BeatTimeConverter.DefaultTimeView;
+            newBeat.BeatTime = 0;
+            newBeat.Description = "";
+            
+            bool isCreated;
+            
+            try {
+                isCreated = await _editorRepository.InsertNewBeatAsync(newBeat);
+            }
+            catch (Exception ex) {
+                throw new InsertNewBeatException(ex, newBeat.DmoId, userId);
+            }
+
+            if (!isCreated) {
+                throw new InsertNewBeatException(newBeat.DmoId, userId);
+            }
+        }
+        
+        public async Task RemoveBeat(RemoveBeatDto beatDto, Guid userId) {
+            if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+            if (beatDto == null) throw new ArgumentNullException(nameof(beatDto));
+            
+            if (!Guid.TryParse(beatDto.DmoId, out var dmoId)) {
+                throw new DeleteBeatException($"Failed to parse dmoId to GUID: {beatDto.DmoId}");
+            }
+            
+            bool isDeleted;
+            try {
+                isDeleted = Guid.TryParse(beatDto.Id, out var beatId)
+                    ? await _editorRepository.DeleteBeatByIdAsync(beatId, dmoId, userId)
+                    : await _editorRepository.DeleteBeatByTempIdAsync(beatDto.Id, dmoId, userId);
+            }
+            catch (Exception ex) {
+                throw new DeleteBeatException(ex, dmoId, userId);
+            }
+            
+            if (!isDeleted) {
+                throw new DeleteBeatException(dmoId, userId);
+            }
+        }
+        
+        
         public Task SetBeatsId(SetBeatsIdDto dmoDto, Guid userId) {
             throw new NotImplementedException();
         }
+
     }
 }

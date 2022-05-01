@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Features.Editor.Hubs;
-using FluentAssertions;
 using Microsoft.AspNetCore.SignalR;
 using Model.DTOs.Editor;
-using Model.DTOs.Editor.Response;
 using Model.Exceptions.Editor;
 using Moq;
 using Xunit;

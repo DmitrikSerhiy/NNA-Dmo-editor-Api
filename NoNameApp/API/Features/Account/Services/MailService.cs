@@ -42,7 +42,7 @@ namespace API.Features.Account.Services {
                 response = await _sendGridClient.SendEmailAsync(message);
             }
             catch (Exception ex) {
-                var responseString = await response?.Body?.ReadAsStringAsync() ?? "Response is null";
+                var responseString = await response?.Body?.ReadAsStringAsync()! ?? "Response is null";
                 Log.Error(ex, responseString);
                 return false;
             }
@@ -61,7 +61,7 @@ namespace API.Features.Account.Services {
                 response = await _sendGridClient.SendEmailAsync(message);
             }
             catch (Exception ex) {
-                var responseString = await response?.Body?.ReadAsStringAsync() ?? "Response is null";
+                var responseString = await response?.Body?.ReadAsStringAsync()! ?? "Response is null";
                 Log.Error(ex, responseString);
                 return false;
             }

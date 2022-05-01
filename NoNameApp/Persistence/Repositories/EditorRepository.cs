@@ -30,6 +30,18 @@ namespace Persistence.Repositories {
         private const string UpdateBeatsJsonScript =
             "UPDATE Dmos set BeatsJson = @jsonBeats, HasBeats = @HasBeats where Id = @id and NnaUserId = @nnaUserId";
 
+        private const string CreateBeatScript =
+            "INSERT INTO [dbo].[Beats] ([Id],[DateOfCreation],[TempId],[BeatTime],[BeatTimeView],[Description],[Order],[UserId],[DmoId]) " +
+            "VALUES(@id, @dateOfCreation, @tempId, @beatTime, @beatTimeView, @description, @order, @userId, @dmoId)";
+
+        private const string DeleteBeatByIdScript =
+            "DELETE FROM [dbo].[Beats]" +
+            "WHERE Id = @id AND DmoId = @dmoId AND UserId = @userId";
+        
+        private const string DeleteBeatByTempIdScript =
+            "DELETE FROM [dbo].[Beats]" +
+            "WHERE TempId = @tempId AND DmoId = @dmoId AND UserId = @userId";
+        
         #endregion
 
         public EditorRepository(IConfiguration configuration) {
@@ -84,6 +96,41 @@ namespace Persistence.Repositories {
             return result >= 1;
         }
 
+        public async Task<bool> InsertNewBeatAsync(Beat beat) {
+            var result = await ExecuteAsync(CreateBeatScript, new {
+                id = beat.Id,
+                dateOfCreation = beat.DateOfCreation,
+                tempId = beat.TempId,
+                beatTime = beat.BeatTime,
+                beatTimeView = beat.BeatTimeView,
+                description = beat.Description,
+                order = beat.Order,
+                userId = beat.UserId,
+                dmoId = beat.DmoId
+            });
+
+            return result >= 1;
+        }
+        
+        public async Task<bool> DeleteBeatByIdAsync(Guid beatId, Guid dmoId, Guid userId) {
+            var result = await ExecuteAsync(DeleteBeatByIdScript, new {
+                id = beatId,
+                dmoId = dmoId,
+                userId = userId
+            });
+
+            return result >= 1;
+        }
+        
+        public async Task<bool> DeleteBeatByTempIdAsync(string beatTempId, Guid dmoId, Guid userId) {
+            var result = await ExecuteAsync(DeleteBeatByTempIdScript, new {
+                tempId = beatTempId,
+                dmoId = dmoId,
+                userId = userId
+            });
+
+            return result >= 1;
+        }
 
         // Asynchronous Processing=true; <-- that's a part of connection string
         // todo: maybe I should migrate to ADO.NET for real async operations here 

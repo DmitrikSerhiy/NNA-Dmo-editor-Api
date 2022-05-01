@@ -127,6 +127,65 @@ namespace API.Features.Editor.Hubs {
             }
         }
 
+
+
+        public async Task CreateBeat(CreateBeatDto beatDto) {
+            if (beatDto == null) {
+                await SendBackErrorResponse(BadRequest());
+                return;
+            }
+            
+            if (!Context.ContainsUser()) {
+                await SendBackErrorResponse(NotAuthorized());
+                return;
+            }
+            
+            var validationResult = await new CreateBeatDtoValidator().ValidateAsync(beatDto);
+            if (!validationResult.IsValid) {
+                await SendBackErrorResponse(NotValid(validationResult));
+                return;
+            }
+
+            try {
+                await EditorService.CreateBeat(beatDto, Context.GetCurrentUserId().GetValueOrDefault());
+            }
+            catch (InsertNewBeatException ex) {
+                Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
+                await SendBackErrorResponse(InternalServerError(ex.Message));
+            }
+        }
+
+        public async Task RemoveBeat(RemoveBeatDto beatDto) {
+            if (beatDto == null) {
+                await SendBackErrorResponse(BadRequest());
+                return;
+            }
+            
+            if (!Context.ContainsUser()) {
+                await SendBackErrorResponse(NotAuthorized());
+                return;
+            }
+            
+            var validationResult = await new RemoveBeatDtoValidator().ValidateAsync(beatDto);
+            if (!validationResult.IsValid) {
+                await SendBackErrorResponse(NotValid(validationResult));
+                return;
+            }
+
+            try {
+                await EditorService.RemoveBeat(beatDto, Context.GetCurrentUserId().GetValueOrDefault());
+            }
+            catch (DeleteBeatException ex) {
+                Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
+                await SendBackErrorResponse(InternalServerError(ex.Message));
+            }
+        }
+        
+        
+        
+        
         public async Task SetBeatsId(SetBeatsIdDto update) {
             if (update == null) {
                 await SendBackErrorResponse(BadRequest());
