@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -30,11 +31,18 @@ namespace API.Features.Beats.Controllers {
 
 
         [HttpGet]
-        [Route("initial/{dmoId}")]
-        public async Task<DmoWithBeatsJsonDto> InitialLoad(Guid dmoId) {
+        [Route("initial/json/{dmoId}")]
+        public async Task<DmoWithBeatsJsonDto> InitialLoadAsJson(Guid dmoId) {
             var dmo = await _dmosRepository.GetDmoWithBeatsJson(_authenticatedIdentityProvider.AuthenticatedUserId, dmoId);
 
             return _mapper.Map<DmoWithBeatsJsonDto>(dmo);
+        }
+        
+        [HttpGet]
+        [Route("initial/array/{dmoId}")]
+        public async Task<IActionResult> InitialLoadAsArray(Guid dmoId) {
+            var beats = await _dmosRepository.GetBeatsForDmo(_authenticatedIdentityProvider.AuthenticatedUserId, dmoId);
+            return Ok(beats.Select(_mapper.Map<BeatDto>).ToArray());
         }
     }
 }

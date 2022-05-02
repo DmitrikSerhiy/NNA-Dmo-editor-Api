@@ -48,5 +48,12 @@ namespace Persistence.Repositories {
                 .AsNoTracking()
                 .FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId);
         }
+
+        public async Task<List<Beat>> GetBeatsForDmo(Guid userId, Guid dmoId) {
+            return await _context.Beats
+                .AsNoTracking()
+                .Where(b => b.DmoId == dmoId && b.UserId == userId)
+                .ToListAsync();
+        }
     }
 }

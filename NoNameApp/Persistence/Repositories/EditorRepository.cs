@@ -19,7 +19,7 @@ namespace Persistence.Repositories {
             "VALUES(@id, @dateOfCreation, @name, @movieTitle, @dmoStatus, @shortComment, @nnaUserId, @hasBeats)";
 
         private const string LoadShortDmoScript =
-            "SELECT Id, Name, MovieTitle, ShortComment, DmoStatus, HasBeats FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
+            "SELECT Id, Name, MovieTitle, ShortComment, DmoStatus FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string LoadDmoScript =
             "SELECT * FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";

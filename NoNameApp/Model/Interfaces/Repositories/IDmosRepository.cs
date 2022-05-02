@@ -10,5 +10,6 @@ namespace Model.Interfaces.Repositories {
         Task<Dmo> GetDmo(Guid userId, Guid? dmoId);
         void DeleteDmo(Dmo dmo);
         Task<Dmo> GetDmoWithBeatsJson(Guid userId, Guid dmoId);
+        Task<List<Beat>> GetBeatsForDmo(Guid userId, Guid dmoId);
     }
 }
