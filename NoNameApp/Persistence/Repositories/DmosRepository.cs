@@ -34,12 +34,14 @@ namespace Persistence.Repositories {
             return await _context.Dmos
                 .Include(d => d.DmoCollectionDmos)
                     .ThenInclude(dd => dd.DmoCollection)
+                .Include(d => d.Beats)
                 .FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId.Value);
         }
 
         public void DeleteDmo(Dmo dmo) {
             if (dmo == null) throw new ArgumentNullException(nameof(dmo));
             dmo.DmoCollectionDmos.Clear();
+            _context.Beats.RemoveRange(dmo.Beats);
             _context.Dmos.Remove(dmo);
         }
 
