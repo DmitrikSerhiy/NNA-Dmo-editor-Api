@@ -182,6 +182,34 @@ namespace API.Features.Editor.Hubs {
                 await SendBackErrorResponse(InternalServerError(ex.Message));
             }
         }
+
+
+        public async Task UpdateBeat(UpdateBeatDto update) {
+            if (update == null) {
+                await SendBackErrorResponse(BadRequest());
+                return;
+            }
+            
+            if (!Context.ContainsUser()) {
+                await SendBackErrorResponse(NotAuthorized());
+                return;
+            }
+            
+            var validationResult = await new UpdateBeatDtoValidator().ValidateAsync(update);
+            if (!validationResult.IsValid) {
+                await SendBackErrorResponse(NotValid(validationResult));
+                return;
+            }
+
+            try {
+                await EditorService.UpdateBeat(update, Context.GetCurrentUserId().GetValueOrDefault());
+            }
+            catch (UpdateBeatException ex) {
+                Log.Error(ex.InnerException, ex.Message);
+                await DisconnectUser();
+                await SendBackErrorResponse(InternalServerError(ex.Message));
+            }
+        }
         
         
         

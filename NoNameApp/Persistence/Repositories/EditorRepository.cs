@@ -42,6 +42,16 @@ namespace Persistence.Repositories {
             "DELETE FROM [dbo].[Beats]" +
             "WHERE TempId = @tempId AND DmoId = @dmoId AND UserId = @userId";
         
+        private const string UpdateBeatByIdScript =
+            "UPDATE [dbo].[Beats]" +
+            "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description " +
+            "WHERE Id = @id AND UserId = @userId";
+        
+        private const string UpdateBeatByTempIdScript =
+            "UPDATE [dbo].[Beats]" +
+            "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description " +
+            "WHERE TempId = @tempId AND UserId = @userId";
+        
         #endregion
 
         public EditorRepository(IConfiguration configuration) {
@@ -110,6 +120,30 @@ namespace Persistence.Repositories {
             });
 
             return result >= 1;
+        }
+
+        public async Task<bool> UpdateBeatByIdAsync(Beat beat, Guid beatId) {
+            var result = await ExecuteAsync(UpdateBeatByIdScript, new {
+                beatTime = beat.BeatTime,
+                beatTimeView = beat.BeatTimeView,
+                description = beat.Description,
+                id = beatId,
+                userId = beat.UserId
+            });
+
+            return result >= 1;
+        }
+
+        public async Task<bool> UpdateBeatByTempIdAsync(Beat beat, string beatTempId) {
+            var result = await ExecuteAsync(UpdateBeatByTempIdScript, new {
+                beatTime = beat.BeatTime,
+                beatTimeView = beat.BeatTimeView,
+                description = beat.Description,
+                tempId = beatTempId,
+                userId = beat.UserId
+            });
+
+            return result >= 1;        
         }
         
         public async Task<bool> DeleteBeatByIdAsync(Guid beatId, Guid dmoId, Guid userId) {

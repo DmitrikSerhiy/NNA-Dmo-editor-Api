@@ -7,6 +7,9 @@ using Model.Mappers;
 
 namespace API.Features.Beats.Mappers {
     public class BeatsMapper : Profile {
+        
+        private static string DefaultTimeView { get; } = "0:00:00";
+        
         public BeatsMapper() {
             CreateMap<Dmo, DmoWithBeatsJsonDto>()
                 .ForMember(dmo => dmo.DmoId, dmoConfig => dmoConfig.MapFrom(dmoDto => dmoDto.Id.ToString()))
@@ -20,12 +23,19 @@ namespace API.Features.Beats.Mappers {
                 .ForMember(beat => beat.Text, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Description))
                 .ForMember(beat => beat.Time, beatConfig => beatConfig.MapFrom(beatDto => MapFromSeconds(beatDto.BeatTime)))
                 .ReverseMap();
-            
-            CreateMap<Beat, CreateBeatDto>()
+
+            CreateMap<CreateBeatDto, Beat>()
                 .ForMember(beat => beat.DmoId, beatConfig => beatConfig.MapFrom(beatDto => beatDto.DmoId.ToString()))
-                .ReverseMap();
+                .ForMember(beat => beat.BeatTimeView, beatConfig => beatConfig.MapFrom(beatDto => DefaultTimeView))
+                .ForMember(beat => beat.BeatTime, beatConfig => beatConfig.MapFrom(beatDto => 0))
+                .ForMember(beat => beat.Description, beatConfig => beatConfig.MapFrom(beatDto => string.Empty));
+            
+            CreateMap<UpdateBeatDto, Beat>()
+                .ForMember(beat => beat.Description, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Text))
+                .ForMember(beat => beat.BeatTime, beatConfig => beatConfig.MapFrom(beatDto => MapToSeconds(beatDto.Time)))
+                .ForMember(beat => beat.BeatTimeView, beatConfig => beatConfig.MapFrom(beatDto => MapToTimeView(beatDto.Time)));        
         }
-        
+
         private static BeatTimeDto MapFromSeconds(int seconds) {
             var timeSpan = TimeSpan.FromSeconds(seconds);
             return new BeatTimeDto {
@@ -33,6 +43,15 @@ namespace API.Features.Beats.Mappers {
                 Minutes = timeSpan.Minutes,
                 Seconds = timeSpan.Seconds
             };
+        }
+        
+        private static int MapToSeconds(UpdateBeatTimeDto timeDto) {
+            return timeDto.Seconds + (60 * timeDto.Minutes) + (60 * 60 * timeDto.Hours);
+        }
+        
+        private static string MapToTimeView(UpdateBeatTimeDto timeDto) {
+            var timeSpanResult = TimeSpan.FromSeconds(MapToSeconds(timeDto));
+            return timeSpanResult.ToString("g").Substring(0, 7);
         }
     }
 }

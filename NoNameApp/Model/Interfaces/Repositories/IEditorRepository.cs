@@ -10,6 +10,8 @@ namespace Model.Interfaces.Repositories {
         Task<bool> CreateDmoAsync(Dmo dmo);
         Task<bool> UpdateShortDmoAsync(Dmo dmo);
         Task<bool> InsertNewBeatAsync(Beat beat);
+        Task<bool> UpdateBeatByIdAsync(Beat beat, Guid beatId);
+        Task<bool> UpdateBeatByTempIdAsync(Beat beat, string tempBeatId);
         Task<bool> DeleteBeatByIdAsync(Guid beatId, Guid dmoId, Guid userId);
         Task<bool> DeleteBeatByTempIdAsync(string beatTempId, Guid dmoId, Guid userId);
     }

@@ -122,10 +122,7 @@ namespace API.Features.Editor.Services {
             
             var newBeat = _mapper.Map<Beat>(beatDto);
             newBeat.UserId = userId;
-            newBeat.BeatTimeView = BeatTimeConverter.DefaultTimeView;
-            newBeat.BeatTime = 0;
-            newBeat.Description = "";
-            
+
             bool isCreated;
             
             try {
@@ -162,8 +159,31 @@ namespace API.Features.Editor.Services {
                 throw new DeleteBeatException(dmoId, userId);
             }
         }
-        
-        
+
+        public async Task UpdateBeat(UpdateBeatDto update, Guid userId) {
+            if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+            if (update == null) throw new ArgumentNullException(nameof(update));
+            
+            var beatToUpdate = _mapper.Map<Beat>(update);
+            var isBeatIdGuid = Guid.TryParse(update.BeatId, out var beatId);
+            beatToUpdate.UserId = userId;
+            bool isUpdated;
+            
+            try {
+                isUpdated = isBeatIdGuid
+                    ? await _editorRepository.UpdateBeatByIdAsync(beatToUpdate, beatId)
+                    : await _editorRepository.UpdateBeatByTempIdAsync(beatToUpdate, update.BeatId);
+            }
+            catch (Exception ex) {
+                throw new UpdateBeatException(ex, update.BeatId, userId);
+            }
+
+            if (!isUpdated) {
+                throw new UpdateBeatException(update.BeatId, userId);
+            }
+        }
+
+
         public Task SetBeatsId(SetBeatsIdDto dmoDto, Guid userId) {
             throw new NotImplementedException();
         }
