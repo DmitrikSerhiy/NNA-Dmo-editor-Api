@@ -41,8 +41,7 @@ namespace API.Features.Editor.Hubs {
                 return InternalServerError(ex.Message);
             }
         }
-
-
+        
         public async Task<object> CreateDmo(CreateDmoDto dmoDto) {
             if (dmoDto == null) return BadRequest();
 
@@ -71,7 +70,6 @@ namespace API.Features.Editor.Hubs {
                 return InternalServerError(ex.Message);
             }
         }
-
 
         public async Task UpdateShortDmo(UpdateShortDmoDto dmoDto) {
             if (dmoDto == null) {
@@ -126,9 +124,7 @@ namespace API.Features.Editor.Hubs {
                 await SendBackErrorResponse(InternalServerError(ex.Message));
             }
         }
-
-
-
+        
         public async Task CreateBeat(CreateBeatDto beatDto) {
             if (beatDto == null) {
                 await SendBackErrorResponse(BadRequest());
@@ -182,8 +178,7 @@ namespace API.Features.Editor.Hubs {
                 await SendBackErrorResponse(InternalServerError(ex.Message));
             }
         }
-
-
+        
         public async Task UpdateBeat(UpdateBeatDto update) {
             if (update == null) {
                 await SendBackErrorResponse(BadRequest());
@@ -205,36 +200,6 @@ namespace API.Features.Editor.Hubs {
                 await EditorService.UpdateBeat(update, Context.GetCurrentUserId().GetValueOrDefault());
             }
             catch (UpdateBeatException ex) {
-                Log.Error(ex.InnerException, ex.Message);
-                await DisconnectUser();
-                await SendBackErrorResponse(InternalServerError(ex.Message));
-            }
-        }
-        
-        
-        
-        
-        public async Task SetBeatsId(SetBeatsIdDto update) {
-            if (update == null) {
-                await SendBackErrorResponse(BadRequest());
-                return;
-            }
-            
-            if (!Context.ContainsUser()) {
-                await SendBackErrorResponse(NotAuthorized());
-                return;
-            }
-            
-            var validationResult = await new SetBeatsIdDtoValidator().ValidateAsync(update);
-            if (!validationResult.IsValid) {
-                await SendBackErrorResponse(NotValid(validationResult));
-                return;
-            }
-            
-            try {
-                await EditorService.SetBeatsId(update, Context.GetCurrentUserId().GetValueOrDefault());
-            }
-            catch (UpdateDmoBeatsAsJsonException ex) {
                 Log.Error(ex.InnerException, ex.Message);
                 await DisconnectUser();
                 await SendBackErrorResponse(InternalServerError(ex.Message));

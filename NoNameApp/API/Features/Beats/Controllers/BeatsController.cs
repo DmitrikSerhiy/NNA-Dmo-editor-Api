@@ -15,7 +15,7 @@ namespace API.Features.Beats.Controllers {
     [Authorize]
     public class BeatsController : ControllerBase {
 
-        private readonly IDmosRepository _dmosRepository; // todo: move to beats repository with diff lib
+        private readonly IDmosRepository _dmosRepository;
         private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
         private readonly IMapper _mapper;
 
@@ -29,15 +29,6 @@ namespace API.Features.Beats.Controllers {
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
 
-
-        [HttpGet]
-        [Route("initial/json/{dmoId}")]
-        public async Task<DmoWithBeatsJsonDto> InitialLoadAsJson(Guid dmoId) {
-            var dmo = await _dmosRepository.GetDmoWithBeatsJson(_authenticatedIdentityProvider.AuthenticatedUserId, dmoId);
-
-            return _mapper.Map<DmoWithBeatsJsonDto>(dmo);
-        }
-        
         [HttpGet]
         [Route("initial/array/{dmoId}")]
         public async Task<IActionResult> InitialLoadAsArray(Guid dmoId) {

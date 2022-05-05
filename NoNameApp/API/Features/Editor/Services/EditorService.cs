@@ -145,11 +145,16 @@ namespace API.Features.Editor.Services {
                 throw new DeleteBeatException($"Failed to parse dmoId to GUID: {beatDto.DmoId}");
             }
             
+            var isBeatIdGuid = Guid.TryParse(beatDto.Id, out var beatId);
+            var beat = isBeatIdGuid
+                ? _mapper.Map<Beat>(beatDto)
+                : new Beat { TempId = beatDto.Id, DmoId = dmoId, Order = beatDto.Order };
+            
             bool isDeleted;
             try {
-                isDeleted = Guid.TryParse(beatDto.Id, out var beatId)
-                    ? await _editorRepository.DeleteBeatByIdAsync(beatId, dmoId, userId)
-                    : await _editorRepository.DeleteBeatByTempIdAsync(beatDto.Id, dmoId, userId);
+                isDeleted = isBeatIdGuid
+                    ? await _editorRepository.DeleteBeatByIdAsync(beat)
+                    : await _editorRepository.DeleteBeatByTempIdAsync(beat);
             }
             catch (Exception ex) {
                 throw new DeleteBeatException(ex, dmoId, userId);
@@ -182,11 +187,5 @@ namespace API.Features.Editor.Services {
                 throw new UpdateBeatException(update.BeatId, userId);
             }
         }
-
-
-        public Task SetBeatsId(SetBeatsIdDto dmoDto, Guid userId) {
-            throw new NotImplementedException();
-        }
-
     }
 }

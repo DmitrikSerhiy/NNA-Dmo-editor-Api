@@ -5,6 +5,7 @@ using Model.Entities;
 using Model.Enums;
 using Model.Interfaces.Repositories;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Persistence.Repositories {
@@ -25,7 +26,7 @@ namespace Persistence.Repositories {
             "SELECT * FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string UpdateShortDmoScript =
-            "UPDATE Dmos set Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment, DmoStatus = @dmoStatus WHERE Id = @id and NnaUserId = @nnaUserId";
+            "UPDATE Dmos SET Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment, DmoStatus = @dmoStatus WHERE Id = @id and NnaUserId = @nnaUserId";
 
         private const string UpdateBeatsJsonScript =
             "UPDATE Dmos set BeatsJson = @jsonBeats, HasBeats = @HasBeats where Id = @id and NnaUserId = @nnaUserId";
@@ -35,13 +36,13 @@ namespace Persistence.Repositories {
             "VALUES(@id, @dateOfCreation, @tempId, @beatTime, @beatTimeView, @description, @order, @userId, @dmoId)";
 
         private const string DeleteBeatByIdScript =
-            "DELETE FROM [dbo].[Beats]" +
-            "WHERE Id = @id AND DmoId = @dmoId AND UserId = @userId";
+            "DELETE FROM [dbo].[Beats] " +
+            "WHERE Id = @id AND DmoId = @dmoId";
         
         private const string DeleteBeatByTempIdScript =
-            "DELETE FROM [dbo].[Beats]" +
-            "WHERE TempId = @tempId AND DmoId = @dmoId AND UserId = @userId";
-        
+            "DELETE FROM [dbo].[Beats] " +
+            "WHERE TempId = @tempId AND DmoId = @dmoId";
+
         private const string UpdateBeatByIdScript =
             "UPDATE [dbo].[Beats]" +
             "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description " +
@@ -51,6 +52,26 @@ namespace Persistence.Repositories {
             "UPDATE [dbo].[Beats]" +
             "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description " +
             "WHERE TempId = @tempId AND UserId = @userId";
+        
+        private const string ReorderBeatsOnAdd = 
+            "UPDATE [dbo].[Beats] " +
+            "SET [Order] = [Order] + 1 "+
+            "WHERE [Order] >= @currenPosition AND Id != @currentBeatId";
+        
+        private const string ReorderBeatsOnDelete = 
+            "UPDATE [dbo].[Beats] " +
+            "SET [Order] = [Order] - 1  "+
+            "WHERE [Order] >= @nextPosition";
+        
+        private const string LoadBeatForDeleteById = 
+            "SELECT TOP (1) [Id], [Order], [DmoId] " +
+            "FROM [dbo].[Beats] "+
+            "WHERE Id = @id AND [DmoId] = @dmoId";
+        
+        private const string LoadBeatForDeleteByTempId = 
+            "SELECT TOP (1) [Id], [Order], [DmoId] " +
+            "FROM [dbo].[Beats] "+
+            "WHERE TempId = @tempId AND [DmoId] = @dmoId";
         
         #endregion
 
@@ -107,7 +128,7 @@ namespace Persistence.Repositories {
         }
 
         public async Task<bool> InsertNewBeatAsync(Beat beat) {
-            var result = await ExecuteAsync(CreateBeatScript, new {
+            await ExecuteAsync(CreateBeatScript, new {
                 id = beat.Id,
                 dateOfCreation = beat.DateOfCreation,
                 tempId = beat.TempId,
@@ -119,7 +140,12 @@ namespace Persistence.Repositories {
                 dmoId = beat.DmoId
             });
 
-            return result >= 1;
+            await ExecuteAsync(ReorderBeatsOnAdd, new {
+                currenPosition = beat.Order,
+                currentBeatId = beat.Id
+            });
+            
+            return true;
         }
 
         public async Task<bool> UpdateBeatByIdAsync(Beat beat, Guid beatId) {
@@ -146,24 +172,38 @@ namespace Persistence.Repositories {
             return result >= 1;        
         }
         
-        public async Task<bool> DeleteBeatByIdAsync(Guid beatId, Guid dmoId, Guid userId) {
-            var result = await ExecuteAsync(DeleteBeatByIdScript, new {
-                id = beatId,
-                dmoId = dmoId,
-                userId = userId
+        public async Task<bool> DeleteBeatByIdAsync(Beat beat) {
+            await ExecuteAsync(DeleteBeatByIdScript, new {
+                id = beat.Id,
+                dmoId = beat.DmoId
             });
 
-            return result >= 1;
+            await ExecuteAsync(ReorderBeatsOnDelete, new {
+                nextPosition = beat.Order + 1
+            });
+            
+            return true;
         }
         
-        public async Task<bool> DeleteBeatByTempIdAsync(string beatTempId, Guid dmoId, Guid userId) {
-            var result = await ExecuteAsync(DeleteBeatByTempIdScript, new {
-                tempId = beatTempId,
-                dmoId = dmoId,
-                userId = userId
+        public async Task<bool> DeleteBeatByTempIdAsync(Beat beat) {
+            await ExecuteAsync(DeleteBeatByTempIdScript, new {
+                tempId = beat.TempId,
+                dmoId = beat.DmoId
             });
 
-            return result >= 1;
+            await ExecuteAsync(ReorderBeatsOnDelete, new {
+                nextPosition = beat.Order + 1
+            });
+            
+            return true;
+        }
+
+        public async Task<Beat> LoadBeatForDeleteByIdAsync(Guid id, Guid dmoId) {
+            return await QueryAsync<Beat>(LoadBeatForDeleteById, new { id, dmoId });
+        }
+        
+        public async Task<Beat> LoadBeatForDeleteByTempIdAsync(string tempId, Guid dmoId) {
+            return await QueryAsync<Beat>(LoadBeatForDeleteByTempId, new { tempId, dmoId });
         }
 
         // Asynchronous Processing=true; <-- that's a part of connection string
@@ -176,13 +216,33 @@ namespace Persistence.Repositories {
         private async Task<T> QueryAsync<T>(string request, object parameters) {
             await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
-            return await connection. QueryFirstOrDefaultAsync<T>(request, parameters);
+            return await connection.QueryFirstOrDefaultAsync<T>(request, parameters);
         }
 
         private async Task<int> ExecuteAsync(string command, object parameters) {
             await using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
             return await connection.ExecuteAsync(command, parameters);
+        }
+
+        private void ExecuteTransactionAsync(List<(string, object)> commandsWithParameters) {
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+            var transaction = connection.BeginTransaction();
+
+            try {
+                foreach (var commandWithParameters in commandsWithParameters) {
+                    connection.Execute(commandWithParameters.Item1, commandWithParameters.Item2);
+                }
+
+                transaction.Commit();
+            }
+            catch (Exception ex) {
+                transaction.Rollback();
+                throw;
+            }
+
+            //return Task.CompletedTask;
         }
     }
 }

@@ -45,16 +45,11 @@ namespace Persistence.Repositories {
             _context.Dmos.Remove(dmo);
         }
 
-        public async Task<Dmo> GetDmoWithBeatsJson(Guid userId, Guid dmoId) {
-            return await _context.Dmos
-                .AsNoTracking()
-                .FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId);
-        }
-
         public async Task<List<Beat>> GetBeatsForDmo(Guid userId, Guid dmoId) {
             return await _context.Beats
                 .AsNoTracking()
                 .Where(b => b.DmoId == dmoId && b.UserId == userId)
+                .OrderBy(b => b.Order)
                 .ToListAsync();
         }
     }

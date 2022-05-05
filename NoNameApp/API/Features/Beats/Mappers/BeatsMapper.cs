@@ -33,7 +33,9 @@ namespace API.Features.Beats.Mappers {
             CreateMap<UpdateBeatDto, Beat>()
                 .ForMember(beat => beat.Description, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Text))
                 .ForMember(beat => beat.BeatTime, beatConfig => beatConfig.MapFrom(beatDto => MapToSeconds(beatDto.Time)))
-                .ForMember(beat => beat.BeatTimeView, beatConfig => beatConfig.MapFrom(beatDto => MapToTimeView(beatDto.Time)));        
+                .ForMember(beat => beat.BeatTimeView, beatConfig => beatConfig.MapFrom(beatDto => MapToTimeView(beatDto.Time)));
+            
+            CreateMap<RemoveBeatDto, Beat>();
         }
 
         private static BeatTimeDto MapFromSeconds(int seconds) {
