@@ -7,6 +7,7 @@ using Model.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Persistence.Extensions;
 
 namespace Persistence.Repositories {
     // ReSharper disable once UnusedMember.Global
@@ -128,23 +129,25 @@ namespace Persistence.Repositories {
         }
 
         public async Task<bool> InsertNewBeatAsync(Beat beat) {
-            await ExecuteAsync(CreateBeatScript, new {
-                id = beat.Id,
-                dateOfCreation = beat.DateOfCreation,
-                tempId = beat.TempId,
-                beatTime = beat.BeatTime,
-                beatTimeView = beat.BeatTimeView,
-                description = beat.Description,
-                order = beat.Order,
-                userId = beat.UserId,
-                dmoId = beat.DmoId
-            });
+            var commandsWithParameters = new List<(string, object)> {
+                 (CreateBeatScript, new {
+                     id = beat.Id,
+                     dateOfCreation = beat.DateOfCreation,
+                     tempId = beat.TempId,
+                     beatTime = beat.BeatTime,
+                     beatTimeView = beat.BeatTimeView,
+                     description = beat.Description,
+                     order = beat.Order,
+                     userId = beat.UserId,
+                     dmoId = beat.DmoId
+                 }),
+                 (ReorderBeatsOnAdd, new {
+                     currenPosition = beat.Order,
+                     currentBeatId = beat.Id
+                 })
+             };
 
-            await ExecuteAsync(ReorderBeatsOnAdd, new {
-                currenPosition = beat.Order,
-                currentBeatId = beat.Id
-            });
-            
+            await ExecuteTransactionAsync(commandsWithParameters);
             return true;
         }
 
@@ -173,27 +176,32 @@ namespace Persistence.Repositories {
         }
         
         public async Task<bool> DeleteBeatByIdAsync(Beat beat) {
-            await ExecuteAsync(DeleteBeatByIdScript, new {
-                id = beat.Id,
-                dmoId = beat.DmoId
-            });
-
-            await ExecuteAsync(ReorderBeatsOnDelete, new {
-                nextPosition = beat.Order + 1
-            });
+            var commandsWithParameters = new List<(string, object)> {
+                 (DeleteBeatByIdScript, new {
+                     id = beat.Id,
+                     dmoId = beat.DmoId
+                 }),
+                 (ReorderBeatsOnDelete, new {
+                     nextPosition = beat.Order + 1
+                 })
+             };
             
+            await ExecuteTransactionAsync(commandsWithParameters);
             return true;
         }
         
         public async Task<bool> DeleteBeatByTempIdAsync(Beat beat) {
-            await ExecuteAsync(DeleteBeatByTempIdScript, new {
-                tempId = beat.TempId,
-                dmoId = beat.DmoId
-            });
-
-            await ExecuteAsync(ReorderBeatsOnDelete, new {
-                nextPosition = beat.Order + 1
-            });
+            var commandsWithParameters = new List<(string, object)> {
+                (DeleteBeatByTempIdScript, new {
+                    id = beat.Id,
+                    dmoId = beat.DmoId
+                }),
+                (ReorderBeatsOnDelete, new {
+                    nextPosition = beat.Order + 1
+                })
+            };
+            
+            await ExecuteTransactionAsync(commandsWithParameters);
             
             return true;
         }
@@ -225,24 +233,25 @@ namespace Persistence.Repositories {
             return await connection.ExecuteAsync(command, parameters);
         }
 
-        private void ExecuteTransactionAsync(List<(string, object)> commandsWithParameters) {
-            using var connection = new SqlConnection(_connectionString);
-            connection.Open();
-            var transaction = connection.BeginTransaction();
+        private async Task ExecuteTransactionAsync(List<(string, object)> commandsWithParameters) {
+            await using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+            await using var transaction = connection.BeginTransaction();
 
             try {
                 foreach (var commandWithParameters in commandsWithParameters) {
-                    connection.Execute(commandWithParameters.Item1, commandWithParameters.Item2);
+                    var command = connection.CreateCommand();
+                    command.Initialize(commandWithParameters.Item1, commandWithParameters.Item2);
+                    command.Transaction = transaction;
+                    await command.ExecuteNonQueryAsync();
                 }
 
-                transaction.Commit();
+                await transaction.CommitAsync();
             }
-            catch (Exception ex) {
-                transaction.Rollback();
+            catch (Exception) {
+                await transaction.RollbackAsync();
                 throw;
             }
-
-            //return Task.CompletedTask;
         }
     }
 }
