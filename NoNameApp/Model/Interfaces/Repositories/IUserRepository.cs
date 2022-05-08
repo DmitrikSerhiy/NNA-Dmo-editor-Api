@@ -18,5 +18,7 @@ namespace Model.Interfaces.Repositories {
         void RemoveEditorConnection(EditorConnection connection);
         Task RemoveEditorConnectionOnLogout(Guid userId);
         Task SyncContextImmediatelyAsync();
+        void SanitiseEditorConnections();
+        void SanitiseUserTokens();
     }
 }

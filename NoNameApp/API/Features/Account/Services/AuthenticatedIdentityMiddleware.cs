@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Net;
+using System.Net.Mime;
+using System.Security.Authentication;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using API.Helpers;
@@ -28,8 +31,23 @@ namespace API.Features.Account.Services {
                 return;
             }
 
-            var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(context.User.Claims.ToList());
-            authenticatedIdentityProvider.SetAuthenticatedUser(authData);
+            try {
+                var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(context.User.Claims.ToList());
+                authenticatedIdentityProvider.SetAuthenticatedUser(authData);
+            }
+            catch (AuthenticationException ex) {
+                context.Response.Clear();
+                context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                context.Response.ContentType = MediaTypeNames.Application.Json;
+                context.Response.Headers.Add(NnaHeaders.Get(NnaHeaderNames.RedirectToLogin));
+                    
+                await context.Response.WriteAsJsonAsync(new {
+                    fromExceptionMiddleware = true,
+                    title = "Authentication error",
+                    message = ex.Message
+                });
+                return;
+            }
             await _next.Invoke(context);
         }
     }

@@ -50,6 +50,8 @@ namespace API {
             });
             services.AddNnaMvcAndFilters();
 
+            services.AddHostedService<LifetimeEventsManager>();
+
             builder.Populate(services);
             builder.RegisterModule(new GlobalModule());
             builder.RegisterModule(new ApiModule());
@@ -57,7 +59,7 @@ namespace API {
         }
 
         public void Configure(IApplicationBuilder app) {
-            app.UseDeveloperExceptionPage();
+            app.UseDeveloperExceptionPage(); // todo: use only for non-prod env. when global errors handling strategy is ready.
             app.UseHttpsRedirection();
             app.UseHsts();
 

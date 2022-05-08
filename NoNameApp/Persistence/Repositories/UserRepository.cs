@@ -22,10 +22,6 @@ namespace Persistence.Repositories {
             _context.Update(user);
         }
         
-        public async Task SyncContextImmediatelyAsync() {
-            await _context.SaveChangesAsync();
-        }
-        
         public async Task<bool> HasEditorConnectionAsync(Guid userId) {
             return await _context.EditorConnections.AnyAsync(ec => ec.UserId == userId);
         }
@@ -37,7 +33,7 @@ namespace Persistence.Repositories {
         public void RemoveEditorConnection(EditorConnection connection) {
             _context.EditorConnections.Remove(connection);
         }
-
+        
         public async Task RemoveEditorConnectionOnLogout(Guid userId) {
             var connections = await _context.EditorConnections
                 .Where(ec => ec.UserId == userId)
@@ -109,5 +105,23 @@ namespace Persistence.Repositories {
         public async Task<NnaUser> WithId(Guid id) {
             return await _context.ApplicationUsers.FindAsync(id);
         }
+        
+        public async Task SyncContextImmediatelyAsync() {
+            await _context.SaveChangesAsync();
+        }
+        
+        // do not use it in normal app lifecycle
+        public void SanitiseEditorConnections() {
+            var editorConnections = _context.EditorConnections.ToList();
+            _context.RemoveRange(editorConnections);
+            _context.SaveChanges();
+        }
+        
+        public void SanitiseUserTokens() {
+            var tokens = _context.Tokens.ToList();
+            _context.RemoveRange(tokens);
+            _context.SaveChanges();
+        }
+
     }
 }
