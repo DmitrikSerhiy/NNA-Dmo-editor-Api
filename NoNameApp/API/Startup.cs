@@ -1,8 +1,6 @@
 ﻿using API.Features.Editor.Hubs;
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,23 +9,23 @@ using API.Features.Account.Services;
 using API.Helpers;
 using API.Helpers.Extensions;
 using Infrastructure;
+using Microsoft.Extensions.Hosting;
 using SendGrid.Extensions.DependencyInjection;
 
 namespace API {
     public class Startup {
 
         private readonly IConfiguration _configuration;
-        private readonly IWebHostEnvironment _environment;
+        private readonly IHostEnvironment _environment;
 
         public Startup(
-            IWebHostEnvironment environment,
+            IHostEnvironment environment,
             IConfiguration configuration) {
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
             _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
-        public IServiceProvider ConfigureServices(IServiceCollection services) {
-            var builder = new ContainerBuilder();
+        public void ConfigureServices(IServiceCollection services) {
             services.AddNnaDbOptions(_configuration);
             services.AddNnaCorsOptions(_configuration);
             services.Configure<JwtOptions>(_configuration.GetSection(nameof(JwtOptions)));
@@ -49,13 +47,14 @@ namespace API {
                 options.ApiKey = _configuration.GetValue<string>("SendGridConfiguration:ApiKey");
             });
             services.AddNnaMvcAndFilters();
-
             services.AddHostedService<LifetimeEventsManager>();
-
-            builder.Populate(services);
+        }
+        
+        
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
             builder.RegisterModule(new GlobalModule());
             builder.RegisterModule(new ApiModule());
-            return new AutofacServiceProvider(builder.Build());
         }
 
         public void Configure(IApplicationBuilder app) {

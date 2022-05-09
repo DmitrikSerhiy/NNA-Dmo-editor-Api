@@ -2,16 +2,16 @@
 using Azure.Core;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Security.KeyVault.Secrets;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Hosting;
 
 namespace API.Helpers.Extensions {
     public static class AppExtensions {
-        public static bool IsLocal(this IWebHostEnvironment env) {
+        public static bool IsLocal(this IHostEnvironment env) {
             return env.EnvironmentName == "Local";
         }
         
-        public static bool IsLocalMachine(this IWebHostEnvironment env) {
+        public static bool IsLocalMachine(this IHostEnvironment env) {
             return Environment.GetEnvironmentVariable("LocalMachine") == "true";
         }
         

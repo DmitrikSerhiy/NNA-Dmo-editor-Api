@@ -13,15 +13,14 @@ namespace Persistence {
         public ContextOrchestrator() { }
 
         // ReSharper disable once UnusedMember.Global
-        public ContextOrchestrator(IDbContextFactory<NnaContext> contextFactory) {
-            if (contextFactory is null) throw new ArgumentNullException(nameof(contextFactory));
-            _context = contextFactory.CreateDbContext();
+        public ContextOrchestrator(NnaContext context) {
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         internal NnaContext Context {
             get {
                 ThrowIfDisposed();
-                return _context;
+                return _context ;
             }
         }
 
@@ -46,6 +45,10 @@ namespace Persistence {
 
         public bool HasChanges() {
             return _context.ChangeTracker.HasChanges();
+        }
+
+        public string GetContextId() {
+            return _context.ContextId.ToString();
         }
 
         private void ThrowIfDisposed() {

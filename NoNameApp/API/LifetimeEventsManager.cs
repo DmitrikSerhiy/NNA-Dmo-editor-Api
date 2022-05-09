@@ -2,18 +2,17 @@
 using System.Threading;
 using System.Threading.Tasks;
 using API.Helpers.Extensions;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 using Model.Interfaces.Repositories;
 
 namespace API {
     internal class LifetimeEventsManager : IHostedService {
-        private readonly IWebHostEnvironment _environment;
+        private readonly IHostEnvironment _environment;
         private readonly IHostApplicationLifetime _appLifetime;
         private readonly IUserRepository _repository;
 
         public LifetimeEventsManager(
-            IWebHostEnvironment environment,
+            IHostEnvironment environment,
             IHostApplicationLifetime appLifetime, 
             IUserRepository repository) {
             _environment = environment ?? throw new ArgumentNullException(nameof(environment));
@@ -32,11 +31,12 @@ namespace API {
         
         private void OnStopping() {
             _repository.SanitiseEditorConnections();
+            Console.WriteLine("Editor connections are sanitised");
+            
             if (!_environment.IsLocalMachine()) {
                 _repository.SanitiseUserTokens();
+                Console.WriteLine("Tokens are sanitised");
             }
-
-            Console.WriteLine("Tokens and connections are sanitised");
         }
     }
 }

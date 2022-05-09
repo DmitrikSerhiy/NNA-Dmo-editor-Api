@@ -13,16 +13,12 @@ using Model.Interfaces;
 namespace API.Features.Account.Services {
     public class AuthenticatedIdentityMiddleware {
         private readonly RequestDelegate _next;
-        private readonly ClaimsValidator _claimsValidator;
 
-        public AuthenticatedIdentityMiddleware(
-            RequestDelegate next, 
-            ClaimsValidator claimsValidator) {
+        public AuthenticatedIdentityMiddleware(RequestDelegate next) {
             _next = next ?? throw new ArgumentNullException(nameof(next));
-            _claimsValidator = claimsValidator ?? throw new ArgumentNullException(nameof(claimsValidator));
         }
         
-        public async Task InvokeAsync(HttpContext context, IAuthenticatedIdentityProvider authenticatedIdentityProvider) {
+        public async Task InvokeAsync(HttpContext context, IAuthenticatedIdentityProvider authenticatedIdentityProvider, ClaimsValidator claimsValidator) {
             if (!(context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.Email)) && 
                 context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)) &&
                 context.User.Claims.Any(claim => claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid))))) {
@@ -32,7 +28,7 @@ namespace API.Features.Account.Services {
             }
 
             try {
-                var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(context.User.Claims.ToList());
+                var authData = await claimsValidator.ValidateAndGetAuthDataAsync(context.User.Claims.ToList());
                 authenticatedIdentityProvider.SetAuthenticatedUser(authData);
             }
             catch (AuthenticationException ex) {

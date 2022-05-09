@@ -15,6 +15,7 @@ namespace Persistence.Repositories {
             if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
             _context = contextOrchestrator.Context;
+            Console.WriteLine($"From DmoCollectionsRepository {GetContextId()}");
         }
 
         public async Task<List<DmoCollection>> GetCollectionsAsync(Guid userId) {
@@ -110,5 +111,8 @@ namespace Persistence.Repositories {
             dmoDmoCollection.DmoCollection = null;
         }
 
+        public string GetContextId() {
+            return _context.ContextId.ToString();
+        }
     }
 }

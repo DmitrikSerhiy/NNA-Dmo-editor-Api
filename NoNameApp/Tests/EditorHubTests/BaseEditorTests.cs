@@ -7,8 +7,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using API.Features.Account.Services;
 using API.Helpers;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Hosting;
 using Model.Interfaces.Repositories;
 
 namespace Tests.EditorHubTests
@@ -16,7 +16,7 @@ namespace Tests.EditorHubTests
     public class BaseEditorTests {
         protected EditorHub Subject { get; set; }
         protected Mock<IEditorService> EditorServiceMock { get; private set; }
-        protected Mock<IWebHostEnvironment> EnvironmentMock { get; private set; }
+        protected Mock<IHostEnvironment> EnvironmentMock { get; private set; }
         protected Mock<ClaimsValidator> ClaimsValidatorMock { get; private set; }
         protected Mock<IUserRepository> UserRepositoryMock { get; private set; }
 
@@ -30,7 +30,7 @@ namespace Tests.EditorHubTests
 
         protected void SetupConstructorMocks() {
             EditorServiceMock = new Mock<IEditorService>();
-            EnvironmentMock = new Mock<IWebHostEnvironment>();
+            EnvironmentMock = new Mock<IHostEnvironment>();
             ClaimsValidatorMock = new Mock<ClaimsValidator>();
             UserRepositoryMock = new Mock<IUserRepository>();
         }

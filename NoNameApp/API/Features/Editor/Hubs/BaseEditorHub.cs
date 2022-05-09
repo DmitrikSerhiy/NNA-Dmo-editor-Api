@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using API.Helpers;
 using API.Helpers.Extensions;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Model.DTOs;
 using Model.DTOs.Editor.Response;
 using Model.Entities;
@@ -22,18 +22,18 @@ namespace API.Features.Editor.Hubs {
     [Authorize]
     public class BaseEditorHub : Hub<IEditorClient> {
         protected readonly IEditorService EditorService;
-        protected readonly IWebHostEnvironment WebHostEnvironment;
+        protected readonly IHostEnvironment Environment;
         
         private readonly ClaimsValidator _claimsValidator;
         private readonly IUserRepository _userRepository;
 
         public BaseEditorHub(
             IEditorService editorService, 
-            IWebHostEnvironment webHostEnvironment, 
+            IHostEnvironment hostEnvironment, 
             ClaimsValidator claimsValidator, 
             IUserRepository userRepository) {
             EditorService = editorService ?? throw new ArgumentNullException(nameof(editorService));
-            WebHostEnvironment = webHostEnvironment ?? throw new ArgumentNullException(nameof(webHostEnvironment));
+            Environment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
             _claimsValidator = claimsValidator ?? throw new ArgumentNullException(nameof(claimsValidator));
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         }
@@ -50,7 +50,7 @@ namespace API.Features.Editor.Hubs {
                 throw new AuthenticationException("User already have active connection.");
             }
             
-            if (WebHostEnvironment.IsLocal()) {
+            if (Environment.IsLocal()) {
                 Console.WriteLine($"{Context.GetCurrentUserEmail()} just connected to the editor");
             }
             
@@ -68,7 +68,7 @@ namespace API.Features.Editor.Hubs {
                 Log.Error(exception, $"Error on websocket disconnection. User: {Context.GetCurrentUserId()}. Error: {exception.Message}");
             }
 
-            if (WebHostEnvironment.IsLocal()) {
+            if (Environment.IsLocal()) {
                 Console.WriteLine($"{Context.GetCurrentUserEmail()} disconnected from the editor");
             }
 

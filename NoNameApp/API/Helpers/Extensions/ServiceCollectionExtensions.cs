@@ -4,11 +4,11 @@ using API.Helpers.GlobalFilters;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 using Model;
 using Model.Entities;
@@ -20,7 +20,7 @@ namespace API.Helpers.Extensions {
         private static readonly string angularClientOrigin = "angularClient";
         
         public static void AddNnaDbOptions(this IServiceCollection services, IConfiguration configuration) {
-            services.AddDbContextFactory<NnaContext>(options => {
+            services.AddDbContextPool<NnaContext>(options => {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), sqlOptions => {
                     sqlOptions.EnableRetryOnFailure(1);
                     sqlOptions.MigrationsAssembly("Persistence");
@@ -46,7 +46,7 @@ namespace API.Helpers.Extensions {
             app.UseCors(angularClientOrigin);
         }
         
-        public static void AddNnaLocalLoggerOptions(this IServiceCollection services, IWebHostEnvironment environment, IConfiguration configuration) {
+        public static void AddNnaLocalLoggerOptions(this IServiceCollection services, IHostEnvironment environment, IConfiguration configuration) {
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .CreateLogger();

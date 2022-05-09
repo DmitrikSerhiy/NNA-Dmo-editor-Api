@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Model.Entities;
 
 namespace Model.Interfaces.Repositories {
-    public interface IUserRepository {
+    public interface IUserRepository: IRepository {
         Task<NnaUser> WithId(Guid id);
         void UpdateUser(NnaUser user);
         Task<NnaUser> FirstUser();

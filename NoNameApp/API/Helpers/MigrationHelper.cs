@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Microsoft.EntityFrameworkCore;
+// ReSharper disable once RedundantUsingDirective
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Persistence;

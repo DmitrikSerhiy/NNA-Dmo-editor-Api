@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Model.Entities;
 
 namespace Model.Interfaces.Repositories {
-    public interface IDmoCollectionsRepository {
+    public interface IDmoCollectionsRepository: IRepository {
         Task<List<DmoCollection>> GetCollectionsAsync(Guid userId);
         Task<DmoCollection> GetCollectionAsync(Guid userId, Guid? collectionId);
         Task AddCollectionAsync(DmoCollection dmoCollection);

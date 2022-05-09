@@ -15,6 +15,7 @@ namespace Persistence.Repositories {
             if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
             _context = contextOrchestrator.Context;
+            Console.WriteLine($"From UserRepository {GetContextId()}");
         }
 
         public void UpdateUser(NnaUser user) {
@@ -123,5 +124,8 @@ namespace Persistence.Repositories {
             _context.SaveChanges();
         }
 
+        public string GetContextId() {
+            return _context.ContextId.ToString();
+        }
     }
 }

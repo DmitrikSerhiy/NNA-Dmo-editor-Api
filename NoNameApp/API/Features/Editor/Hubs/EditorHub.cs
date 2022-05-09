@@ -6,7 +6,7 @@ using Model.Interfaces;
 using Serilog;
 using System.Threading.Tasks;
 using API.Helpers;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
 using Model.Interfaces.Repositories;
 
 namespace API.Features.Editor.Hubs {
@@ -14,7 +14,7 @@ namespace API.Features.Editor.Hubs {
 
         public EditorHub(
             IEditorService editorService,
-            IWebHostEnvironment webHostEnvironment,
+            IHostEnvironment webHostEnvironment,
             ClaimsValidator claimsValidator,
             IUserRepository userRepository) 
                 : base(editorService, webHostEnvironment, claimsValidator, userRepository) { }
