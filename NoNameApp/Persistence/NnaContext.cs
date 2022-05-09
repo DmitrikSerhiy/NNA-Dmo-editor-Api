@@ -6,7 +6,6 @@ using Persistence.Configuration;
 
 namespace Persistence {
     public class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
-
         public DbSet<NnaUser> ApplicationUsers { get; set; }
         public DbSet<Dmo> Dmos { get; set; }
         public DbSet<DmoCollection> DmoCollections { get; set; }
@@ -16,8 +15,6 @@ namespace Persistence {
         public DbSet<NnaToken> Tokens { get; set; }
         
         public DbSet<Beat> Beats { get; set; }
-
-        public NnaContext() { }
 
         public NnaContext(DbContextOptions<NnaContext> options)
             : base(options) { }

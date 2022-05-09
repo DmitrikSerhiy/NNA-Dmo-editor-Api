@@ -20,7 +20,7 @@ namespace API.Helpers.Extensions {
         private static readonly string angularClientOrigin = "angularClient";
         
         public static void AddNnaDbOptions(this IServiceCollection services, IConfiguration configuration) {
-            services.AddDbContext<NnaContext>(options => {
+            services.AddDbContextFactory<NnaContext>(options => {
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection"), sqlOptions => {
                     sqlOptions.EnableRetryOnFailure(1);
                     sqlOptions.MigrationsAssembly("Persistence");

@@ -13,8 +13,9 @@ namespace Persistence {
         public ContextOrchestrator() { }
 
         // ReSharper disable once UnusedMember.Global
-        public ContextOrchestrator(NnaContext context) {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+        public ContextOrchestrator(IDbContextFactory<NnaContext> contextFactory) {
+            if (contextFactory is null) throw new ArgumentNullException(nameof(contextFactory));
+            _context = contextFactory.CreateDbContext();
         }
 
         internal NnaContext Context {

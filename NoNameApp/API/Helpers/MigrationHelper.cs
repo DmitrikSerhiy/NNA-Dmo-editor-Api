@@ -5,7 +5,9 @@ using Microsoft.Extensions.Configuration;
 using Persistence;
 
 namespace API.Helpers {
-    public class MigrationHelper : IDesignTimeDbContextFactory<NnaContext> {
+    // todo: create new migration strategy 
+    public class MigrationHelper //: IDesignTimeDbContextFactory<NnaContext> {
+    {
         public NnaContext CreateDbContext(string[] args) {
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Path.Combine(Directory.GetCurrentDirectory(), "../API"))
@@ -18,7 +20,7 @@ namespace API.Helpers {
                     mySqlOptions.EnableRetryOnFailure(2);
                     mySqlOptions.MigrationsAssembly("Persistence");
                 });
-            return new NnaContext(optionsBuilder.Options);
+            return null; //new NnaContext(optionsBuilder.Options);
         }
     }
 }
