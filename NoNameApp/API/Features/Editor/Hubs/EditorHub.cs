@@ -190,9 +190,9 @@ namespace API.Features.Editor.Hubs {
                 return;
             }
             
-            var validationResult = await new UpdateBeatDtoValidator().ValidateAsync(update);
+            var validationResult = await new UpdateBeatDtoValidator().ValidateAsync(update); // todo: add validators for minutes and seconds
             if (!validationResult.IsValid) {
-                await SendBackErrorResponse(NotValid(validationResult));
+                await SendBackErrorResponse(NotValid(validationResult)); // todo: check in unit tests what error was thrown exactly
                 return;
             }
 
@@ -201,7 +201,7 @@ namespace API.Features.Editor.Hubs {
             }
             catch (UpdateBeatException ex) {
                 Log.Error(ex.InnerException, ex.Message);
-                await DisconnectUser();
+                await DisconnectUser(); // todo: add unit test for this line of code for every action method
                 await SendBackErrorResponse(InternalServerError(ex.Message));
             }
         }
