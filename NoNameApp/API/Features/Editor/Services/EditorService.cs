@@ -153,7 +153,7 @@ namespace API.Features.Editor.Services {
             bool isDeleted;
             try {
                 isDeleted = isBeatIdGuid
-                    ? await _editorRepository.DeleteBeatByIdAsync(beat)
+                    ? await _editorRepository.DeleteBeatByIdAsync(beat, beatId)
                     : await _editorRepository.DeleteBeatByTempIdAsync(beat);
             }
             catch (Exception ex) {

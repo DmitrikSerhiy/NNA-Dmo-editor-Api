@@ -12,7 +12,7 @@ namespace Model.Interfaces.Repositories {
         Task<bool> InsertNewBeatAsync(Beat beat);
         Task<bool> UpdateBeatByIdAsync(Beat beat, Guid beatId);
         Task<bool> UpdateBeatByTempIdAsync(Beat beat, string tempBeatId);
-        Task<bool> DeleteBeatByIdAsync(Beat beat);
+        Task<bool> DeleteBeatByIdAsync(Beat beat, Guid beatId);
         Task<bool> DeleteBeatByTempIdAsync(Beat beat);
         Task<Beat> LoadBeatForDeleteByIdAsync(Guid id, Guid dmoId);
         Task<Beat> LoadBeatForDeleteByTempIdAsync(string tempId, Guid dmoId);

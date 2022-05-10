@@ -175,10 +175,10 @@ namespace Persistence.Repositories {
             return result >= 1;        
         }
         
-        public async Task<bool> DeleteBeatByIdAsync(Beat beat) {
+        public async Task<bool> DeleteBeatByIdAsync(Beat beat, Guid beatId) {
             var commandsWithParameters = new List<(string, object)> {
                  (DeleteBeatByIdScript, new {
-                     id = beat.Id,
+                     id = beatId,
                      dmoId = beat.DmoId
                  }),
                  (ReorderBeatsOnDelete, new {
@@ -193,7 +193,7 @@ namespace Persistence.Repositories {
         public async Task<bool> DeleteBeatByTempIdAsync(Beat beat) {
             var commandsWithParameters = new List<(string, object)> {
                 (DeleteBeatByTempIdScript, new {
-                    id = beat.Id,
+                    tempId = beat.TempId,
                     dmoId = beat.DmoId
                 }),
                 (ReorderBeatsOnDelete, new {

@@ -66,7 +66,7 @@ namespace Tests.EditorHubServiceTests {
             SetupMocksAndVariables();
             MapperMock.Setup(m => m.Map<Beat>(beatDto)).Returns(BeatToRemove);
             RepositoryMock.Setup(m => m.DeleteBeatByTempIdAsync(BeatToRemove)).Verifiable();
-            RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove)).ReturnsAsync(true);
+            RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove, Guid.Parse(beatDto.Id))).ReturnsAsync(true);
             Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
             //Act
@@ -75,7 +75,7 @@ namespace Tests.EditorHubServiceTests {
 
             //Assert
             RepositoryMock.Verify(sbj => sbj.DeleteBeatByTempIdAsync(It.IsAny<Beat>()), Times.Never());
-            RepositoryMock.Verify(sbj => sbj.DeleteBeatByIdAsync(It.IsAny<Beat>()), Times.Once());
+            RepositoryMock.Verify(sbj => sbj.DeleteBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>()), Times.Once());
             MapperMock.Verify(sbj => sbj.Map<Beat>(It.IsAny<RemoveBeatDto>()), Times.Once());
         }
         
@@ -86,7 +86,7 @@ namespace Tests.EditorHubServiceTests {
             beatDto.Id = "TempIdString";
             MapperMock.Setup(m => m.Map<Beat>(beatDto)).Verifiable();
             RepositoryMock.Setup(m => m.DeleteBeatByTempIdAsync(It.IsAny<Beat>())).ReturnsAsync(true);
-            RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove)).Verifiable();
+            RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove, It.IsAny<Guid>())).Verifiable();
             Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
             //Act
@@ -95,7 +95,7 @@ namespace Tests.EditorHubServiceTests {
 
             //Assert
             RepositoryMock.Verify(sbj => sbj.DeleteBeatByTempIdAsync(It.IsAny<Beat>()), Times.Once());
-            RepositoryMock.Verify(sbj => sbj.DeleteBeatByIdAsync(It.IsAny<Beat>()), Times.Never());
+            RepositoryMock.Verify(sbj => sbj.DeleteBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>()), Times.Never());
             MapperMock.Verify(sbj => sbj.Map<Beat>(It.IsAny<RemoveBeatDto>()), Times.Never());
         }
         
@@ -105,7 +105,7 @@ namespace Tests.EditorHubServiceTests {
             SetupMocksAndVariables();
             var repositoryExceptionMessage = "some message from repository";
             MapperMock.Setup(m => m.Map<Beat>(beatDto)).Returns(BeatToRemove);
-            RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove))
+            RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove, It.IsAny<Guid>()))
                 .ThrowsAsync(new Exception(repositoryExceptionMessage));
 
             Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
@@ -124,7 +124,7 @@ namespace Tests.EditorHubServiceTests {
             //Arrange
             SetupMocksAndVariables();
             MapperMock.Setup(m => m.Map<Beat>(beatDto)).Returns(BeatToRemove);
-            RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove)).ReturnsAsync(false);
+            RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove, It.IsAny<Guid>())).ReturnsAsync(false);
             var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
             //Act
