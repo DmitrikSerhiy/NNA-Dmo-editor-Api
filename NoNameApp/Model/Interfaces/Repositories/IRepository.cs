@@ -1,5 +1,4 @@
-﻿namespace Model.Interfaces.Repositories {
-    public interface IRepository {
-        string GetContextId();
-    }
+﻿namespace Model.Interfaces.Repositories; 
+public interface IRepository {
+    string GetContextId();
 }

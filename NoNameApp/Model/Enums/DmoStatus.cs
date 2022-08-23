@@ -1,7 +1,6 @@
-﻿namespace Model.Enums {
-    public enum DmoStatus: short {
-        InProgress = 0,
-        Completed = 1,
-        NotFinished = 2
-    }
+﻿namespace Model.Enums; 
+public enum DmoStatus: short {
+    InProgress = 0,
+    Completed = 1,
+    NotFinished = 2
 }

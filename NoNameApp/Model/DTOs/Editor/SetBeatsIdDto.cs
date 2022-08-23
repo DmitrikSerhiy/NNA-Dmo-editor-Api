@@ -1,5 +1,4 @@
-﻿namespace Model.DTOs.Editor {
-    public class SetBeatsIdDto: BaseDto {
-        public string Id { get; set; }
-    }
+﻿namespace Model.DTOs.Editor; 
+public class SetBeatsIdDto: BaseDto {
+    public string Id { get; set; }
 }

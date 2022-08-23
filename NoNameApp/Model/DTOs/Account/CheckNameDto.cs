@@ -1,7 +1,5 @@
-﻿namespace Model.DTOs.Account
+﻿namespace Model.DTOs.Account; 
+public sealed class CheckNameDto : BaseDto
 {
-    public sealed class CheckNameDto : BaseDto
-    {
-        public string Name { get; set; }
-    }
+    public string Name { get; set; }
 }

@@ -1,6 +1,5 @@
-﻿namespace Model.Enums {
-    public enum TokenName {
-        Access,
-        Refresh
-    }
+﻿namespace Model.Enums; 
+public enum TokenName {
+    Access,
+    Refresh
 }

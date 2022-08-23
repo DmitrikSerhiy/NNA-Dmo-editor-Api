@@ -1,14 +1,12 @@
 ﻿using Autofac;
 using Autofac.Features.ResolveAnything;
 
-namespace Model {
-    public class ModelModule : Module {
+namespace Model; 
+public class ModelModule : Module {
+    protected override void Load(ContainerBuilder builder) {
 
-        protected override void Load(ContainerBuilder builder) {
-
-            builder.RegisterSource(
-                new AnyConcreteTypeNotAlreadyRegisteredSource()
-                    .WithRegistrationsAs(b => b.InstancePerLifetimeScope()));
-        }
+        builder.RegisterSource(
+            new AnyConcreteTypeNotAlreadyRegisteredSource()
+                .WithRegistrationsAs(b => b.InstancePerLifetimeScope()));
     }
 }

@@ -1,15 +1,14 @@
 ﻿using System.Collections.Generic;
 
-namespace Model.Enums {
-    public class NnaCustomTokenClaimsDictionary {
+namespace Model.Enums; 
+public class NnaCustomTokenClaimsDictionary {
 
-        private static readonly Dictionary<NnaCustomTokenClaims, string> Dictionary = new() {
-                { NnaCustomTokenClaims.gtyp, "refresh_token" },
-                { NnaCustomTokenClaims.oid, "http://schemas.microsoft.com/identity/claims/objectidentifier" }
-            };
+    private static readonly Dictionary<NnaCustomTokenClaims, string> Dictionary = new() {
+        { NnaCustomTokenClaims.gtyp, "refresh_token" },
+        { NnaCustomTokenClaims.oid, "http://schemas.microsoft.com/identity/claims/objectidentifier" }
+    };
 
-        public static string GetValue(NnaCustomTokenClaims name) {
-            return !Dictionary.TryGetValue(name, out var claimValue) ? "" : claimValue;
-        }
+    public static string GetValue(NnaCustomTokenClaims name) {
+        return !Dictionary.TryGetValue(name, out var claimValue) ? "" : claimValue;
     }
 }

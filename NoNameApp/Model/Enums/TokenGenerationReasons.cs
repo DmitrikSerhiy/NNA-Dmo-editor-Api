@@ -1,5 +1,4 @@
-﻿namespace Model.Enums {
-    public enum TokenGenerationReasons {
-        NnaConfirmEmail
-    }
+﻿namespace Model.Enums; 
+public enum TokenGenerationReasons {
+    NnaConfirmEmail
 }

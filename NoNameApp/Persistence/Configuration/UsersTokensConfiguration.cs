@@ -1,21 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Model.Entities;
 
-namespace Persistence.Configuration {
-    public static class UsersTokensConfiguration {
-        
-        public static void Configure(ModelBuilder modelBuilder) {
-            modelBuilder
-                .Entity<UsersTokens>()
-                .ToView(nameof(UsersTokens))
-                .HasNoKey();
+namespace Persistence.Configuration;
+public static class UsersTokensConfiguration {
+    public static void Configure(ModelBuilder modelBuilder) {
+        modelBuilder
+            .Entity<UsersTokens>()
+            .ToView(nameof(UsersTokens))
+            .HasNoKey();
 
-            // not working for some reason. Migration file was edited manually.
-            modelBuilder
-                .Entity<NnaToken>(token => {
-                    // ReSharper disable once RedundantArgumentDefaultValue
-                    token.Property(p => p.TokenKeyId).IsRequired(true);
-                });
-        }
+        // todo: not working for some reason. Migration file was edited manually.
+        modelBuilder
+            .Entity<NnaToken>(token => {
+                // ReSharper disable once RedundantArgumentDefaultValue
+                token.Property(p => p.TokenKeyId).IsRequired(true);
+            });
     }
 }
