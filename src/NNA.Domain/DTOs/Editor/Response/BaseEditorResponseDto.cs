@@ -5,8 +5,8 @@ public class BaseEditorResponseDto : BaseDto {
 
     // ReSharper disable InconsistentNaming
     public int httpCode { get; private set; }
-    public string header { get; private set; }
-    public string message { get; private set; }
+    public string header { get; private set; } = null!;
+    public string message { get; private set; } = null!;
     public bool isSuccessful { get; private set; }
 
     public List<EditorErrorDetailsDto> errors { get; private set; } = new ();

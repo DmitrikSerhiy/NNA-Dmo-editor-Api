@@ -182,7 +182,7 @@ public class DmoCollectionsController: ControllerBase {
             return NotFound();
         }
 
-        if (dmoCollection.DmoCollectionDmos.All(d => d.Dmo.Id != dmo.Id)) {
+        if (dmoCollection.DmoCollectionDmos.All(d => d.Dmo!.Id != dmo.Id)) {
             return NotFound();
         }
 

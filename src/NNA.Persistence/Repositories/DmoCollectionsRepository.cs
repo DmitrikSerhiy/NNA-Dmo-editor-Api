@@ -14,20 +14,20 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
 
     public async Task<List<DmoCollection>> GetCollectionsAsync(Guid userId) {
         return await _context.DmoCollections
-            .Where(d => d.NnaUserId == userId)
-            .Include(d => d.DmoCollectionDmos)
+            .Where(dmo => dmo.NnaUserId == userId)
+            .Include(dmo => dmo.DmoCollectionDmos)
             .AsNoTracking()
-            .OrderByDescending(d => d.DateOfCreation)
+            .OrderByDescending(dmo => dmo.DateOfCreation)
             .ToListAsync();
     }
 
-    public async Task<DmoCollection> GetCollectionAsync(Guid userId, Guid? collectionId) {
+    public async Task<DmoCollection?> GetCollectionAsync(Guid userId, Guid? collectionId) {
         if(!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
         return await _context.DmoCollections
             .FirstOrDefaultAsync(udc => udc.Id == collectionId && udc.NnaUserId == userId);
     }
 
-    public async Task<Dmo> GetDmoAsync(Guid userId, Guid? dmoId) {
+    public async Task<Dmo?> GetDmoAsync(Guid userId, Guid? dmoId) {
         if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
         return await _context.Dmos.FirstOrDefaultAsync(d => d.Id == dmoId && d.NnaUserId == userId);
     }
@@ -38,7 +38,7 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
             udc.CollectionName.Equals(collectionName) && udc.NnaUserId == userId);
     }
 
-    public void UpdateCollectionName(DmoCollection oldDmoCollection, DmoCollection newDmoCollection) {
+    public void UpdateCollectionName(DmoCollection? oldDmoCollection, DmoCollection newDmoCollection) {
         if (oldDmoCollection == null) throw new ArgumentNullException(nameof(oldDmoCollection));
         if (newDmoCollection == null) throw new ArgumentNullException(nameof(newDmoCollection));
 
@@ -46,26 +46,31 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
         _context.DmoCollections.Update(oldDmoCollection);
     }
 
-    public async Task AddCollectionAsync(DmoCollection dmoCollection) {
+    public async Task AddCollectionAsync(DmoCollection? dmoCollection) {
         if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
         await _context.DmoCollections.AddAsync(dmoCollection);
     }
 
-    public void DeleteCollection(DmoCollection collection) {
+    public void DeleteCollection(DmoCollection? collection) {
         if (collection == null) throw new ArgumentNullException(nameof(collection));
         collection.DmoCollectionDmos.Clear();
         _context.DmoCollections.Remove(collection);
     }
 
-    public async Task<DmoCollection> GetCollectionWithDmos(Guid userId, Guid? collectionId) {
+    public async Task<DmoCollection?> GetCollectionWithDmos(Guid userId, Guid? collectionId) {
         if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
         var dmoCollection = await _context.DmoCollections
-            .Where(d => d.NnaUserId == userId && d.Id == collectionId)
-            .Include(dc => dc.DmoCollectionDmos)
-            .ThenInclude(d => d.Dmo)
+            .Where(dmo => dmo.NnaUserId == userId && dmo.Id == collectionId)
+            .Include(dmoCollection => dmoCollection.DmoCollectionDmos)
+            .ThenInclude(dmo => dmo.Dmo)
             .FirstOrDefaultAsync();
+        
+        if (dmoCollection == null)
+        {
+            return null;
+        }
 
-        dmoCollection.DmoCollectionDmos = dmoCollection.DmoCollectionDmos.OrderByDescending(d => d.Dmo.DateOfCreation).ToList();
+        dmoCollection.DmoCollectionDmos = dmoCollection.DmoCollectionDmos.OrderByDescending(d => d.Dmo!.DateOfCreation).ToList();
         return dmoCollection;
     }
 

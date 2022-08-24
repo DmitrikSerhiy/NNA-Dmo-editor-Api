@@ -5,15 +5,13 @@ using NNA.Persistence.Configuration;
 
 namespace NNA.Persistence;
 public class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
-    public DbSet<NnaUser> ApplicationUsers { get; set; }
-    public DbSet<Dmo> Dmos { get; set; }
-    public DbSet<DmoCollection> DmoCollections { get; set; }
-        
-    public DbSet<NnaLogin> Logins { get; set; }
-    public DbSet<EditorConnection> EditorConnections { get; set; }
-    public DbSet<NnaToken> Tokens { get; set; }
-        
-    public DbSet<Beat> Beats { get; set; }
+    public DbSet<NnaUser> ApplicationUsers => Set<NnaUser>();
+    public DbSet<Dmo> Dmos => Set<Dmo>();
+    public DbSet<DmoCollection> DmoCollections => Set<DmoCollection>();
+    public DbSet<NnaLogin> Logins => Set<NnaLogin>();
+    public DbSet<EditorConnection> EditorConnections => Set<EditorConnection>();
+    public DbSet<NnaToken> Tokens  => Set<NnaToken>();
+    public DbSet<Beat> Beats => Set<Beat>();
 
     public NnaContext(DbContextOptions<NnaContext> options)
         : base(options) { } 

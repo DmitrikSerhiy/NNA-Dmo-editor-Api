@@ -9,7 +9,7 @@ public interface IEditorRepository {
     Task<bool> UpdateShortDmoAsync(Dmo dmo);
     Task<bool> InsertNewBeatAsync(Beat beat);
     Task<bool> UpdateBeatByIdAsync(Beat beat, Guid beatId);
-    Task<bool> UpdateBeatByTempIdAsync(Beat beat, string tempBeatId);
+    Task<bool> UpdateBeatByTempIdAsync(Beat beat, string? tempBeatId);
     Task<bool> DeleteBeatByIdAsync(Beat beat, Guid beatId);
     Task<bool> DeleteBeatByTempIdAsync(Beat beat);
     Task<Beat> LoadBeatForDeleteByIdAsync(Guid id, Guid dmoId);

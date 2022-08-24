@@ -43,7 +43,7 @@ internal sealed class UserRepository : IUserRepository {
         _context.EditorConnections.RemoveRange(connections);
     }
 
-    public async Task<UsersTokens> GetAuthenticatedUserDataAsync(string email) {
+    public async Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email) {
         return await _context.Set<UsersTokens>().SingleOrDefaultAsync(ut => ut.Email == email);
     }
 
@@ -99,7 +99,7 @@ internal sealed class UserRepository : IUserRepository {
         return await _context.ApplicationUsers.FirstAsync();
     }
 
-    public async Task<NnaUser> WithId(Guid id) {
+    public async Task<NnaUser?> WithId(Guid id) {
         return await _context.ApplicationUsers.FindAsync(id);
     }
         

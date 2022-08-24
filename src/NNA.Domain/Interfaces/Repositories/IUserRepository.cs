@@ -2,7 +2,7 @@
 
 namespace NNA.Domain.Interfaces.Repositories; 
 public interface IUserRepository: IRepository {
-    Task<NnaUser> WithId(Guid id);
+    Task<NnaUser?> WithId(Guid id);
     void UpdateUser(NnaUser user);
     Task<NnaUser> FirstUser();
     Task SaveTokens(NnaToken accessToken, NnaToken refreshToken);
@@ -10,7 +10,7 @@ public interface IUserRepository: IRepository {
     void UpdateTokens(NnaToken accessToken, NnaToken refreshToken);
     void ConfirmUserEmail(NnaUser user);
     Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId);
-    Task<UsersTokens> GetAuthenticatedUserDataAsync(string email);
+    Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email);
     Task<bool> HasEditorConnectionAsync(Guid userId);
     Task AddEditorConnectionAsync(EditorConnection connection);
     void RemoveEditorConnection(EditorConnection connection);

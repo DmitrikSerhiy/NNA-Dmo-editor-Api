@@ -1,5 +1,13 @@
 ﻿namespace NNA.Domain.DTOs.Account; 
 public class PersonalInfoDto: BaseDto {
+    public PersonalInfoDto(string userName, string userEmail, string userId, string[] authProviders)
+    {
+        UserName = userName;
+        UserEmail = userEmail;
+        UserId = userId;
+        AuthProviders = authProviders;
+    }
+
     public string UserName { get; set; }
     public string UserEmail { get; set; }
     public string UserId { get; set; }

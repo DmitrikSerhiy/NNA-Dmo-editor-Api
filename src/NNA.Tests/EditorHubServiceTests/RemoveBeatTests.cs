@@ -12,8 +12,8 @@ public class RemoveBeatTests : BaseHubServiceTests {
     private Guid userId { get; set; }
 
     // ReSharper disable once InconsistentNaming
-    private RemoveBeatDto beatDto { get; set; }
-    private Beat BeatToRemove { get; set; }
+    private RemoveBeatDto beatDto { get; set; } = null!;
+    private Beat BeatToRemove { get; set; } = null!;
 
     private void SetupMocksAndVariables() {
         SetupConstructorMocks();
@@ -64,7 +64,7 @@ public class RemoveBeatTests : BaseHubServiceTests {
         SetupMocksAndVariables();
         MapperMock.Setup(m => m.Map<Beat>(beatDto)).Returns(BeatToRemove);
         RepositoryMock.Setup(m => m.DeleteBeatByTempIdAsync(BeatToRemove)).Verifiable();
-        RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove, Guid.Parse(beatDto.Id))).ReturnsAsync(true);
+        RepositoryMock.Setup(rm => rm.DeleteBeatByIdAsync(BeatToRemove, Guid.Parse(beatDto.Id!))).ReturnsAsync(true);
         Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act
@@ -114,7 +114,7 @@ public class RemoveBeatTests : BaseHubServiceTests {
         //Assert
         // ReSharper disable once PossibleNullReferenceException
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<DeleteBeatException>().Result
-            .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
+            .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
         
     [Fact]

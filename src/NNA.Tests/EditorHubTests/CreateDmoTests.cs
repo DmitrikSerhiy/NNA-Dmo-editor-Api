@@ -8,9 +8,9 @@ using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
 namespace NNA.Tests.EditorHubTests; 
-public class CreateDmoTests : BaseEditorTests {
-
-    private CreateDmoDto DmoDto { get; set; }
+public class CreateDmoTests : BaseEditorTests
+{
+    private CreateDmoDto DmoDto { get; set; } = null!;
 
     private void SetMockAndVariables()
     {
@@ -56,7 +56,7 @@ public class CreateDmoTests : BaseEditorTests {
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         var hubContext = new Mock<HubCallerContext>();
-        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object>());
+        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object?>());
         Subject.Context = hubContext.Object;
 
         //Act
@@ -126,7 +126,7 @@ public class CreateDmoTests : BaseEditorTests {
                 .Excluding(exclude => exclude.message));
             
         // ReSharper disable once PossibleNullReferenceException
-        response.GetType().GetProperty("data").GetValue(response).Should().BeEquivalentTo(createdDmoDto);
+        response.GetType().GetProperty("data")!.GetValue(response).Should().BeEquivalentTo(createdDmoDto);
     }
 
     [Fact]

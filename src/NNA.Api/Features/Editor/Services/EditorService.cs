@@ -18,7 +18,7 @@ public class EditorService : IEditorService {
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
-    public async Task<CreatedDmoDto> CreateAndLoadDmo(CreateDmoDto dmoDto, Guid userId) {
+    public async Task<CreatedDmoDto> CreateAndLoadDmo(CreateDmoDto? dmoDto, Guid userId) {
         if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
 
@@ -52,7 +52,7 @@ public class EditorService : IEditorService {
         return _mapper.Map<CreatedDmoDto>(dmo);
     }
 
-    public async Task UpdateShortDmo(UpdateShortDmoDto dmoDto, Guid userId) {
+    public async Task UpdateShortDmo(UpdateShortDmoDto? dmoDto, Guid userId) {
         if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
 
@@ -72,7 +72,7 @@ public class EditorService : IEditorService {
         }
     }
 
-    public async Task<LoadedShortDmoDto> LoadShortDmo(LoadShortDmoDto dmoDto, Guid userId) {
+    public async Task<LoadedShortDmoDto> LoadShortDmo(LoadShortDmoDto? dmoDto, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
         if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
 
@@ -94,7 +94,7 @@ public class EditorService : IEditorService {
         return _mapper.Map<LoadedShortDmoDto>(loadedDmo);
     }
 
-    public async Task UpdateDmoBeatsAsJson(UpdateDmoBeatsAsJsonDto dmoDto, Guid userId) {
+    public async Task UpdateDmoBeatsAsJson(UpdateDmoBeatsAsJsonDto? dmoDto, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
         if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
 
@@ -115,7 +115,7 @@ public class EditorService : IEditorService {
         }
     }
 
-    public async Task CreateBeat(CreateBeatDto beatDto, Guid userId) {
+    public async Task CreateBeat(CreateBeatDto? beatDto, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
         if (beatDto == null) throw new ArgumentNullException(nameof(beatDto));
 
@@ -136,7 +136,7 @@ public class EditorService : IEditorService {
         }
     }
 
-    public async Task RemoveBeat(RemoveBeatDto beatDto, Guid userId) {
+    public async Task RemoveBeat(RemoveBeatDto? beatDto, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
         if (beatDto == null) throw new ArgumentNullException(nameof(beatDto));
 
@@ -164,7 +164,7 @@ public class EditorService : IEditorService {
         }
     }
 
-    public async Task UpdateBeat(UpdateBeatDto update, Guid userId) {
+    public async Task UpdateBeat(UpdateBeatDto? update, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
         if (update == null) throw new ArgumentNullException(nameof(update));
 

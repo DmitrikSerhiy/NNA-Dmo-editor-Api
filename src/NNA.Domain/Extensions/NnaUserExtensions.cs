@@ -13,8 +13,8 @@ public static class NnaUserExtensions {
             : user.AuthProviders.Split(ProvidersSeparator).ToArray();
     }
 
-    public static void AddAuthProvider(this NnaUser? user, string providerName) {
-        if (user == null) {
+    public static void AddAuthProvider(this NnaUser? user, string? providerName) {
+        if (user == null || providerName == null) {
             return;
         }
         if (user.AuthProviders == null) {

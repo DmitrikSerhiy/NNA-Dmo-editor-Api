@@ -13,8 +13,8 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
     // ReSharper disable once InconsistentNaming
-    private CreateDmoDto dmoDto { get; set; }
-    private Dmo InitialDmo { get; set; }
+    private CreateDmoDto dmoDto { get; set; }  = null!;
+    private Dmo InitialDmo { get; set; }  = null!;
 
     private void SetupMocksAndVariables() {
         SetupConstructorMocks();
@@ -90,17 +90,17 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
         //Assert
         // ReSharper disable once PossibleNullReferenceException
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<CreateDmoException>().Result
-            .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
+            .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
 
     [Fact]
     public void ShouldThrowIfDmoWasNotFoundAfterCreationTest() {
         //Arrange
         SetupMocksAndVariables();
-        static Dmo Dmo() => null;
-        MapperMock.Setup(m => m.Map<Dmo>(dmoDto)).Returns(InitialDmo);
+        static Dmo? Dmo() => null;
+        MapperMock.Setup(m => m.Map<Dmo?>(dmoDto)).Returns(InitialDmo);
         RepositoryMock.Setup(rm => rm.CreateDmoAsync(InitialDmo)).ReturnsAsync(true);
-        RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId)).ReturnsAsync(Dmo);
+        RepositoryMock.Setup(rm => rm.LoadShortDmoAsync(InitialDmo.Id, userId))!.ReturnsAsync(Dmo);
 
         var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
@@ -131,6 +131,6 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
         //Assert
         // ReSharper disable once PossibleNullReferenceException
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<LoadShortDmoException>().Result
-            .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
+            .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
 }

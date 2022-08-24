@@ -12,8 +12,8 @@ public class UpdateBeatTests : BaseHubServiceTests {
     private Guid userId { get; set; }
 
     // ReSharper disable once InconsistentNaming
-    private UpdateBeatDto update { get; set; }
-    private Beat BeatToUpdate { get; set; }
+    private UpdateBeatDto update { get; set; } = null!;
+    private Beat BeatToUpdate { get; set; } = null!;
 
     private void SetupMocksAndVariables() {
         SetupConstructorMocks();
@@ -117,7 +117,7 @@ public class UpdateBeatTests : BaseHubServiceTests {
         //Assert
         // ReSharper disable once PossibleNullReferenceException
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<UpdateBeatException>().Result
-            .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
+            .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
         
         

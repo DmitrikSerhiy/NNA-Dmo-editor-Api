@@ -159,7 +159,7 @@ internal sealed class EditorRepository : IEditorRepository {
         return result >= 1;
     }
 
-    public async Task<bool> UpdateBeatByTempIdAsync(Beat beat, string beatTempId) {
+    public async Task<bool> UpdateBeatByTempIdAsync(Beat beat, string? beatTempId) {
         var result = await ExecuteAsync(UpdateBeatByTempIdScript, new {
             beatTime = beat.BeatTime,
             beatTimeView = beat.BeatTimeView,

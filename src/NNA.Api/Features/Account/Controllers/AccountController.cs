@@ -279,11 +279,8 @@ public class AccountController: NnaController {
             return NoContent();
         }
 
-        return OkWithData(new PersonalInfoDto{
-            AuthProviders = user.GetAuthProviders(),
-            UserEmail = user.Email,
-            UserId = user.Id.ToString(),
-            UserName = user.UserName,
+        return OkWithData(new PersonalInfoDto(user.UserName, user.Email, user.Id.ToString(), user.GetAuthProviders())
+        {
             IsEmailVerified = user.EmailConfirmed,
             HasPassword = !string.IsNullOrEmpty(user.PasswordHash)
         });

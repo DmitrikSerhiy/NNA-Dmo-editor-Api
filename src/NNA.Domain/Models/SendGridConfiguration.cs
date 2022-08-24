@@ -1,7 +1,7 @@
 ﻿namespace NNA.Domain.Models;
-public class SendGridConfiguration {
-    public string SenderEmail { get; set; }
-    public string PasswordFormUrl { get; set; }
-    public string ConfirmAccountUrl { get; set; }
-    public string ApiKey { get; set; }
+public class SendGridConfiguration
+{
+    public string SenderEmail { get; set; } = null!;
+    public string PasswordFormUrl { get; set; } = null!;
+    public string ConfirmAccountUrl { get; set; } = null!;
 }

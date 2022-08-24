@@ -7,7 +7,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubTests; 
 public class UpdateBeatTest: BaseEditorTests {
-    private UpdateBeatDto BeatDto { get; set; }
+    private UpdateBeatDto BeatDto { get; set; } = null!;
         
     private void SetMockAndVariables()
     {
@@ -54,7 +54,7 @@ public class UpdateBeatTest: BaseEditorTests {
             UserRepositoryMock.Object);
         SetupHubContext();
         var hubContext = new Mock<HubCallerContext>();
-        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object>());
+        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object?>());
         Subject.Context = hubContext.Object;
         
         //Act

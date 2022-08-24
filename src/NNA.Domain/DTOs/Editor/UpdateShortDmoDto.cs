@@ -1,8 +1,8 @@
 ﻿namespace NNA.Domain.DTOs.Editor; 
 public class UpdateShortDmoDto : BaseDto {
-    public string Id { get; set; }
-    public string Name { get; set; }
-    public string MovieTitle { get; set; }
-    public string ShortComment { get; set; }
+    public string? Id { get; set; }
+    public string Name { get; set; } = null!;
+    public string MovieTitle { get; set; } = null!;
+    public string ShortComment { get; set; } = null!;
     public short DmoStatus { get; set; }
 }

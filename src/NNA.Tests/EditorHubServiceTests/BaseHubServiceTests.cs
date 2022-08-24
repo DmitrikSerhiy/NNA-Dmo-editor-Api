@@ -5,9 +5,9 @@ using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Tests.EditorHubServiceTests; 
 public abstract class BaseHubServiceTests {
-    protected Mock<IEditorRepository> RepositoryMock { get; private set; }
-    protected Mock<IMapper> MapperMock { get; private set; }
-    protected EditorService Subject { get; set; }
+    protected Mock<IEditorRepository> RepositoryMock { get; private set; } = null!;
+    protected Mock<IMapper> MapperMock { get; private set; } = null!;
+    protected EditorService Subject { get; set; } = null!;
     
     protected void SetupConstructorMocks() {
         RepositoryMock = new Mock<IEditorRepository>();

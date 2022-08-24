@@ -6,8 +6,9 @@ using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
 namespace NNA.Tests.EditorHubTests; 
-public class DeleteBeatTest: BaseEditorTests {
-    private RemoveBeatDto BeatDto { get; set; }
+public class DeleteBeatTest: BaseEditorTests
+{
+    private RemoveBeatDto BeatDto { get; set; } = null!;
         
     private void SetMockAndVariables()
     {
@@ -50,7 +51,7 @@ public class DeleteBeatTest: BaseEditorTests {
             UserRepositoryMock.Object);
         SetupHubContext();
         var hubContext = new Mock<HubCallerContext>();
-        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object>());
+        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object?>());
         Subject.Context = hubContext.Object;
         
         //Act

@@ -10,7 +10,7 @@ using Xunit;
 namespace NNA.Tests.EditorHubTests; 
 public class LoadShortTests : BaseEditorTests {
 
-    private LoadShortDmoDto DmoDto { get; set; }
+    private LoadShortDmoDto DmoDto { get; set; } = null!;
 
     private void SetMockAndVariables() {
         SetupConstructorMocks();
@@ -51,7 +51,7 @@ public class LoadShortTests : BaseEditorTests {
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         var hubContext = new Mock<HubCallerContext>();
-        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object>());
+        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object?>());
         Subject.Context = hubContext.Object;
 
         //Act
@@ -121,7 +121,7 @@ public class LoadShortTests : BaseEditorTests {
                 .Excluding(exclude => exclude.message));
 
         // ReSharper disable once PossibleNullReferenceException
-        response.GetType().GetProperty("data").GetValue(response).Should().BeEquivalentTo(loadedDmo);
+        response.GetType().GetProperty("data")!.GetValue(response).Should().BeEquivalentTo(loadedDmo);
     }
 
     [Fact]

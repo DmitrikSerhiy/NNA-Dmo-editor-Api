@@ -12,13 +12,13 @@ public sealed class NnaUser : IdentityUser<Guid> {
             throw new ArgumentNullException(nameof(userName));
         }
 
-        // ReSharper disable VirtualMemberCallInConstructor
         Email = email;
         UserName = userName;
     }
 
     public string? AuthProviders { get; set; }
-    public ICollection<Dmo> Dmos { get; set; }
-    public ICollection<DmoCollection> DmoCollections { get; set; }
-    public ICollection<Beat> Beats { get; set; }
+    // ReSharper disable CollectionNeverUpdated.Global
+    public ICollection<Dmo> Dmos { get; set; } = new List<Dmo>();
+    public ICollection<DmoCollection> DmoCollections { get; set; } = new List<DmoCollection>();
+    public ICollection<Beat> Beats { get; set; } = new List<Beat>();
 }

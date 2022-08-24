@@ -12,7 +12,7 @@ namespace NNA.Tests.AccountTests;
 public class ClaimsValidatorTests {
 
     private readonly List<Claim> _claimsToValidate;
-    private Mock<IUserRepository> _userRepositoryMock;
+    private Mock<IUserRepository> _userRepositoryMock = null!;
         
     public ClaimsValidatorTests() {
         _claimsToValidate = new List<Claim>();
@@ -132,7 +132,7 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_userEmailClaim);
         _claimsToValidate.Add(_tokenIdClaim);
         _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
-            .ReturnsAsync((UsersTokens)null);
+            .ReturnsAsync((UsersTokens?)null);
             
         // Act
         async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);

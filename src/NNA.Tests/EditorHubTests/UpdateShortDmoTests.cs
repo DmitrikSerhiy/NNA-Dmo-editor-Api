@@ -8,7 +8,7 @@ using Xunit;
 namespace NNA.Tests.EditorHubTests; 
 public class UpdateShortDmoTests : BaseEditorTests {
 
-    private UpdateShortDmoDto DmoDto { get; set; }
+    private UpdateShortDmoDto DmoDto { get; set; } = null!;
 
     private void SetMockAndVariables() {
         SetupConstructorMocks();
@@ -50,7 +50,7 @@ public class UpdateShortDmoTests : BaseEditorTests {
             UserRepositoryMock.Object);
         SetupHubContext();
         var hubContext = new Mock<HubCallerContext>();
-        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object>());
+        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object?>());
         Subject.Context = hubContext.Object;
         
         //Act

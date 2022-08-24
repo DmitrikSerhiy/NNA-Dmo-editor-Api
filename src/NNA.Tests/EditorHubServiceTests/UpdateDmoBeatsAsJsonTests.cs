@@ -11,7 +11,7 @@ public class UpdateDmoBeatsAsJsonTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
     // ReSharper disable once InconsistentNaming
-    private UpdateDmoBeatsAsJsonDto dmoDto { get; set; }
+    private UpdateDmoBeatsAsJsonDto dmoDto { get; set; } = null!;
     private void SetupMocksAndVariables() {
         SetupConstructorMocks();
         userId = Guid.NewGuid();
@@ -56,7 +56,7 @@ public class UpdateDmoBeatsAsJsonTests : BaseHubServiceTests {
         //Arrange
         SetupMocksAndVariables();
         var repositoryExceptionMessage = "some message from repository";
-        RepositoryMock.Setup(rm => rm.UpdateJsonBeatsAsync(dmoDto.Data, Guid.Parse(dmoDto.DmoId), userId))
+        RepositoryMock.Setup(rm => rm.UpdateJsonBeatsAsync(dmoDto.Data, Guid.Parse(dmoDto.DmoId!), userId))
             .ThrowsAsync(new Exception(repositoryExceptionMessage));
         var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
@@ -66,14 +66,14 @@ public class UpdateDmoBeatsAsJsonTests : BaseHubServiceTests {
         //Assert
         // ReSharper disable once PossibleNullReferenceException
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<UpdateDmoBeatsAsJsonException>().Result
-            .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
+            .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
 
     [Fact]
     public void ShouldThrowIfDmoWasNotUpdatedTest() {
         //Arrange
         SetupMocksAndVariables();
-        RepositoryMock.Setup(rm => rm.UpdateJsonBeatsAsync(dmoDto.Data, Guid.Parse(dmoDto.DmoId), userId))
+        RepositoryMock.Setup(rm => rm.UpdateJsonBeatsAsync(dmoDto.Data, Guid.Parse(dmoDto.DmoId!), userId))
             .ReturnsAsync(false);
 
         var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);

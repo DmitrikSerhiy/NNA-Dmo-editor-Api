@@ -13,9 +13,9 @@ using Xunit;
 namespace NNA.Tests.AccountTests; 
 public class NnaTokenManagerTests {
 
-    private Mock<IUserRepository> _userRepositoryMock;
-    private Mock<NnaTokenHandler> _nnaTokenHandlerMock;
-    private Mock<IAuthenticatedIdentityProvider> _authenticatedIdentityProviderMock;
+    private Mock<IUserRepository> _userRepositoryMock = null!;
+    private Mock<NnaTokenHandler> _nnaTokenHandlerMock = null!;
+    private Mock<IAuthenticatedIdentityProvider> _authenticatedIdentityProviderMock = null!;
 
     private static readonly NnaUser NnaUser = new() {
         Id = Guid.NewGuid(),
@@ -37,8 +37,7 @@ public class NnaTokenManagerTests {
         Value = "NewRefreshToken",
         TokenKeyId = "NewRefreshTokenId"
     };
-        
-        
+    
     // ReSharper disable once EmptyConstructor
     public NnaTokenManagerTests() { }
 
@@ -367,7 +366,7 @@ public class NnaTokenManagerTests {
             .Returns(NewRefreshToken.TokenKeyId);
 
         // Act
-        async Task<TokensDto> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
+        async Task<TokensDto?> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
         var result = await Act();
 
         // Assert
@@ -386,7 +385,7 @@ public class NnaTokenManagerTests {
                     nnaToken.UserId.Equals(NewRefreshToken.UserId))),
             Times.Once());
 
-        result.AccessToken.Should().Be(NewAccessToken.Value);
+        result!.AccessToken.Should().Be(NewAccessToken.Value);
         result.AccessTokenKeyId.Should().Be(NewAccessToken.TokenKeyId);
         result.RefreshToken.Should().Be(NewRefreshToken.Value);
         result.RefreshTokenKeyId.Should().Be(NewRefreshToken.TokenKeyId);
@@ -435,11 +434,11 @@ public class NnaTokenManagerTests {
             .Returns(new TokenValidationResult{IsValid = false});
 
         // Act
-        async Task<TokensDto> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
+        async Task<TokensDto?> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
         var result = await Act();
 
         // Assert
-        result.Should().BeNull();
+        result!.Should().BeNull();
     }
         
     [Fact]
@@ -477,7 +476,7 @@ public class NnaTokenManagerTests {
             .Returns("AnotherRefTknKey");
 
         // Act
-        async Task<TokensDto> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
+        async Task<TokensDto?> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
         var result = await Act();
 
         // Assert
@@ -514,7 +513,7 @@ public class NnaTokenManagerTests {
             .Returns("AnotherAccTknKey");
 
         // Act
-        async Task<TokensDto> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
+        async Task<TokensDto?> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
         var result = await Act();
 
         // Assert
@@ -540,10 +539,10 @@ public class NnaTokenManagerTests {
 
         _userRepositoryMock
             .Setup(ur => ur.GetAuthenticatedUserDataAsync(It.Is<string>(t => t.Equals(NnaUser.Email))))
-            .ReturnsAsync((UsersTokens)null);
+            .ReturnsAsync((UsersTokens?)null);
 
         // Act
-        async Task<TokensDto> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
+        async Task<TokensDto?> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
         var result = await Act();
 
         // Assert
@@ -568,7 +567,7 @@ public class NnaTokenManagerTests {
             .Returns("anotherMail@gmail.com");
 
         // Act
-        async Task<TokensDto> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
+        async Task<TokensDto?> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
         var result = await Act();
 
         // Assert
@@ -589,10 +588,10 @@ public class NnaTokenManagerTests {
             
         _nnaTokenHandlerMock
             .Setup(th => th.GetUserEmail(It.Is<string>(t => t.Equals(refreshTokenDto.AccessToken))))
-            .Returns((string)null);
+            .Returns((string?)null);
 
         // Act
-        async Task<TokensDto> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
+        async Task<TokensDto?> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
         var result = await Act();
 
         // Assert
@@ -609,7 +608,7 @@ public class NnaTokenManagerTests {
         };
         _nnaTokenHandlerMock
             .Setup(th => th.GetUserEmail(It.Is<string>(t => t.Equals(refreshTokenDto.RefreshToken))))
-            .Returns((string)null);
+            .Returns((string?)null);
             
         _nnaTokenHandlerMock
             .Setup(th => th.GetUserEmail(It.Is<string>(t => t.Equals(refreshTokenDto.AccessToken))))
@@ -617,7 +616,7 @@ public class NnaTokenManagerTests {
 
 
         // Act
-        async Task<TokensDto> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
+        async Task<TokensDto?> Act() => await subject.RefreshTokensAsync(refreshTokenDto);
         var result = await Act();
 
         // Assert

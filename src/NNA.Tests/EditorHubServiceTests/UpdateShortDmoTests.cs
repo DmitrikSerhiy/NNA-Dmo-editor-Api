@@ -11,8 +11,8 @@ public class UpdateShortDmoTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
     // ReSharper disable once InconsistentNaming
-    private UpdateShortDmoDto dmoDto { get; set; }
-    private Dmo InitialDmo { get; set; }
+    private UpdateShortDmoDto dmoDto { get; set; } = null!;
+    private Dmo InitialDmo { get; set; } = null!;
 
     private void SetupMocksAndVariables() {
         SetupConstructorMocks();
@@ -68,7 +68,7 @@ public class UpdateShortDmoTests : BaseHubServiceTests {
         //Assert
         // ReSharper disable once PossibleNullReferenceException
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<UpdateShortDmoException>().Result
-            .And.InnerException.Message.Should().Be(repositoryExceptionMessage);
+            .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
 
     [Fact]

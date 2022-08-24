@@ -10,13 +10,13 @@ using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Tests.EditorHubTests; 
 public class BaseEditorTests {
-    protected EditorHub Subject { get; set; }
-    protected Mock<IEditorService> EditorServiceMock { get; private set; }
-    protected Mock<IHostEnvironment> EnvironmentMock { get; private set; }
-    protected Mock<ClaimsValidator> ClaimsValidatorMock { get; private set; }
-    protected Mock<IUserRepository> UserRepositoryMock { get; private set; }
+    protected EditorHub Subject { get; set; } = null!;
+    protected Mock<IEditorService> EditorServiceMock { get; private set; } = null!;
+    protected Mock<IHostEnvironment> EnvironmentMock { get; private set; } = null!;
+    protected Mock<ClaimsValidator> ClaimsValidatorMock { get; private set; } = null!;
+    protected Mock<IUserRepository> UserRepositoryMock { get; private set; } = null!;
 
-    protected Mock<IHubCallerClients<IEditorClient>> EditorClientsMock { get; private set; }
+    protected Mock<IHubCallerClients<IEditorClient>> EditorClientsMock { get; private set; } = null!;
 
 
     protected string UserName { get; } = "UserName";
@@ -32,6 +32,7 @@ public class BaseEditorTests {
     }
 
     protected void SetupHubContext() {
+        // ReSharper disable once ConditionIsAlwaysTrueOrFalse
         if (Subject == null) {
             return;
         }
@@ -47,7 +48,7 @@ public class BaseEditorTests {
 
         var authProvider = new AuthenticatedIdentityProvider();
         authProvider.SetAuthenticatedUser(userMock.Object);
-        var items = new Dictionary<object, object> { { "user", authProvider } };
+        var items = new Dictionary<object, object?> { { "user", authProvider } };
         hubContext.Setup(hm => hm.Items).Returns(items);
         Subject.Context = hubContext.Object;
             

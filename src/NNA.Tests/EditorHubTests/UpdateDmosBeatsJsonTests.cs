@@ -9,7 +9,7 @@ namespace NNA.Tests.EditorHubTests;
 public class UpdateDmosBeatsJsonTests : BaseEditorTests {
 
     // ReSharper disable once InconsistentNaming
-    private UpdateDmoBeatsAsJsonDto update { get; set; }
+    private UpdateDmoBeatsAsJsonDto update { get; set; } = null!;
 
     private void SetMockAndVariables() {
         SetupConstructorMocks();
@@ -48,7 +48,7 @@ public class UpdateDmosBeatsJsonTests : BaseEditorTests {
             UserRepositoryMock.Object);
         SetupHubContext();
         var hubContext = new Mock<HubCallerContext>();
-        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object>());
+        hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object?>());
         Subject.Context = hubContext.Object;
         
         //Act

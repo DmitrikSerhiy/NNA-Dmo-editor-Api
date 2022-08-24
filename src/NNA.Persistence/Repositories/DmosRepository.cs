@@ -13,18 +13,18 @@ internal sealed class DmosRepository : IDmosRepository {
     }
 
     public async Task<List<Dmo>> GetAll(Guid userId) {
-        return await _context.Dmos.Where(d => d.NnaUserId == userId)
-            .OrderByDescending(d => d.DateOfCreation)
+        return await _context.Dmos.Where(dmo => dmo.NnaUserId == userId)
+            .OrderByDescending(dmo => dmo.DateOfCreation)
             .ToListAsync();
     }
 
-    public async Task<Dmo> GetShortDmo(Guid userId, Guid? dmoId) {
+    public async Task<Dmo?> GetShortDmo(Guid userId, Guid? dmoId) {
         if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
         return await _context.Dmos.FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId.Value);
     }
 
 
-    public async Task<Dmo> GetDmo(Guid userId, Guid? dmoId) {
+    public async Task<Dmo?> GetDmo(Guid userId, Guid? dmoId) {
         if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
         return await _context.Dmos
             .Include(d => d.DmoCollectionDmos)
@@ -33,7 +33,7 @@ internal sealed class DmosRepository : IDmosRepository {
             .FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId.Value);
     }
 
-    public void DeleteDmo(Dmo dmo) {
+    public void DeleteDmo(Dmo? dmo) {
         if (dmo == null) throw new ArgumentNullException(nameof(dmo));
         dmo.DmoCollectionDmos.Clear();
         _context.Beats.RemoveRange(dmo.Beats);

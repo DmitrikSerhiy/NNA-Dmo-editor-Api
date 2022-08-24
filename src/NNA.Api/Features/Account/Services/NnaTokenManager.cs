@@ -26,7 +26,7 @@ public sealed class NnaTokenManager {
     /// Creates new valid pair of access/refresh tokens for user with specified email.
     /// All previous tokens for that user become invalid.
     /// </summary>
-    public async Task<TokensDto> CreateTokensAsync(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
+    public async Task<TokensDto> CreateTokensAsync(NnaUser? user, LoginProviderName loginProviderName = LoginProviderName.password) {
         if (user == null) throw new ArgumentNullException(nameof(user));
             
         return await GenerateAndSaveTokensAsync(user, loginProviderName);
@@ -48,7 +48,7 @@ public sealed class NnaTokenManager {
     /// Load existing tokens or generate new if tokens are missing.
     /// If tokens exist but are invalid then new tokens are created 
     /// </summary>
-    public async Task<TokensDto> GetOrCreateTokensAsync(NnaUser user, LoginProviderName loginProviderName = LoginProviderName.password) {
+    public async Task<TokensDto> GetOrCreateTokensAsync(NnaUser? user, LoginProviderName loginProviderName = LoginProviderName.password) {
         if (user == null) throw new ArgumentNullException(nameof(user));
         var tokens = await _userRepository.GetTokens(user.Id);
             
@@ -122,7 +122,7 @@ public sealed class NnaTokenManager {
     /// <summary>
     /// Remove all user tokens. Clear authenticated data.
     /// </summary>
-    public async Task ClearTokensAsync(NnaUser user) {
+    public async Task ClearTokensAsync(NnaUser? user) {
         if (user == null) throw new ArgumentNullException(nameof(user));
         if (_identityProvider.AuthenticatedUserEmail != user.Email) {
             return;

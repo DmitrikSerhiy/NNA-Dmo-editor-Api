@@ -5,12 +5,10 @@ using Serilog;
 namespace NNA.Persistence;
 // Unit of work
 public class ContextOrchestrator : IContextOrchestrator {
-    private readonly NnaContext _context;
+    private readonly NnaContext _context = null!;
     private bool _disposed;
-    // ReSharper disable once UnusedMember.Global
     public ContextOrchestrator() { }
 
-    // ReSharper disable once UnusedMember.Global
     public ContextOrchestrator(NnaContext context) {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
@@ -32,7 +30,7 @@ public class ContextOrchestrator : IContextOrchestrator {
             try {
                 await using var transaction = await _context.Database.BeginTransactionAsync();
                 await _context.SaveChangesAsync();
-                await _context.Database.CurrentTransaction.CommitAsync();
+                await _context.Database.CurrentTransaction!.CommitAsync();
             }
             catch (DbUpdateException ex) {
                 Log.Error(ex, "Transaction failed");

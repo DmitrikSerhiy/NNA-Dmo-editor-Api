@@ -37,13 +37,13 @@ public class NnaTokenHandler : JsonWebTokenHandler {
         return ValidateToken(token, TokenValidationParametersProvider.Provide(refreshTokenDescriptor));
     }
 
-    public virtual string? GetTokenKeyId(string token) {
+    public virtual string GetTokenKeyId(string token) {
         if (!CanReadToken(token)) {
-            return null;
+            return string.Empty;
         }
             
         return ReadJsonWebToken(token).Claims
-            .FirstOrDefault(claim => claim.Type == nameof(NnaCustomTokenClaims.oid))?.Value;
+            .FirstOrDefault(claim => claim.Type == nameof(NnaCustomTokenClaims.oid))?.Value ?? string.Empty;
     }
         
     public virtual string? GetUserEmail(string token) {
