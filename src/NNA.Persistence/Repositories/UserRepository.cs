@@ -2,15 +2,16 @@
 using NNA.Domain.Entities;
 using NNA.Domain.Enums;
 using NNA.Domain.Exceptions.Data;
+using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Persistence.Repositories;
 internal sealed class UserRepository : IUserRepository {
     private readonly NnaContext _context;
-    public UserRepository(ContextOrchestrator contextOrchestrator) {
+    public UserRepository(IContextOrchestrator contextOrchestrator) {
         if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
-        _context = contextOrchestrator.Context;
+        _context = (contextOrchestrator.Context as NnaContext)!;
         Console.WriteLine($"From UserRepository {GetContextId()}");
     }
 

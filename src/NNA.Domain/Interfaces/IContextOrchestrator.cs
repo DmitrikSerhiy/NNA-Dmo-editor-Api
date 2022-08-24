@@ -1,6 +1,8 @@
-﻿namespace NNA.Domain.Interfaces; 
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace NNA.Domain.Interfaces; 
 public interface IContextOrchestrator : IDisposable {
     Task CommitChangesAsync();
     bool HasChanges();
-    string GetContextId();
+    DbContext Context { get; }
 }

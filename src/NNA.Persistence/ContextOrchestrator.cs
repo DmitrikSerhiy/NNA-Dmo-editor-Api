@@ -13,10 +13,10 @@ public class ContextOrchestrator : IContextOrchestrator {
         _context = context ?? throw new ArgumentNullException(nameof(context));
     }
 
-    internal NnaContext Context {
+    public DbContext Context {
         get {
             ThrowIfDisposed();
-            return _context ;
+            return _context;
         }
     }
 
@@ -41,10 +41,6 @@ public class ContextOrchestrator : IContextOrchestrator {
 
     public bool HasChanges() {
         return _context.ChangeTracker.HasChanges();
-    }
-
-    public string GetContextId() {
-        return _context.ContextId.ToString();
     }
 
     private void ThrowIfDisposed() {

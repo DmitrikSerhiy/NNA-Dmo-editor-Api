@@ -1,4 +1,6 @@
-﻿using Azure.Core;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Azure.Core;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
@@ -14,7 +16,6 @@ using NNA.Domain.Entities;
 using NNA.Domain.Enums;
 using NNA.Domain.Models;
 using NNA.Persistence;
-using Serilog;
 
 namespace NNA.Api.Extensions; 
 
@@ -28,14 +29,7 @@ public static class ApiBuilderExtensions {
     public static bool IsLocalMachine(this IHostEnvironment env) {
         return Environment.GetEnvironmentVariable("LocalMachine") == "true";
     }
-    
-    public static void AddNnaLocalLoggerOptions(this WebApplicationBuilder builder) {
-        builder.Host.UseSerilog();
-        Log.Logger = new LoggerConfiguration()
-            .ReadFrom.Configuration(builder.Configuration)
-            .CreateLogger();
-    }
-    
+
     public static void UseNnaCorsOptions(this IApplicationBuilder app) {
         app.UseCors(angularClientOrigin);
     }
@@ -143,6 +137,16 @@ public static class ApiBuilderExtensions {
         if (builder.Environment.IsLocal()) {
             builder.Configuration.AddUserSecrets("9287554d-fee5-4c75-8bd9-0ecbd051c423");
         }
+    }
+
+    public static void AddAutofacContainer(this WebApplicationBuilder builder)
+    {
+        builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        builder.Host.ConfigureContainer<ContainerBuilder>(afcBuilder =>
+            {
+                afcBuilder.RegisterModule(new PersistenceModule());
+                afcBuilder.RegisterModule(new ApiModule());
+            });
     }
     
     private static void AddNnaAzureKeyVault(this IConfigurationBuilder configBuilder, TokenCredential credentials) {
