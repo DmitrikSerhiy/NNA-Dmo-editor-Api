@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using Model.DTOs.Editor;
-using Model.Entities;
+using NNA.Domain.DTOs.Editor;
+using NNA.Domain.Entities;
 
 namespace NNA.Api.Features.Editor.Mappers;
 public class DmoMapper : Profile {
     public DmoMapper() {
-
         CreateMap<CreateDmoDto, Dmo>();
         CreateMap<Dmo, CreatedDmoDto>();
 

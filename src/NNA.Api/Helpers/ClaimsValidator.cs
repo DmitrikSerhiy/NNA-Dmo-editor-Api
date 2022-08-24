@@ -1,8 +1,8 @@
 ﻿using System.Security.Authentication;
 using System.Security.Claims;
-using Model.Entities;
-using Model.Enums;
-using Model.Interfaces.Repositories;
+using NNA.Domain.Entities;
+using NNA.Domain.Enums;
+using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Helpers;
 public class ClaimsValidator {

@@ -1,9 +1,9 @@
 ﻿using Google.Apis.Auth;
-using Model.DTOs.Account;
-using Model.Entities;
-using Model.Enums;
-using Model.Interfaces;
-using Model.Interfaces.Repositories;
+using NNA.Domain.DTOs.Account;
+using NNA.Domain.Entities;
+using NNA.Domain.Enums;
+using NNA.Domain.Interfaces;
+using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.Account.Services;
 public sealed class NnaTokenManager {

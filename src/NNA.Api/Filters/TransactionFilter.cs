@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
-using Model.Interfaces;
+using NNA.Domain.Interfaces;
 
 namespace NNA.Api.Filters;
 public class TransactionFilter : IAsyncActionFilter {

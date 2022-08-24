@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
-using Model;
-using Model.DTOs.Account;
+using NNA.Domain;
+using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 public class UpdateUserNameDtoValidator: AbstractValidator<UpdateUserNameDto> {

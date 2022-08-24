@@ -1,11 +1,11 @@
 using Autofac;
 using Microsoft.AspNetCore.Http.Connections;
-using Model;
 using NNA.Api;
 using NNA.Api.Extensions;
 using NNA.Api.Features.Account.Services;
 using NNA.Api.Features.Editor.Hubs;
-using Persistence;
+using NNA.Domain;
+using NNA.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -38,7 +38,6 @@ builder.Host.ConfigureContainer<ContainerBuilder>(afcBuilder => {
     afcBuilder.RegisterModule(new PersistenceModule());
     afcBuilder.RegisterModule(new ApiModule());
 });
-
 
 
 

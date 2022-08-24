@@ -2,9 +2,9 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using Model.Entities;
-using Model.Enums;
-using Model.Models;
+using NNA.Domain.Entities;
+using NNA.Domain.Enums;
+using NNA.Domain.Models;
 
 namespace NNA.Api.Features.Account.Services;
 public class NnaTokenHandler : JsonWebTokenHandler {

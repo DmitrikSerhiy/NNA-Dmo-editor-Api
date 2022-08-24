@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Model.DTOs.Editor;
+using NNA.Domain.DTOs.Editor;
 
 namespace NNA.Api.Features.Editor.Validators;
 public class LoadShortDmoDtoValidator : AbstractValidator<LoadShortDmoDto> {

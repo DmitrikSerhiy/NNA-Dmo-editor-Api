@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Model.DTOs.DmoCollections;
-using Model.Entities;
-using Model.Mappers;
+using NNA.Domain.DTOs.DmoCollections;
+using NNA.Domain.Entities;
+using NNA.Domain.Mappers;
 
 namespace NNA.Api.Features.DmoCollections.Mappers;
 public class DmoCollectionsMappers : Profile {

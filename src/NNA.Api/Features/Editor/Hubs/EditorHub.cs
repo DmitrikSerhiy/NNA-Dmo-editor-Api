@@ -1,10 +1,10 @@
-﻿using Model.DTOs.Editor;
-using Model.Exceptions.Editor;
-using Model.Interfaces;
-using Model.Interfaces.Repositories;
-using NNA.Api.Features.Editor.Services;
+﻿using NNA.Api.Features.Editor.Services;
 using NNA.Api.Features.Editor.Validators;
 using NNA.Api.Helpers;
+using NNA.Domain.DTOs.Editor;
+using NNA.Domain.Exceptions.Editor;
+using NNA.Domain.Interfaces;
+using NNA.Domain.Interfaces.Repositories;
 using Serilog;
 
 namespace NNA.Api.Features.Editor.Hubs;

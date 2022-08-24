@@ -1,4 +1,4 @@
-﻿using Model.DTOs.Dmos;
+﻿using NNA.Domain.DTOs.Dmos;
 
 namespace NNA.Api.Features.Editor.Services;
 public class BeatsIdGenerator {

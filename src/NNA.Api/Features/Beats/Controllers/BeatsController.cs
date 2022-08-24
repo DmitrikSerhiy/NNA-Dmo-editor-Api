@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Model.DTOs.Beats;
-using Model.Interfaces;
-using Model.Interfaces.Repositories;
+using NNA.Domain.DTOs.Beats;
+using NNA.Domain.Interfaces;
+using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.Beats.Controllers; 
 

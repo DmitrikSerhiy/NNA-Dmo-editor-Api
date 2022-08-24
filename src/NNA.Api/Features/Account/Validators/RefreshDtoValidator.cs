@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Model.DTOs.Account;
+using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 public class RefreshDtoValidator: AbstractValidator<RefreshDto> {

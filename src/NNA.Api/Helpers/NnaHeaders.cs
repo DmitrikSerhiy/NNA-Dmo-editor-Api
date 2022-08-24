@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Primitives;
-using Model.Enums;
+using NNA.Domain.Enums;
 
 namespace NNA.Api.Helpers;
 public class NnaHeaders {

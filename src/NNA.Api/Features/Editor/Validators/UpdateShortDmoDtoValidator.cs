@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Model;
-using Model.DTOs.Editor;
+using NNA.Domain;
+using NNA.Domain.DTOs.Editor;
 
 namespace NNA.Api.Features.Editor.Validators;
 public class UpdateShortDmoDtoValidator : AbstractValidator<UpdateShortDmoDto> {

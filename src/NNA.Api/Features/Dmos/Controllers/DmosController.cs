@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Model.DTOs.DmoCollections;
-using Model.DTOs.Dmos;
-using Model.Interfaces;
-using Model.Interfaces.Repositories;
+using NNA.Domain.DTOs.DmoCollections;
+using NNA.Domain.DTOs.Dmos;
+using NNA.Domain.Interfaces;
+using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.Dmos.Controllers;
 

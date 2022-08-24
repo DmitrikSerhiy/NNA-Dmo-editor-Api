@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Model;
-using Model.DTOs.Account;
+using NNA.Domain;
+using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 public class SsoCheckDtoValidator: AbstractValidator<SsoCheckDto> {

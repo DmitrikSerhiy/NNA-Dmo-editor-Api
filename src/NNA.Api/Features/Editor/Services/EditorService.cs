@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Model.DTOs.Editor;
-using Model.Entities;
-using Model.Exceptions.Editor;
-using Model.Interfaces;
-using Model.Interfaces.Repositories;
+using NNA.Domain.DTOs.Editor;
+using NNA.Domain.Entities;
+using NNA.Domain.Exceptions.Editor;
+using NNA.Domain.Interfaces;
+using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.Editor.Services;
 public class EditorService : IEditorService {

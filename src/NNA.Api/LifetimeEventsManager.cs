@@ -1,5 +1,5 @@
-﻿using Model.Interfaces.Repositories;
-using NNA.Api.Extensions;
+﻿using NNA.Api.Extensions;
+using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api;
 

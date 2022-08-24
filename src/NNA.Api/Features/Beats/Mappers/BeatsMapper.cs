@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
-using Model.DTOs.Beats;
-using Model.DTOs.Editor;
-using Model.Entities;
-using Model.Mappers;
+using NNA.Domain.DTOs.Beats;
+using NNA.Domain.DTOs.Editor;
+using NNA.Domain.Entities;
+using NNA.Domain.Mappers;
 
 namespace NNA.Api.Features.Beats.Mappers;
 public class BeatsMapper : Profile {

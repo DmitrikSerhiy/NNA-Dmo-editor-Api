@@ -1,6 +1,7 @@
-﻿using Model.DTOs.Account;
-using Model.Entities;
-using Model.Enums;
+﻿
+using NNA.Domain.DTOs.Account;
+using NNA.Domain.Entities;
+using NNA.Domain.Enums;
 
 namespace NNA.Api.Features.Account.Services;
 public class TokenMapper {

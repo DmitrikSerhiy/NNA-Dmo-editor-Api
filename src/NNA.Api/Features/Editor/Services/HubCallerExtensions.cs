@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.SignalR;
-using Model.Entities;
 using NNA.Api.Features.Account.Services;
+using NNA.Domain.Entities;
 
 namespace NNA.Api.Features.Editor.Services;
 public static class HubCallerExtensions {

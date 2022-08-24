@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
-using Model.Entities;
-using Model.Enums;
-using Model.Interfaces.Repositories;
+using NNA.Domain.Entities;
+using NNA.Domain.Enums;
+using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.Account.Services;
 public sealed class NnaUserManager: UserManager<NnaUser> {

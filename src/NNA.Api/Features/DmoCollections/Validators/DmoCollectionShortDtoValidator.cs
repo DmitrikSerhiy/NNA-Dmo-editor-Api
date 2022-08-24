@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
-using Model;
-using Model.DTOs.DmoCollections;
+using NNA.Domain;
+using NNA.Domain.DTOs.DmoCollections;
 
 namespace NNA.Api.Features.DmoCollections.Validators;
 public class DmoCollectionShortDtoValidator : AbstractValidator<DmoCollectionShortDto> {

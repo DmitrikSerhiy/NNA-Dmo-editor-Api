@@ -2,9 +2,9 @@
 using System.Text;
 using System.Web;
 using Microsoft.Extensions.Options;
-using Model.Entities;
-using Model.Enums;
-using Model.Models;
+using NNA.Domain.Entities;
+using NNA.Domain.Enums;
+using NNA.Domain.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using Serilog;

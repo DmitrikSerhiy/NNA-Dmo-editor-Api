@@ -1,7 +1,7 @@
 ﻿using Autofac;
-using Model.Interfaces;
 using NNA.Api.Features.Account.Services;
 using NNA.Api.Features.Editor.Services;
+using NNA.Domain.Interfaces;
 
 namespace NNA.Api;
 public class ApiModule : Module

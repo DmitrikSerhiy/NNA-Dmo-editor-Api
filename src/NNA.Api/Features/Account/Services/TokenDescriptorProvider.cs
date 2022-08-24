@@ -1,8 +1,8 @@
 ﻿using Microsoft.IdentityModel.Tokens;
-using Model.Entities;
-using Model.Enums;
-using Model.Models;
 using NNA.Api.Extensions;
+using NNA.Domain.Entities;
+using NNA.Domain.Enums;
+using NNA.Domain.Models;
 
 namespace NNA.Api.Features.Account.Services;
 public class TokenDescriptorProvider {

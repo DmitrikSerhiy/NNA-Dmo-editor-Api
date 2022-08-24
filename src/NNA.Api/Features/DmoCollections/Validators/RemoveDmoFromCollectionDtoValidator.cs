@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using Model.DTOs.DmoCollections;
+using NNA.Domain.DTOs.DmoCollections;
 
 namespace NNA.Api.Features.DmoCollections.Validators;
 public class RemoveDmoFromCollectionDtoValidator : AbstractValidator<RemoveDmoFromCollectionDto> {

@@ -2,9 +2,9 @@
 using System.Net.Mime;
 using System.Security.Authentication;
 using System.Security.Claims;
-using Model.Enums;
-using Model.Interfaces;
 using NNA.Api.Helpers;
+using NNA.Domain.Enums;
+using NNA.Domain.Interfaces;
 
 namespace NNA.Api.Features.Account.Services;
 public class AuthenticatedIdentityMiddleware {

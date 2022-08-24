@@ -1,5 +1,5 @@
-﻿using Model.Entities;
-using Model.Interfaces;
+﻿using NNA.Domain.Entities;
+using NNA.Domain.Interfaces;
 
 namespace NNA.Api.Features.Account.Services;
 public sealed class AuthenticatedIdentityProvider : IAuthenticatedIdentityProvider {

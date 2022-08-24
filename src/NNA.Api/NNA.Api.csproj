@@ -26,6 +26,8 @@
     <ItemGroup>
       <ProjectReference Include="..\..\NoNameApp\Model\Model.csproj" />
       <ProjectReference Include="..\..\NoNameApp\Persistence\Persistence.csproj" />
+      <ProjectReference Include="..\NNA.Domain\NNA.Domain.csproj" />
+      <ProjectReference Include="..\NNA.Persistence\NNA.Persistence.csproj" />
     </ItemGroup>
 
 </Project>

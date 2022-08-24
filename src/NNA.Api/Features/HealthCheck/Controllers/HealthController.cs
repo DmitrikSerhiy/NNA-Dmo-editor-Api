@@ -1,13 +1,12 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Model.Interfaces.Repositories;
+using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.HealthCheck.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class HealthController : ControllerBase {
-
     private readonly IUserRepository _repository;
 
     public HealthController(IUserRepository repository) {
