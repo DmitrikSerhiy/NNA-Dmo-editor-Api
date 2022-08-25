@@ -7,7 +7,6 @@ using NNA.Domain.Enums;
 using NNA.Domain.Models;
 using SendGrid;
 using SendGrid.Helpers.Mail;
-using Serilog;
 
 namespace NNA.Api.Features.Account.Services;
 public class MailService {
@@ -35,14 +34,12 @@ public class MailService {
         var plainTextContent = GenerateMessageForConfirmEmailActionWithLink(token);
         var message = MailHelper.CreateSingleEmail(_nnaFromEmail, to, "Confirm your account", plainTextContent, "");
             
-        Response? response = null;
+        Response? response;
         try {
             var sendGridClient = new SendGridClient(new SendGridClientOptions{ ApiKey = _sendGridApiKey });
             response = await sendGridClient.SendEmailAsync(message);
         }
-        catch (Exception ex) {
-            var responseString = await response?.Body?.ReadAsStringAsync()!;
-            Log.Error(ex, responseString);
+        catch (Exception) {
             return false;
         }
         return response.StatusCode == HttpStatusCode.Accepted;
@@ -55,14 +52,12 @@ public class MailService {
         var plainTextContent = GenerateMessageForPasswordActionWithLink(user, token, reason);
         var message = MailHelper.CreateSingleEmail(_nnaFromEmail, to, subject, plainTextContent, "");
             
-        Response? response = null;
+        Response? response;
         try {
             var sendGridClient = new SendGridClient(new SendGridClientOptions{ ApiKey = _sendGridApiKey });
             response = await sendGridClient.SendEmailAsync(message);
         }
-        catch (Exception ex) {
-            var responseString = await response?.Body?.ReadAsStringAsync()!;
-            Log.Error(ex, responseString);
+        catch (Exception) {
             return false;
         }
         return response.StatusCode == HttpStatusCode.Accepted;

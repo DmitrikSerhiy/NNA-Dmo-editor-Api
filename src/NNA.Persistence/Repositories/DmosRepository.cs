@@ -10,7 +10,6 @@ internal sealed class DmosRepository : IDmosRepository {
         if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
         _context = (contextOrchestrator.Context as NnaContext)!;
-        Console.WriteLine($"From DmosRepository {GetContextId()}");
     }
 
     public async Task<List<Dmo>> GetAll(Guid userId) {

@@ -6,7 +6,6 @@ using Serilog;
 
 namespace NNA.Api.Filters;
 public class ExceptionFilter : IAsyncExceptionFilter {
-
     public Task OnExceptionAsync(ExceptionContext context) {
         Log.Error(context.Exception, $"From exception filter: {context.Exception.Message}");
         ObjectResult result;

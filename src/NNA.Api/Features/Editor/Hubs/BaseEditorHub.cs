@@ -49,7 +49,7 @@ public class BaseEditorHub : Hub<IEditorClient> {
         }
 
         if (Environment.IsLocal()) {
-            Console.WriteLine($"{Context.GetCurrentUserEmail()} just connected to the editor");
+            Log.Information($"{Context.GetCurrentUserEmail()} just connected to the editor");
         }
 
         await _userRepository.AddEditorConnectionAsync(new EditorConnection {
@@ -68,7 +68,7 @@ public class BaseEditorHub : Hub<IEditorClient> {
         }
 
         if (Environment.IsLocal()) {
-            Console.WriteLine($"{Context.GetCurrentUserEmail()} disconnected from the editor");
+            Log.Information($"{Context.GetCurrentUserEmail()} disconnected from the editor");
         }
 
         await DisconnectUser();

@@ -1,5 +1,6 @@
 ﻿using NNA.Api.Extensions;
 using NNA.Domain.Interfaces.Repositories;
+using Serilog;
 
 namespace NNA.Api;
 
@@ -29,11 +30,11 @@ internal class LifetimeEventsManager : IHostedService {
 
     private void OnStopping() {
         _repository.SanitiseEditorConnections();
-        Console.WriteLine("Editor connections are sanitised");
+        Log.Information("Editor connections are sanitised");
 
         if (!_environment.IsLocalMachine()) {
             _repository.SanitiseUserTokens();
-            Console.WriteLine("Tokens are sanitised");
+            Log.Information("Tokens are sanitised");
         }
     }
 }

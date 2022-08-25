@@ -12,7 +12,6 @@ internal sealed class UserRepository : IUserRepository {
         if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
         _context = (contextOrchestrator.Context as NnaContext)!;
-        Console.WriteLine($"From UserRepository {GetContextId()}");
     }
 
     public void UpdateUser(NnaUser user) {
