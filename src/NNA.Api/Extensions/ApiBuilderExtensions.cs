@@ -120,7 +120,7 @@ public static class ApiBuilderExtensions {
     public static void AddNnaDbOptions(this WebApplicationBuilder builder) {
         builder.Services.AddDbContextPool<NnaContext>(options => {
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => {
-                sqlOptions.EnableRetryOnFailure(1);
+                sqlOptions.EnableRetryOnFailure(2);
                 sqlOptions.MigrationsAssembly("Persistence");
             });
         });

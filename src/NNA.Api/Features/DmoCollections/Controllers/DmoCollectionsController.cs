@@ -16,15 +16,12 @@ public class DmoCollectionsController: ControllerBase {
 
     private readonly IDmoCollectionsRepository _dmoCollectionsRepository;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
-    private readonly ResponseBuilder _responseBuilder;
     private readonly IMapper _mapper;
 
     public DmoCollectionsController(
-        ResponseBuilder responseBuilder,
         IMapper mapper, 
         IDmoCollectionsRepository dmoCollectionsRepository, 
         IAuthenticatedIdentityProvider authenticatedIdentityProvider) {
-        _responseBuilder = responseBuilder ?? throw new ArgumentNullException(nameof(responseBuilder));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _dmoCollectionsRepository = dmoCollectionsRepository 
                                     ?? throw new ArgumentNullException(nameof(dmoCollectionsRepository));
@@ -48,7 +45,7 @@ public class DmoCollectionsController: ControllerBase {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
 
         if (await _dmoCollectionsRepository.IsCollectionExist(_authenticatedIdentityProvider.AuthenticatedUserId, dto.CollectionName)) {
-            return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"List with name '{dto.CollectionName}' is already exist"));
+            return BadRequest(ResponseBuilder.AppendBadRequestErrorMessage($"List with name '{dto.CollectionName}' is already exist"));
         }
 
         await _dmoCollectionsRepository.AddCollectionAsync(new DmoCollection {
@@ -99,7 +96,7 @@ public class DmoCollectionsController: ControllerBase {
         var collectionForUpdate = await _dmoCollectionsRepository
             .GetCollectionAsync(_authenticatedIdentityProvider.AuthenticatedUserId, dmoCollectionShort.Id);
         if (collectionForUpdate is null) {
-            return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"'{dmoCollectionShort.CollectionName}' has been removed or invalid"));
+            return BadRequest(ResponseBuilder.AppendBadRequestErrorMessage($"'{dmoCollectionShort.CollectionName}' has been removed or invalid"));
         }
 
         _dmoCollectionsRepository.UpdateCollectionName(collectionForUpdate, _mapper.Map<DmoCollection>(dmoCollectionShort));
@@ -148,7 +145,7 @@ public class DmoCollectionsController: ControllerBase {
 
         foreach (var dmoInCollection in dto.Dmos) {
             if (_dmoCollectionsRepository.ContainsDmo(dmoCollection, dmoInCollection.Id)) {
-                return BadRequest(_responseBuilder.AppendBadRequestErrorMessage($"Collection already contains dmo with id {dmoInCollection.Id}"));
+                return BadRequest(ResponseBuilder.AppendBadRequestErrorMessage($"Collection already contains dmo with id {dmoInCollection.Id}"));
             }
         }
 

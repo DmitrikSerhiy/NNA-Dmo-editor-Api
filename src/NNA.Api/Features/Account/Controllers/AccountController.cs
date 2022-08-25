@@ -23,10 +23,9 @@ public class AccountController: NnaController {
     public AccountController(
         NnaUserManager userManager,
         NnaTokenManager nnaTokenManager, 
-        ResponseBuilder responseBuilder, 
         MailService mailService,
         IAuthenticatedIdentityProvider identityProvider, 
-        IUserRepository userRepository): base(responseBuilder) {
+        IUserRepository userRepository) {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _nnaTokenManager = nnaTokenManager ?? throw new ArgumentNullException(nameof(nnaTokenManager));
         _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));

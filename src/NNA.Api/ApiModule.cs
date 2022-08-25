@@ -7,10 +7,25 @@ using NNA.Domain.Interfaces;
 namespace NNA.Api;
 public class ApiModule : Module
 {
-    protected override void Load(ContainerBuilder builder) {
-
+    protected override void Load(ContainerBuilder builder)
+    {
+        builder
+            .RegisterType<NnaTokenHandler>()
+            .AsSelf()
+            .InstancePerLifetimeScope();
+        
+        builder
+            .RegisterType<NnaTokenManager>()
+            .AsSelf()
+            .InstancePerLifetimeScope();
+        
         builder 
             .RegisterType<ClaimsValidator>()
+            .AsSelf()
+            .InstancePerLifetimeScope();
+
+        builder
+            .RegisterType<MailService>()
             .AsSelf()
             .InstancePerLifetimeScope();
             

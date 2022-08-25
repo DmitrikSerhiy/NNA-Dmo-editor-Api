@@ -1,14 +1,14 @@
 ﻿namespace NNA.Api.Helpers;
-public class ResponseBuilder {
-    public object AppendBadRequestErrorMessage(string errorMessage) {
+public static class ResponseBuilder {
+    public static object AppendBadRequestErrorMessage(string errorMessage) {
         return new { errorMessage };
     }
 
-    public object AppendBadRequestErrorMessageToForm(string errorMessage) {
+    public static object AppendBadRequestErrorMessageToForm(string errorMessage) {
         return new { errorMessage, hasMassageInUI = true };
     }
 
-    public NnaValidationResult AppendValidationErrorMessage(string field, string errorMessage) {
+    public static NnaValidationResult AppendValidationErrorMessage(string field, string errorMessage) {
         return new NnaValidationResult {
             Fields = new[] { new NnaValidationResultFields { Field = field, Errors = new[] { errorMessage } } }
         };
