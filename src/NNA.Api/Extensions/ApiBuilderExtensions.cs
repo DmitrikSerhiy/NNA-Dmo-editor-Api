@@ -48,16 +48,14 @@ public static class ApiBuilderExtensions {
         });
     }
     
-    public static void AddNnaMvcAndFilters(this IServiceCollection services) {
-        services
-            .AddControllersWithViews(options => {
-                options.Filters.Add(typeof(ValidationFilter));
-                options.Filters.Add(typeof(ExceptionFilter));
-                options.Filters.Add(typeof(TransactionFilter));
-            })
-            .ConfigureApiBehaviorOptions(options => {
-                options.SuppressModelStateInvalidFilter = true;
-            });
+    public static void AddNnaMvcAndFilters(this IServiceCollection services)
+    {
+        services.AddControllersWithViews(options =>
+        {
+            options.Filters.Add(typeof(ValidationFilter));
+            options.Filters.Add(typeof(ExceptionFilter));
+            options.Filters.Add(typeof(TransactionFilter));
+        });
     }
 
 

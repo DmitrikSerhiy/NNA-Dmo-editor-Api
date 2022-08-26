@@ -1,7 +1,11 @@
 ﻿using Autofac;
+using FluentValidation;
 using NNA.Api.Features.Account.Services;
+using NNA.Api.Features.Account.Validators;
 using NNA.Api.Features.Editor.Services;
 using NNA.Api.Helpers;
+using NNA.Domain.DTOs;
+using NNA.Domain.DTOs.Account;
 using NNA.Domain.Interfaces;
 
 namespace NNA.Api;
@@ -37,6 +41,17 @@ public class ApiModule : Module
         builder
             .RegisterType<EditorService>()
             .As<IEditorService>()
+            .InstancePerLifetimeScope();
+        
+        builder
+            .RegisterAssemblyTypes(typeof(Program).Assembly)
+            .Where(type => type.Name.EndsWith("Validator") && type.GetInterfaces().Any(x => x.Name == nameof(IValidator)))
+            .As(typeof(IValidator<>))
+            .InstancePerLifetimeScope();
+
+        builder
+            .RegisterType<UpdateUserNameDtoValidator>()
+            .As<IValidator<UpdateUserNameDto>>()
             .InstancePerLifetimeScope();
     }
 }

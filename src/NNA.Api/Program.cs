@@ -1,3 +1,4 @@
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http.Connections;
 using NNA.Api;
 using NNA.Api.Extensions;
@@ -31,7 +32,6 @@ try
     builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
     builder.Services.AddNnaMvcAndFilters();
     builder.Services.AddHostedService<LifetimeEventsManager>();
-    // todo: register validators, try with automatic validation
     builder.AddAutofacContainer();
     if (builder.Environment.IsLocalMachine())
     {
