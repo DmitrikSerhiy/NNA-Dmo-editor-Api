@@ -5,7 +5,6 @@ using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 public class ChangePasswordDtoValidator: AbstractValidator<ChangePasswordDto> {
-
     public ChangePasswordDtoValidator() {
         RuleFor(u => u.CurrentPassword)
             .NotEmpty()

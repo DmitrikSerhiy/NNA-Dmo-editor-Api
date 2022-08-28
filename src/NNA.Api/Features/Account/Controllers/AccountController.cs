@@ -94,7 +94,7 @@ public class AccountController: NnaController {
             accessToken = tokens.AccessToken,
             refreshToken = tokens.RefreshToken,
             userName = registerDto.UserName,
-            email = registerDto.Email,
+            email = registerDto.Email
         });
     }
         
