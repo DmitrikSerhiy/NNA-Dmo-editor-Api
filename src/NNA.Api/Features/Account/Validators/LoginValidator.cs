@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Identity;
+using NNA.Api.Helpers;
 using NNA.Domain;
 using NNA.Domain.DTOs.Account;
-using NNA.Domain.Entities;
 
 namespace NNA.Api.Features.Account.Validators;
 public class LoginValidator : AbstractValidator<LoginDto> {
-    public LoginValidator(PasswordValidator<NnaUser> passwordValidator) {
+    public LoginValidator() {
         // regex html5 standard. Took from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
         // it fit angular built in validation
         RuleFor(u => u.Email)
@@ -25,11 +24,11 @@ public class LoginValidator : AbstractValidator<LoginDto> {
             .WithMessage($"Maximum password length is {ApplicationConstants.MaxPasswordLength}")
             .Must(password => password.Distinct().Count() > ApplicationConstants.MinPasswordLength / 2)
             .WithMessage($"Passwords must use at least {ApplicationConstants.MinPasswordLength / 2} different symbols")
-            .Must(password => password.Any(passwordValidator.IsDigit))
+            .Must(password => password.Any(CharactersVerificator.IsDigit))
             .WithMessage("Password must contain at least one number")
-            .Must(password => password.Any(passwordValidator.IsLower))
+            .Must(password => password.Any(CharactersVerificator.IsLower))
             .WithMessage("Password must contain at least one symbol in lower case")
-            .Must(password => password.Any(passwordValidator.IsUpper))
+            .Must(password => password.Any(CharactersVerificator.IsUpper))
             .WithMessage("Password must contain at least one symbol in upper case");
     }
 }

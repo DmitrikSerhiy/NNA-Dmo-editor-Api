@@ -1,12 +1,12 @@
 ﻿using FluentValidation;
 using Microsoft.AspNetCore.Identity;
+using NNA.Api.Helpers;
 using NNA.Domain;
 using NNA.Domain.DTOs.Account;
-using NNA.Domain.Entities;
 
 namespace NNA.Api.Features.Account.Validators;
 public class RegisterValidator : AbstractValidator<RegisterDto> {
-    public RegisterValidator(PasswordValidator<NnaUser> passwordValidator) {
+    public RegisterValidator() {
         RuleFor(u => u.UserName).NotEmpty().WithMessage("Username is missing");
         // regex html5 standard. Took from https://html.spec.whatwg.org/multipage/input.html#valid-e-mail-address
         // it fit angular built in validation
@@ -35,11 +35,11 @@ public class RegisterValidator : AbstractValidator<RegisterDto> {
             .WithMessage($"Maximum password length is {ApplicationConstants.MaxPasswordLength}")
             .Must(password => password.Distinct().Count() > ApplicationConstants.MinPasswordLength / 2)
             .WithMessage($"Password must not contain {ApplicationConstants.MinPasswordLength / 2} repeating symbols")
-            .Must(password => password.Any(passwordValidator.IsDigit))
+            .Must(password => password.Any(CharactersVerificator.IsDigit))
             .WithMessage("Password must contain at least one number")
-            .Must(password => password.Any(passwordValidator.IsLower))
+            .Must(password => password.Any(CharactersVerificator.IsLower))
             .WithMessage("Password must contain at least one symbol in lower case")
-            .Must(password => password.Any(passwordValidator.IsUpper))
+            .Must(password => password.Any(CharactersVerificator.IsUpper))
             .WithMessage("Password must contain at least one symbol in upper case");
     }
 }
