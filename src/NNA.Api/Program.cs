@@ -1,4 +1,3 @@
-using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Http.Connections;
 using NNA.Api;
 using NNA.Api.Extensions;

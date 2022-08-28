@@ -13,6 +13,7 @@ namespace NNA.Api.Features.Account.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class AccountController: NnaController {
     private readonly NnaUserManager _userManager;
     private readonly NnaTokenManager _nnaTokenManager;
@@ -271,7 +272,6 @@ public class AccountController: NnaController {
         
     [HttpGet]
     [Route("personalInfo")]
-    [Authorize]
     public async Task<IActionResult> GetPersonalInfo() {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user == null) {
@@ -287,7 +287,6 @@ public class AccountController: NnaController {
         
     [HttpPost]
     [Route("mail/confirmation")]
-    [Authorize]
     public async Task<IActionResult> SendEmailForAccountConfirmation(SendMailDto update) {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user.Email != update.Email) {
@@ -300,7 +299,6 @@ public class AccountController: NnaController {
         
     [HttpPut]
     [Route("name")]
-    [Authorize]
     public async Task<IActionResult> UpdateUserName(UpdateUserNameDto updateUserNameDto) {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user.Email != updateUserNameDto.Email) {
@@ -318,7 +316,6 @@ public class AccountController: NnaController {
 
     [HttpPut]
     [Route("password")]
-    [Authorize]
     public async Task<IActionResult> UpdatePassword(ChangePasswordDto changePasswordDto) {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user.Email != changePasswordDto.Email) {
@@ -343,7 +340,6 @@ public class AccountController: NnaController {
         
     [HttpPost]
     [Route("confirmation")]
-    [Authorize]
     public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto changePasswordDto) {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user.Email != changePasswordDto.Email) {
@@ -363,7 +359,6 @@ public class AccountController: NnaController {
 
     [HttpGet]
     [Route("ping")]
-    [Authorize]
     public async Task<IActionResult> ValidateToken() {
         var isVerified = await _nnaTokenManager.VerifyTokenAsync();
         return isVerified
@@ -373,7 +368,6 @@ public class AccountController: NnaController {
         
     [HttpDelete]
     [Route("logout")]
-    [Authorize]
     public async Task<IActionResult> Logout(LogoutDto logoutDto) {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user.Email != logoutDto.Email) {

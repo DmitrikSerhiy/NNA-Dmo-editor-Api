@@ -42,7 +42,7 @@ public class ValidationFilter : IAsyncActionFilter {
         var dtoType = dtoToValidate.GetType();
         var validatorType = typeof(IValidator<>).MakeGenericType(dtoType);
         var validator = context.HttpContext.RequestServices.GetService(validatorType);
-        if (validator is null) // todo: fix some validators here
+        if (validator is null) 
         {
             throw new Exception($"Failed to resolve validator for {dtoType.Name} dto");
         }
