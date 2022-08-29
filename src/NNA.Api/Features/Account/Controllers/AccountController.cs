@@ -62,8 +62,12 @@ public class AccountController: NnaController {
         }
         var hasPassword = await _userManager.HasPasswordAsync(user);
 
-        if (user.AuthProviders != null && hasPassword == false) {
-            return OkWithData(user.GetAuthProviders());
+        if (user.AuthProviders != null && hasPassword == false)
+        {
+            var authProviders = user.GetAuthProviders();
+            return authProviders.Length == 0 
+                ? NoContent() 
+                : OkWithData(authProviders);
         }
 
         return NoContent();

@@ -6,7 +6,8 @@ namespace NNA.Api.Features.DmoCollections.Validators;
 public class AddNewDmoCollectionDtoValidator : AbstractValidator<AddNewDmoCollectionDto> {
     public AddNewDmoCollectionDtoValidator() {
         RuleFor(d => d.CollectionName)
-            .NotEmpty().WithMessage("Collection id is missing")
+            .NotEmpty()
+            .WithMessage("Collection id is missing")
             .MaximumLength(ApplicationConstants.MaxCollectionNameLength)
             .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxCollectionNameLength}");
     }
