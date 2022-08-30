@@ -66,7 +66,7 @@ public class MailService {
     private string GenerateMessageForConfirmEmailActionWithLink(string token) {
         var welcomeMessage = new StringBuilder();
         welcomeMessage.AppendLine("Welcome to Dmo Editor!");
-        welcomeMessage.AppendLine("To activate your account please follow the link to verify your email address:");
+        welcomeMessage.AppendLine("To confirm your account please follow the link:");
         welcomeMessage.AppendLine("");
             
         var link = new StringBuilder();
@@ -76,7 +76,7 @@ public class MailService {
             
         var goodbyeMessage = new StringBuilder();
         goodbyeMessage.AppendLine("");
-        goodbyeMessage.AppendLine("Happy DMOing!");
+        goodbyeMessage.AppendLine("Dmo Editor Support Team");
             
         return $"{welcomeMessage}{link}{goodbyeMessage}";
     }
@@ -104,9 +104,8 @@ public class MailService {
         goodbyeMessage.AppendLine("");
         goodbyeMessage.AppendLine("If it was not you ignore this email and reset your account password immediately.");
         goodbyeMessage.AppendLine("Remember to use a password that is both strong and unique.");
-        goodbyeMessage.AppendLine("Or use one of your social accounts to login in Dmo Editor which is recommended approach");
+        goodbyeMessage.AppendLine("Or use one of your social accounts to login in Dmo Editor (recommended approach).");
         goodbyeMessage.AppendLine("");
-
         goodbyeMessage.AppendLine("Dmo Editor Support Team");
             
         return $"{welcomeMessage}{link}{goodbyeMessage}";
