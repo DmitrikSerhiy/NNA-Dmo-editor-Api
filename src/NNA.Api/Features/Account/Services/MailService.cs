@@ -93,6 +93,7 @@ public class MailService {
         var link = new StringBuilder();
         link.Append($"To {reasonString} your password follow the link:");
         link.AppendLine("");
+        link.AppendLine("");
         link.Append(_sendGridConfiguration.PasswordFormUrl);
         link.Append($"?token={HttpUtility.UrlEncode(token)}");
         link.Append($"&reason={(int)reason}");
@@ -100,15 +101,12 @@ public class MailService {
 
         var goodbyeMessage = new StringBuilder();
         goodbyeMessage.AppendLine("");
-        goodbyeMessage.AppendLine("If it was not you ignore this email!");
-        goodbyeMessage.AppendLine("And please, reset your account password immediately.");
-        goodbyeMessage.AppendLine("Remember to use a password that is both strong and unique.");
         goodbyeMessage.AppendLine("");
-        goodbyeMessage.AppendLine("Or use one of your social accounts to login in Dmo Editor.");
-        goodbyeMessage.AppendLine("This is the best approach from security view point");
+        goodbyeMessage.AppendLine("If it was not you ignore this email and reset your account password immediately.");
+        goodbyeMessage.AppendLine("Remember to use a password that is both strong and unique.");
+        goodbyeMessage.AppendLine("Or use one of your social accounts to login in Dmo Editor which is recommended approach");
         goodbyeMessage.AppendLine("");
 
-        goodbyeMessage.AppendLine("Thanks,");
         goodbyeMessage.AppendLine("Dmo Editor Support Team");
             
         return $"{welcomeMessage}{link}{goodbyeMessage}";

@@ -5,7 +5,7 @@ using Serilog;
 namespace NNA.Persistence;
 // Unit of work
 public class ContextOrchestrator : IContextOrchestrator {
-    private readonly NnaContext _context = null!;
+    private NnaContext? _context;
     private bool _disposed;
     public ContextOrchestrator() { }
 
@@ -16,13 +16,13 @@ public class ContextOrchestrator : IContextOrchestrator {
     public DbContext Context {
         get {
             ThrowIfDisposed();
-            return _context;
+            return _context!;
         }
     }
 
     public async Task CommitChangesAsync() {
         ThrowIfDisposed();
-        if (_context.Database.CurrentTransaction != null) {
+        if (_context!.Database.CurrentTransaction != null) {
             throw new InvalidOperationException("Transaction is already started");
         }
 
@@ -40,7 +40,7 @@ public class ContextOrchestrator : IContextOrchestrator {
     }
 
     public bool HasChanges() {
-        return _context.ChangeTracker.HasChanges();
+        return _context!.ChangeTracker.HasChanges();
     }
 
     private void ThrowIfDisposed() {
@@ -55,7 +55,8 @@ public class ContextOrchestrator : IContextOrchestrator {
         }
 
         if (disposing) {
-            _context.Dispose();
+            _context!.Dispose();
+            _context = null;
         }
         _disposed = true;
     }

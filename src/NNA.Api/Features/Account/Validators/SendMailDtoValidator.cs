@@ -16,6 +16,8 @@ public class SendMailDtoValidator: AbstractValidator<SendMailDto> {
             .WithMessage($"Maximum email length is {ApplicationConstants.MaxUserEmailLength}");
 
         RuleFor(u => u.Reason)
+            .NotEmpty()
+            .WithMessage("Reason is missing")
             .IsInEnum()
             .WithMessage("Not valid reason");
     }

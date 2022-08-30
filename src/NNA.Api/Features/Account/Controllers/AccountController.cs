@@ -158,7 +158,7 @@ public class AccountController: NnaController {
         }
 
         var user = await _userManager.FindByEmailAsync(authGoogleDto.Email);
-        if (user != null) {
+        if (user != null) { // login user
             var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, LoginProviderName.google);
             user.AddAuthProvider(Enum.GetName(LoginProviderName.google));
                 
@@ -169,7 +169,12 @@ public class AccountController: NnaController {
                 email = user.Email
             });            
         }
-            
+
+        if (string.IsNullOrWhiteSpace(authGoogleDto.Name))
+        {
+            authGoogleDto.Name = authGoogleDto.Email;
+        }
+        
         var userWithTakenName = await _userManager.FindByNameAsync(authGoogleDto.Name);
         if (userWithTakenName != null) {
             var isNameUnique = false;
@@ -289,9 +294,10 @@ public class AccountController: NnaController {
         });
     }
         
+    // todo: add rate limit here once per hour
     [HttpPost]
     [Route("mail/confirmation")]
-    public async Task<IActionResult> SendEmailForAccountConfirmation(SendMailDto update) {
+    public async Task<IActionResult> SendEmailForAccountConfirmation(SendConfirmAccountEmailDto update) {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user.Email != update.Email) {
             return BadRequestWithMessageToToastr("Wrong email address");
@@ -342,6 +348,7 @@ public class AccountController: NnaController {
         return NoContent();
     }
         
+    // todo: add rate limit once per token lifetime
     [HttpPost]
     [Route("confirmation")]
     public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto changePasswordDto) {

@@ -6,7 +6,6 @@ using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 public class AuthGoogleDtoValidator : AbstractValidator<AuthGoogleDto> {
-
     public AuthGoogleDtoValidator() {
         RuleFor(u => u.Email)
             .NotEmpty()
@@ -16,14 +15,6 @@ public class AuthGoogleDtoValidator : AbstractValidator<AuthGoogleDto> {
             .MaximumLength(ApplicationConstants.MaxUserEmailLength)
             .WithMessage($"Maximum email length is {ApplicationConstants.MaxUserEmailLength}");
 
-        RuleFor(u => u.Name)
-            .NotEmpty()
-            .WithMessage("UserName is missing")
-            .MaximumLength(ApplicationConstants.MaxUserNameLength)
-            .WithMessage($"Maximum user name length is {ApplicationConstants.MaxUserNameLength}")
-            .Must(userName => userName.All(userNameSymbol => (new UserOptions().AllowedUserNameCharacters += " ").Contains(userNameSymbol)))
-            .WithMessage("User name may contain only letters numbers and -._@+ symbols");
-            
         RuleFor(u => u.GoogleToken)
             .NotEmpty()
             .WithMessage("Google token is missing");
