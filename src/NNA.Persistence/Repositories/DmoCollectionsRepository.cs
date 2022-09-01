@@ -4,8 +4,10 @@ using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Persistence.Repositories;
+
 internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
     private readonly NnaContext _context;
+
     public DmoCollectionsRepository(IContextOrchestrator contextOrchestrator) {
         if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
@@ -22,7 +24,7 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
     }
 
     public async Task<DmoCollection?> GetCollectionAsync(Guid userId, Guid? collectionId) {
-        if(!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
+        if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
         return await _context.DmoCollections
             .FirstOrDefaultAsync(udc => udc.Id == collectionId && udc.NnaUserId == userId);
     }
@@ -33,7 +35,7 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
     }
 
     public async Task<bool> IsCollectionExist(Guid userId, string collectionName) {
-        if(string.IsNullOrWhiteSpace(collectionName)) throw new ArgumentNullException(nameof(collectionName));
+        if (string.IsNullOrWhiteSpace(collectionName)) throw new ArgumentNullException(nameof(collectionName));
         return await _context.DmoCollections.AnyAsync(udc =>
             udc.CollectionName.Equals(collectionName) && udc.NnaUserId == userId);
     }
@@ -64,13 +66,13 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
             .Include(dmoCollection => dmoCollection.DmoCollectionDmos)
             .ThenInclude(dmo => dmo.Dmo)
             .FirstOrDefaultAsync();
-        
-        if (dmoCollection == null)
-        {
+
+        if (dmoCollection == null) {
             return null;
         }
 
-        dmoCollection.DmoCollectionDmos = dmoCollection.DmoCollectionDmos.OrderByDescending(d => d.Dmo!.DateOfCreation).ToList();
+        dmoCollection.DmoCollectionDmos =
+            dmoCollection.DmoCollectionDmos.OrderByDescending(d => d.Dmo!.DateOfCreation).ToList();
         return dmoCollection;
     }
 
@@ -98,7 +100,8 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
         if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
 
         return await _context.Dmos
-            .Where(d => d.NnaUserId == userId && d.DmoCollectionDmos.All(dc => dc.DmoCollectionId != collectionId.Value))
+            .Where(d => d.NnaUserId == userId &&
+                        d.DmoCollectionDmos.All(dc => dc.DmoCollectionId != collectionId.Value))
             .ToListAsync();
     }
 

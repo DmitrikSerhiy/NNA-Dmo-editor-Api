@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.Entities; 
+﻿namespace NNA.Domain.Entities;
+
 public sealed class DmoCollectionDmo {
     public Guid DmoId { get; set; }
     public Dmo? Dmo { get; set; }

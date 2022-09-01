@@ -6,7 +6,8 @@ using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubServiceTests; 
+namespace NNA.Tests.EditorHubServiceTests;
+
 public class UpdateBeatTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
@@ -29,8 +30,8 @@ public class UpdateBeatTests : BaseHubServiceTests {
         };
         BeatToUpdate = new Beat();
     }
-        
-        
+
+
     [Fact]
     public void ShouldThrowWithInvalidEntryParamsTest() {
         //Arrange
@@ -45,8 +46,8 @@ public class UpdateBeatTests : BaseHubServiceTests {
         act1.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(update));
         act2.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(userId));
     }
-        
-        
+
+
     [Fact]
     public async Task ShouldSetUserIdBeforeRepositoryIsCalledTest() {
         //Arrange
@@ -54,16 +55,16 @@ public class UpdateBeatTests : BaseHubServiceTests {
         MapperMock.Setup(m => m.Map<Beat>(update)).Returns(BeatToUpdate);
         RepositoryMock.Setup(rm => rm.UpdateBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>())).ReturnsAsync(true);
         Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
-        
+
         //Act
         Func<Task> act = async () => await Subject.UpdateBeat(update, userId);
         await act.Invoke();
-        
+
         //Assert
         BeatToUpdate.UserId.Should().Be(userId);
     }
-        
-                
+
+
     [Fact]
     public async Task ShouldUpdateBeatByIdIfBeatIdIsValidGuidTest() {
         //Arrange
@@ -81,7 +82,7 @@ public class UpdateBeatTests : BaseHubServiceTests {
         RepositoryMock.Verify(sbj => sbj.UpdateBeatByTempIdAsync(It.IsAny<Beat>(), It.IsAny<string>()), Times.Never());
         RepositoryMock.Verify(sbj => sbj.UpdateBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>()), Times.Once());
     }
-        
+
     [Fact]
     public async Task ShouldUpdateBeatByTempIdIfBeatIdIsStringTest() {
         //Arrange
@@ -100,7 +101,7 @@ public class UpdateBeatTests : BaseHubServiceTests {
         RepositoryMock.Verify(sbj => sbj.UpdateBeatByTempIdAsync(It.IsAny<Beat>(), It.IsAny<string>()), Times.Once());
         RepositoryMock.Verify(sbj => sbj.UpdateBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>()), Times.Never());
     }
-        
+
     [Fact]
     public void ShouldHandleRepositoryExceptionTest() {
         //Arrange
@@ -119,12 +120,12 @@ public class UpdateBeatTests : BaseHubServiceTests {
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<UpdateBeatException>().Result
             .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
-        
-        
+
+
     [Fact]
     public void ShouldThrowIfDmoWasNotUpdatedTest() {
         //Arrange
-            
+
         SetupMocksAndVariables();
         MapperMock.Setup(m => m.Map<Beat>(update)).Returns(BeatToUpdate);
         RepositoryMock.Setup(rm => rm.UpdateBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>())).ReturnsAsync(false);

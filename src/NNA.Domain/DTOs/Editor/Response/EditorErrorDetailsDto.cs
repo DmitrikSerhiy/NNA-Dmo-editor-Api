@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.DTOs.Editor.Response; 
+﻿namespace NNA.Domain.DTOs.Editor.Response;
+
 public class EditorErrorDetailsDto : BaseDto {
     public EditorErrorDetailsDto(string errorMessage) {
         this.errorMessage = errorMessage;

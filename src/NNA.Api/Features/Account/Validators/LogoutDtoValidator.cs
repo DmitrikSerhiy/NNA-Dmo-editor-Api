@@ -4,7 +4,8 @@ using NNA.Domain;
 using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
-public class LogoutDtoValidator: AbstractValidator<LogoutDto> {
+
+public class LogoutDtoValidator : AbstractValidator<LogoutDto> {
     public LogoutDtoValidator() {
         RuleFor(u => u.Email)
             .NotEmpty()

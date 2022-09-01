@@ -36,4 +36,3 @@ public class HealthController : ControllerBase {
         return new JsonResult(new { message = "Token is valid" });
     }
 }
-

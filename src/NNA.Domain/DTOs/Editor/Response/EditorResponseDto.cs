@@ -1,6 +1,6 @@
-﻿namespace NNA.Domain.DTOs.Editor.Response; 
-public class EditorResponseDto<T> : BaseEditorResponseDto where T : BaseDto {
+﻿namespace NNA.Domain.DTOs.Editor.Response;
 
+public class EditorResponseDto<T> : BaseEditorResponseDto where T : BaseDto {
     // ReSharper disable InconsistentNaming
     public new int httpCode { get; private set; }
     public new string header { get; private set; } = null!;

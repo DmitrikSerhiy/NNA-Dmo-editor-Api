@@ -1,6 +1,7 @@
 ﻿using NNA.Domain.Enums;
 
-namespace NNA.Domain.Mappers; 
+namespace NNA.Domain.Mappers;
+
 public static class DmoStatusMapper {
     public static string GetDmoStatusString(short status) {
         return status switch {

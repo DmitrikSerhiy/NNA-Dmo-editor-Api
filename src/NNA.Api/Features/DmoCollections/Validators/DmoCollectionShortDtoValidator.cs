@@ -3,6 +3,7 @@ using NNA.Domain;
 using NNA.Domain.DTOs.DmoCollections;
 
 namespace NNA.Api.Features.DmoCollections.Validators;
+
 public class DmoCollectionShortDtoValidator : AbstractValidator<DmoCollectionShortDto> {
     public DmoCollectionShortDtoValidator() {
         RuleFor(d => d.Id)

@@ -1,6 +1,7 @@
 ﻿using NNA.Domain.Entities;
 
-namespace NNA.Domain.Interfaces.Repositories; 
+namespace NNA.Domain.Interfaces.Repositories;
+
 public interface IEditorRepository {
     Task<bool> UpdateJsonBeatsAsync(string jsonBeats, Guid id, Guid userId);
     Task<Dmo> LoadShortDmoAsync(Guid id, Guid userId);

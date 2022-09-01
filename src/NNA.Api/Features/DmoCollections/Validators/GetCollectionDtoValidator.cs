@@ -2,6 +2,7 @@
 using NNA.Domain.DTOs.DmoCollections;
 
 namespace NNA.Api.Features.DmoCollections.Validators;
+
 public class GetCollectionDtoValidator : AbstractValidator<GetCollectionDto> {
     public GetCollectionDtoValidator() {
         RuleFor(d => d.CollectionId)

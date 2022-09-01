@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.Entities; 
+﻿namespace NNA.Domain.Entities;
+
 public class UsersTokens {
     public virtual Guid UserId { get; set; }
     public virtual string Email { get; set; } = null!;

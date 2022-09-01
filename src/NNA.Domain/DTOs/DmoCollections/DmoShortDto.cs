@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.DTOs.DmoCollections; 
+﻿namespace NNA.Domain.DTOs.DmoCollections;
+
 public sealed class DmoShortDto : BaseDto {
     public string Id { get; set; } = null!;
     public string Name { get; set; } = null!;

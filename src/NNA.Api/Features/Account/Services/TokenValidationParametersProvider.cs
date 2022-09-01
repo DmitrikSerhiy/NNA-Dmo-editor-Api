@@ -1,6 +1,7 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
 namespace NNA.Api.Features.Account.Services;
+
 internal sealed class TokenValidationParametersProvider {
     internal static TokenValidationParameters Provide(SecurityTokenDescriptor tokenDescriptor) {
         return new TokenValidationParameters {

@@ -7,15 +7,13 @@ using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
-if (builder.Environment.IsLocalMachine())
-{
+if (builder.Environment.IsLocalMachine()) {
     Log.Logger = new LoggerConfiguration()
         .WriteTo.Console()
         .CreateBootstrapLogger();
 }
 
-try
-{
+try {
     builder.Services.AddControllers();
     builder.AddNnaAzureKeyVaultAndSecretsOptions();
     builder.AddNnaDbOptions();
@@ -32,18 +30,17 @@ try
     builder.Services.AddNnaMvcAndFilters();
     builder.Services.AddHostedService<LifetimeEventsManager>();
     builder.AddAutofacContainer();
-    if (builder.Environment.IsLocalMachine())
-    {
+    if (builder.Environment.IsLocalMachine()) {
         builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration));
     }
 
     var app = builder.Build();
 
-    if (builder.Environment.IsLocalMachine())
-    {
+    if (builder.Environment.IsLocalMachine()) {
         app.UseSerilogRequestLogging();
         app.UseDeveloperExceptionPage();
     }
+
     app.UseHttpsRedirection();
     app.UseHsts();
     app.UseRouting();
@@ -52,8 +49,7 @@ try
     app.UseAuthorization();
     app.UseMiddleware<AuthenticatedIdentityMiddleware>();
 
-    app.UseEndpoints(endpoints =>
-    {
+    app.UseEndpoints(endpoints => {
         endpoints.MapControllers();
         endpoints.MapHub<EditorHub>("api/editor", options => { options.Transports = HttpTransportType.WebSockets; });
     });
@@ -63,7 +59,8 @@ try
 catch (Exception ex) {
     Log.Fatal(ex, "Unhandled startup exception");
     throw;
-} finally {
+}
+finally {
     Log.Information("Shut down complete");
-    Log.CloseAndFlush();  
+    Log.CloseAndFlush();
 }

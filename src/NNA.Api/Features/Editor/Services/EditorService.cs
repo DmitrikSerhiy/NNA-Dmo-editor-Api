@@ -6,8 +6,8 @@ using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.Editor.Services;
-public class EditorService : IEditorService {
 
+public class EditorService : IEditorService {
     private readonly IEditorRepository _editorRepository;
     private readonly IMapper _mapper;
 

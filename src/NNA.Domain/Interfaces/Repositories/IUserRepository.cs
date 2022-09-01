@@ -1,7 +1,8 @@
 ﻿using NNA.Domain.Entities;
 
-namespace NNA.Domain.Interfaces.Repositories; 
-public interface IUserRepository: IRepository {
+namespace NNA.Domain.Interfaces.Repositories;
+
+public interface IUserRepository : IRepository {
     Task<NnaUser?> WithId(Guid id);
     void UpdateUser(NnaUser user);
     Task<NnaUser> FirstUser();

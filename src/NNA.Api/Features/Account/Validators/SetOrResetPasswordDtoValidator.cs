@@ -4,9 +4,9 @@ using NNA.Domain;
 using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
-public class SetOrResetPasswordDtoValidator: AbstractValidator<SetOrResetPasswordDto> {
+
+public class SetOrResetPasswordDtoValidator : AbstractValidator<SetOrResetPasswordDto> {
     public SetOrResetPasswordDtoValidator() {
-            
         RuleFor(u => u.Email)
             .NotEmpty()
             .WithMessage("Email is missing")
@@ -14,7 +14,7 @@ public class SetOrResetPasswordDtoValidator: AbstractValidator<SetOrResetPasswor
             .WithMessage("Invalid email address")
             .MaximumLength(ApplicationConstants.MaxUserEmailLength)
             .WithMessage($"Maximum email length is {ApplicationConstants.MaxUserEmailLength}");
-            
+
         RuleFor(u => u.NewPassword)
             .NotEmpty()
             .WithMessage("Password is missing")
@@ -34,7 +34,7 @@ public class SetOrResetPasswordDtoValidator: AbstractValidator<SetOrResetPasswor
         RuleFor(u => u.Token)
             .NotEmpty()
             .WithMessage("Set or Reset token is missing");
-            
+
         RuleFor(u => u.Reason)
             .NotEmpty()
             .WithMessage("Reason is missing")

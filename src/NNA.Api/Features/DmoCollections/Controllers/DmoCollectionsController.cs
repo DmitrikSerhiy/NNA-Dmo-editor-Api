@@ -7,23 +7,22 @@ using NNA.Domain.Entities;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
-namespace NNA.Api.Features.DmoCollections.Controllers; 
+namespace NNA.Api.Features.DmoCollections.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class DmoCollectionsController: ControllerBase {
-
+public class DmoCollectionsController : ControllerBase {
     private readonly IDmoCollectionsRepository _dmoCollectionsRepository;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
     private readonly IMapper _mapper;
 
     public DmoCollectionsController(
-        IMapper mapper, 
-        IDmoCollectionsRepository dmoCollectionsRepository, 
+        IMapper mapper,
+        IDmoCollectionsRepository dmoCollectionsRepository,
         IAuthenticatedIdentityProvider authenticatedIdentityProvider) {
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
-        _dmoCollectionsRepository = dmoCollectionsRepository 
+        _dmoCollectionsRepository = dmoCollectionsRepository
                                     ?? throw new ArgumentNullException(nameof(dmoCollectionsRepository));
         _authenticatedIdentityProvider = authenticatedIdentityProvider
                                          ?? throw new ArgumentNullException(nameof(authenticatedIdentityProvider));
@@ -44,8 +43,11 @@ public class DmoCollectionsController: ControllerBase {
     public async Task<ActionResult<DmoCollectionShortDto[]>> AddCollection(AddNewDmoCollectionDto dto) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-        if (await _dmoCollectionsRepository.IsCollectionExist(_authenticatedIdentityProvider.AuthenticatedUserId, dto.CollectionName)) {
-            return BadRequest(ResponseBuilder.AppendBadRequestErrorMessage($"List with name '{dto.CollectionName}' is already exist"));
+        if (await _dmoCollectionsRepository.IsCollectionExist(_authenticatedIdentityProvider.AuthenticatedUserId,
+                dto.CollectionName)) {
+            return BadRequest(
+                ResponseBuilder.AppendBadRequestErrorMessage(
+                    $"List with name '{dto.CollectionName}' is already exist"));
         }
 
         await _dmoCollectionsRepository.AddCollectionAsync(new DmoCollection {
@@ -58,7 +60,7 @@ public class DmoCollectionsController: ControllerBase {
 
     [HttpDelete]
     [Route("")]
-    public async Task<ActionResult<DmoCollectionShortDto>> DeleteCollection([FromQuery]DeleteCollectionDto dto) {
+    public async Task<ActionResult<DmoCollectionShortDto>> DeleteCollection([FromQuery] DeleteCollectionDto dto) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
         var dmoCollection = await _dmoCollectionsRepository
             .GetCollectionWithDmos(_authenticatedIdentityProvider.AuthenticatedUserId, dto.CollectionId);
@@ -77,7 +79,7 @@ public class DmoCollectionsController: ControllerBase {
 
     [HttpGet]
     [Route("collection/name")]
-    public async Task<ActionResult<DmoCollectionShortDto>> GetCollectionName([FromQuery]CollectionNameDto dto) {
+    public async Task<ActionResult<DmoCollectionShortDto>> GetCollectionName([FromQuery] CollectionNameDto dto) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
         var dmoCollection = await _dmoCollectionsRepository
             .GetCollectionAsync(_authenticatedIdentityProvider.AuthenticatedUserId, dto.CollectionId);
@@ -96,10 +98,13 @@ public class DmoCollectionsController: ControllerBase {
         var collectionForUpdate = await _dmoCollectionsRepository
             .GetCollectionAsync(_authenticatedIdentityProvider.AuthenticatedUserId, dmoCollectionShort.Id);
         if (collectionForUpdate is null) {
-            return BadRequest(ResponseBuilder.AppendBadRequestErrorMessage($"'{dmoCollectionShort.CollectionName}' has been removed or invalid"));
+            return BadRequest(
+                ResponseBuilder.AppendBadRequestErrorMessage(
+                    $"'{dmoCollectionShort.CollectionName}' has been removed or invalid"));
         }
 
-        _dmoCollectionsRepository.UpdateCollectionName(collectionForUpdate, _mapper.Map<DmoCollection>(dmoCollectionShort));
+        _dmoCollectionsRepository.UpdateCollectionName(collectionForUpdate,
+            _mapper.Map<DmoCollection>(dmoCollectionShort));
         return NoContent();
     }
 
@@ -110,7 +115,7 @@ public class DmoCollectionsController: ControllerBase {
 
     [HttpGet]
     [Route("collection")]
-    public async Task<ActionResult<DmoCollectionDto>> GetCollection([FromQuery]GetCollectionDto dto) {
+    public async Task<ActionResult<DmoCollectionDto>> GetCollection([FromQuery] GetCollectionDto dto) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
 
         var dmoCollection = await _dmoCollectionsRepository
@@ -124,7 +129,7 @@ public class DmoCollectionsController: ControllerBase {
 
     [HttpGet]
     [Route("collection/dmos")]
-    public async Task<ActionResult<DmoShortDto[]>> GetExcludedDmos([FromQuery]GetExcludedDmosDto dto) {
+    public async Task<ActionResult<DmoShortDto[]>> GetExcludedDmos([FromQuery] GetExcludedDmosDto dto) {
         if (dto is null) throw new ArgumentNullException(nameof(dto));
 
         var dmos = await _dmoCollectionsRepository
@@ -135,7 +140,7 @@ public class DmoCollectionsController: ControllerBase {
 
     [HttpPost]
     [Route("collection/dmos")]
-    public async Task<IActionResult> AddDmoToCollection([FromBody]AddDmoToCollectionDto dto) {
+    public async Task<IActionResult> AddDmoToCollection([FromBody] AddDmoToCollectionDto dto) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
         var dmoCollection = await _dmoCollectionsRepository
             .GetCollectionWithDmos(_authenticatedIdentityProvider.AuthenticatedUserId, dto.CollectionId);
@@ -145,7 +150,9 @@ public class DmoCollectionsController: ControllerBase {
 
         foreach (var dmoInCollection in dto.Dmos) {
             if (_dmoCollectionsRepository.ContainsDmo(dmoCollection, dmoInCollection.Id)) {
-                return BadRequest(ResponseBuilder.AppendBadRequestErrorMessage($"Collection already contains dmo with id {dmoInCollection.Id}"));
+                return BadRequest(
+                    ResponseBuilder.AppendBadRequestErrorMessage(
+                        $"Collection already contains dmo with id {dmoInCollection.Id}"));
             }
         }
 
@@ -156,6 +163,7 @@ public class DmoCollectionsController: ControllerBase {
             if (dmo == null) {
                 return NotFound();
             }
+
             dmos.Add(dmo);
         }
 
@@ -166,7 +174,7 @@ public class DmoCollectionsController: ControllerBase {
 
     [HttpDelete]
     [Route("collection/dmos")]
-    public async Task<IActionResult> RemoveDmoFromCollection([FromQuery]RemoveDmoFromCollectionDto dto) {
+    public async Task<IActionResult> RemoveDmoFromCollection([FromQuery] RemoveDmoFromCollectionDto dto) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
         var dmoCollection = await _dmoCollectionsRepository
             .GetCollectionWithDmos(_authenticatedIdentityProvider.AuthenticatedUserId, dto.CollectionId);
@@ -174,7 +182,8 @@ public class DmoCollectionsController: ControllerBase {
             return NotFound();
         }
 
-        var dmo = await _dmoCollectionsRepository.GetDmoAsync(_authenticatedIdentityProvider.AuthenticatedUserId, dto.DmoId);
+        var dmo = await _dmoCollectionsRepository.GetDmoAsync(_authenticatedIdentityProvider.AuthenticatedUserId,
+            dto.DmoId);
         if (dmo is null) {
             return NotFound();
         }

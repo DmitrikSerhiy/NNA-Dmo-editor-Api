@@ -3,6 +3,7 @@ using NNA.Domain.Interfaces;
 using Serilog;
 
 namespace NNA.Persistence;
+
 // Unit of work
 public class ContextOrchestrator : IContextOrchestrator {
     private NnaContext? _context;
@@ -58,6 +59,7 @@ public class ContextOrchestrator : IContextOrchestrator {
             _context!.Dispose();
             _context = null;
         }
+
         _disposed = true;
     }
 

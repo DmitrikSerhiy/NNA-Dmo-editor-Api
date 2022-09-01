@@ -5,29 +5,31 @@ using NNA.Domain.Enums;
 using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.Account.Services;
-public sealed class NnaUserManager: UserManager<NnaUser> {
-        
+
+public sealed class NnaUserManager : UserManager<NnaUser> {
     private readonly IServiceProvider _serviceProvider;
-    private readonly IUserRepository _userRepository; 
+    private readonly IUserRepository _userRepository;
 
     private readonly string? _nnaSetPasswordPurpose =
         Enum.GetName(typeof(SendMailReason), SendMailReason.NnaSetPassword);
+
     private readonly string? _nnaResetPasswordPurpose =
         Enum.GetName(typeof(SendMailReason), SendMailReason.NnaResetPassword);
 
     private const string NnaTokenProviderName = "NnaDataProtectorTokenProvider";
 
     public NnaUserManager(
-        IUserStore<NnaUser> store, 
-        IOptions<IdentityOptions> optionsAccessor, 
-        IPasswordHasher<NnaUser> passwordHasher, 
-        IEnumerable<IUserValidator<NnaUser>> userValidators, 
+        IUserStore<NnaUser> store,
+        IOptions<IdentityOptions> optionsAccessor,
+        IPasswordHasher<NnaUser> passwordHasher,
+        IEnumerable<IUserValidator<NnaUser>> userValidators,
         IEnumerable<IPasswordValidator<NnaUser>> passwordValidators,
         ILookupNormalizer keyNormalizer,
-        IdentityErrorDescriber errors, 
+        IdentityErrorDescriber errors,
         IServiceProvider services,
-        ILogger<NnaUserManager> logger) 
-        : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors, services, logger) {
+        ILogger<NnaUserManager> logger)
+        : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors,
+            services, logger) {
         _serviceProvider = services;
         _userRepository = _serviceProvider.GetService<IUserRepository>()!;
         RegisterTokenProvider(NnaTokenProviderName, GetNnaDataProtectorTokenProvider());
@@ -42,9 +44,10 @@ public sealed class NnaUserManager: UserManager<NnaUser> {
             Enum.GetName(typeof(TokenGenerationReasons), TokenGenerationReasons.NnaConfirmEmail), token, this, user);
 
         if (!isValid) {
-            return IdentityResult.Failed(new IdentityError { Code = "", Description = "Invalid confirm email nna token" });
+            return IdentityResult.Failed(new IdentityError
+                { Code = "", Description = "Invalid confirm email nna token" });
         }
-            
+
         _userRepository.ConfirmUserEmail(user);
         return IdentityResult.Success;
     }
@@ -52,11 +55,11 @@ public sealed class NnaUserManager: UserManager<NnaUser> {
     public async Task<string> GenerateNnaUserTokenAsync(NnaUser user, string? reason) {
         return await GenerateUserTokenAsync(user, NnaTokenProviderName, reason);
     }
-        
+
     public async Task<string> GenerateNnaTokenForSetOrResetPasswordAsync(NnaUser user, SendMailReason reason) {
         return reason switch {
             SendMailReason.NnaSetPassword => await GenerateUserTokenAsync(
-                user, 
+                user,
                 NnaTokenProviderName,
                 _nnaSetPasswordPurpose),
             SendMailReason.NnaResetPassword => await GenerateUserTokenAsync(
@@ -66,8 +69,9 @@ public sealed class NnaUserManager: UserManager<NnaUser> {
             _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
         };
     }
-        
-    public async Task<bool> ValidateNnaTokenForSetOrResetPasswordAsync(NnaUser user, string token, SendMailReason reason) {
+
+    public async Task<bool> ValidateNnaTokenForSetOrResetPasswordAsync(NnaUser user, string token,
+        SendMailReason reason) {
         return reason switch {
             SendMailReason.NnaSetPassword => await GetNnaDataProtectorTokenProvider()
                 .ValidateAsync(_nnaSetPasswordPurpose, token, this, user),
@@ -78,7 +82,7 @@ public sealed class NnaUserManager: UserManager<NnaUser> {
     }
 
     public async Task ResetNnaPassword(NnaUser user, string password) {
-        await UpdatePasswordHash(user, password, validatePassword: false); 
+        await UpdatePasswordHash(user, password, validatePassword: false);
         await UpdateUserAsync(user);
     }
 

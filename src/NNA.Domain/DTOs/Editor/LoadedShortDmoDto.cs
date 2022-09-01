@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.DTOs.Editor; 
+﻿namespace NNA.Domain.DTOs.Editor;
+
 public class LoadedShortDmoDto : BaseDto {
     // ReSharper disable InconsistentNaming
     public string id { get; set; } = null!;

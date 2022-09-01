@@ -7,12 +7,13 @@ using NNA.Domain.Interfaces.Repositories;
 using NNA.Persistence.Extensions;
 
 namespace NNA.Persistence.Repositories;
+
 internal sealed class EditorRepository : IEditorRepository {
     private readonly string _connectionString;
 
     #region sqlScripts
 
-    private const string CreateDmoScript = 
+    private const string CreateDmoScript =
         "INSERT INTO [dbo].[Dmos] ([Id],[DateOfCreation],[Name],[MovieTitle],[DmoStatus],[ShortComment],[NnaUserId],[HasBeats]) " +
         "VALUES(@id, @dateOfCreation, @name, @movieTitle, @dmoStatus, @shortComment, @nnaUserId, @hasBeats)";
 
@@ -35,7 +36,7 @@ internal sealed class EditorRepository : IEditorRepository {
     private const string DeleteBeatByIdScript =
         "DELETE FROM [dbo].[Beats] " +
         "WHERE Id = @id AND DmoId = @dmoId";
-        
+
     private const string DeleteBeatByTempIdScript =
         "DELETE FROM [dbo].[Beats] " +
         "WHERE TempId = @tempId AND DmoId = @dmoId";
@@ -44,37 +45,37 @@ internal sealed class EditorRepository : IEditorRepository {
         "UPDATE [dbo].[Beats]" +
         "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description " +
         "WHERE Id = @id AND UserId = @userId";
-        
+
     private const string UpdateBeatByTempIdScript =
         "UPDATE [dbo].[Beats]" +
         "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description " +
         "WHERE TempId = @tempId AND UserId = @userId";
-        
-    private const string ReorderBeatsOnAdd = 
+
+    private const string ReorderBeatsOnAdd =
         "UPDATE [dbo].[Beats] " +
-        "SET [Order] = [Order] + 1 "+
+        "SET [Order] = [Order] + 1 " +
         "WHERE [Order] >= @currenPosition AND Id != @currentBeatId";
-        
-    private const string ReorderBeatsOnDelete = 
+
+    private const string ReorderBeatsOnDelete =
         "UPDATE [dbo].[Beats] " +
-        "SET [Order] = [Order] - 1  "+
+        "SET [Order] = [Order] - 1  " +
         "WHERE [Order] >= @nextPosition";
-        
-    private const string LoadBeatForDeleteById = 
+
+    private const string LoadBeatForDeleteById =
         "SELECT TOP (1) [Id], [Order], [DmoId] " +
-        "FROM [dbo].[Beats] "+
+        "FROM [dbo].[Beats] " +
         "WHERE Id = @id AND [DmoId] = @dmoId";
-        
-    private const string LoadBeatForDeleteByTempId = 
+
+    private const string LoadBeatForDeleteByTempId =
         "SELECT TOP (1) [Id], [Order], [DmoId] " +
-        "FROM [dbo].[Beats] "+
+        "FROM [dbo].[Beats] " +
         "WHERE TempId = @tempId AND [DmoId] = @dmoId";
-        
+
     #endregion
 
     public EditorRepository(IConfiguration configuration) {
         if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-        _connectionString = configuration.GetConnectionString("ConnectionForEditor") 
+        _connectionString = configuration.GetConnectionString("ConnectionForEditor")
                             ?? throw new ApplicationException("Failed to establish db connection");
     }
 
@@ -110,15 +111,15 @@ internal sealed class EditorRepository : IEditorRepository {
             nnaUserId = dmo.NnaUserId,
             dmoStatus = dmo.DmoStatus
         });
-            
+
         return result >= 1;
     }
 
     public async Task<bool> UpdateJsonBeatsAsync(string jsonBeats, Guid id, Guid nnaUserId) {
         var result = await ExecuteAsync(UpdateBeatsJsonScript, new {
-            jsonBeats, 
-            id, 
-            nnaUserId, 
+            jsonBeats,
+            id,
+            nnaUserId,
             HasBeats = jsonBeats.Length > 0
         });
         return result >= 1;
@@ -168,9 +169,9 @@ internal sealed class EditorRepository : IEditorRepository {
             userId = beat.UserId
         });
 
-        return result >= 1;        
+        return result >= 1;
     }
-        
+
     public async Task<bool> DeleteBeatByIdAsync(Beat beat, Guid beatId) {
         var commandsWithParameters = new List<(string, object)> {
             (DeleteBeatByIdScript, new {
@@ -181,11 +182,11 @@ internal sealed class EditorRepository : IEditorRepository {
                 nextPosition = beat.Order + 1
             })
         };
-            
+
         await ExecuteTransactionAsync(commandsWithParameters);
         return true;
     }
-        
+
     public async Task<bool> DeleteBeatByTempIdAsync(Beat beat) {
         var commandsWithParameters = new List<(string, object)> {
             (DeleteBeatByTempIdScript, new {
@@ -196,16 +197,16 @@ internal sealed class EditorRepository : IEditorRepository {
                 nextPosition = beat.Order + 1
             })
         };
-            
+
         await ExecuteTransactionAsync(commandsWithParameters);
-            
+
         return true;
     }
 
     public async Task<Beat> LoadBeatForDeleteByIdAsync(Guid id, Guid dmoId) {
         return await QueryAsync<Beat>(LoadBeatForDeleteById, new { id, dmoId });
     }
-        
+
     public async Task<Beat> LoadBeatForDeleteByTempIdAsync(string tempId, Guid dmoId) {
         return await QueryAsync<Beat>(LoadBeatForDeleteByTempId, new { tempId, dmoId });
     }
@@ -215,7 +216,7 @@ internal sealed class EditorRepository : IEditorRepository {
     // because Dapper just does Task.FromResult under the hood. Need to investigate more deeply here
     // https://docs.microsoft.com/en-us/dotnet/api/system.data.sqlclient.sqlconnection.connectionstring?view=dotnet-plat-ext-6.0
     // and inspect code of dapper more accurate
-        
+
 
     private async Task<T> QueryAsync<T>(string request, object parameters) {
         await using var connection = new SqlConnection(_connectionString);

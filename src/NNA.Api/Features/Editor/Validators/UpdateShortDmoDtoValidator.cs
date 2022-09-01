@@ -3,6 +3,7 @@ using NNA.Domain;
 using NNA.Domain.DTOs.Editor;
 
 namespace NNA.Api.Features.Editor.Validators;
+
 public class UpdateShortDmoDtoValidator : AbstractValidator<UpdateShortDmoDto> {
     public UpdateShortDmoDtoValidator() {
         RuleFor(d => d.Id)

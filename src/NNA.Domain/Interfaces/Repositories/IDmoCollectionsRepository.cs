@@ -1,7 +1,8 @@
 ﻿using NNA.Domain.Entities;
 
-namespace NNA.Domain.Interfaces.Repositories; 
-public interface IDmoCollectionsRepository: IRepository {
+namespace NNA.Domain.Interfaces.Repositories;
+
+public interface IDmoCollectionsRepository : IRepository {
     Task<List<DmoCollection>> GetCollectionsAsync(Guid userId);
     Task<DmoCollection?> GetCollectionAsync(Guid userId, Guid? collectionId);
     Task AddCollectionAsync(DmoCollection? dmoCollection);

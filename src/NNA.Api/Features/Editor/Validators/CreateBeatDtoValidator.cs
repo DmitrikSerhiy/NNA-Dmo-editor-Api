@@ -2,6 +2,7 @@
 using NNA.Domain.DTOs.Editor;
 
 namespace NNA.Api.Features.Editor.Validators;
+
 public class CreateBeatDtoValidator : AbstractValidator<CreateBeatDto> {
     public CreateBeatDtoValidator() {
         RuleFor(d => d.TempId)

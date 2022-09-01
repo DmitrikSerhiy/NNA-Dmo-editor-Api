@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 using Serilog;
 
 namespace NNA.Api.Filters;
+
 public class ExceptionFilter : IAsyncExceptionFilter {
     public Task OnExceptionAsync(ExceptionContext context) {
         Log.Error(context.Exception, $"From exception filter: {context.Exception.Message}");
@@ -37,4 +38,3 @@ public class ExceptionFilter : IAsyncExceptionFilter {
         return Task.CompletedTask;
     }
 }
-

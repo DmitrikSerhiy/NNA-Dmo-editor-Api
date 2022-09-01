@@ -4,7 +4,8 @@ using NNA.Domain;
 using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
-public class ChangePasswordDtoValidator: AbstractValidator<ChangePasswordDto> {
+
+public class ChangePasswordDtoValidator : AbstractValidator<ChangePasswordDto> {
     public ChangePasswordDtoValidator() {
         RuleFor(u => u.CurrentPassword)
             .NotEmpty()
@@ -21,7 +22,7 @@ public class ChangePasswordDtoValidator: AbstractValidator<ChangePasswordDto> {
             .WithMessage("Password must contain at least one symbol in lower case")
             .Must(password => password.Any(CharactersVerificator.IsUpper))
             .WithMessage("Password must contain at least one symbol in upper case");
-            
+
         RuleFor(u => u.NewPassword)
             .NotEmpty()
             .WithMessage("Password is missing")
@@ -37,7 +38,7 @@ public class ChangePasswordDtoValidator: AbstractValidator<ChangePasswordDto> {
             .WithMessage("Password must contain at least one symbol in lower case")
             .Must(password => password.Any(CharactersVerificator.IsUpper))
             .WithMessage("Password must contain at least one symbol in upper case");
-            
+
         RuleFor(u => u.Email)
             .NotEmpty()
             .WithMessage("Email is missing")

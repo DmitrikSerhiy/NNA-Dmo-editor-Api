@@ -2,9 +2,9 @@
 using NNA.Domain.Interfaces;
 
 namespace NNA.Persistence;
+
 public class PersistenceModule : Module {
     protected override void Load(ContainerBuilder builder) {
-
         builder
             .RegisterAssemblyTypes(typeof(NnaContext).Assembly)
             .Where(t => t.Name.EndsWith("Repository"))

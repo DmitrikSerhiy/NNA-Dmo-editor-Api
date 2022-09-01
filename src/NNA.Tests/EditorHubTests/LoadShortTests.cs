@@ -7,14 +7,14 @@ using NNA.Domain.DTOs.Editor.Response;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubTests; 
-public class LoadShortTests : BaseEditorTests {
+namespace NNA.Tests.EditorHubTests;
 
+public class LoadShortTests : BaseEditorTests {
     private LoadShortDmoDto DmoDto { get; set; } = null!;
 
     private void SetMockAndVariables() {
         SetupConstructorMocks();
-        DmoDto = new LoadShortDmoDto {Id = Guid.NewGuid().ToString()};
+        DmoDto = new LoadShortDmoDto { Id = Guid.NewGuid().ToString() };
     }
 
 
@@ -23,7 +23,7 @@ public class LoadShortTests : BaseEditorTests {
         //Arrange
         SetMockAndVariables();
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
@@ -46,7 +46,7 @@ public class LoadShortTests : BaseEditorTests {
         //Arrange
         SetMockAndVariables();
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
@@ -70,7 +70,7 @@ public class LoadShortTests : BaseEditorTests {
         SetMockAndVariables();
         DmoDto.Id = null;
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
@@ -81,7 +81,8 @@ public class LoadShortTests : BaseEditorTests {
         var response = await act.Invoke();
 
         //Assert
-        response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateFailedValidationResponse(new List<Tuple<string, string>>()),
+        response.Should().BeEquivalentTo(
+            BaseEditorResponseDto.CreateFailedValidationResponse(new List<Tuple<string, string>>()),
             config => config
                 .Including(include => include.httpCode)
                 .Including(include => include.header)
@@ -103,7 +104,7 @@ public class LoadShortTests : BaseEditorTests {
 
         EditorServiceMock.Setup(esm => esm.LoadShortDmo(DmoDto, UserId)).ReturnsAsync(loadedDmo);
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
@@ -133,7 +134,7 @@ public class LoadShortTests : BaseEditorTests {
         EditorServiceMock.Setup(esm => esm.LoadShortDmo(DmoDto, UserId))
             .ThrowsAsync(new LoadShortDmoException(exceptionMessage, new Exception("exception from repository")));
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
@@ -144,7 +145,9 @@ public class LoadShortTests : BaseEditorTests {
         var response = await act.Invoke();
 
         //Assert
-        response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateInternalServerErrorResponse($"{LoadShortDmoException.CustomMessage} {exceptionMessage}"),
+        response.Should().BeEquivalentTo(
+            BaseEditorResponseDto.CreateInternalServerErrorResponse(
+                $"{LoadShortDmoException.CustomMessage} {exceptionMessage}"),
             config => config
                 .Excluding(exclude => exclude.warnings));
     }

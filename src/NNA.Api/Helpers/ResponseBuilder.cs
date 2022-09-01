@@ -1,4 +1,5 @@
 ﻿namespace NNA.Api.Helpers;
+
 public static class ResponseBuilder {
     public static object AppendBadRequestErrorMessage(string errorMessage) {
         return new { errorMessage };
@@ -14,4 +15,3 @@ public static class ResponseBuilder {
         };
     }
 }
-

@@ -6,14 +6,16 @@ using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubServiceTests; 
+namespace NNA.Tests.EditorHubServiceTests;
+
 public class CreateBeatTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
+
     // ReSharper disable once InconsistentNaming
     private CreateBeatDto beatDto { get; set; } = null!;
     private Beat NewBeat { get; set; } = null!;
-        
+
     private void SetupMocksAndVariables() {
         SetupConstructorMocks();
         userId = Guid.NewGuid();
@@ -24,7 +26,7 @@ public class CreateBeatTests : BaseHubServiceTests {
         };
         NewBeat = new Beat();
     }
-        
+
     [Fact]
     public void ShouldThrowWithInvalidEntryParamsTest() {
         //Arrange
@@ -39,7 +41,7 @@ public class CreateBeatTests : BaseHubServiceTests {
         act1.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(beatDto));
         act2.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(userId));
     }
-        
+
     [Fact]
     public async Task ShouldSetUserIdBeforeRepositoryIsCalledTest() {
         //Arrange
@@ -55,8 +57,8 @@ public class CreateBeatTests : BaseHubServiceTests {
         //Assert
         NewBeat.UserId.Should().Be(userId);
     }
-        
-        
+
+
     [Fact]
     public void ShouldHandleRepositoryExceptionTest() {
         //Arrange
@@ -75,7 +77,7 @@ public class CreateBeatTests : BaseHubServiceTests {
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<InsertNewBeatException>().Result
             .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
-        
+
     [Fact]
     public void ShouldThrowIfDmoWasNotUpdatedTest() {
         //Arrange
@@ -91,5 +93,4 @@ public class CreateBeatTests : BaseHubServiceTests {
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<InsertNewBeatException>().Result
             .And.InnerException.Should().BeNull();
     }
-        
 }

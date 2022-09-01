@@ -5,6 +5,7 @@ using NNA.Domain;
 using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
+
 public class AuthGoogleDtoValidator : AbstractValidator<AuthGoogleDto> {
     public AuthGoogleDtoValidator() {
         RuleFor(u => u.Email)

@@ -1,3 +1,3 @@
-﻿namespace NNA.Domain.DTOs; 
-public abstract class BaseDto
-{ }
+﻿namespace NNA.Domain.DTOs;
+
+public abstract class BaseDto { }

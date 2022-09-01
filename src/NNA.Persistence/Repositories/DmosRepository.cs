@@ -4,8 +4,10 @@ using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Persistence.Repositories;
+
 internal sealed class DmosRepository : IDmosRepository {
     private readonly NnaContext _context;
+
     public DmosRepository(IContextOrchestrator contextOrchestrator) {
         if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 

@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.DTOs.DmoCollections; 
+﻿namespace NNA.Domain.DTOs.DmoCollections;
+
 public class DmoCollectionDto : BaseDto {
     public string Id { get; set; } = null!;
     public string CollectionName { get; set; } = null!;

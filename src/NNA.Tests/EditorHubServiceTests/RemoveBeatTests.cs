@@ -6,7 +6,8 @@ using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubServiceTests; 
+namespace NNA.Tests.EditorHubServiceTests;
+
 public class RemoveBeatTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
@@ -22,7 +23,6 @@ public class RemoveBeatTests : BaseHubServiceTests {
             Order = 0,
             DmoId = Guid.NewGuid().ToString(),
             Id = Guid.NewGuid().ToString()
-
         };
         BeatToRemove = new Beat();
     }
@@ -41,7 +41,7 @@ public class RemoveBeatTests : BaseHubServiceTests {
         act1.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(beatDto));
         act2.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(userId));
     }
-        
+
     [Fact]
     public void ShouldThrowIfDmoIdIsInvalidGuidTest() {
         //Arrange
@@ -57,7 +57,7 @@ public class RemoveBeatTests : BaseHubServiceTests {
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<DeleteBeatException>().Result
             .And.Message.Should().StartWith(DeleteBeatException.CustomMessage);
     }
-        
+
     [Fact]
     public async Task ShouldDeleteBeatByMapperAndDeleteByIdIfBeatIdIsValidGuidTest() {
         //Arrange
@@ -76,7 +76,7 @@ public class RemoveBeatTests : BaseHubServiceTests {
         RepositoryMock.Verify(sbj => sbj.DeleteBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>()), Times.Once());
         MapperMock.Verify(sbj => sbj.Map<Beat>(It.IsAny<RemoveBeatDto>()), Times.Once());
     }
-        
+
     [Fact]
     public async Task ShouldDeleteBeatWithoutMapperAndDeleteByTempIdIfBeatIdIsStringTest() {
         //Arrange
@@ -96,7 +96,7 @@ public class RemoveBeatTests : BaseHubServiceTests {
         RepositoryMock.Verify(sbj => sbj.DeleteBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>()), Times.Never());
         MapperMock.Verify(sbj => sbj.Map<Beat>(It.IsAny<RemoveBeatDto>()), Times.Never());
     }
-        
+
     [Fact]
     public void ShouldHandleRepositoryExceptionTest() {
         //Arrange
@@ -107,7 +107,7 @@ public class RemoveBeatTests : BaseHubServiceTests {
             .ThrowsAsync(new Exception(repositoryExceptionMessage));
 
         Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
-            
+
         //Act
         async Task Act() => await Subject.RemoveBeat(beatDto, userId);
 
@@ -116,7 +116,7 @@ public class RemoveBeatTests : BaseHubServiceTests {
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<DeleteBeatException>().Result
             .And.InnerException!.Message.Should().Be(repositoryExceptionMessage);
     }
-        
+
     [Fact]
     public void ShouldThrowIfDmoWasNotUpdatedTest() {
         //Arrange
@@ -132,5 +132,4 @@ public class RemoveBeatTests : BaseHubServiceTests {
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<DeleteBeatException>().Result
             .And.InnerException.Should().BeNull();
     }
-        
 }

@@ -7,11 +7,12 @@ using NNA.Domain.Enums;
 using NNA.Domain.Models;
 
 namespace NNA.Api.Features.Account.Services;
+
 public class NnaTokenHandler : JsonWebTokenHandler {
     private readonly TokenDescriptorProvider _descriptorProvider = null!;
 
     public NnaTokenHandler() { }
-        
+
     public NnaTokenHandler(IOptions<JwtOptions> jwtOptions) {
         if (jwtOptions.Value is null) throw new ArgumentNullException(nameof(jwtOptions));
         _descriptorProvider = new TokenDescriptorProvider(jwtOptions.Value);
@@ -41,20 +42,20 @@ public class NnaTokenHandler : JsonWebTokenHandler {
         if (!CanReadToken(token)) {
             return string.Empty;
         }
-            
+
         return ReadJsonWebToken(token).Claims
             .FirstOrDefault(claim => claim.Type == nameof(NnaCustomTokenClaims.oid))?.Value ?? string.Empty;
     }
-        
+
     public virtual string? GetUserEmail(string token) {
         if (!CanReadToken(token)) {
             return null;
         }
-            
+
         return ReadJsonWebToken(token).Claims
             .FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Email)?.Value;
     }
-        
+
     public virtual async Task<GoogleJsonWebSignature.Payload> ValidateGoogleTokenAsync(string token) {
         return await GoogleJsonWebSignature.ValidateAsync(token);
     }

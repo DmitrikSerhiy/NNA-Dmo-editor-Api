@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.DTOs.Account; 
+﻿namespace NNA.Domain.DTOs.Account;
+
 public class TokensDto : BaseDto {
     public string AccessToken { get; set; } = null!;
     public string AccessTokenKeyId { get; set; } = null!;

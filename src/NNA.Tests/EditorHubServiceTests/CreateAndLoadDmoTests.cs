@@ -6,15 +6,15 @@ using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubServiceTests; 
+namespace NNA.Tests.EditorHubServiceTests;
+
 public class CreateAndLoadDmoTests : BaseHubServiceTests {
-
-
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
+
     // ReSharper disable once InconsistentNaming
-    private CreateDmoDto dmoDto { get; set; }  = null!;
-    private Dmo InitialDmo { get; set; }  = null!;
+    private CreateDmoDto dmoDto { get; set; } = null!;
+    private Dmo InitialDmo { get; set; } = null!;
 
     private void SetupMocksAndVariables() {
         SetupConstructorMocks();

@@ -4,6 +4,7 @@ using NNA.Domain;
 using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
+
 public class CheckNameDtoValidator : AbstractValidator<CheckNameDto> {
     public CheckNameDtoValidator() {
         RuleFor(u => u.Name)
@@ -11,7 +12,8 @@ public class CheckNameDtoValidator : AbstractValidator<CheckNameDto> {
             .WithMessage("UserName is missing")
             .MaximumLength(ApplicationConstants.MaxUserNameLength)
             .WithMessage($"Maximum user name length is {ApplicationConstants.MaxUserNameLength}")
-            .Must(userName => userName.All(userNameSymbol => (new UserOptions().AllowedUserNameCharacters += " ").Contains(userNameSymbol)))
+            .Must(userName => userName.All(userNameSymbol =>
+                (new UserOptions().AllowedUserNameCharacters += " ").Contains(userNameSymbol)))
             .WithMessage("User name may contain only letters, numbers and -._@+ symbols");
     }
 }

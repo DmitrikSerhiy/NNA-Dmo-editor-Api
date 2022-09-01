@@ -5,23 +5,22 @@ using NNA.Domain.DTOs.Beats;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
-namespace NNA.Api.Features.Beats.Controllers; 
+namespace NNA.Api.Features.Beats.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
 public class BeatsController : ControllerBase {
-
     private readonly IDmosRepository _dmosRepository;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
     private readonly IMapper _mapper;
 
     public BeatsController(
-        IDmosRepository dmosRepository, 
-        IAuthenticatedIdentityProvider authenticatedIdentityProvider, 
+        IDmosRepository dmosRepository,
+        IAuthenticatedIdentityProvider authenticatedIdentityProvider,
         IMapper mapper) {
         _dmosRepository = dmosRepository ?? throw new ArgumentNullException(nameof(dmosRepository));
-        _authenticatedIdentityProvider = authenticatedIdentityProvider 
+        _authenticatedIdentityProvider = authenticatedIdentityProvider
                                          ?? throw new ArgumentNullException(nameof(authenticatedIdentityProvider));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }

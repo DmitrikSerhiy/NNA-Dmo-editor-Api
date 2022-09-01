@@ -1,13 +1,13 @@
-﻿
-using NNA.Domain.DTOs.Account;
+﻿using NNA.Domain.DTOs.Account;
 using NNA.Domain.Entities;
 using NNA.Domain.Enums;
 
 namespace NNA.Api.Features.Account.Services;
+
 public class TokenMapper {
     public static NnaToken MapToAccessTokenByPasswordAuth(
-        Guid userId, 
-        TokensDto tokensDto, 
+        Guid userId,
+        TokensDto tokensDto,
         LoginProviderName loginProviderName = LoginProviderName.password) {
         return new NnaToken {
             UserId = userId,
@@ -19,8 +19,8 @@ public class TokenMapper {
     }
 
     public static NnaToken MapToRefreshTokenByPasswordAuth(
-        Guid userId, 
-        TokensDto tokensDto, 
+        Guid userId,
+        TokensDto tokensDto,
         LoginProviderName loginProviderName = LoginProviderName.password) {
         return new NnaToken {
             UserId = userId,

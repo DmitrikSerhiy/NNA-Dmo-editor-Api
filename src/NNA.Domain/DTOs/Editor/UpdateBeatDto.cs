@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.DTOs.Editor; 
+﻿namespace NNA.Domain.DTOs.Editor;
+
 public class UpdateBeatDto : BaseDto {
     public string? BeatId { get; set; }
     public string Text { get; set; } = null!;

@@ -5,9 +5,10 @@ using NNA.Domain.Enums;
 using NNA.Domain.Models;
 
 namespace NNA.Api.Features.Account.Services;
-public class TokenDescriptorProvider {
 
+public class TokenDescriptorProvider {
     private readonly JwtOptions _jwtOptions;
+
     public TokenDescriptorProvider(JwtOptions jwtOptions) {
         _jwtOptions = jwtOptions ?? throw new ArgumentNullException(nameof(jwtOptions));
     }
@@ -19,7 +20,7 @@ public class TokenDescriptorProvider {
 
         return accessTokenDescriptor;
     }
-        
+
     public SecurityTokenDescriptor ProvideForRefreshTokenWithCredentialsAndSubject(NnaUser user) {
         var refreshTokenDescriptor = ProvideForRefreshToken();
         refreshTokenDescriptor.AddSigningCredentials(_jwtOptions);

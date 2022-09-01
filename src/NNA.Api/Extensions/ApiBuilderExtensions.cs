@@ -17,7 +17,7 @@ using NNA.Domain.Enums;
 using NNA.Domain.Models;
 using NNA.Persistence;
 
-namespace NNA.Api.Extensions; 
+namespace NNA.Api.Extensions;
 
 public static class ApiBuilderExtensions {
     private static readonly string angularClientOrigin = "angularClient";
@@ -25,7 +25,7 @@ public static class ApiBuilderExtensions {
     public static bool IsLocal(this IHostEnvironment env) {
         return env.EnvironmentName == "Local";
     }
-    
+
     public static bool IsLocalMachine(this IHostEnvironment env) {
         return Environment.GetEnvironmentVariable("LocalMachine") == "true";
     }
@@ -33,13 +33,13 @@ public static class ApiBuilderExtensions {
     public static void UseNnaCorsOptions(this IApplicationBuilder app) {
         app.UseCors(angularClientOrigin);
     }
-    
+
     public static void AddNnaCorsOptions(this WebApplicationBuilder builder) {
         builder.Services.AddCors(o => {
             o.AddPolicy(angularClientOrigin, policyBuilder => {
                 policyBuilder.WithOrigins(builder.Configuration["CorsUrls"].Split(","));
                 policyBuilder.WithExposedHeaders(
-                    nameof(NnaHeaderNames.ExpiredToken), 
+                    nameof(NnaHeaderNames.ExpiredToken),
                     nameof(NnaHeaderNames.RedirectToLogin));
                 policyBuilder.AllowAnyMethod();
                 policyBuilder.AllowAnyHeader();
@@ -47,11 +47,9 @@ public static class ApiBuilderExtensions {
             });
         });
     }
-    
-    public static void AddNnaMvcAndFilters(this IServiceCollection services)
-    {
-        services.AddControllersWithViews(options =>
-        {
+
+    public static void AddNnaMvcAndFilters(this IServiceCollection services) {
+        services.AddControllersWithViews(options => {
             options.Filters.Add(typeof(ValidationFilter));
             options.Filters.Add(typeof(ExceptionFilter));
             options.Filters.Add(typeof(TransactionFilter));
@@ -112,7 +110,8 @@ public static class ApiBuilderExtensions {
 
     public static void AddNnaOptions(this WebApplicationBuilder builder) {
         builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
-        builder.Services.Configure<SendGridConfiguration>(builder.Configuration.GetSection(nameof(SendGridConfiguration)));
+        builder.Services.Configure<SendGridConfiguration>(
+            builder.Configuration.GetSection(nameof(SendGridConfiguration)));
     }
 
     public static void AddNnaDbOptions(this WebApplicationBuilder builder) {
@@ -137,22 +136,20 @@ public static class ApiBuilderExtensions {
         }
     }
 
-    public static void AddAutofacContainer(this WebApplicationBuilder builder)
-    {
+    public static void AddAutofacContainer(this WebApplicationBuilder builder) {
         builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-        builder.Host.ConfigureContainer<ContainerBuilder>(afcBuilder =>
-            {
-                afcBuilder.RegisterModule(new PersistenceModule());
-                afcBuilder.RegisterModule(new ApiModule());
-            });
+        builder.Host.ConfigureContainer<ContainerBuilder>(afcBuilder => {
+            afcBuilder.RegisterModule(new PersistenceModule());
+            afcBuilder.RegisterModule(new ApiModule());
+        });
     }
-    
+
     private static void AddNnaAzureKeyVault(this IConfigurationBuilder configBuilder, TokenCredential credentials) {
         var configuration = configBuilder.Build();
         var secretClient = new SecretClient(
             new Uri($"https://{configuration["az-key-vault"]}.vault.azure.net/"),
             credentials);
-        
+
         configBuilder.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
     }
 }

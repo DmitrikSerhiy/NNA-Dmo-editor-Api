@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.Exceptions.Editor; 
+﻿namespace NNA.Domain.Exceptions.Editor;
+
 public class UpdateShortDmoException : Exception {
     private const string InnerMessage = "Failed to update short dmo.";
     public static string CustomMessage { get; } = InnerMessage;

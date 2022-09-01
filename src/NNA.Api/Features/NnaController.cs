@@ -3,8 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Helpers;
 
 namespace NNA.Api.Features;
+
 public class NnaController : ControllerBase {
-    
     public IActionResult OkWithData(object data) {
         return new JsonResult(data);
     }

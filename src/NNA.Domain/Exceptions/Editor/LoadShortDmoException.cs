@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.Exceptions.Editor; 
+﻿namespace NNA.Domain.Exceptions.Editor;
+
 public class LoadShortDmoException : Exception {
     private const string InnerMessage = "Failed to load short dmo.";
     public static string CustomMessage { get; } = InnerMessage;

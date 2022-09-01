@@ -4,9 +4,9 @@ using NNA.Domain;
 using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
-public class SendMailDtoValidator: AbstractValidator<SendMailDto> {
+
+public class SendMailDtoValidator : AbstractValidator<SendMailDto> {
     public SendMailDtoValidator() {
-            
         RuleFor(u => u.Email)
             .NotEmpty()
             .WithMessage("Email is missing")

@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.DTOs.Editor; 
+﻿namespace NNA.Domain.DTOs.Editor;
+
 public class CreateDmoDto : BaseDto {
     public string? Name { get; set; }
     public string MovieTitle { get; set; } = null!;

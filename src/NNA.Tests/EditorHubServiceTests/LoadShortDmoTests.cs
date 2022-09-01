@@ -6,11 +6,12 @@ using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubServiceTests; 
-public class LoadShortDmoTests : BaseHubServiceTests {
+namespace NNA.Tests.EditorHubServiceTests;
 
+public class LoadShortDmoTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
+
     // ReSharper disable once InconsistentNaming
     private LoadShortDmoDto dmoDto { get; set; } = null!;
     private Dmo InitialDmo { get; set; } = null!;

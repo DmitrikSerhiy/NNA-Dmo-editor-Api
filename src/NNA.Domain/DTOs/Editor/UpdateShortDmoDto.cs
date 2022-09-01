@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.DTOs.Editor; 
+﻿namespace NNA.Domain.DTOs.Editor;
+
 public class UpdateShortDmoDto : BaseDto {
     public string? Id { get; set; }
     public string Name { get; set; } = null!;

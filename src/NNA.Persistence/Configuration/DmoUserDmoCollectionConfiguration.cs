@@ -2,9 +2,9 @@
 using NNA.Domain.Entities;
 
 namespace NNA.Persistence.Configuration;
+
 public static class DmoUserDmoCollectionConfiguration {
     public static void Configure(ModelBuilder modelBuilder) {
-
         modelBuilder.Entity<DmoCollectionDmo>()
             .HasKey(dc => new { dc.DmoId, dc.DmoCollectionId });
 

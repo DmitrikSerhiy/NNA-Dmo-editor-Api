@@ -1,8 +1,9 @@
-﻿namespace NNA.Domain.Exceptions.Editor; 
+﻿namespace NNA.Domain.Exceptions.Editor;
+
 public class UpdateBeatException : Exception {
     private const string InnerMessage = "Failed to update beat.";
     public static string CustomMessage { get; } = InnerMessage;
-        
+
     public UpdateBeatException() { }
 
     public UpdateBeatException(string message) : base($"{InnerMessage} {message}") { }

@@ -2,6 +2,7 @@
 using NNA.Domain.Entities;
 
 namespace NNA.Persistence.Configuration;
+
 public static class EditorConnectionConfiguration {
     public static void Configure(ModelBuilder modelBuilder) {
         modelBuilder.Entity<EditorConnection>()
@@ -9,6 +10,5 @@ public static class EditorConnectionConfiguration {
 
         modelBuilder.Entity<EditorConnection>()
             .HasIndex(s => s.UserId);
-
     }
 }

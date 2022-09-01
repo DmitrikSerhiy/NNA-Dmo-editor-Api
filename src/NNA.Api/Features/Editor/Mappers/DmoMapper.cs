@@ -3,6 +3,7 @@ using NNA.Domain.DTOs.Editor;
 using NNA.Domain.Entities;
 
 namespace NNA.Api.Features.Editor.Mappers;
+
 public class DmoMapper : Profile {
     public DmoMapper() {
         CreateMap<CreateDmoDto, Dmo>();
@@ -14,4 +15,3 @@ public class DmoMapper : Profile {
         CreateMap<Dmo, LoadedShortDmoDto>();
     }
 }
-

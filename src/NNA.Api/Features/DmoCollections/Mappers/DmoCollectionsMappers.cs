@@ -4,8 +4,8 @@ using NNA.Domain.Entities;
 using NNA.Domain.Mappers;
 
 namespace NNA.Api.Features.DmoCollections.Mappers;
-public class DmoCollectionsMappers : Profile {
 
+public class DmoCollectionsMappers : Profile {
     public DmoCollectionsMappers() {
         CreateMap<DmoCollection, DmoCollectionShortDto>()
             .ForMember(udc => udc.DmoCount, dcd => dcd.MapFrom(dd => dd.DmoCollectionDmos.Count))

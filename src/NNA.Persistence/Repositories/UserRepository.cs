@@ -6,8 +6,10 @@ using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Persistence.Repositories;
+
 internal sealed class UserRepository : IUserRepository {
     private readonly NnaContext _context;
+
     public UserRepository(IContextOrchestrator contextOrchestrator) {
         if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
 
@@ -18,7 +20,7 @@ internal sealed class UserRepository : IUserRepository {
         _context.Set<NnaUser>().Attach(user);
         _context.Update(user);
     }
-        
+
     public async Task<bool> HasEditorConnectionAsync(Guid userId) {
         return await _context.EditorConnections.AnyAsync(ec => ec.UserId == userId);
     }
@@ -30,16 +32,16 @@ internal sealed class UserRepository : IUserRepository {
     public void RemoveEditorConnection(EditorConnection connection) {
         _context.EditorConnections.Remove(connection);
     }
-        
+
     public async Task RemoveEditorConnectionOnLogout(Guid userId) {
         var connections = await _context.EditorConnections
             .Where(ec => ec.UserId == userId)
             .ToListAsync();
-            
+
         if (connections.Count == 0) {
             return;
         }
-            
+
         _context.EditorConnections.RemoveRange(connections);
     }
 
@@ -50,7 +52,7 @@ internal sealed class UserRepository : IUserRepository {
     public async Task SaveTokens(NnaToken accessToken, NnaToken refreshToken) {
         if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
         if (refreshToken == null) throw new ArgumentNullException(nameof(refreshToken));
-            
+
         await _context.AddRangeAsync(accessToken, refreshToken);
     }
 
@@ -63,7 +65,7 @@ internal sealed class UserRepository : IUserRepository {
     public void UpdateTokens(NnaToken accessToken, NnaToken refreshToken) {
         if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
         if (refreshToken == null) throw new ArgumentNullException(nameof(refreshToken));
-            
+
         _context.AttachRange(accessToken, refreshToken);
         _context.Tokens.UpdateRange(accessToken, refreshToken);
     }
@@ -80,7 +82,7 @@ internal sealed class UserRepository : IUserRepository {
             .Where(token => token.UserId == userId)
             .AsNoTracking()
             .ToListAsync();
-            
+
         if (tokens.Count != 0 && tokens.Count != 2) {
             throw new InconsistentDataException(
                 $"Expected to get 2 tokens [access and refresh] for user {userId}. But found: {tokens.Count} amount");
@@ -89,9 +91,9 @@ internal sealed class UserRepository : IUserRepository {
         if (tokens.Count == 0) {
             return null;
         }
-            
-        return tokens[0].Name == nameof(TokenName.Access) 
-            ? (accessToken: tokens[0], refreshToken: tokens[1]) 
+
+        return tokens[0].Name == nameof(TokenName.Access)
+            ? (accessToken: tokens[0], refreshToken: tokens[1])
             : (accessToken: tokens[1], refreshToken: tokens[0]);
     }
 
@@ -102,18 +104,18 @@ internal sealed class UserRepository : IUserRepository {
     public async Task<NnaUser?> WithId(Guid id) {
         return await _context.ApplicationUsers.FindAsync(id);
     }
-        
+
     public async Task SyncContextImmediatelyAsync() {
         await _context.SaveChangesAsync();
     }
-        
+
     // do not use it in normal app lifecycle
     public void SanitiseEditorConnections() {
         var editorConnections = _context.EditorConnections.ToList();
         _context.RemoveRange(editorConnections);
         _context.SaveChanges();
     }
-        
+
     public void SanitiseUserTokens() {
         var tokens = _context.Tokens.ToList();
         _context.RemoveRange(tokens);

@@ -4,7 +4,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using NNA.Domain.Models;
 
-namespace NNA.Api.Extensions; 
+namespace NNA.Api.Extensions;
 
 public static class NnaTokenExtensions {
     public static void AddSubjectClaims(this SecurityTokenDescriptor descriptor, string userEmail, Guid userGuid) {
@@ -13,7 +13,7 @@ public static class NnaTokenExtensions {
         subject.AddClaim(new Claim(JwtRegisteredClaimNames.Sub, userGuid.ToString()));
         descriptor.Subject = subject;
     }
-        
+
     public static void AddSigningCredentials(this SecurityTokenDescriptor descriptor, JwtOptions options) {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(options.Key));
         descriptor.SigningCredentials = new SigningCredentials(key, options.SigningAlg);

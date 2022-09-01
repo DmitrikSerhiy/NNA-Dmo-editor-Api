@@ -5,15 +5,15 @@ using NNA.Domain.DTOs.Editor;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubTests; 
-public class UpdateDmosBeatsJsonTests : BaseEditorTests {
+namespace NNA.Tests.EditorHubTests;
 
+public class UpdateDmosBeatsJsonTests : BaseEditorTests {
     // ReSharper disable once InconsistentNaming
     private UpdateDmoBeatsAsJsonDto update { get; set; } = null!;
 
     private void SetMockAndVariables() {
         SetupConstructorMocks();
-        update = new UpdateDmoBeatsAsJsonDto { DmoId = Guid.NewGuid().ToString(), Data = "{}"};
+        update = new UpdateDmoBeatsAsJsonDto { DmoId = Guid.NewGuid().ToString(), Data = "{}" };
     }
 
 
@@ -22,7 +22,7 @@ public class UpdateDmosBeatsJsonTests : BaseEditorTests {
         //Arrange
         SetMockAndVariables();
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
@@ -42,7 +42,7 @@ public class UpdateDmosBeatsJsonTests : BaseEditorTests {
         //Arrange
         SetMockAndVariables();
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
@@ -50,7 +50,7 @@ public class UpdateDmosBeatsJsonTests : BaseEditorTests {
         var hubContext = new Mock<HubCallerContext>();
         hubContext.Setup(hm => hm.Items).Returns(new Dictionary<object, object?>());
         Subject.Context = hubContext.Object;
-        
+
         //Act
         Func<Task> act = async () => await Subject.UpdateDmosJson(update);
         await act.Invoke();
@@ -58,70 +58,70 @@ public class UpdateDmosBeatsJsonTests : BaseEditorTests {
         //Assert
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
     }
-        
+
     [Fact]
     public async Task ShouldReturnNotValidResponseIfDtoIsNotValidTest() {
         //Arrange
         SetMockAndVariables();
         update.DmoId = null;
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         SetupHubContext();
-        
+
         //Act
         Func<Task> act = async () => await Subject.UpdateDmosJson(update);
         await act.Invoke();
-        
+
         //Assert
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
     }
-        
+
     [Fact]
     public async Task ShouldReturnNoContentResponseTest() {
         //Arrange
         SetMockAndVariables();
-        
+
         EditorServiceMock.Setup(esm => esm.UpdateDmoBeatsAsJson(update, UserId)).Verifiable();
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         SetupHubContext();
-        
+
         //Act
         Func<Task> act = async () => await Subject.UpdateDmosJson(update);
         await act.Invoke();
-        
+
         //Assert
         EditorServiceMock.Verify(esm => esm.UpdateDmoBeatsAsJson(update, UserId), Times.Once);
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Never());
-
     }
-        
-        
+
+
     [Fact]
     public async Task ShouldReturnInternalServerErrorResponseIfRepositoryThrowsTest() {
         //Arrange
         SetMockAndVariables();
         var exceptionMessage = "some message";
-        
+
         EditorServiceMock.Setup(esm => esm.UpdateDmoBeatsAsJson(update, UserId))
-            .ThrowsAsync(new UpdateDmoBeatsAsJsonException(exceptionMessage, new Exception("exception from repository")));
+            .ThrowsAsync(
+                new UpdateDmoBeatsAsJsonException(exceptionMessage, new Exception("exception from repository")));
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         SetupHubContext();
-        
+
         //Act
         Func<Task> act = async () => await Subject.UpdateDmosJson(update);
         await act.Invoke();
-        
+
         //Assert
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
     }

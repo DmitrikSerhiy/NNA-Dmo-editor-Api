@@ -5,8 +5,8 @@ using NNA.Domain.Enums;
 using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Helpers;
-public class ClaimsValidator {
 
+public class ClaimsValidator {
     private readonly IUserRepository _repository = null!;
 
     public ClaimsValidator() { }

@@ -1,4 +1,5 @@
-﻿namespace NNA.Domain.Entities.Common; 
+﻿namespace NNA.Domain.Entities.Common;
+
 public class Entity {
     protected Entity() {
         Id = Guid.NewGuid();

@@ -1,6 +1,7 @@
-﻿namespace NNA.Domain.Enums; 
+﻿namespace NNA.Domain.Enums;
+
 // ReSharper disable InconsistentNaming
-public enum  LoginProviderName {
+public enum LoginProviderName {
     password,
     google
 }

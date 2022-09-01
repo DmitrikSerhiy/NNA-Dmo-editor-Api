@@ -9,12 +9,12 @@ using NNA.Domain.Extensions;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
-namespace NNA.Api.Features.Account.Controllers; 
+namespace NNA.Api.Features.Account.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class AccountController: NnaController {
+public class AccountController : NnaController {
     private readonly NnaUserManager _userManager;
     private readonly NnaTokenManager _nnaTokenManager;
     private readonly MailService _mailService;
@@ -23,9 +23,9 @@ public class AccountController: NnaController {
 
     public AccountController(
         NnaUserManager userManager,
-        NnaTokenManager nnaTokenManager, 
+        NnaTokenManager nnaTokenManager,
         MailService mailService,
-        IAuthenticatedIdentityProvider identityProvider, 
+        IAuthenticatedIdentityProvider identityProvider,
         IUserRepository userRepository) {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _nnaTokenManager = nnaTokenManager ?? throw new ArgumentNullException(nameof(nnaTokenManager));
@@ -42,7 +42,7 @@ public class AccountController: NnaController {
             ? OkWithData(true)
             : OkWithData(false);
     }
-        
+
     [HttpPost]
     [Route("name")]
     [AllowAnonymous]
@@ -51,22 +51,22 @@ public class AccountController: NnaController {
             ? OkWithData(true)
             : OkWithData(false);
     }
-        
+
     [HttpGet]
     [Route("authproviders")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetAuthProviderForPasswordlessEmail([FromQuery]SsoCheckDto ssoCheckDto) {
+    public async Task<IActionResult> GetAuthProviderForPasswordlessEmail([FromQuery] SsoCheckDto ssoCheckDto) {
         var user = await _userManager.FindByEmailAsync(ssoCheckDto.Email);
         if (user == null) {
             return NoContent();
         }
+
         var hasPassword = await _userManager.HasPasswordAsync(user);
 
-        if (user.AuthProviders != null && hasPassword == false)
-        {
+        if (user.AuthProviders != null && hasPassword == false) {
             var authProviders = user.GetAuthProviders();
-            return authProviders.Length == 0 
-                ? NoContent() 
+            return authProviders.Length == 0
+                ? NoContent()
                 : OkWithData(authProviders);
         }
 
@@ -85,7 +85,8 @@ public class AccountController: NnaController {
             return BadRequestWithMessageForUi("Username is already taken");
         }
 
-        var result = await _userManager.CreateAsync(new NnaUser(registerDto.Email, registerDto.UserName), registerDto.Password);
+        var result = await _userManager.CreateAsync(new NnaUser(registerDto.Email, registerDto.UserName),
+            registerDto.Password);
         if (!result.Succeeded) {
             return BadRequestWithMessageForUi("Failed to create account");
         }
@@ -101,7 +102,7 @@ public class AccountController: NnaController {
             email = registerDto.Email
         });
     }
-        
+
     [HttpPost]
     [Route("token")]
     [AllowAnonymous]
@@ -158,23 +159,23 @@ public class AccountController: NnaController {
         }
 
         var user = await _userManager.FindByEmailAsync(authGoogleDto.Email);
-        if (user != null) { // login user
+        if (user != null) {
+            // login user
             var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, LoginProviderName.google);
             user.AddAuthProvider(Enum.GetName(LoginProviderName.google));
-                
+
             return OkWithData(new {
                 accessToken = tokens.AccessToken,
                 refreshToken = tokens.RefreshToken,
                 userName = user.UserName,
                 email = user.Email
-            });            
+            });
         }
 
-        if (string.IsNullOrWhiteSpace(authGoogleDto.Name))
-        {
+        if (string.IsNullOrWhiteSpace(authGoogleDto.Name)) {
             authGoogleDto.Name = authGoogleDto.Email;
         }
-        
+
         var userWithTakenName = await _userManager.FindByNameAsync(authGoogleDto.Name);
         if (userWithTakenName != null) {
             var isNameUnique = false;
@@ -197,7 +198,7 @@ public class AccountController: NnaController {
         if (!result.Succeeded) {
             return BadRequestWithMessageToToastr("Failed to create account with Google data");
         }
-            
+
         var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
         await _mailService.SendConfirmAccountEmailAsync(newUser);
         var tokensForNewUser = await _nnaTokenManager.CreateTokensAsync(newUser, LoginProviderName.google);
@@ -209,7 +210,7 @@ public class AccountController: NnaController {
             email = newUser.Email,
         });
     }
-        
+
     [HttpPost]
     [Route("mail/password")]
     [AllowAnonymous]
@@ -227,7 +228,8 @@ public class AccountController: NnaController {
     [HttpPost]
     [Route("validate/tokenFromMail")]
     [AllowAnonymous]
-    public async Task<IActionResult> ValidateTokenForPasswordChange(ValidateNnaTokenForSetOrResetPasswordDto nnaTokenDto) {
+    public async Task<IActionResult> ValidateTokenForPasswordChange(
+        ValidateNnaTokenForSetOrResetPasswordDto nnaTokenDto) {
         var user = await _userManager.FindByEmailAsync(nnaTokenDto.Email);
         if (user == null) {
             return OkWithData(
@@ -236,10 +238,13 @@ public class AccountController: NnaController {
         }
 
         return OkWithData(
-            new { valid = await _userManager.ValidateNnaTokenForSetOrResetPasswordAsync(user, nnaTokenDto.Token, nnaTokenDto.Reason) }
+            new {
+                valid = await _userManager.ValidateNnaTokenForSetOrResetPasswordAsync(user, nnaTokenDto.Token,
+                    nnaTokenDto.Reason)
+            }
         );
     }
-        
+
     [HttpPost]
     [Route("password")]
     [AllowAnonymous]
@@ -260,9 +265,11 @@ public class AccountController: NnaController {
             case SendMailReason.NnaSetPassword: {
                 if (await _userManager.HasPasswordAsync(user)) {
                     await _userManager.ResetNnaPassword(user, newPasswordDto.NewPassword);
-                } else {
+                }
+                else {
                     await _userManager.AddPasswordAsync(user, newPasswordDto.NewPassword);
                 }
+
                 break;
             }
             case SendMailReason.NnaResetPassword:
@@ -271,14 +278,13 @@ public class AccountController: NnaController {
             default:
                 return BadRequestWithMessageToToastr("Reason is invalid");
         }
+
         return NoContent();
     }
 
 
-        
-        
     #region Authorized end-points
-        
+
     [HttpGet]
     [Route("personalInfo")]
     public async Task<IActionResult> GetPersonalInfo() {
@@ -287,13 +293,12 @@ public class AccountController: NnaController {
             return NoContent();
         }
 
-        return OkWithData(new PersonalInfoDto(user.UserName, user.Email, user.Id.ToString(), user.GetAuthProviders())
-        {
+        return OkWithData(new PersonalInfoDto(user.UserName, user.Email, user.Id.ToString(), user.GetAuthProviders()) {
             IsEmailVerified = user.EmailConfirmed,
             HasPassword = !string.IsNullOrEmpty(user.PasswordHash)
         });
     }
-        
+
     // todo: add rate limit here once per hour
     [HttpPost]
     [Route("mail/confirmation")]
@@ -306,7 +311,7 @@ public class AccountController: NnaController {
         await _mailService.SendConfirmAccountEmailAsync(user);
         return NoContent();
     }
-        
+
     [HttpPut]
     [Route("name")]
     public async Task<IActionResult> UpdateUserName(UpdateUserNameDto updateUserNameDto) {
@@ -314,7 +319,7 @@ public class AccountController: NnaController {
         if (user.Email != updateUserNameDto.Email) {
             return BadRequestWithMessageToToastr("Wrong email address");
         }
-            
+
         var userWithNewName = await _userManager.FindByNameAsync(updateUserNameDto.UserName);
         if (userWithNewName != null) {
             return BadRequestWithMessageForUi("User with such name is already registered");
@@ -334,20 +339,24 @@ public class AccountController: NnaController {
 
         var isPasswordValid = await _userManager.CheckPasswordAsync(user, changePasswordDto.CurrentPassword);
         if (!isPasswordValid) {
-            return InvalidRequestWithValidationMessagesToToastr("Current password","Current password is wrong"); 
+            return InvalidRequestWithValidationMessagesToToastr("Current password", "Current password is wrong");
         }
 
         if (changePasswordDto.CurrentPassword == changePasswordDto.NewPassword) {
-            return InvalidRequestWithValidationMessagesToToastr("Current password & New password","New password and your current password must be different"); 
+            return InvalidRequestWithValidationMessagesToToastr("Current password & New password",
+                "New password and your current password must be different");
         }
 
-        var result = await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword, changePasswordDto.NewPassword);
+        var result =
+            await _userManager.ChangePasswordAsync(user, changePasswordDto.CurrentPassword,
+                changePasswordDto.NewPassword);
         if (!result.Succeeded) {
             return BadRequestWithMessageToToastr("Failed to change password");
         }
+
         return NoContent();
     }
-        
+
     // todo: add rate limit once per token lifetime
     [HttpPost]
     [Route("confirmation")]
@@ -360,11 +369,12 @@ public class AccountController: NnaController {
         if (await _userManager.IsEmailConfirmedAsync(user)) {
             return NoContent();
         }
-            
+
         var isEmailConfirmed = await _userManager.ConfirmEmailAsync(user, changePasswordDto.Token);
         if (!isEmailConfirmed.Succeeded) {
             return BadRequestWithMessageForUi("Failed to confirm email");
         }
+
         return NoContent();
     }
 
@@ -376,7 +386,7 @@ public class AccountController: NnaController {
             ? NoContent()
             : Unauthorized();
     }
-        
+
     [HttpDelete]
     [Route("logout")]
     public async Task<IActionResult> Logout(LogoutDto logoutDto) {
@@ -384,11 +394,11 @@ public class AccountController: NnaController {
         if (user.Email != logoutDto.Email) {
             return BadRequestWithMessageToToastr("Wrong email address");
         }
-            
+
         await _nnaTokenManager.ClearTokensAsync(user);
         await _userRepository.RemoveEditorConnectionOnLogout(user.Id);
         return NoContent();
     }
-        
+
     #endregion
 }

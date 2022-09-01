@@ -1,8 +1,9 @@
-﻿namespace NNA.Domain.Exceptions.Editor; 
+﻿namespace NNA.Domain.Exceptions.Editor;
+
 public class DeleteBeatException : Exception {
     private const string InnerMessage = "Failed to delete beat.";
     public static string CustomMessage { get; } = InnerMessage;
-        
+
     public DeleteBeatException() { }
 
     public DeleteBeatException(string message) : base($"{InnerMessage} {message}") { }

@@ -5,17 +5,19 @@ using NNA.Domain.DTOs.Editor;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubServiceTests; 
-public class UpdateDmoBeatsAsJsonTests : BaseHubServiceTests {
+namespace NNA.Tests.EditorHubServiceTests;
 
+public class UpdateDmoBeatsAsJsonTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
+
     // ReSharper disable once InconsistentNaming
     private UpdateDmoBeatsAsJsonDto dmoDto { get; set; } = null!;
+
     private void SetupMocksAndVariables() {
         SetupConstructorMocks();
         userId = Guid.NewGuid();
-        dmoDto = new UpdateDmoBeatsAsJsonDto {DmoId = Guid.NewGuid().ToString(), Data = "{}"};
+        dmoDto = new UpdateDmoBeatsAsJsonDto { DmoId = Guid.NewGuid().ToString(), Data = "{}" };
     }
 
 

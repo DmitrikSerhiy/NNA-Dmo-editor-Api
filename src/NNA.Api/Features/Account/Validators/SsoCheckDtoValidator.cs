@@ -4,7 +4,8 @@ using NNA.Domain;
 using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
-public class SsoCheckDtoValidator: AbstractValidator<SsoCheckDto> {
+
+public class SsoCheckDtoValidator : AbstractValidator<SsoCheckDto> {
     public SsoCheckDtoValidator() {
         RuleFor(u => u.Email)
             .NotEmpty()

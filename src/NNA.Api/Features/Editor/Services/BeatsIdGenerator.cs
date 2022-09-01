@@ -1,6 +1,7 @@
 ﻿using NNA.Domain.DTOs.Dmos;
 
 namespace NNA.Api.Features.Editor.Services;
+
 public class BeatsIdGenerator {
     public static BeatDto[] GenerateMissingBeatsIds(BeatDto[] beats) {
         return beats.Select(beat => {

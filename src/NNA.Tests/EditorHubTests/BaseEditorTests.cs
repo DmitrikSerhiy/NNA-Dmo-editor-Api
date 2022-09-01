@@ -8,7 +8,8 @@ using NNA.Domain.Entities;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
-namespace NNA.Tests.EditorHubTests; 
+namespace NNA.Tests.EditorHubTests;
+
 public class BaseEditorTests {
     protected EditorHub Subject { get; set; } = null!;
     protected Mock<IEditorService> EditorServiceMock { get; private set; } = null!;
@@ -22,7 +23,7 @@ public class BaseEditorTests {
     protected string UserName { get; } = "UserName";
     protected string UserEmail { get; } = "User@gmail.com";
     protected Guid UserId { get; } = Guid.NewGuid();
-        
+
 
     protected void SetupConstructorMocks() {
         EditorServiceMock = new Mock<IEditorService>();
@@ -51,12 +52,12 @@ public class BaseEditorTests {
         var items = new Dictionary<object, object?> { { "user", authProvider } };
         hubContext.Setup(hm => hm.Items).Returns(items);
         Subject.Context = hubContext.Object;
-            
+
         EditorClientsMock = new Mock<IHubCallerClients<IEditorClient>>();
         EditorClientsMock.Setup(client => client.Caller).Returns(new Mock<EditorClient>().Object);
         Subject.Clients = EditorClientsMock.Object;
     }
-        
+
     public class EditorClient : IEditorClient {
         public virtual Task OnServerError(object notificationBody) {
             return Task.CompletedTask;

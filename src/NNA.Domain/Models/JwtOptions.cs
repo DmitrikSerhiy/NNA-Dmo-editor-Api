@@ -1,4 +1,5 @@
 ﻿namespace NNA.Domain.Models;
+
 public sealed class JwtOptions {
     public string Key { get; set; } = null!;
     public string SigningAlg { get; set; } = null!;

@@ -3,6 +3,7 @@ using NNA.Api.Features.Account.Services;
 using NNA.Domain.Entities;
 
 namespace NNA.Api.Features.Editor.Services;
+
 public static class HubCallerExtensions {
     public static Guid? GetCurrentUserId(this HubCallerContext context) {
         if (!context.Items.TryGetValue("user", out var authProvider)) {

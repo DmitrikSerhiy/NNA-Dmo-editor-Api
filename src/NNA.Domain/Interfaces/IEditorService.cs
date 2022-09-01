@@ -1,6 +1,7 @@
 ﻿using NNA.Domain.DTOs.Editor;
 
-namespace NNA.Domain.Interfaces; 
+namespace NNA.Domain.Interfaces;
+
 public interface IEditorService {
     Task<CreatedDmoDto> CreateAndLoadDmo(CreateDmoDto dto, Guid userId);
     Task UpdateShortDmo(UpdateShortDmoDto dmoDto, Guid userId);

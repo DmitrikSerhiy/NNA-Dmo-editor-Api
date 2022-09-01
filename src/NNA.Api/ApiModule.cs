@@ -6,21 +6,20 @@ using NNA.Api.Helpers;
 using NNA.Domain.Interfaces;
 
 namespace NNA.Api;
-public class ApiModule : Module
-{
-    protected override void Load(ContainerBuilder builder)
-    {
+
+public class ApiModule : Module {
+    protected override void Load(ContainerBuilder builder) {
         builder
             .RegisterType<NnaTokenHandler>()
             .AsSelf()
             .InstancePerLifetimeScope();
-        
+
         builder
             .RegisterType<NnaTokenManager>()
             .AsSelf()
             .InstancePerLifetimeScope();
-        
-        builder 
+
+        builder
             .RegisterType<ClaimsValidator>()
             .AsSelf()
             .InstancePerLifetimeScope();
@@ -29,7 +28,7 @@ public class ApiModule : Module
             .RegisterType<MailService>()
             .AsSelf()
             .InstancePerLifetimeScope();
-            
+
         builder
             .RegisterType<AuthenticatedIdentityProvider>()
             .As<IAuthenticatedIdentityProvider>()
@@ -39,12 +38,12 @@ public class ApiModule : Module
             .RegisterType<EditorService>()
             .As<IEditorService>()
             .InstancePerLifetimeScope();
-        
+
         builder
             .RegisterAssemblyTypes(typeof(Program).Assembly)
-            .Where(type => type.Name.EndsWith("Validator") && type.GetInterfaces().Any(x => x.Name == nameof(IValidator)))
+            .Where(type =>
+                type.Name.EndsWith("Validator") && type.GetInterfaces().Any(x => x.Name == nameof(IValidator)))
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
     }
 }
-

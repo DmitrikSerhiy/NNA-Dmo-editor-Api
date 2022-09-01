@@ -2,6 +2,7 @@
 using NNA.Domain.Entities;
 
 namespace NNA.Persistence.Configuration;
+
 public static class UsersTokensConfiguration {
     public static void Configure(ModelBuilder modelBuilder) {
         modelBuilder

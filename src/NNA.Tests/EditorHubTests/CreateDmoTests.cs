@@ -7,13 +7,12 @@ using NNA.Domain.DTOs.Editor.Response;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
-namespace NNA.Tests.EditorHubTests; 
-public class CreateDmoTests : BaseEditorTests
-{
+namespace NNA.Tests.EditorHubTests;
+
+public class CreateDmoTests : BaseEditorTests {
     private CreateDmoDto DmoDto { get; set; } = null!;
 
-    private void SetMockAndVariables()
-    {
+    private void SetMockAndVariables() {
         SetupConstructorMocks();
         DmoDto = new CreateDmoDto {
             MovieTitle = "movie title",
@@ -27,8 +26,8 @@ public class CreateDmoTests : BaseEditorTests
         //Arrange
         SetMockAndVariables();
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
-            EnvironmentMock.Object, 
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         SetupHubContext();
@@ -38,7 +37,7 @@ public class CreateDmoTests : BaseEditorTests
         var response = await act.Invoke();
 
         //Assert
-        response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateBadRequestResponse(), 
+        response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateBadRequestResponse(),
             config => config
                 .Excluding(exclude => exclude.errors)
                 .Excluding(exclude => exclude.warnings)
@@ -51,8 +50,8 @@ public class CreateDmoTests : BaseEditorTests
         //Arrange
         SetMockAndVariables();
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
-            EnvironmentMock.Object, 
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         var hubContext = new Mock<HubCallerContext>();
@@ -75,8 +74,8 @@ public class CreateDmoTests : BaseEditorTests
         SetMockAndVariables();
         DmoDto.Name = null;
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
-            EnvironmentMock.Object, 
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         SetupHubContext();
@@ -86,7 +85,8 @@ public class CreateDmoTests : BaseEditorTests
         var response = await act.Invoke();
 
         //Assert
-        response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateFailedValidationResponse(new List<Tuple<string, string>>()),
+        response.Should().BeEquivalentTo(
+            BaseEditorResponseDto.CreateFailedValidationResponse(new List<Tuple<string, string>>()),
             config => config
                 .Including(include => include.httpCode)
                 .Including(include => include.header)
@@ -105,11 +105,11 @@ public class CreateDmoTests : BaseEditorTests
             movieTitle = "Some test movie",
             shortComment = "Short comment"
         };
-            
+
         EditorServiceMock.Setup(esm => esm.CreateAndLoadDmo(DmoDto, UserId)).ReturnsAsync(createdDmoDto);
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
-            EnvironmentMock.Object, 
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
         SetupHubContext();
@@ -124,7 +124,7 @@ public class CreateDmoTests : BaseEditorTests
                 .Excluding(exclude => exclude.errors)
                 .Excluding(exclude => exclude.warnings)
                 .Excluding(exclude => exclude.message));
-            
+
         // ReSharper disable once PossibleNullReferenceException
         response.GetType().GetProperty("data")!.GetValue(response).Should().BeEquivalentTo(createdDmoDto);
     }
@@ -134,7 +134,7 @@ public class CreateDmoTests : BaseEditorTests
         //Arrange
         SetMockAndVariables();
         var exceptionMessage = "some message";
-            
+
         EditorServiceMock.Setup(esm => esm.CreateAndLoadDmo(DmoDto, UserId))
             .ThrowsAsync(new CreateDmoException(exceptionMessage, new Exception("exception from repository")));
         Subject = new EditorHub(
@@ -149,7 +149,9 @@ public class CreateDmoTests : BaseEditorTests
         var response = await act.Invoke();
 
         //Assert
-        response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateInternalServerErrorResponse($"{CreateDmoException.CustomMessage} {exceptionMessage}"),
+        response.Should().BeEquivalentTo(
+            BaseEditorResponseDto.CreateInternalServerErrorResponse(
+                $"{CreateDmoException.CustomMessage} {exceptionMessage}"),
             config => config
                 .Excluding(exclude => exclude.warnings));
     }
@@ -163,7 +165,7 @@ public class CreateDmoTests : BaseEditorTests
         EditorServiceMock.Setup(esm => esm.CreateAndLoadDmo(DmoDto, UserId))
             .ThrowsAsync(new LoadShortDmoException(exceptionMessage, new Exception("exception from repository")));
         Subject = new EditorHub(
-            EditorServiceMock.Object, 
+            EditorServiceMock.Object,
             EnvironmentMock.Object,
             ClaimsValidatorMock.Object,
             UserRepositoryMock.Object);
@@ -174,7 +176,9 @@ public class CreateDmoTests : BaseEditorTests
         var response = await act.Invoke();
 
         //Assert
-        response.Should().BeEquivalentTo(BaseEditorResponseDto.CreateInternalServerErrorResponse($"{LoadShortDmoException.CustomMessage} {exceptionMessage}"),
+        response.Should().BeEquivalentTo(
+            BaseEditorResponseDto.CreateInternalServerErrorResponse(
+                $"{LoadShortDmoException.CustomMessage} {exceptionMessage}"),
             config => config
                 .Excluding(exclude => exclude.warnings));
     }

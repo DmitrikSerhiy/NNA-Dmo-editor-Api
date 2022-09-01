@@ -1,6 +1,7 @@
 ﻿using NNA.Domain.Entities;
 
-namespace NNA.Domain.Extensions; 
+namespace NNA.Domain.Extensions;
+
 public static class NnaUserExtensions {
     private const char ProvidersSeparator = ',';
 
@@ -8,8 +9,9 @@ public static class NnaUserExtensions {
         if (user == null) {
             return Array.Empty<string>();
         }
-        return user.AuthProviders == null 
-            ? Array.Empty<string>() 
+
+        return user.AuthProviders == null
+            ? Array.Empty<string>()
             : user.AuthProviders.Split(ProvidersSeparator).ToArray();
     }
 
@@ -17,6 +19,7 @@ public static class NnaUserExtensions {
         if (user == null || providerName == null) {
             return;
         }
+
         if (user.AuthProviders == null) {
             user.AuthProviders = providerName;
             return;
