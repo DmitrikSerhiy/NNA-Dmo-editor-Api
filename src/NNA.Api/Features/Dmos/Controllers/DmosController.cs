@@ -11,7 +11,7 @@ namespace NNA.Api.Features.Dmos.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class DmosController : ControllerBase {
+public class DmosController : NnaController {
     private readonly IMapper _mapper;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
     private readonly IDmosRepository _dmosRepository;
@@ -27,20 +27,18 @@ public class DmosController : ControllerBase {
     }
 
     [HttpGet]
-    [Route("")]
-    public async Task<ActionResult<DmoShortDto[]>> GetDmos() {
+    public async Task<IActionResult> GetDmos() {
         var dmos = await _dmosRepository.GetAll(_authenticatedIdentityProvider.AuthenticatedUserId);
-        return Ok(dmos.Select(_mapper.Map<DmoShortDto>).ToArray());
+        return OkWithData(dmos.Select(_mapper.Map<DmoShortDto>).ToArray());
     }
 
     [HttpDelete]
-    [Route("")]
-    public async Task<ActionResult<DmoShortDto[]>> RemoveDmo([FromQuery] RemoveDmoDto dto) {
+    public async Task<IActionResult> RemoveDmo([FromQuery] RemoveDmoDto dto) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
 
         var dmo = await _dmosRepository.GetDmo(_authenticatedIdentityProvider.AuthenticatedUserId, dto.DmoId);
         if (dmo == null) {
-            return NotFound();
+            return BadRequestWithMessageToToastr($"Dmo {dto.DmoId} is not found");
         }
 
         _dmosRepository.DeleteDmo(dmo);

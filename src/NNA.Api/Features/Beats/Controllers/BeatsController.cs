@@ -10,7 +10,7 @@ namespace NNA.Api.Features.Beats.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class BeatsController : ControllerBase {
+public class BeatsController : NnaController {
     private readonly IDmosRepository _dmosRepository;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
     private readonly IMapper _mapper;
@@ -29,6 +29,6 @@ public class BeatsController : ControllerBase {
     [Route("initial/array/{dmoId}")]
     public async Task<IActionResult> InitialLoadAsArray(Guid dmoId) {
         var beats = await _dmosRepository.GetBeatsForDmo(_authenticatedIdentityProvider.AuthenticatedUserId, dmoId);
-        return Ok(beats.Select(_mapper.Map<BeatDto>).ToArray());
+        return OkWithData(beats.Select(_mapper.Map<BeatDto>).ToArray());
     }
 }

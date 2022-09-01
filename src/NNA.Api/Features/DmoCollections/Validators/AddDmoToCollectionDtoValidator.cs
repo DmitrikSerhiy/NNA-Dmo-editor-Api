@@ -3,7 +3,7 @@ using NNA.Domain.DTOs.DmoCollections;
 
 namespace NNA.Api.Features.DmoCollections.Validators;
 
-public class AddDmoToCollectionDtoValidator : AbstractValidator<AddDmoToCollectionDto> {
+public sealed class AddDmoToCollectionDtoValidator : AbstractValidator<AddDmoToCollectionDto> {
     public AddDmoToCollectionDtoValidator() {
         RuleFor(d => d.CollectionId)
             .NotEmpty()

@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using Microsoft.AspNetCore.Identity;
 using NNA.Api.Helpers;
 using NNA.Domain;
 using NNA.Domain.DTOs.Account;

@@ -4,8 +4,8 @@ using NNA.Domain.DTOs.DmoCollections;
 
 namespace NNA.Api.Features.DmoCollections.Validators;
 
-public sealed class DmoCollectionShortDtoValidator : AbstractValidator<DmoCollectionShortDto> {
-    public DmoCollectionShortDtoValidator() {
+public sealed class UpdateDmoCollectionNameDtoValidator : AbstractValidator<UpdateDmoCollectionNameDto>  {
+    public UpdateDmoCollectionNameDtoValidator() {
         RuleFor(d => d.Id)
             .NotEmpty()
             .WithMessage("Collection id is missing");

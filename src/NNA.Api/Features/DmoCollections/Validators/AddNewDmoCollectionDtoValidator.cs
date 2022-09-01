@@ -4,7 +4,7 @@ using NNA.Domain.DTOs.DmoCollections;
 
 namespace NNA.Api.Features.DmoCollections.Validators;
 
-public class AddNewDmoCollectionDtoValidator : AbstractValidator<AddNewDmoCollectionDto> {
+public sealed class AddNewDmoCollectionDtoValidator : AbstractValidator<AddNewDmoCollectionDto> {
     public AddNewDmoCollectionDtoValidator() {
         RuleFor(d => d.CollectionName)
             .NotEmpty()

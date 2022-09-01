@@ -18,5 +18,7 @@ public class DmoCollectionsMappers : Profile {
         CreateMap<DmoCollection, DmoCollectionDto>()
             .ForMember(udc => udc.Dmos,
                 dcd => dcd.MapFrom(dd => dd.DmoCollectionDmos.Select(d => d.Dmo).ToArray()));
+        CreateMap<DmoCollection, UpdateDmoCollectionNameDto>().ReverseMap();
+        
     }
 }
