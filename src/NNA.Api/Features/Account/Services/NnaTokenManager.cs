@@ -25,18 +25,18 @@ public sealed class NnaTokenManager {
     /// Creates new valid pair of access/refresh tokens for user with specified email.
     /// All previous tokens for that user become invalid.
     /// </summary>
-    public async Task<TokensDto> CreateTokensAsync(NnaUser? user,
+    public TokensDto CreateTokens(NnaUser? user,
         LoginProviderName loginProviderName = LoginProviderName.password) {
         if (user == null) throw new ArgumentNullException(nameof(user));
 
-        return await GenerateAndSaveTokensAsync(user, loginProviderName);
+        return GenerateAndSaveTokens(user, loginProviderName);
     }
 
     /// <summary>
     /// Check whether current user has tokens.
     /// </summary>
-    public async Task<bool> VerifyTokenAsync() {
-        var tokens = await _userRepository.GetTokens(_identityProvider.AuthenticatedUserId);
+    public async Task<bool> VerifyTokenAsync(CancellationToken cancellationToken) {
+        var tokens = await _userRepository.GetTokens(_identityProvider.AuthenticatedUserId, cancellationToken);
         if (tokens is null) {
             return false;
         }
@@ -49,12 +49,12 @@ public sealed class NnaTokenManager {
     /// If tokens exist but are invalid then new tokens are created 
     /// </summary>
     public async Task<TokensDto> GetOrCreateTokensAsync(NnaUser? user,
-        LoginProviderName loginProviderName = LoginProviderName.password) {
+        CancellationToken cancellationToken, LoginProviderName loginProviderName = LoginProviderName.password) {
         if (user == null) throw new ArgumentNullException(nameof(user));
-        var tokens = await _userRepository.GetTokens(user.Id);
+        var tokens = await _userRepository.GetTokens(user.Id, cancellationToken);
 
         if (tokens is null) {
-            return await GenerateAndSaveTokensAsync(user, loginProviderName);
+            return GenerateAndSaveTokens(user, loginProviderName);
         }
 
         var accessTokenValidation = _nnaTokenHandler.ValidateAccessToken(tokens.Value.accessToken.Value, user);
@@ -75,7 +75,7 @@ public sealed class NnaTokenManager {
     /// <summary>
     /// Creates or Updates new access/refresh tokens pair if old access/refresh pair corresponds to each other.
     /// </summary>
-    public async Task<TokensDto?> RefreshTokensAsync(RefreshDto refreshDto) {
+    public async Task<TokensDto?> RefreshTokensAsync(RefreshDto refreshDto, CancellationToken cancellationToken) {
         if (string.IsNullOrWhiteSpace(refreshDto.AccessToken))
             throw new ArgumentNullException(nameof(refreshDto.AccessToken));
         if (string.IsNullOrWhiteSpace(refreshDto.RefreshToken))
@@ -96,7 +96,7 @@ public sealed class NnaTokenManager {
             return null;
         }
 
-        var authData = await _userRepository.GetAuthenticatedUserDataAsync(userEmailFromRefreshToken);
+        var authData = await _userRepository.GetAuthenticatedUserDataAsync(userEmailFromRefreshToken, cancellationToken);
         if (authData is null) {
             return null;
         }
@@ -125,13 +125,13 @@ public sealed class NnaTokenManager {
     /// <summary>
     /// Remove all user tokens. Clear authenticated data.
     /// </summary>
-    public async Task ClearTokensAsync(NnaUser? user) {
+    public async Task ClearTokensAsync(NnaUser? user, CancellationToken cancellationToken) {
         if (user == null) throw new ArgumentNullException(nameof(user));
         if (_identityProvider.AuthenticatedUserEmail != user.Email) {
             return;
         }
 
-        await _userRepository.ClearTokens(user);
+        await _userRepository.ClearTokensAsync(user, cancellationToken);
         _identityProvider.ClearAuthenticatedUserInfo();
     }
 
@@ -166,11 +166,11 @@ public sealed class NnaTokenManager {
         return newTokens;
     }
 
-    private async Task<TokensDto> GenerateAndSaveTokensAsync(NnaUser user,
+    private TokensDto GenerateAndSaveTokens(NnaUser user,
         LoginProviderName loginProviderName = LoginProviderName.password) {
         var newTokens = GenerateNewTokenPair(user);
 
-        await _userRepository.SaveTokens(
+        _userRepository.SaveTokens(
             TokenMapper.MapToAccessTokenByPasswordAuth(user.Id, newTokens, loginProviderName),
             TokenMapper.MapToRefreshTokenByPasswordAuth(user.Id, newTokens, loginProviderName));
 

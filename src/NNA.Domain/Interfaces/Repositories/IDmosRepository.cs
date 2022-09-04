@@ -3,9 +3,9 @@
 namespace NNA.Domain.Interfaces.Repositories;
 
 public interface IDmosRepository : IRepository {
-    Task<List<Dmo>> GetAll(Guid userId);
-    Task<Dmo?> GetShortDmo(Guid userId, Guid? dmoId);
-    Task<Dmo?> GetDmo(Guid userId, Guid? dmoId);
+    Task<List<Dmo>> GetAllAsync(Guid userId, CancellationToken token);
+    Task<Dmo?> GetShortDmoAsync(Guid userId, Guid? dmoId, CancellationToken token);
+    Task<Dmo?> GetDmoAsync(Guid userId, Guid? dmoId, CancellationToken token);
     void DeleteDmo(Dmo? dmo);
-    Task<List<Beat>> GetBeatsForDmo(Guid userId, Guid dmoId);
+    Task<List<Beat>> GetBeatsForDmoAsync(Guid userId, Guid dmoId, CancellationToken token);
 }

@@ -15,7 +15,7 @@ public class ClaimsValidator {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
     }
 
-    public async Task<UsersTokens> ValidateAndGetAuthDataAsync(List<Claim> claims) {
+    public async Task<UsersTokens> ValidateAndGetAuthDataAsync(List<Claim> claims, CancellationToken cancellationToken) {
         if (claims.Any(claim => claim.Type == nameof(NnaCustomTokenClaims.gtyp))) {
             throw new AuthenticationException("Invalid token. Refresh token should not be used as authentication key");
         }
@@ -36,7 +36,7 @@ public class ClaimsValidator {
             throw new AuthenticationException("User oid claim is missing");
         }
 
-        var authData = await _repository.GetAuthenticatedUserDataAsync(userEmail);
+        var authData = await _repository.GetAuthenticatedUserDataAsync(userEmail, cancellationToken);
         if (authData is null) {
             throw new AuthenticationException($"Authentication data for '{userEmail}' is not saved");
         }

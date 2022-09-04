@@ -26,18 +26,18 @@ public class DmosController : NnaController {
                                          ?? throw new ArgumentNullException(nameof(authenticatedIdentityProvider));
     }
 
-    // todo: add cache here AND add pagination here
+    // todo: add pagination here
     [HttpGet]
-    public async Task<IActionResult> GetDmos() {
-        var dmos = await _dmosRepository.GetAll(_authenticatedIdentityProvider.AuthenticatedUserId);
+    public async Task<IActionResult> GetDmos(CancellationToken cancellationToken) {
+        var dmos = await _dmosRepository.GetAllAsync(_authenticatedIdentityProvider.AuthenticatedUserId, cancellationToken);
         return OkWithData(dmos.Select(_mapper.Map<DmoShortDto>).ToArray());
     }
 
     [HttpDelete]
-    public async Task<IActionResult> RemoveDmo([FromQuery] RemoveDmoDto dto) {
+    public async Task<IActionResult> RemoveDmo([FromQuery] RemoveDmoDto dto, CancellationToken cancellationToken) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-        var dmo = await _dmosRepository.GetDmo(_authenticatedIdentityProvider.AuthenticatedUserId, dto.DmoId);
+        var dmo = await _dmosRepository.GetDmoAsync(_authenticatedIdentityProvider.AuthenticatedUserId, dto.DmoId, cancellationToken);
         if (dmo == null) {
             return BadRequestWithMessageToToastr($"Dmo {dto.DmoId} is not found");
         }

@@ -27,7 +27,7 @@ public class AuthenticatedIdentityMiddleware {
         }
 
         try {
-            var authData = await claimsValidator.ValidateAndGetAuthDataAsync(context.User.Claims.ToList());
+            var authData = await claimsValidator.ValidateAndGetAuthDataAsync(context.User.Claims.ToList(), CancellationToken.None);
             authenticatedIdentityProvider.SetAuthenticatedUser(authData);
         }
         catch (AuthenticationException ex) {

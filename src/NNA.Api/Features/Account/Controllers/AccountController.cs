@@ -76,7 +76,7 @@ public class AccountController : NnaController {
     [HttpPost]
     [Route("register")]
     [AllowAnonymous]
-    public async Task<IActionResult> Register(RegisterDto registerDto) {
+    public async Task<IActionResult> Register(RegisterDto registerDto, CancellationToken cancellationToken) {
         if (await _userManager.FindByEmailAsync(registerDto.Email) != null) {
             return BadRequestWithMessageForUi("Email is already taken");
         }
@@ -92,8 +92,8 @@ public class AccountController : NnaController {
         }
 
         var newlyCreatedUser = await _userManager.FindByEmailAsync(registerDto.Email);
-        await _mailService.SendConfirmAccountEmailAsync(newlyCreatedUser);
-        var tokens = await _nnaTokenManager.CreateTokensAsync(newlyCreatedUser);
+        await _mailService.SendConfirmAccountEmailAsync(newlyCreatedUser, cancellationToken);
+        var tokens = _nnaTokenManager.CreateTokens(newlyCreatedUser);
 
         return OkWithData(new {
             accessToken = tokens.AccessToken,
@@ -106,7 +106,7 @@ public class AccountController : NnaController {
     [HttpPost]
     [Route("token")]
     [AllowAnonymous]
-    public async Task<IActionResult> Login(LoginDto loginDto) {
+    public async Task<IActionResult> Login(LoginDto loginDto, CancellationToken cancellationToken) {
         var user = await _userManager.FindByEmailAsync(loginDto.Email);
         if (user == null) {
             return BadRequestWithMessageForUi("User with this email is not found");
@@ -116,7 +116,7 @@ public class AccountController : NnaController {
             return BadRequestWithMessageForUi("Password is not correct");
         }
 
-        var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user);
+        var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, cancellationToken);
         return OkWithData(new {
             accessToken = tokens.AccessToken,
             refreshToken = tokens.RefreshToken,
@@ -128,8 +128,8 @@ public class AccountController : NnaController {
     [HttpPost]
     [Route("refresh")]
     [AllowAnonymous]
-    public async Task<IActionResult> Refresh(RefreshDto refreshDto) {
-        var tokensDto = await _nnaTokenManager.RefreshTokensAsync(refreshDto);
+    public async Task<IActionResult> Refresh(RefreshDto refreshDto, CancellationToken cancellationToken) {
+        var tokensDto = await _nnaTokenManager.RefreshTokensAsync(refreshDto, cancellationToken);
 
         if (tokensDto == null) {
             HttpContext.Response.Headers.Add(NnaHeaders.Get(NnaHeaderNames.RedirectToLogin));
@@ -148,11 +148,12 @@ public class AccountController : NnaController {
     /// otherwise create new.
     /// </summary>
     /// <param name="authGoogleDto"></param>
+    /// <param name="cancellationToken"></param>
     /// <returns></returns>
     [HttpPost]
     [Route("google")]
     [AllowAnonymous]
-    public async Task<IActionResult> Google(AuthGoogleDto authGoogleDto) {
+    public async Task<IActionResult> Google(AuthGoogleDto authGoogleDto, CancellationToken cancellationToken) {
         var isValid = await _nnaTokenManager.ValidateGoogleTokenAsync(authGoogleDto);
         if (!isValid) {
             return InvalidRequestWithValidationMessagesToToastr(nameof(AuthGoogleDto.GoogleToken), "Token is invalid");
@@ -161,7 +162,7 @@ public class AccountController : NnaController {
         var user = await _userManager.FindByEmailAsync(authGoogleDto.Email);
         if (user != null) {
             // login user
-            var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, LoginProviderName.google);
+            var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, cancellationToken, LoginProviderName.google);
             user.AddAuthProvider(Enum.GetName(LoginProviderName.google));
 
             return OkWithData(new {
@@ -200,8 +201,8 @@ public class AccountController : NnaController {
         }
 
         var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
-        await _mailService.SendConfirmAccountEmailAsync(newUser);
-        var tokensForNewUser = await _nnaTokenManager.CreateTokensAsync(newUser, LoginProviderName.google);
+        await _mailService.SendConfirmAccountEmailAsync(newUser, cancellationToken);
+        var tokensForNewUser = _nnaTokenManager.CreateTokens(newUser, LoginProviderName.google);
 
         return OkWithData(new {
             accessToken = tokensForNewUser.AccessToken,
@@ -214,13 +215,13 @@ public class AccountController : NnaController {
     [HttpPost]
     [Route("mail/password")]
     [AllowAnonymous]
-    public async Task<IActionResult> SendMail(SendMailDto update) {
+    public async Task<IActionResult> SendMail(SendMailDto update, CancellationToken cancellationToken) {
         var user = await _userManager.FindByEmailAsync(update.Email);
         if (user == null) {
             return OkWithData(false);
         }
 
-        return await _mailService.SendSetOrResetPasswordEmailAsync(user, update.Reason)
+        return await _mailService.SendSetOrResetPasswordEmailAsync(user, update.Reason, cancellationToken)
             ? OkWithData(true)
             : OkWithData(false);
     }
@@ -302,13 +303,13 @@ public class AccountController : NnaController {
     // todo: add rate limit here once per hour
     [HttpPost]
     [Route("mail/confirmation")]
-    public async Task<IActionResult> SendEmailForAccountConfirmation(SendConfirmAccountEmailDto update) {
+    public async Task<IActionResult> SendEmailForAccountConfirmation(SendConfirmAccountEmailDto update, CancellationToken cancellationToken) {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user.Email != update.Email) {
             return BadRequestWithMessageToToastr("Wrong email address");
         }
 
-        await _mailService.SendConfirmAccountEmailAsync(user);
+        await _mailService.SendConfirmAccountEmailAsync(user, cancellationToken);
         return NoContent();
     }
 
@@ -381,8 +382,8 @@ public class AccountController : NnaController {
     // todo: make sure this end-point never cache
     [HttpGet]
     [Route("ping")]
-    public async Task<IActionResult> ValidateToken() {
-        var isVerified = await _nnaTokenManager.VerifyTokenAsync();
+    public async Task<IActionResult> ValidateToken(CancellationToken cancellationToken) {
+        var isVerified = await _nnaTokenManager.VerifyTokenAsync(cancellationToken);
         return isVerified
             ? NoContent()
             : Unauthorized();
@@ -390,14 +391,14 @@ public class AccountController : NnaController {
 
     [HttpDelete]
     [Route("logout")]
-    public async Task<IActionResult> Logout(LogoutDto logoutDto) {
+    public async Task<IActionResult> Logout(LogoutDto logoutDto, CancellationToken cancellationToken) {
         var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
         if (user.Email != logoutDto.Email) {
             return BadRequestWithMessageToToastr("Wrong email address");
         }
 
-        await _nnaTokenManager.ClearTokensAsync(user);
-        await _userRepository.RemoveEditorConnectionOnLogout(user.Id);
+        await _nnaTokenManager.ClearTokensAsync(user, cancellationToken);
+        await _userRepository.RemoveEditorConnectionOnLogout(user.Id, cancellationToken);
         return NoContent();
     }
 

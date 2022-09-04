@@ -3,20 +3,20 @@
 namespace NNA.Domain.Interfaces.Repositories;
 
 public interface IUserRepository : IRepository {
-    Task<NnaUser?> WithId(Guid id);
+    Task<NnaUser?> WithIdAsync(Guid id, CancellationToken token);
     void UpdateUser(NnaUser user);
-    Task<NnaUser> FirstUser();
-    Task SaveTokens(NnaToken accessToken, NnaToken refreshToken);
-    Task ClearTokens(NnaUser user);
+    Task<NnaUser> FirstUserAsync(CancellationToken token);
+    void SaveTokens(NnaToken accessToken, NnaToken refreshToken);
+    Task ClearTokensAsync(NnaUser user, CancellationToken token);
     void UpdateTokens(NnaToken accessToken, NnaToken refreshToken);
     void ConfirmUserEmail(NnaUser user);
-    Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId);
-    Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email);
-    Task<bool> HasEditorConnectionAsync(Guid userId);
-    Task AddEditorConnectionAsync(EditorConnection connection);
+    Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId, CancellationToken token);
+    Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email, CancellationToken token);
+    Task<bool> HasEditorConnectionAsync(Guid userId, CancellationToken token);
+    void AddEditorConnection(EditorConnection connection);
     void RemoveEditorConnection(EditorConnection connection);
-    Task RemoveEditorConnectionOnLogout(Guid userId);
-    Task SyncContextImmediatelyAsync();
+    Task RemoveEditorConnectionOnLogout(Guid userId, CancellationToken token);
+    Task SyncContextImmediatelyAsync(CancellationToken token);
     void SanitiseEditorConnections();
     void SanitiseUserTokens();
 }

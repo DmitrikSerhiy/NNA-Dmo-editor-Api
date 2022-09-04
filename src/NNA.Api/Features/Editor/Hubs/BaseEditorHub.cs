@@ -43,8 +43,8 @@ public class BaseEditorHub : Hub<IEditorClient> {
             throw new AuthenticationException("Missing user claims");
         }
 
-        var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(Context.User.Claims.ToList());
-        if (await _userRepository.HasEditorConnectionAsync(authData.UserId)) {
+        var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(Context.User.Claims.ToList(), CancellationToken.None);
+        if (await _userRepository.HasEditorConnectionAsync(authData.UserId, CancellationToken.None)) {
             throw new AuthenticationException("User already have active connection.");
         }
 
@@ -52,11 +52,11 @@ public class BaseEditorHub : Hub<IEditorClient> {
             Log.Information($"{Context.GetCurrentUserEmail()} just connected to the editor");
         }
 
-        await _userRepository.AddEditorConnectionAsync(new EditorConnection {
+        _userRepository.AddEditorConnection(new EditorConnection {
             UserId = authData.UserId,
             ConnectionId = Context.ConnectionId
         });
-        await _userRepository.SyncContextImmediatelyAsync();
+        await _userRepository.SyncContextImmediatelyAsync(CancellationToken.None);
         Context.AuthenticateUser(authData);
         await base.OnConnectedAsync();
     }
@@ -80,7 +80,7 @@ public class BaseEditorHub : Hub<IEditorClient> {
             UserId = Context.GetCurrentUserId().GetValueOrDefault(),
             ConnectionId = Context.ConnectionId
         });
-        await _userRepository.SyncContextImmediatelyAsync();
+        await _userRepository.SyncContextImmediatelyAsync(CancellationToken.None);
         Context.LogoutUser();
     }
 

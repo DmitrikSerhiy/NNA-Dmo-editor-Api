@@ -27,7 +27,7 @@ public class MailService {
         _sendGridApiKey = configuration.GetValue<string>($"{nameof(SendGridConfiguration)}:ApiKey");
     }
 
-    public async Task<bool> SendConfirmAccountEmailAsync(NnaUser user) {
+    public async Task<bool> SendConfirmAccountEmailAsync(NnaUser user, CancellationToken cancellationToken) {
         var to = new EmailAddress(user.Email, user.UserName);
         var token = await _nnaUserManager.GenerateNnaUserTokenAsync(
             user,
@@ -38,7 +38,7 @@ public class MailService {
         Response? response;
         try {
             var sendGridClient = new SendGridClient(new SendGridClientOptions { ApiKey = _sendGridApiKey });
-            response = await sendGridClient.SendEmailAsync(message);
+            response = await sendGridClient.SendEmailAsync(message, cancellationToken);
         }
         catch (Exception) {
             return false;
@@ -47,7 +47,7 @@ public class MailService {
         return response.StatusCode == HttpStatusCode.Accepted;
     }
 
-    public async Task<bool> SendSetOrResetPasswordEmailAsync(NnaUser user, SendMailReason reason) {
+    public async Task<bool> SendSetOrResetPasswordEmailAsync(NnaUser user, SendMailReason reason, CancellationToken cancellationToken) {
         var subject = reason == SendMailReason.NnaSetPassword ? "Set new password" : "Reset your password";
         var to = new EmailAddress(user.Email, user.UserName);
         var token = await _nnaUserManager.GenerateNnaTokenForSetOrResetPasswordAsync(user, reason);
@@ -57,7 +57,7 @@ public class MailService {
         Response? response;
         try {
             var sendGridClient = new SendGridClient(new SendGridClientOptions { ApiKey = _sendGridApiKey });
-            response = await sendGridClient.SendEmailAsync(message);
+            response = await sendGridClient.SendEmailAsync(message, cancellationToken);
         }
         catch (Exception) {
             return false;

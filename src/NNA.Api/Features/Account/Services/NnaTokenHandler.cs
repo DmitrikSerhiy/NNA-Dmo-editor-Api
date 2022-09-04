@@ -8,6 +8,7 @@ using NNA.Domain.Models;
 
 namespace NNA.Api.Features.Account.Services;
 
+// ReSharper disable once ClassWithVirtualMembersNeverInherited.Global
 public class NnaTokenHandler : JsonWebTokenHandler {
     private readonly TokenDescriptorProvider _descriptorProvider = null!;
 

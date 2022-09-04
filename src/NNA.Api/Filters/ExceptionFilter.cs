@@ -8,29 +8,36 @@ namespace NNA.Api.Filters;
 
 public class ExceptionFilter : IAsyncExceptionFilter {
     public Task OnExceptionAsync(ExceptionContext context) {
-        Log.Error(context.Exception, $"From exception filter: {context.Exception.Message}");
         ObjectResult result;
-        if (context.Exception is AuthenticationException) {
-            result = new ObjectResult(new {
-                fromExceptionFilter = true,
-                title = "Authentication error",
-                code = (int)HttpStatusCode.Unauthorized,
-                message = context.Exception.Message,
-                exception = context.Exception.StackTrace
-            }) {
-                StatusCode = (int)HttpStatusCode.Unauthorized
-            };
-        }
-        else {
-            result = new ObjectResult(new {
-                fromExceptionFilter = true,
-                title = "Internal server error",
-                code = (int)HttpStatusCode.InternalServerError,
-                message = context.Exception.Message,
-                exception = context.Exception.StackTrace
-            }) {
-                StatusCode = (int)HttpStatusCode.InternalServerError
-            };
+        switch (context.Exception) {
+            case OperationCanceledException:
+                result = new ObjectResult(null) {
+                    StatusCode = (int)HttpStatusCode.OK
+                };
+                break;
+            case AuthenticationException:
+                result = new ObjectResult(new {
+                    fromExceptionFilter = true,
+                    title = "Authentication error",
+                    code = (int)HttpStatusCode.Unauthorized,
+                    message = context.Exception.Message,
+                    exception = context.Exception.StackTrace
+                }) {
+                    StatusCode = (int)HttpStatusCode.Unauthorized
+                };
+                break;
+            default:
+                Log.Error(context.Exception, $"From exception filter: {context.Exception.Message}");
+                result = new ObjectResult(new {
+                    fromExceptionFilter = true,
+                    title = "Internal server error",
+                    code = (int)HttpStatusCode.InternalServerError,
+                    message = context.Exception.Message,
+                    exception = context.Exception.StackTrace
+                }) {
+                    StatusCode = (int)HttpStatusCode.InternalServerError
+                };
+                break;
         }
 
         context.Result = result;

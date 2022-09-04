@@ -21,22 +21,22 @@ internal sealed class UserRepository : IUserRepository {
         _context.Update(user);
     }
 
-    public async Task<bool> HasEditorConnectionAsync(Guid userId) {
-        return await _context.EditorConnections.AnyAsync(ec => ec.UserId == userId);
+    public async Task<bool> HasEditorConnectionAsync(Guid userId, CancellationToken token) {
+        return await _context.EditorConnections.AnyAsync(ec => ec.UserId == userId, token);
     }
 
-    public async Task AddEditorConnectionAsync(EditorConnection connection) {
-        await _context.EditorConnections.AddAsync(connection);
+    public void AddEditorConnection(EditorConnection connection) {
+        _context.EditorConnections.Add(connection);
     }
 
     public void RemoveEditorConnection(EditorConnection connection) {
         _context.EditorConnections.Remove(connection);
     }
 
-    public async Task RemoveEditorConnectionOnLogout(Guid userId) {
+    public async Task RemoveEditorConnectionOnLogout(Guid userId, CancellationToken token) {
         var connections = await _context.EditorConnections
             .Where(ec => ec.UserId == userId)
-            .ToListAsync();
+            .ToListAsync(token);
 
         if (connections.Count == 0) {
             return;
@@ -45,20 +45,20 @@ internal sealed class UserRepository : IUserRepository {
         _context.EditorConnections.RemoveRange(connections);
     }
 
-    public async Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email) {
-        return await _context.Set<UsersTokens>().SingleOrDefaultAsync(ut => ut.Email == email);
+    public async Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email, CancellationToken token) {
+        return await _context.Set<UsersTokens>().SingleOrDefaultAsync(ut => ut.Email == email, token);
     }
 
-    public async Task SaveTokens(NnaToken accessToken, NnaToken refreshToken) {
+    public void SaveTokens(NnaToken accessToken, NnaToken refreshToken) {
         if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
         if (refreshToken == null) throw new ArgumentNullException(nameof(refreshToken));
 
-        await _context.AddRangeAsync(accessToken, refreshToken);
+        _context.AddRange(accessToken, refreshToken);
     }
 
-    public async Task ClearTokens(NnaUser user) {
+    public async Task ClearTokensAsync(NnaUser user, CancellationToken token) {
         if (user == null) throw new ArgumentNullException(nameof(user));
-        var tokens = await _context.Tokens.Where(token => token.UserId == user.Id).ToListAsync();
+        var tokens = await _context.Tokens.Where(tkn => tkn.UserId == user.Id).ToListAsync(token);
         _context.Tokens.RemoveRange(tokens);
     }
 
@@ -77,11 +77,11 @@ internal sealed class UserRepository : IUserRepository {
         _context.Update(user);
     }
 
-    public async Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId) {
+    public async Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId, CancellationToken token) {
         var tokens = await _context.Tokens
-            .Where(token => token.UserId == userId)
+            .Where(tkn => tkn.UserId == userId)
             .AsNoTracking()
-            .ToListAsync();
+            .ToListAsync(token);
 
         if (tokens.Count != 0 && tokens.Count != 2) {
             throw new InconsistentDataException(
@@ -97,16 +97,16 @@ internal sealed class UserRepository : IUserRepository {
             : (accessToken: tokens[1], refreshToken: tokens[0]);
     }
 
-    public async Task<NnaUser> FirstUser() {
-        return await _context.ApplicationUsers.FirstAsync();
+    public async Task<NnaUser> FirstUserAsync(CancellationToken token) {
+        return await _context.ApplicationUsers.FirstAsync(token);
     }
 
-    public async Task<NnaUser?> WithId(Guid id) {
-        return await _context.ApplicationUsers.FindAsync(id);
+    public async Task<NnaUser?> WithIdAsync(Guid id, CancellationToken token) {
+        return await _context.ApplicationUsers.FirstOrDefaultAsync(user => user.Id == id, token);
     }
 
-    public async Task SyncContextImmediatelyAsync() {
-        await _context.SaveChangesAsync();
+    public async Task SyncContextImmediatelyAsync(CancellationToken token) {
+        await _context.SaveChangesAsync(token);
     }
 
     // do not use it in normal app lifecycle

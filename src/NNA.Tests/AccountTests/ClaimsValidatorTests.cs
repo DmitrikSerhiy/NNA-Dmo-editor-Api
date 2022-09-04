@@ -72,7 +72,7 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_claimForRefreshToken);
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
 
         // Assert
         await FluentActions.Awaiting(Act)
@@ -87,7 +87,7 @@ public class ClaimsValidatorTests {
         var subject = SetupSubjectMock();
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
 
         // Assert
         await FluentActions.Awaiting(Act)
@@ -103,7 +103,7 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_userIdClaim);
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
 
         // Assert
         await FluentActions.Awaiting(Act)
@@ -120,7 +120,7 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_userEmailClaim);
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
 
         // Assert
         await FluentActions.Awaiting(Act)
@@ -136,11 +136,11 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_userIdClaim);
         _claimsToValidate.Add(_userEmailClaim);
         _claimsToValidate.Add(_tokenIdClaim);
-        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value, CancellationToken.None))
             .ReturnsAsync((UsersTokens?)null);
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
 
         // Assert
         await FluentActions.Awaiting(Act)
@@ -156,11 +156,11 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_userIdClaim);
         _claimsToValidate.Add(_userEmailClaim);
         _claimsToValidate.Add(_tokenIdClaim);
-        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value, CancellationToken.None))
             .ReturnsAsync(UserTokensWithWrongEmail);
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
 
         // Assert
         await FluentActions.Awaiting(Act)
@@ -176,11 +176,11 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_userIdClaim);
         _claimsToValidate.Add(_userEmailClaim);
         _claimsToValidate.Add(_tokenIdClaim);
-        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value, CancellationToken.None))
             .ReturnsAsync(UserTokensWithWrongUserId);
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
 
         // Assert
         await FluentActions.Awaiting(Act)
@@ -196,11 +196,11 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_userIdClaim);
         _claimsToValidate.Add(_userEmailClaim);
         _claimsToValidate.Add(_tokenIdClaim);
-        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value, CancellationToken.None))
             .ReturnsAsync(UserTokensWithWrongAccessTokenId);
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
 
         // Assert
         await FluentActions.Awaiting(Act)
@@ -216,15 +216,15 @@ public class ClaimsValidatorTests {
         _claimsToValidate.Add(_userIdClaim);
         _claimsToValidate.Add(_userEmailClaim);
         _claimsToValidate.Add(_tokenIdClaim);
-        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value))
+        _userRepositoryMock.Setup(m => m.GetAuthenticatedUserDataAsync(_userEmailClaim.Value, CancellationToken.None))
             .ReturnsAsync(_userTokens);
 
         // Act
-        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate);
+        async Task<UsersTokens> Act() => await subject.ValidateAndGetAuthDataAsync(_claimsToValidate, CancellationToken.None);
         var result = await Act();
 
         // Assert
         result.Should().Be(_userTokens);
-        _userRepositoryMock.Verify(u => u.GetAuthenticatedUserDataAsync(_userEmailClaim.Value), Times.Once);
+        _userRepositoryMock.Verify(u => u.GetAuthenticatedUserDataAsync(_userEmailClaim.Value, CancellationToken.None), Times.Once);
     }
 }

@@ -24,8 +24,8 @@ public class HealthController : ControllerBase {
     [HttpGet]
     [AllowAnonymous]
     [Route("database")]
-    public async Task<ActionResult<string>> CheckDb() {
-        var user = await _repository.FirstUser();
+    public async Task<ActionResult<string>> CheckDb(CancellationToken cancellationToken) {
+        var user = await _repository.FirstUserAsync(cancellationToken);
         return Ok($"Db is ok. First user: {user.Email}");
     }
 

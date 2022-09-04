@@ -27,8 +27,8 @@ public class BeatsController : NnaController {
 
     [HttpGet]
     [Route("initial/array/{dmoId}")]
-    public async Task<IActionResult> InitialLoadAsArray(Guid dmoId) {
-        var beats = await _dmosRepository.GetBeatsForDmo(_authenticatedIdentityProvider.AuthenticatedUserId, dmoId);
+    public async Task<IActionResult> InitialLoadAsArray(Guid dmoId, CancellationToken cancellationToken) {
+        var beats = await _dmosRepository.GetBeatsForDmoAsync(_authenticatedIdentityProvider.AuthenticatedUserId, dmoId, cancellationToken);
         return OkWithData(beats.Select(_mapper.Map<BeatDto>).ToArray());
     }
 }
