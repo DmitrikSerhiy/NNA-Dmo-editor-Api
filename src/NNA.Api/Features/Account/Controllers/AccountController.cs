@@ -378,6 +378,7 @@ public class AccountController : NnaController {
         return NoContent();
     }
 
+    // todo: make sure this end-point never cache
     [HttpGet]
     [Route("ping")]
     public async Task<IActionResult> ValidateToken() {

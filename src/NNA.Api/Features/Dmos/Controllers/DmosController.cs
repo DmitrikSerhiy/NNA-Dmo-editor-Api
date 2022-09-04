@@ -26,6 +26,7 @@ public class DmosController : NnaController {
                                          ?? throw new ArgumentNullException(nameof(authenticatedIdentityProvider));
     }
 
+    // todo: add cache here AND add pagination here
     [HttpGet]
     public async Task<IActionResult> GetDmos() {
         var dmos = await _dmosRepository.GetAll(_authenticatedIdentityProvider.AuthenticatedUserId);
