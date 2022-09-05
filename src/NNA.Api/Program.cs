@@ -38,7 +38,6 @@ try {
 
     if (builder.Environment.IsLocalMachine()) {
         app.UseSerilogRequestLogging();
-        app.UseDeveloperExceptionPage();
     }
 
     app.UseHttpsRedirection();
