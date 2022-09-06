@@ -39,7 +39,8 @@ public class EditorHub : BaseEditorHub {
             return InternalServerError(ex.Message);
         }
     }
-
+    
+    [Obsolete]
     public async Task<object> CreateDmo(CreateDmoDto? dmoDto) {
         if (dmoDto == null) return BadRequest();
 

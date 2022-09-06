@@ -18,6 +18,7 @@ public class EditorService : IEditorService {
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
 
+    [Obsolete]
     public async Task<CreatedDmoDto> CreateAndLoadDmo(CreateDmoDto? dmoDto, Guid userId) {
         if (dmoDto == null) throw new ArgumentNullException(nameof(dmoDto));
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
