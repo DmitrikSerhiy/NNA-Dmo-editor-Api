@@ -118,7 +118,6 @@ public static class ApiBuilderExtensions {
         builder.Services.AddDbContextPool<NnaContext>(options => {
             options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"), sqlOptions => {
                 sqlOptions.EnableRetryOnFailure(2);
-                sqlOptions.MigrationsAssembly("Persistence");
             });
         });
     }
