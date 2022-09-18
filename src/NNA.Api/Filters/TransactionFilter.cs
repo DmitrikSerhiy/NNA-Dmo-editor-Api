@@ -16,6 +16,7 @@ public class TransactionFilter : IAsyncActionFilter {
         //after each action
         if (executedContext.Exception == null && _contextOrchestrator.HasChanges()) {
             await _contextOrchestrator.CommitChangesAsync();
+            // todo: call _contextOrchestrator.dispose here? maybe I should use result filter here instead?
         }
     }
 }
