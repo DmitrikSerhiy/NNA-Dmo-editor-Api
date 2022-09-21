@@ -10,4 +10,5 @@ public interface IEditorService {
     Task CreateBeat(CreateBeatDto beatDto, Guid userId);
     Task RemoveBeat(RemoveBeatDto beatDto, Guid userId);
     Task UpdateBeat(UpdateBeatDto update, Guid userId);
+    Task SwapBeats(SwapBeatsDto update, Guid userId);
 }

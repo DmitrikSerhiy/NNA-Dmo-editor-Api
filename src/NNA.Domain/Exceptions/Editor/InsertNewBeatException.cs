@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.Exceptions.Editor;
 
-public class InsertNewBeatException : Exception {
+public sealed class InsertNewBeatException : Exception {
     private const string InnerMessage = "Failed to insert beat.";
     public static string CustomMessage { get; } = InnerMessage;
 

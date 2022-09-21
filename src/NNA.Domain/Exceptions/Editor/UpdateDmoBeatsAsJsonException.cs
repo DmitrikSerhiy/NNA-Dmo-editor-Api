@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.Exceptions.Editor;
 
-public class UpdateDmoBeatsAsJsonException : Exception {
+public sealed class UpdateDmoBeatsAsJsonException : Exception {
     private const string InnerMessage = "Failed to update dmos beats json.";
     public static string CustomMessage { get; } = InnerMessage;
     public UpdateDmoBeatsAsJsonException() { }

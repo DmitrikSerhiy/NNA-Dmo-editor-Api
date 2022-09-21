@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.Exceptions.Editor;
 
-public class CreateDmoException : Exception {
+public sealed class CreateDmoException : Exception {
     private const string InnerMessage = "Failed to create dmo.";
     public static string CustomMessage { get; } = InnerMessage;
     public CreateDmoException() { }

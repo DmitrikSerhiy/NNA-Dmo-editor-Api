@@ -3,7 +3,7 @@ using NNA.Domain.DTOs.Editor;
 
 namespace NNA.Api.Features.Editor.Validators;
 
-public class RemoveBeatDtoValidator : AbstractValidator<RemoveBeatDto> {
+public sealed class RemoveBeatDtoValidator : AbstractValidator<RemoveBeatDto> {
     public RemoveBeatDtoValidator() {
         RuleFor(d => d.Id)
             .NotEmpty()

@@ -34,7 +34,7 @@ public class EditorHub : BaseEditorHub {
             return Ok(dmo);
         }
         catch (LoadShortDmoException ex) {
-            Log.Error(ex.InnerException!, ex.Message);
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
             await DisconnectUser();
             return InternalServerError(ex.Message);
         }
@@ -59,12 +59,12 @@ public class EditorHub : BaseEditorHub {
             return Ok(dmo);
         }
         catch (CreateDmoException ex) {
-            Log.Error(ex.InnerException!, ex.Message);
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
             await DisconnectUser();
             return InternalServerError(ex.Message);
         }
         catch (LoadShortDmoException ex) {
-            Log.Error(ex.InnerException!, ex.Message);
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
             await DisconnectUser();
             return InternalServerError(ex.Message);
         }
@@ -91,7 +91,7 @@ public class EditorHub : BaseEditorHub {
             await EditorService.UpdateShortDmo(dmoDto, Context.GetCurrentUserId().GetValueOrDefault());
         }
         catch (UpdateShortDmoException ex) {
-            Log.Error(ex.InnerException!, ex.Message);
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
             await DisconnectUser();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
@@ -118,7 +118,7 @@ public class EditorHub : BaseEditorHub {
             await EditorService.UpdateDmoBeatsAsJson(update, Context.GetCurrentUserId().GetValueOrDefault());
         }
         catch (UpdateDmoBeatsAsJsonException ex) {
-            Log.Error(ex.InnerException!, ex.Message);
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
             await DisconnectUser();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
@@ -145,7 +145,7 @@ public class EditorHub : BaseEditorHub {
             await EditorService.CreateBeat(beatDto, Context.GetCurrentUserId().GetValueOrDefault());
         }
         catch (InsertNewBeatException ex) {
-            Log.Error(ex.InnerException!, ex.Message);
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
             await DisconnectUser();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
@@ -172,7 +172,7 @@ public class EditorHub : BaseEditorHub {
             await EditorService.RemoveBeat(beatDto, Context.GetCurrentUserId().GetValueOrDefault());
         }
         catch (DeleteBeatException ex) {
-            Log.Error(ex.InnerException!, ex.Message);
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
             await DisconnectUser();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
@@ -201,8 +201,36 @@ public class EditorHub : BaseEditorHub {
             await EditorService.UpdateBeat(update, Context.GetCurrentUserId().GetValueOrDefault());
         }
         catch (UpdateBeatException ex) {
-            Log.Error(ex.InnerException!, ex.Message);
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
             await DisconnectUser(); // todo: add unit test for this line of code for every action method
+            await SendBackErrorResponse(InternalServerError(ex.Message));
+        }
+    }
+
+    // todo: cover by unit tests
+    public async Task SwapBeats(SwapBeatsDto? update) {
+        if (update == null) {
+            await SendBackErrorResponse(BadRequest());
+            return;
+        }
+        
+        if (!Context.ContainsUser()) {
+            await SendBackErrorResponse(NotAuthorized());
+            return;
+        }
+        
+        var validationResult = await new SwapBeatsDtoValidator().ValidateAsync(update);
+        if (!validationResult.IsValid) {
+            await SendBackErrorResponse(NotValid(validationResult));
+            return;
+        }
+
+        try {
+            await EditorService.SwapBeats(update, Context.GetCurrentUserId().GetValueOrDefault());
+        }
+        catch (SwapBeatsException ex) {
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
+            await DisconnectUser();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }

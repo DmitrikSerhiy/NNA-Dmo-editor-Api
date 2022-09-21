@@ -37,6 +37,7 @@ public class BeatsMapper : Profile {
                 beatConfig => beatConfig.MapFrom(beatDto => MapToTimeView(beatDto.Time)));
 
         CreateMap<RemoveBeatDto, Beat>();
+        CreateMap<BeatToSwapDto, Beat>();
     }
 
     private static BeatTimeDto MapFromSeconds(int seconds) {

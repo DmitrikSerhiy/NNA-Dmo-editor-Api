@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.Exceptions.Editor;
 
-public class LoadDmoException : Exception {
+public sealed class LoadDmoException : Exception {
     private const string InnerMessage = "Failed to load dmo.";
     public static string CustomMessage { get; } = InnerMessage;
     public LoadDmoException() { }

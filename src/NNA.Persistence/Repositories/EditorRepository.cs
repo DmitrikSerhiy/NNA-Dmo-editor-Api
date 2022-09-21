@@ -70,6 +70,11 @@ internal sealed class EditorRepository : IEditorRepository {
         "SELECT TOP (1) [Id], [Order], [DmoId] " +
         "FROM [dbo].[Beats] " +
         "WHERE TempId = @tempId AND [DmoId] = @dmoId";
+    
+    private const string SetBeatOrder =
+        "UPDATE [dbo].[Beats] " +
+        "SET [Order] = @order " +
+        "WHERE Id = @id AND [DmoId] = @dmoId AND UserId = @userId";
 
     #endregion
 
@@ -199,7 +204,6 @@ internal sealed class EditorRepository : IEditorRepository {
         };
 
         await ExecuteTransactionAsync(commandsWithParameters);
-
         return true;
     }
 
@@ -209,6 +213,26 @@ internal sealed class EditorRepository : IEditorRepository {
 
     public async Task<Beat> LoadBeatForDeleteByTempIdAsync(string tempId, Guid dmoId) {
         return await QueryAsync<Beat>(LoadBeatForDeleteByTempId, new { tempId, dmoId });
+    }
+    
+    public async Task<bool> SwapBeatsAsync(Beat beatToMode, Beat beatToReplace, Guid dmoId, Guid userId) {
+        var commandsWithParameters = new List<(string, object)> {
+            (SetBeatOrder, new {
+                id = beatToMode.Id,
+                dmoId = dmoId,
+                order = beatToReplace.Order,
+                userId = userId
+            }),
+            (SetBeatOrder, new {
+                id = beatToReplace.Id,
+                dmoId = dmoId,
+                order = beatToMode.Order,
+                userId = userId
+            })
+        };
+
+        await ExecuteTransactionAsync(commandsWithParameters);
+        return true;
     }
 
     // Asynchronous Processing=true; <-- that's a part of connection string

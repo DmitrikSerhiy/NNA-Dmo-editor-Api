@@ -187,4 +187,25 @@ public class EditorService : IEditorService {
             throw new UpdateBeatException(update.BeatId, userId);
         }
     }
+
+    public async Task SwapBeats(SwapBeatsDto update, Guid userId) {
+        if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+        if (update == null) throw new ArgumentNullException(nameof(update));
+        
+        var dmoId = Guid.Parse(update.dmoId);
+        var beatToMove = _mapper.Map<Beat>(update.beatToMove);
+        var beatToReplace = _mapper.Map<Beat>(update.beatToReplace);
+        bool isUpdated;
+
+        try {
+            isUpdated = await _editorRepository.SwapBeatsAsync(beatToMove, beatToReplace, dmoId, userId);
+        }
+        catch (Exception ex) {
+            throw new SwapBeatsException(ex, dmoId, userId);
+        }
+        
+        if (!isUpdated) {
+            throw new SwapBeatsException(dmoId, userId);
+        }
+    }
 }

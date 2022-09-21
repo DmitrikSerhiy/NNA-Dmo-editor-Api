@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.Exceptions.Editor;
 
-public class UpdateBeatException : Exception {
+public sealed class UpdateBeatException : Exception {
     private const string InnerMessage = "Failed to update beat.";
     public static string CustomMessage { get; } = InnerMessage;
 
