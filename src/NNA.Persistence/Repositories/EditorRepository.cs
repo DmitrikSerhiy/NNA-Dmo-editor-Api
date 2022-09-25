@@ -80,6 +80,11 @@ internal sealed class EditorRepository : IEditorRepository {
         "UPDATE [dbo].[Beats] " +
         "SET [Order] = @order " +
         "WHERE TempId = @tempId AND [DmoId] = @dmoId AND UserId = @userId";
+    
+    private const string SanitizeTempIds = 
+        "UPDATE [dbo].[Beats] " +
+        "SET TempId = NULL " +
+        "WHERE [DmoId] = @dmoId AND UserId = @userId";
 
     #endregion
 
@@ -220,7 +225,7 @@ internal sealed class EditorRepository : IEditorRepository {
         return await QueryAsync<Beat>(LoadBeatForDeleteByTempId, new { tempId, dmoId });
     }
 
-    public async Task<bool> SetBeatOrderById(Beat beat) {
+    public async Task<bool> SetBeatOrderByIdAsync(Beat beat) {
         var result = await ExecuteAsync(SetNewOrderByBeatId, new {
             id = beat.Id,
             dmoId = beat.DmoId,
@@ -231,7 +236,7 @@ internal sealed class EditorRepository : IEditorRepository {
         return result > 0;
     }
     
-    public async Task<bool> SetBeatOrderByTempId(Beat beat) {
+    public async Task<bool> SetBeatOrderByTempIdAsync(Beat beat) {
         var result = await ExecuteAsync(SetNewOrderByBeatTempId, new {
             tempId = beat.TempId,
             dmoId = beat.DmoId,
@@ -239,6 +244,11 @@ internal sealed class EditorRepository : IEditorRepository {
             userId = beat.UserId
         });
 
+        return result > 0;
+    }
+    
+    public async Task<bool> SanitizeTempIdsForDmoAsync(Guid dmoId, Guid userId) {
+        var result = await ExecuteAsync(SanitizeTempIds, new { dmoId, userId });
         return result > 0;
     }
 

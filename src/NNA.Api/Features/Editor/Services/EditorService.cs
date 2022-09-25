@@ -227,12 +227,12 @@ public class EditorService : IEditorService {
 
         try {
             isBeatToMoveUpdated = isBeatToMoveIdIsGuid
-                ? await _editorRepository.SetBeatOrderById(beatToMove)
-                : await _editorRepository.SetBeatOrderByTempId(beatToMove);
+                ? await _editorRepository.SetBeatOrderByIdAsync(beatToMove)
+                : await _editorRepository.SetBeatOrderByTempIdAsync(beatToMove);
             
             isBeatToReplaceUpdated = isBeatToReplaceIdIsGuid
-                ? await _editorRepository.SetBeatOrderById(beatToReplace)
-                : await _editorRepository.SetBeatOrderByTempId(beatToReplace);
+                ? await _editorRepository.SetBeatOrderByIdAsync(beatToReplace)
+                : await _editorRepository.SetBeatOrderByTempIdAsync(beatToReplace);
         }
         catch (Exception ex) {
             throw new SwapBeatsException(ex, dmoId, userId);
@@ -240,6 +240,26 @@ public class EditorService : IEditorService {
         
         if (!isBeatToMoveUpdated || !isBeatToReplaceUpdated) {
             throw new SwapBeatsException(dmoId, userId);
+        }
+    }
+
+    public async Task SanitizeTempIds(SanitizeTempIdsDto update, Guid userId) {
+        if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+        if (update == null) throw new ArgumentNullException(nameof(update));
+        
+        var dmoId = Guid.Parse(update.dmoId);
+
+        bool isUpdated;
+
+        try {
+            isUpdated = await _editorRepository.SanitizeTempIdsForDmoAsync(dmoId, userId);
+        }
+        catch (Exception ex) {
+            throw new SanitizeTempIdsException(ex, dmoId, userId);
+        }
+
+        if (!isUpdated) {
+            throw new SanitizeTempIdsException(dmoId, userId);
         }
     }
 }

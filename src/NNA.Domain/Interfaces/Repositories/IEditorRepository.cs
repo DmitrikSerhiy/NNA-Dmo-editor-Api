@@ -15,6 +15,7 @@ public interface IEditorRepository {
     Task<bool> DeleteBeatByTempIdAsync(Beat beat);
     Task<Beat> LoadBeatForDeleteByIdAsync(Guid id, Guid dmoId);
     Task<Beat> LoadBeatForDeleteByTempIdAsync(string tempId, Guid dmoId);
-    Task<bool> SetBeatOrderByTempId(Beat beat);
-    Task<bool> SetBeatOrderById(Beat beat);
+    Task<bool> SetBeatOrderByTempIdAsync(Beat beat);
+    Task<bool> SetBeatOrderByIdAsync(Beat beat);
+    Task<bool> SanitizeTempIdsForDmoAsync(Guid dmoId, Guid userId);
 }
