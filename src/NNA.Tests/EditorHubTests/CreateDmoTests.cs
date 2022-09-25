@@ -33,7 +33,10 @@ public class CreateDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.CreateDmo(null);
+#pragma warning restore CS0612
+
         var response = await act.Invoke();
 
         //Assert
@@ -59,7 +62,9 @@ public class CreateDmoTests : BaseEditorTests {
         Subject.Context = hubContext.Object;
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.CreateDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -81,7 +86,9 @@ public class CreateDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.CreateDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -115,7 +122,9 @@ public class CreateDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.CreateDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -145,7 +154,9 @@ public class CreateDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.CreateDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -172,7 +183,9 @@ public class CreateDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.CreateDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert

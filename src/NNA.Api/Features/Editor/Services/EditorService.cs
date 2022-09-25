@@ -193,18 +193,52 @@ public class EditorService : IEditorService {
         if (update == null) throw new ArgumentNullException(nameof(update));
         
         var dmoId = Guid.Parse(update.dmoId);
-        var beatToMove = _mapper.Map<Beat>(update.beatToMove);
-        var beatToReplace = _mapper.Map<Beat>(update.beatToReplace);
-        bool isUpdated;
+        var beatToMove = new Beat {
+            UserId = userId,
+            DmoId = dmoId,
+            Order = update.beatToReplace.order
+        };
+
+        var beatToReplace = new Beat {
+            UserId = userId,
+            DmoId = dmoId,
+            Order = update.beatToMove.order
+        };
+        
+        var isBeatToMoveIdIsGuid = Guid. TryParse(update.beatToMove.id, out var beatIdToMove);
+        var isBeatToReplaceIdIsGuid = Guid.TryParse(update.beatToReplace.id, out var beatIdToReplace);
+
+        if (!isBeatToMoveIdIsGuid) {
+            beatToMove.TempId = update.beatToMove.id;
+        }
+        else {
+            beatToMove.SetIdExplicitly(beatIdToMove);
+        }
+
+        if (!isBeatToReplaceIdIsGuid) {
+            beatToReplace.TempId = update.beatToReplace.id;
+        }
+        else {
+            beatToReplace.SetIdExplicitly(beatIdToReplace);
+        }
+        
+        bool isBeatToMoveUpdated;
+        bool isBeatToReplaceUpdated;
 
         try {
-            isUpdated = await _editorRepository.SwapBeatsAsync(beatToMove, beatToReplace, dmoId, userId);
+            isBeatToMoveUpdated = isBeatToMoveIdIsGuid
+                ? await _editorRepository.SetBeatOrderById(beatToMove)
+                : await _editorRepository.SetBeatOrderByTempId(beatToMove);
+            
+            isBeatToReplaceUpdated = isBeatToReplaceIdIsGuid
+                ? await _editorRepository.SetBeatOrderById(beatToReplace)
+                : await _editorRepository.SetBeatOrderByTempId(beatToReplace);
         }
         catch (Exception ex) {
             throw new SwapBeatsException(ex, dmoId, userId);
         }
         
-        if (!isUpdated) {
+        if (!isBeatToMoveUpdated || !isBeatToReplaceUpdated) {
             throw new SwapBeatsException(dmoId, userId);
         }
     }

@@ -30,9 +30,10 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
         Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act
+#pragma warning disable CS0612
         Func<Task> act1 = async () => await Subject.CreateAndLoadDmo(null, userId);
         Func<Task> act2 = async () => await Subject.CreateAndLoadDmo(dmoDto, Guid.Empty);
-
+#pragma warning restore CS0612
         //Assert
         act1.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(dmoDto));
         act2.Should().ThrowAsync<ArgumentNullException>().Result.And.ParamName.Should().Be(nameof(userId));
@@ -48,7 +49,9 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
         Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act
+#pragma warning disable CS0612
         await Subject.CreateAndLoadDmo(dmoDto, userId);
+#pragma warning restore CS0612
 
         //Assert
         InitialDmo.NnaUserId.Should().Be(userId);
@@ -65,7 +68,9 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
         var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act
+#pragma warning disable CS0612
         async Task Act() => await subject.CreateAndLoadDmo(dmoDto, userId);
+#pragma warning restore CS0612
 
         //Assert
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<CreateDmoException>().Result
@@ -85,7 +90,9 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
         var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act
+#pragma warning disable CS0612
         async Task Act() => await subject.CreateAndLoadDmo(dmoDto, userId);
+#pragma warning restore CS0612
 
         //Assert
         // ReSharper disable once PossibleNullReferenceException
@@ -105,7 +112,9 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
         var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act
+#pragma warning disable CS0612
         async Task Act() => await subject.CreateAndLoadDmo(dmoDto, userId);
+#pragma warning restore CS0612
 
         //Assert
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<LoadShortDmoException>().Result
@@ -126,7 +135,9 @@ public class CreateAndLoadDmoTests : BaseHubServiceTests {
         var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act
+#pragma warning disable CS0612
         async Task Act() => await subject.CreateAndLoadDmo(dmoDto, userId);
+#pragma warning restore CS0612
 
         //Assert
         // ReSharper disable once PossibleNullReferenceException

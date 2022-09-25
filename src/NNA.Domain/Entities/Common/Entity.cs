@@ -9,4 +9,8 @@ public class Entity {
     public Guid Id { get; private set; }
 
     public long DateOfCreation { get; private set; }
+    
+    public void SetIdExplicitly(Guid id) {
+        Id = id;
+    }
 }

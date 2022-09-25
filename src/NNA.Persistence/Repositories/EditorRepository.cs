@@ -71,10 +71,15 @@ internal sealed class EditorRepository : IEditorRepository {
         "FROM [dbo].[Beats] " +
         "WHERE TempId = @tempId AND [DmoId] = @dmoId";
     
-    private const string SetBeatOrder =
+    private const string SetNewOrderByBeatId =
         "UPDATE [dbo].[Beats] " +
         "SET [Order] = @order " +
         "WHERE Id = @id AND [DmoId] = @dmoId AND UserId = @userId";
+    
+    private const string SetNewOrderByBeatTempId =
+        "UPDATE [dbo].[Beats] " +
+        "SET [Order] = @order " +
+        "WHERE TempId = @tempId AND [DmoId] = @dmoId AND UserId = @userId";
 
     #endregion
 
@@ -214,25 +219,27 @@ internal sealed class EditorRepository : IEditorRepository {
     public async Task<Beat> LoadBeatForDeleteByTempIdAsync(string tempId, Guid dmoId) {
         return await QueryAsync<Beat>(LoadBeatForDeleteByTempId, new { tempId, dmoId });
     }
-    
-    public async Task<bool> SwapBeatsAsync(Beat beatToMode, Beat beatToReplace, Guid dmoId, Guid userId) {
-        var commandsWithParameters = new List<(string, object)> {
-            (SetBeatOrder, new {
-                id = beatToMode.Id,
-                dmoId = dmoId,
-                order = beatToReplace.Order,
-                userId = userId
-            }),
-            (SetBeatOrder, new {
-                id = beatToReplace.Id,
-                dmoId = dmoId,
-                order = beatToMode.Order,
-                userId = userId
-            })
-        };
 
-        await ExecuteTransactionAsync(commandsWithParameters);
-        return true;
+    public async Task<bool> SetBeatOrderById(Beat beat) {
+        var result = await ExecuteAsync(SetNewOrderByBeatId, new {
+            id = beat.Id,
+            dmoId = beat.DmoId,
+            order = beat.Order,
+            userId = beat.UserId
+        });
+
+        return result > 0;
+    }
+    
+    public async Task<bool> SetBeatOrderByTempId(Beat beat) {
+        var result = await ExecuteAsync(SetNewOrderByBeatTempId, new {
+            tempId = beat.TempId,
+            dmoId = beat.DmoId,
+            order = beat.Order,
+            userId = beat.UserId
+        });
+
+        return result > 0;
     }
 
     // Asynchronous Processing=true; <-- that's a part of connection string
