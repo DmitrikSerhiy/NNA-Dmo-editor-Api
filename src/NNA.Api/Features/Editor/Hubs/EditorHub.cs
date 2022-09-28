@@ -190,7 +190,7 @@ public class EditorHub : BaseEditorHub {
         }
 
         var validationResult =
-            await new UpdateBeatDtoValidator().ValidateAsync(update); // todo: add validators for minutes and seconds
+            await new UpdateBeatDtoValidator().ValidateAsync(update);
         if (!validationResult.IsValid) {
             await SendBackErrorResponse(
                 NotValid(validationResult)); // todo: check in unit tests what error was thrown exactly

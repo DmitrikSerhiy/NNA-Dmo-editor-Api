@@ -69,10 +69,50 @@ public class UpdateBeatTest : BaseEditorTests {
 
 
     [Fact]
-    public async Task ShouldReturnNotValidResponseIfDtoIsNotValidTest() {
+    public async Task ShouldReturnNotValidResponseIfDtoIsNotValidDueToMissingBeatIdTest() {
         //Arrange
         SetMockAndVariables();
         BeatDto.BeatId = null;
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.UpdateBeat(BeatDto);
+        await act.Invoke();
+
+        //Assert
+        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
+    }
+    
+    [Fact]
+    public async Task ShouldReturnNotValidResponseIfDtoIsNotValidDueToInvalidMinutesBeatIdTest() {
+        //Arrange
+        SetMockAndVariables();
+        BeatDto.Time.Minutes = 70;
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.UpdateBeat(BeatDto);
+        await act.Invoke();
+
+        //Assert
+        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
+    }
+    
+    [Fact]
+    public async Task ShouldReturnNotValidResponseIfDtoIsNotValidDueToInvalidSecondsBeatIdTest() {
+        //Arrange
+        SetMockAndVariables();
+        BeatDto.Time.Seconds = 70;
         Subject = new EditorHub(
             EditorServiceMock.Object,
             EnvironmentMock.Object,
