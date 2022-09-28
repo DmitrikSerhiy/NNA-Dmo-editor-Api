@@ -259,6 +259,5 @@ public class EditorHub : BaseEditorHub {
             await DisconnectUser();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
-        
     }
 }

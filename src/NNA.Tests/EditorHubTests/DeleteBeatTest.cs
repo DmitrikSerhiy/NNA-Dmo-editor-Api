@@ -87,7 +87,7 @@ public class DeleteBeatTest : BaseEditorTests {
 
 
     [Fact]
-    public async Task ShouldReturnNoContentResponseTest() {
+    public async Task ShouldCallServiceMethodToRemoveBeatTest() {
         //Arrange
         SetMockAndVariables();
 

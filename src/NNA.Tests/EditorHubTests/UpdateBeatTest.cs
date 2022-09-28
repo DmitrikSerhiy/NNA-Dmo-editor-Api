@@ -130,7 +130,7 @@ public class UpdateBeatTest : BaseEditorTests {
 
 
     [Fact]
-    public async Task ShouldReturnNoContentResponseTest() {
+    public async Task ShouldCallServiceMethodToUpdateBeatTest() {
         //Arrange
         SetMockAndVariables();
 

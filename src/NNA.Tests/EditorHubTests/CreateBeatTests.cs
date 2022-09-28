@@ -88,7 +88,7 @@ public class CreateBeatTests : BaseEditorTests {
 
 
     [Fact]
-    public async Task ShouldReturnNoContentResponseTest() {
+    public async Task ShouldCallServiceMethodToCreateBeatTest() {
         //Arrange
         SetMockAndVariables();
 

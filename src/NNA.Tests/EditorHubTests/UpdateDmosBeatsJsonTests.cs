@@ -82,7 +82,7 @@ public class UpdateDmosBeatsJsonTests : BaseEditorTests {
     }
 
     [Fact]
-    public async Task ShouldReturnNoContentResponseTest() {
+    public async Task ShouldCallServiceMethodToUpdateBeatsJsonTest() {
         //Arrange
         SetMockAndVariables();
 

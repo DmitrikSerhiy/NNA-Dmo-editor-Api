@@ -9,19 +9,14 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubTests;
 
-public class UpdateShortDmoTests : BaseEditorTests {
-    private UpdateShortDmoDto DmoDto { get; set; } = null!;
+public class SanitizeTempIdsTests : BaseEditorTests {
+    private SanitizeTempIdsDto update { get; set; } = null!;
 
     private void SetMockAndVariables() {
         SetupConstructorMocks();
-        DmoDto = new UpdateShortDmoDto {
-            Id = Guid.NewGuid().ToString(),
-            MovieTitle = "movie title",
-            Name = "dmo name",
-            ShortComment = "some comment"
-        };
+        update = new SanitizeTempIdsDto { dmoId = "someDmoId" };
     }
-
+    
     [Fact]
     public async Task ShouldReturnBadRequestIfEntryDtoIsEmptyTest() {
         //Arrange
@@ -34,13 +29,13 @@ public class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
-        Func<Task> act = async () => await Subject.UpdateShortDmo(null);
+        Func<Task> act = async () => await Subject.SanitizeTempIds(null);
         await act.Invoke();
 
         //Assert
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
     }
-
+    
     [Fact]
     public async Task ShouldReturnNotAuthorizedIfNoUserInContextTest() {
         //Arrange
@@ -56,18 +51,18 @@ public class UpdateShortDmoTests : BaseEditorTests {
         Subject.Context = hubContext.Object;
 
         //Act
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+        Func<Task> act = async () => await Subject.SanitizeTempIds(update);
         await act.Invoke();
 
         //Assert
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
     }
-
+    
     [Fact]
     public async Task ShouldReturnNotValidResponseIfDtoIsNotValidTest() {
         //Arrange
         SetMockAndVariables();
-        DmoDto.Id = null;
+        update.dmoId = string.Empty;
         Subject = new EditorHub(
             EditorServiceMock.Object,
             EnvironmentMock.Object,
@@ -76,19 +71,19 @@ public class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+        Func<Task> act = async () => await Subject.SanitizeTempIds(update);
         await act.Invoke();
 
         //Assert
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
     }
-
+    
     [Fact]
-    public async Task ShouldCallServiceMethodToUpdateShortDmoInfoTest() {
+    public async Task ShouldCallServiceMethodToSanitizeTempIdsTest() {
         //Arrange
         SetMockAndVariables();
 
-        EditorServiceMock.Setup(esm => esm.UpdateShortDmo(DmoDto, UserId)).Verifiable();
+        EditorServiceMock.Setup(esm => esm.SanitizeTempIds(update, UserId)).Verifiable();
         Subject = new EditorHub(
             EditorServiceMock.Object,
             EnvironmentMock.Object,
@@ -97,22 +92,22 @@ public class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+        Func<Task> act = async () => await Subject.SanitizeTempIds(update);
         await act.Invoke();
 
         //Assert
-        EditorServiceMock.Verify(esm => esm.UpdateShortDmo(DmoDto, UserId), Times.Once);
+        EditorServiceMock.Verify(esm => esm.SanitizeTempIds(update, UserId), Times.Once);
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Never());
     }
-
+    
     [Fact]
     public async Task ShouldReturnInternalServerErrorResponseIfRepositoryThrowsTest() {
         //Arrange
         SetMockAndVariables();
         var exceptionMessage = "some message";
 
-        EditorServiceMock.Setup(esm => esm.UpdateShortDmo(DmoDto, UserId))
-            .ThrowsAsync(new UpdateShortDmoException(exceptionMessage, new Exception("exception from repository")));
+        EditorServiceMock.Setup(esm => esm.SanitizeTempIds(update, UserId))
+            .ThrowsAsync(new SanitizeTempIdsException(exceptionMessage, new Exception("exception from repository")));
         Subject = new EditorHub(
             EditorServiceMock.Object,
             EnvironmentMock.Object,
@@ -121,7 +116,7 @@ public class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+        Func<Task> act = async () => await Subject.SanitizeTempIds(update);
         await act.Invoke();
 
         //Assert
@@ -134,8 +129,8 @@ public class UpdateShortDmoTests : BaseEditorTests {
         SetMockAndVariables();
         var exceptionMessage = "some message";
 
-        EditorServiceMock.Setup(esm => esm.UpdateShortDmo(DmoDto, UserId))
-            .ThrowsAsync(new UpdateShortDmoException(exceptionMessage, new Exception("exception from repository")));
+        EditorServiceMock.Setup(esm => esm.SanitizeTempIds(update, UserId))
+            .ThrowsAsync(new SanitizeTempIdsException(exceptionMessage, new Exception("exception from repository")));
 
         UserRepositoryMock
             .Setup(repository => repository.RemoveEditorConnection(EditorConnection))
@@ -153,7 +148,7 @@ public class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+        Func<Task> act = async () => await Subject.SanitizeTempIds(update);
         await act.Invoke();
 
         //Assert
@@ -163,4 +158,5 @@ public class UpdateShortDmoTests : BaseEditorTests {
         UserRepositoryMock.Verify(sbj => sbj.SyncContextImmediatelyAsync(CancellationToken.None), Times.Once());
         Subject.Context.Items.Should().NotContainKey("user");
     }
+    
 }
