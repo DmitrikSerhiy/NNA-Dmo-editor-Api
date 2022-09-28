@@ -4,6 +4,7 @@ using Moq;
 using NNA.Api.Features.Editor.Hubs;
 using NNA.Domain.DTOs.Editor;
 using NNA.Domain.DTOs.Editor.Response;
+using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
@@ -194,5 +195,43 @@ public class CreateDmoTests : BaseEditorTests {
                 $"{LoadShortDmoException.CustomMessage} {exceptionMessage}"),
             config => config
                 .Excluding(exclude => exclude.warnings));
+    }
+    
+    [Fact]
+    public async Task ShouldDisconnectUserIfRepositoryThrowsTest() {
+        //Arrange
+        SetMockAndVariables();
+        var exceptionMessage = "some message";
+
+        EditorServiceMock.Setup(esm => esm.CreateAndLoadDmo(DmoDto, UserId))
+            .ThrowsAsync(new LoadShortDmoException(exceptionMessage, new Exception("exception from repository")));
+
+        UserRepositoryMock
+            .Setup(repository => repository.RemoveEditorConnection(EditorConnection))
+            .Verifiable();
+        
+        UserRepositoryMock
+            .Setup(repository => repository.SyncContextImmediatelyAsync(CancellationToken.None))
+            .Verifiable();
+
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+#pragma warning disable CS0612
+        Func<Task> act = async () => await Subject.CreateDmo(DmoDto);
+#pragma warning restore CS0612
+        await act.Invoke();
+
+        //Assert
+        UserRepositoryMock.Verify(sbj => sbj.RemoveEditorConnection(
+                It.Is<EditorConnection>(ec => ec.ConnectionId == EditorConnection.ConnectionId && ec.UserId == EditorConnection.UserId )), 
+            Times.Once());
+        UserRepositoryMock.Verify(sbj => sbj.SyncContextImmediatelyAsync(CancellationToken.None), Times.Once());
+        Subject.Context.Items.Should().NotContainKey("user");
     }
 }

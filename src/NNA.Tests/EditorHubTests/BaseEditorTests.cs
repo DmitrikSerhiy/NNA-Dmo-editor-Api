@@ -22,8 +22,10 @@ public class BaseEditorTests {
 
     protected string UserName { get; } = "UserName";
     protected string UserEmail { get; } = "User@gmail.com";
+    protected string ConnectionId { get; } = "CurrentConnectionId";
     protected Guid UserId { get; } = Guid.NewGuid();
 
+    protected EditorConnection EditorConnection { get; set; }
 
     protected void SetupConstructorMocks() {
         EditorServiceMock = new Mock<IEditorService>();
@@ -51,11 +53,15 @@ public class BaseEditorTests {
         authProvider.SetAuthenticatedUser(userMock.Object);
         var items = new Dictionary<object, object?> { { "user", authProvider } };
         hubContext.Setup(hm => hm.Items).Returns(items);
+        hubContext.Setup(hm => hm.ConnectionId).Returns(ConnectionId);
+        // hubContext.Setup(hm => hm.LogoutUser)
         Subject.Context = hubContext.Object;
 
         EditorClientsMock = new Mock<IHubCallerClients<IEditorClient>>();
         EditorClientsMock.Setup(client => client.Caller).Returns(new Mock<EditorClient>().Object);
         Subject.Clients = EditorClientsMock.Object;
+        
+        EditorConnection = new EditorConnection { UserId = UserId, ConnectionId = ConnectionId };
     }
 
     public class EditorClient : IEditorClient {

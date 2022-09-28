@@ -202,12 +202,11 @@ public class EditorHub : BaseEditorHub {
         }
         catch (UpdateBeatException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser(); // todo: add unit test for this line of code for every action method
+            await DisconnectUser();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
-
-    // todo: cover by unit tests
+    
     public async Task SwapBeats(SwapBeatsDto? update) {
         if (update == null) {
             await SendBackErrorResponse(BadRequest());

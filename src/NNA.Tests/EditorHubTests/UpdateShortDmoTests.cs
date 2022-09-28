@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using FluentAssertions;
+using Microsoft.AspNetCore.SignalR;
 using Moq;
 using NNA.Api.Features.Editor.Hubs;
 using NNA.Domain.DTOs.Editor;
+using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
@@ -124,5 +126,41 @@ public class UpdateShortDmoTests : BaseEditorTests {
 
         //Assert
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
+    }
+    
+    [Fact]
+    public async Task ShouldDisconnectUserIfRepositoryThrowsTest() {
+        //Arrange
+        SetMockAndVariables();
+        var exceptionMessage = "some message";
+
+        EditorServiceMock.Setup(esm => esm.UpdateShortDmo(DmoDto, UserId))
+            .ThrowsAsync(new UpdateShortDmoException(exceptionMessage, new Exception("exception from repository")));
+
+        UserRepositoryMock
+            .Setup(repository => repository.RemoveEditorConnection(EditorConnection))
+            .Verifiable();
+        
+        UserRepositoryMock
+            .Setup(repository => repository.SyncContextImmediatelyAsync(CancellationToken.None))
+            .Verifiable();
+
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+        await act.Invoke();
+
+        //Assert
+        UserRepositoryMock.Verify(sbj => sbj.RemoveEditorConnection(
+                It.Is<EditorConnection>(ec => ec.ConnectionId == EditorConnection.ConnectionId && ec.UserId == EditorConnection.UserId )), 
+            Times.Once());
+        UserRepositoryMock.Verify(sbj => sbj.SyncContextImmediatelyAsync(CancellationToken.None), Times.Once());
+        Subject.Context.Items.Should().NotContainKey("user");
     }
 }
