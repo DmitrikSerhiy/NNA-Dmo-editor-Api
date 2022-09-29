@@ -129,10 +129,10 @@ public class UpdateBeatTests : BaseHubServiceTests {
         SetupMocksAndVariables();
         MapperMock.Setup(m => m.Map<Beat>(update)).Returns(BeatToUpdate);
         RepositoryMock.Setup(rm => rm.UpdateBeatByIdAsync(It.IsAny<Beat>(), It.IsAny<Guid>())).ReturnsAsync(false);
-        var subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
+        Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act
-        async Task Act() => await subject.UpdateBeat(update, userId);
+        async Task Act() => await Subject.UpdateBeat(update, userId);
 
         //Assert
         FluentActions.Awaiting(Act).Should().ThrowExactlyAsync<UpdateBeatException>().Result

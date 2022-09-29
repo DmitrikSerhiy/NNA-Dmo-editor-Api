@@ -25,7 +25,7 @@ public class BaseEditorTests {
     protected string ConnectionId { get; } = "CurrentConnectionId";
     protected Guid UserId { get; } = Guid.NewGuid();
 
-    protected EditorConnection EditorConnection { get; set; }
+    protected EditorConnection EditorConnection { get; set; } = null!;
 
     protected void SetupConstructorMocks() {
         EditorServiceMock = new Mock<IEditorService>();

@@ -205,7 +205,7 @@ public class EditorService : IEditorService {
             Order = update.beatToMove.order
         };
         
-        var isBeatToMoveIdIsGuid = Guid. TryParse(update.beatToMove.id, out var beatIdToMove);
+        var isBeatToMoveIdIsGuid = Guid.TryParse(update.beatToMove.id, out var beatIdToMove);
         var isBeatToReplaceIdIsGuid = Guid.TryParse(update.beatToReplace.id, out var beatIdToReplace);
 
         if (!isBeatToMoveIdIsGuid) {
