@@ -3,5 +3,6 @@
 public class UpdateBeatDto : BaseDto {
     public string? BeatId { get; set; }
     public string Text { get; set; } = null!;
+    public int Type { get; set; }
     public UpdateBeatTimeDto Time { get; set; } = null!;
 }

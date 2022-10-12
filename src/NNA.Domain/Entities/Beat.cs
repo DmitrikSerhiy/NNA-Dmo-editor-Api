@@ -1,4 +1,5 @@
 ﻿using NNA.Domain.Entities.Common;
+using NNA.Domain.Enums;
 
 namespace NNA.Domain.Entities;
 
@@ -8,6 +9,7 @@ public sealed class Beat : Entity {
     public string? BeatTimeView { get; set; }
     public string? Description { get; set; }
     public int Order { get; set; }
+    public BeatType Type { get; set; }
 
     public Guid UserId { get; set; }
     public NnaUser User { get; set; } = null!;

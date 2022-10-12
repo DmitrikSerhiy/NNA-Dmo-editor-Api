@@ -30,6 +30,7 @@ try {
     builder.Services.AddNnaMvcAndFilters();
     builder.Services.AddHostedService<LifetimeEventsManager>();
     builder.AddAutofacContainer();
+    
     if (builder.Environment.IsLocalMachine()) {
         builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration));
     }
