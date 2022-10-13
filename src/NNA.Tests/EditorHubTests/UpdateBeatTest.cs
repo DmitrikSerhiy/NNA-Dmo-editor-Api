@@ -4,6 +4,7 @@ using Moq;
 using NNA.Api.Features.Editor.Hubs;
 using NNA.Domain.DTOs.Editor;
 using NNA.Domain.Entities;
+using NNA.Domain.Enums;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
@@ -17,6 +18,7 @@ public class UpdateBeatTest : BaseEditorTests {
         BeatDto = new UpdateBeatDto {
             BeatId = Guid.NewGuid().ToString(),
             Text = "Beat description",
+            Type = BeatType.Beat,
             Time = new UpdateBeatTimeDto {
                 Hours = 0,
                 Minutes = 10,
@@ -113,6 +115,26 @@ public class UpdateBeatTest : BaseEditorTests {
         //Arrange
         SetMockAndVariables();
         BeatDto.Time.Seconds = 70;
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.UpdateBeat(BeatDto);
+        await act.Invoke();
+
+        //Assert
+        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
+    }
+    
+    [Fact]
+    public async Task ShouldReturnNotValidResponseIfDtoIsNotValidDueToMissingBeatTypeTest() {
+        //Arrange
+        SetMockAndVariables();
+        BeatDto.Type = 0;
         Subject = new EditorHub(
             EditorServiceMock.Object,
             EnvironmentMock.Object,
