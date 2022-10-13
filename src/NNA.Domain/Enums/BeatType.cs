@@ -4,5 +4,5 @@ public enum BeatType {
     Beat = 1,
     ExpositionBeat,
     CharacterBeat,
-    EcstaticBeat
+    AestheticBeat
 }

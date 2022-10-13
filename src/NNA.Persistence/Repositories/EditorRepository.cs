@@ -48,7 +48,7 @@ internal sealed class EditorRepository : IEditorRepository {
 
     private const string UpdateBeatByTempIdScript =
         "UPDATE [dbo].[Beats]" +
-        "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description [Type] = @type " +
+        "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description, [Type] = @type " +
         "WHERE TempId = @tempId AND UserId = @userId";
 
     private const string ReorderBeatsOnAdd =
