@@ -33,6 +33,7 @@ public class BeatsMapper : Profile {
         CreateMap<UpdateBeatDto, Beat>()
             .ForMember(beat => beat.Description, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Text))
             .ForMember(beat => beat.BeatTime, beatConfig => beatConfig.MapFrom(beatDto => MapToSeconds(beatDto.Time)))
+            .ForMember(beat => beat.Type, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Type))
             .ForMember(beat => beat.BeatTimeView,
                 beatConfig => beatConfig.MapFrom(beatDto => MapToTimeView(beatDto.Time)));
 

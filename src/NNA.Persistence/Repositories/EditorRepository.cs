@@ -43,12 +43,12 @@ internal sealed class EditorRepository : IEditorRepository {
 
     private const string UpdateBeatByIdScript =
         "UPDATE [dbo].[Beats]" +
-        "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description " +
+        "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description, [Type] = @type " +
         "WHERE Id = @id AND UserId = @userId";
 
     private const string UpdateBeatByTempIdScript =
         "UPDATE [dbo].[Beats]" +
-        "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description " +
+        "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description [Type] = @type " +
         "WHERE TempId = @tempId AND UserId = @userId";
 
     private const string ReorderBeatsOnAdd =
@@ -168,6 +168,7 @@ internal sealed class EditorRepository : IEditorRepository {
             beatTime = beat.BeatTime,
             beatTimeView = beat.BeatTimeView,
             description = beat.Description,
+            type = beat.Type,
             id = beatId,
             userId = beat.UserId
         });
@@ -180,6 +181,7 @@ internal sealed class EditorRepository : IEditorRepository {
             beatTime = beat.BeatTime,
             beatTimeView = beat.BeatTimeView,
             description = beat.Description,
+            type = beat.Type,
             tempId = beatTempId,
             userId = beat.UserId
         });
