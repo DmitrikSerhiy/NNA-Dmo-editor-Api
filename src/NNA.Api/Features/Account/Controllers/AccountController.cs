@@ -82,7 +82,7 @@ public class AccountController : NnaController {
         }
 
         if (await _userManager.FindByNameAsync(registerDto.UserName) != null) {
-            return BadRequestWithMessageForUi("Username is already taken");
+            return BadRequestWithMessageForUi("Nickname is already taken");
         }
 
         var result = await _userManager.CreateAsync(new NnaUser(registerDto.Email, registerDto.UserName),
@@ -323,7 +323,7 @@ public class AccountController : NnaController {
 
         var userWithNewName = await _userManager.FindByNameAsync(updateUserNameDto.UserName);
         if (userWithNewName != null) {
-            return BadRequestWithMessageForUi("User with such name is already registered");
+            return BadRequestWithMessageForUi("User with such nickname is already registered");
         }
 
         await _userManager.SetUserNameAsync(user, updateUserNameDto.UserName);

@@ -18,12 +18,12 @@ public class RegisterValidator : AbstractValidator<RegisterDto> {
 
         RuleFor(u => u.UserName)
             .NotEmpty()
-            .WithMessage("UserName is missing")
+            .WithMessage("Nickname is missing")
             .MaximumLength(ApplicationConstants.MaxUserNameLength)
-            .WithMessage($"Maximum user name length is {ApplicationConstants.MaxUserNameLength}")
+            .WithMessage($"Maximum user nickname length is {ApplicationConstants.MaxUserNameLength}")
             .Must(userName => userName.All(userNameSymbol =>
                 (new UserOptions().AllowedUserNameCharacters += " ").Contains(userNameSymbol)))
-            .WithMessage("User name may contain only letters, numbers and -._@+ symbols");
+            .WithMessage("Nickname may contain only letters, numbers and -._@+ symbols");
 
         RuleFor(u => u.Password)
             .NotEmpty()
