@@ -1,6 +1,5 @@
 ﻿using FluentValidation;
 using NNA.Domain.DTOs.Editor;
-using NNA.Domain.Enums;
 
 namespace NNA.Api.Features.Editor.Validators;
 

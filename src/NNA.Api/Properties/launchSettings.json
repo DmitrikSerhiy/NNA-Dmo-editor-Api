@@ -8,7 +8,7 @@
         "ASPNETCORE_ENVIRONMENT": "Local",
         "LocalMachine": "true"
       },
-      "applicationUrl": "https://localhost:4000"
+      "applicationUrl": "http://localhost:4000"
     },
     "API Development": {
       "commandName": "Project",
