@@ -197,7 +197,8 @@ public class AccountController : NnaController {
         var result = await _userManager.CreateAsync(googleUser);
 
         if (!result.Succeeded) {
-            return BadRequestWithMessageToToastr("Failed to create account with Google data");
+            var errors = string.Join(' ', result.Errors.ToList().Select(r => r.Description.Append('.')).ToList());
+            return BadRequestWithMessageToToastr($"Failed to create account due to invalid Google data. {errors}");
         }
 
         var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
