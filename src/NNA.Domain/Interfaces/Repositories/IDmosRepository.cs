@@ -7,5 +7,5 @@ public interface IDmosRepository : IRepository {
     Task<Dmo?> GetShortDmoAsync(Guid userId, Guid? dmoId, CancellationToken token);
     Task<Dmo?> GetDmoAsync(Guid userId, Guid? dmoId, CancellationToken token);
     void DeleteDmo(Dmo? dmo);
-    Task<List<Beat>> GetBeatsForDmoAsync(Guid userId, Guid dmoId, CancellationToken token);
+    Task<Dmo?> GetDmoWithDataAsync(Guid userId, Guid dmoId, CancellationToken cancellationToken);
 }

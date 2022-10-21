@@ -4,9 +4,9 @@ using NNA.Domain.DTOs.Editor;
 using NNA.Domain.Entities;
 using NNA.Domain.Mappers;
 
-namespace NNA.Api.Features.Beats.Mappers;
+namespace NNA.Api.Features.Dmos.Mappers;
 
-public class BeatsMapper : Profile {
+public sealed class BeatsMapper : Profile {
     private static string DefaultTimeView { get; } = "0:00:00";
 
     public BeatsMapper() {

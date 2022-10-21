@@ -28,10 +28,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Features\Characters\Services" />
-    </ItemGroup>
-
-    <ItemGroup>
       <Compile Remove="Features\Characters\Services\CharactersService.cs" />
     </ItemGroup>
 

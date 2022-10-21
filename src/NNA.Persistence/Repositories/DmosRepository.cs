@@ -40,12 +40,12 @@ internal sealed class DmosRepository : IDmosRepository {
         _context.Dmos.Remove(dmo);
     }
 
-    public async Task<List<Beat>> GetBeatsForDmoAsync(Guid userId, Guid dmoId, CancellationToken token) {
-        return await _context.Beats
+    public async Task<Dmo?> GetDmoWithDataAsync(Guid userId, Guid dmoId, CancellationToken cancellationToken) {
+        return await _context.Dmos
             .AsNoTracking()
-            .Where(b => b.DmoId == dmoId && b.UserId == userId)
-            .OrderBy(b => b.Order)
-            .ToListAsync(token);
+            .Include(d => d.Beats)
+            .Include(d => d.Characters)
+            .FirstOrDefaultAsync(b => b.Id == dmoId && b.NnaUserId == userId, cancellationToken);
     }
 
     public string GetContextId() {

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NNA.Domain.DTOs.Beats;
+using NNA.Domain.DTOs.Characters;
 using NNA.Domain.DTOs.DmoCollections;
 using NNA.Domain.DTOs.Dmos;
 using NNA.Domain.DTOs.Editor;
@@ -54,5 +56,20 @@ public class DmosController : NnaController {
 
         _dmosRepository.DeleteDmo(dmo);
         return NoContent();
+    }
+    
+    [HttpGet]
+    [Route("withdata")]
+    public async Task<IActionResult> LoadDmoWithData([FromQuery] GetDmoWithDataDto getDmoWithDataDto, CancellationToken cancellationToken) {
+        var dmoWithData = await _dmosRepository.GetDmoWithDataAsync(_authenticatedIdentityProvider.AuthenticatedUserId, Guid.Parse(getDmoWithDataDto.Id), cancellationToken);
+        if (dmoWithData is null) {
+            return NoContent();
+        }
+
+        var dmoWithDataDto = new DmoWithDataDto {
+            Beats = dmoWithData.Beats.Select(_mapper.Map<BeatDto>).OrderBy(b => b.Order).ToList(),
+            Characters = dmoWithData.Characters.Select(_mapper.Map<DmoCharacterDto>).ToList()
+        };
+        return OkWithData(dmoWithDataDto);
     }
 }
