@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Http.Connections;
+using Microsoft.AspNetCore.Mvc;
 using NNA.Api;
 using NNA.Api.Extensions;
 using NNA.Api.Features.Account.Services;
@@ -14,7 +15,11 @@ if (builder.Environment.IsLocalMachine()) {
 }
 
 try {
-    builder.Services.AddControllers();
+    builder.Services.AddControllers(options => options.ModelValidatorProviders.Clear());
+    builder.Services.Configure<ApiBehaviorOptions>(options => {
+        options.SuppressModelStateInvalidFilter = true;
+        options.SuppressMapClientErrors = true;
+    });
     builder.AddNnaAzureKeyVaultAndSecretsOptions();
     builder.AddNnaDbOptions();
     builder.AddNnaCorsOptions();

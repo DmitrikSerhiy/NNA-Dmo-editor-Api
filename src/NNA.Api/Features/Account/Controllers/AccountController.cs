@@ -14,7 +14,7 @@ namespace NNA.Api.Features.Account.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class AccountController : NnaController {
+public sealed class AccountController : NnaController {
     private readonly NnaUserManager _userManager;
     private readonly NnaTokenManager _nnaTokenManager;
     private readonly MailService _mailService;
