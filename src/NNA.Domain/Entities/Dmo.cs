@@ -17,4 +17,5 @@ public sealed class Dmo : Entity {
 
     public ICollection<DmoCollectionDmo> DmoCollectionDmos { get; set; } = new List<DmoCollectionDmo>();
     public ICollection<Beat> Beats { get; set; } = new List<Beat>();
+    public ICollection<NnaMovieCharacter> Characters { get; set; } = new List<NnaMovieCharacter>();
 }

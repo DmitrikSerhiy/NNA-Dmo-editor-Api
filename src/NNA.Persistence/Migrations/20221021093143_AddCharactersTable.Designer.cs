@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NNA.Persistence;
 
@@ -11,9 +12,10 @@ using NNA.Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NnaContext))]
-    partial class NnaContextModelSnapshot : ModelSnapshot
+    [Migration("20221021093143_AddCharactersTable")]
+    partial class AddCharactersTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -296,6 +298,7 @@ namespace Persistence.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Aliases")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<long>("DateOfCreation")

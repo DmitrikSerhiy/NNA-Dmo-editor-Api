@@ -13,6 +13,7 @@ public class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
     public DbSet<EditorConnection> EditorConnections => Set<EditorConnection>();
     public DbSet<NnaToken> Tokens => Set<NnaToken>();
     public DbSet<Beat> Beats => Set<Beat>();
+    public DbSet<NnaMovieCharacter> Characters => Set<NnaMovieCharacter>();
 
     public NnaContext(DbContextOptions<NnaContext> options)
         : base(options) { }
@@ -25,5 +26,6 @@ public class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
         UsersTokensConfiguration.Configure(modelBuilder);
         EditorConnectionConfiguration.Configure(modelBuilder);
         BeatConfiguration.Configure(modelBuilder);
+        CharacterConfiguration.Configure(modelBuilder);
     }
 }
