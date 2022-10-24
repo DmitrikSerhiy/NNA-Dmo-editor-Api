@@ -30,7 +30,7 @@ public sealed class CharactersController : NnaController {
     [Route("")]
     public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterDto createCharacterDto, CancellationToken cancellationToken) {
         var isCharacterNameTaken =
-            await _repository.IsExist(createCharacterDto.Name, Guid.Parse(createCharacterDto.DmoId), cancellationToken);
+            await _repository.IsExistAsync(createCharacterDto.Name, Guid.Parse(createCharacterDto.DmoId), cancellationToken);
 
         if (isCharacterNameTaken) {
             return BadRequestWithMessageForUi("Character name is already taken");
@@ -44,18 +44,19 @@ public sealed class CharactersController : NnaController {
     [HttpPut]
     [Route("")]
     public async Task<IActionResult> UpdateCharacter([FromBody] UpdateCharacterDto updateCharacterDto, CancellationToken cancellationToken) {
-        var isCharacterNameTaken =
-            await _repository.IsExist(updateCharacterDto.Name, Guid.Parse(updateCharacterDto.DmoId), cancellationToken);
-
-        if (isCharacterNameTaken) {
-            return BadRequestWithMessageForUi("Character name is already taken");
-        }
-        
-        var characterToUpdate = await _repository.GetCharacterById(Guid.Parse(updateCharacterDto.Id), cancellationToken);
+        var characterToUpdate = await _repository.GetCharacterByIdAsync(Guid.Parse(updateCharacterDto.Id), cancellationToken);
         if (characterToUpdate is null) {
             return NoContent();
         }
-
+        if (characterToUpdate.Name != updateCharacterDto.Name) {
+            var isCharacterNameTaken =
+                await _repository.IsExistAsync(updateCharacterDto.Name, Guid.Parse(updateCharacterDto.DmoId), cancellationToken);
+            
+            if (isCharacterNameTaken) {
+                return BadRequestWithMessageForUi("Character name is already taken");
+            }
+        }
+        
         _repository.UpdateCharactersNameAndAliases(characterToUpdate, updateCharacterDto.Name, updateCharacterDto.Aliases);
         return NoContent();
     }
@@ -63,7 +64,7 @@ public sealed class CharactersController : NnaController {
     [HttpDelete]
     [Route("")]
     public async Task<IActionResult> DeleteCharacter([FromQuery] DeleteCharacterDto deleteCharacterDto, CancellationToken cancellationToken) {
-        var characterToDelete = await _repository.GetCharacterById(Guid.Parse(deleteCharacterDto.Id), cancellationToken);
+        var characterToDelete = await _repository.GetCharacterByIdAsync(Guid.Parse(deleteCharacterDto.Id), cancellationToken);
         if (characterToDelete is null) {
             return NoContent();
         }
