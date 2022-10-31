@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using NNA.Domain.DTOs.CharactersInBeats;
 using NNA.Domain.DTOs.Editor;
 using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
@@ -242,6 +243,43 @@ public class EditorService : IEditorService {
             throw new SwapBeatsException(dmoId, userId);
         }
     }
+
+    public async Task AttachCharacterToBeat(AttachCharacterToBeatDto characterToBeatDto, Guid userId) {
+        if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+        if (characterToBeatDto == null) throw new ArgumentNullException(nameof(characterToBeatDto));
+        
+        var dmoId = Guid.Parse(characterToBeatDto.DmoId);
+        var characterId = Guid.Parse(characterToBeatDto.CharacterId); 
+        var isBeatIdIsGuid = Guid.TryParse(characterToBeatDto.BeatId, out var beatIdGuid);
+        Guid beatId;
+        bool isAttached;
+
+        if (isBeatIdIsGuid) {
+            beatId = beatIdGuid;
+        } else {
+            var loadedBeatId = await _editorRepository.LoadBeatIdByTempId(dmoId, characterToBeatDto.BeatId, userId);
+            beatId = loadedBeatId;
+        }
+
+        try {
+            isAttached = await _editorRepository.AttachCharacterToBeatAsync(beatId, characterId);
+        }
+        catch (Exception ex) {
+            throw new AttachCharacterToBeatException(ex, dmoId, userId, beatId, characterId);
+        }
+        
+        if (!isAttached) {
+            throw new AttachCharacterToBeatException(dmoId, userId);
+        }
+
+    }
+    
+    
+    
+    
+    
+    
+    
 
     public async Task SanitizeTempIds(SanitizeTempIdsDto update, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));

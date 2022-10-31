@@ -18,16 +18,19 @@ internal sealed class EditorRepository : IEditorRepository {
         "VALUES(@id, @dateOfCreation, @name, @movieTitle, @dmoStatus, @shortComment, @nnaUserId, @hasBeats)";
 
     private const string LoadShortDmoScript =
-        "SELECT Id, Name, MovieTitle, ShortComment, DmoStatus FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
+        "SELECT Id, Name, MovieTitle, ShortComment, DmoStatus FROM Dmos WHERE Id = @id AND NnaUserId = @nnaUserId";
+
+    private const string LoadBeatIdByTempIdScript =
+        "SELECT Id FROM [dbo].[Beats] WHERE TempId = @tempId AND DmoId = @dmoId AND UserId = @userId";
 
     private const string LoadDmoScript =
-        "SELECT * FROM Dmos WHERE Id = @id and NnaUserId = @nnaUserId";
+        "SELECT * FROM Dmos WHERE Id = @id AND NnaUserId = @nnaUserId";
 
     private const string UpdateShortDmoScript =
-        "UPDATE Dmos SET Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment, DmoStatus = @dmoStatus WHERE Id = @id and NnaUserId = @nnaUserId";
+        "UPDATE Dmos SET Name = @name, MovieTitle = @movieTitle, ShortComment = @shortComment, DmoStatus = @dmoStatus WHERE Id = @id AND NnaUserId = @nnaUserId";
 
     private const string UpdateBeatsJsonScript =
-        "UPDATE Dmos set BeatsJson = @jsonBeats, HasBeats = @HasBeats where Id = @id and NnaUserId = @nnaUserId";
+        "UPDATE Dmos set BeatsJson = @jsonBeats, HasBeats = @HasBeats WHERE Id = @id AND NnaUserId = @nnaUserId";
 
     private const string CreateBeatScript =
         "INSERT INTO [dbo].[Beats] ([Id],[DateOfCreation],[TempId],[BeatTime],[BeatTimeView],[Description],[Order],[UserId],[DmoId]) " +
@@ -51,37 +54,41 @@ internal sealed class EditorRepository : IEditorRepository {
         "SET BeatTime = @beatTime, BeatTimeView = @beatTimeView, Description = @description, [Type] = @type " +
         "WHERE TempId = @tempId AND UserId = @userId";
 
-    private const string ReorderBeatsOnAdd =
+    private const string ReorderBeatsOnAddScript =
         "UPDATE [dbo].[Beats] " +
         "SET [Order] = [Order] + 1 " +
         "WHERE [Order] >= @currenPosition AND Id != @currentBeatId";
 
-    private const string ReorderBeatsOnDelete =
+    private const string ReorderBeatsOnDeleteScript =
         "UPDATE [dbo].[Beats] " +
         "SET [Order] = [Order] - 1  " +
         "WHERE [Order] >= @nextPosition";
 
-    private const string LoadBeatForDeleteById =
+    private const string LoadBeatForDeleteByIdScript =
         "SELECT TOP (1) [Id], [Order], [DmoId] " +
         "FROM [dbo].[Beats] " +
         "WHERE Id = @id AND [DmoId] = @dmoId";
 
-    private const string LoadBeatForDeleteByTempId =
+    private const string LoadBeatForDeleteByTempIdScript =
         "SELECT TOP (1) [Id], [Order], [DmoId] " +
         "FROM [dbo].[Beats] " +
         "WHERE TempId = @tempId AND [DmoId] = @dmoId";
     
-    private const string SetNewOrderByBeatId =
+    private const string SetNewOrderByBeatIdScript =
         "UPDATE [dbo].[Beats] " +
         "SET [Order] = @order " +
         "WHERE Id = @id AND [DmoId] = @dmoId AND UserId = @userId";
     
-    private const string SetNewOrderByBeatTempId =
+    private const string SetNewOrderByBeatTempIdScript =
         "UPDATE [dbo].[Beats] " +
         "SET [Order] = @order " +
         "WHERE TempId = @tempId AND [DmoId] = @dmoId AND UserId = @userId";
+
+    private const string AttachCharacterToBeatScript =
+        "INSERT INTO [dbo].[NnaCharactersBeats] ([BeatsId], [CharactersId]) " +
+        "VALUES (@beatId, @characterId)";
     
-    private const string SanitizeTempIds = 
+    private const string SanitizeTempIdsScript = 
         "UPDATE [dbo].[Beats] " +
         "SET TempId = NULL " +
         "WHERE [DmoId] = @dmoId AND UserId = @userId";
@@ -111,6 +118,10 @@ internal sealed class EditorRepository : IEditorRepository {
 
     public async Task<Dmo> LoadShortDmoAsync(Guid id, Guid nnaUserId) {
         return await QueryAsync<Dmo>(LoadShortDmoScript, new { id, nnaUserId });
+    }
+
+    public async Task<Guid> LoadBeatIdByTempId(Guid dmoId, string tempId, Guid userId) {
+        return await QueryAsync<Guid>(LoadBeatIdByTempIdScript, new { dmoId = dmoId, tempId = tempId, userId = userId });
     }
 
     public async Task<Dmo> LoadDmoAsync(Guid id, Guid nnaUserId) {
@@ -153,7 +164,7 @@ internal sealed class EditorRepository : IEditorRepository {
                 userId = beat.UserId,
                 dmoId = beat.DmoId
             }),
-            (ReorderBeatsOnAdd, new {
+            (ReorderBeatsOnAddScript, new {
                 currenPosition = beat.Order,
                 currentBeatId = beat.Id
             })
@@ -195,7 +206,7 @@ internal sealed class EditorRepository : IEditorRepository {
                 id = beatId,
                 dmoId = beat.DmoId
             }),
-            (ReorderBeatsOnDelete, new {
+            (ReorderBeatsOnDeleteScript, new {
                 nextPosition = beat.Order + 1
             })
         };
@@ -210,7 +221,7 @@ internal sealed class EditorRepository : IEditorRepository {
                 tempId = beat.TempId,
                 dmoId = beat.DmoId
             }),
-            (ReorderBeatsOnDelete, new {
+            (ReorderBeatsOnDeleteScript, new {
                 nextPosition = beat.Order + 1
             })
         };
@@ -220,15 +231,15 @@ internal sealed class EditorRepository : IEditorRepository {
     }
 
     public async Task<Beat> LoadBeatForDeleteByIdAsync(Guid id, Guid dmoId) {
-        return await QueryAsync<Beat>(LoadBeatForDeleteById, new { id, dmoId });
+        return await QueryAsync<Beat>(LoadBeatForDeleteByIdScript, new { id, dmoId });
     }
 
     public async Task<Beat> LoadBeatForDeleteByTempIdAsync(string tempId, Guid dmoId) {
-        return await QueryAsync<Beat>(LoadBeatForDeleteByTempId, new { tempId, dmoId });
+        return await QueryAsync<Beat>(LoadBeatForDeleteByTempIdScript, new { tempId, dmoId });
     }
 
     public async Task<bool> SetBeatOrderByIdAsync(Beat beat) {
-        var result = await ExecuteAsync(SetNewOrderByBeatId, new {
+        var result = await ExecuteAsync(SetNewOrderByBeatIdScript, new {
             id = beat.Id,
             dmoId = beat.DmoId,
             order = beat.Order,
@@ -237,9 +248,17 @@ internal sealed class EditorRepository : IEditorRepository {
 
         return result > 0;
     }
+    public async Task<bool> AttachCharacterToBeatAsync(Guid beatId, Guid characterId) {
+        var result = await ExecuteAsync(AttachCharacterToBeatScript, new {
+            beatId = beatId,
+            characterId = characterId
+        });
+        
+        return result > 0;
+    }
     
     public async Task<bool> SetBeatOrderByTempIdAsync(Beat beat) {
-        var result = await ExecuteAsync(SetNewOrderByBeatTempId, new {
+        var result = await ExecuteAsync(SetNewOrderByBeatTempIdScript, new {
             tempId = beat.TempId,
             dmoId = beat.DmoId,
             order = beat.Order,
@@ -250,7 +269,7 @@ internal sealed class EditorRepository : IEditorRepository {
     }
     
     public async Task<bool> SanitizeTempIdsForDmoAsync(Guid dmoId, Guid userId) {
-        var result = await ExecuteAsync(SanitizeTempIds, new { dmoId, userId });
+        var result = await ExecuteAsync(SanitizeTempIdsScript, new { dmoId, userId });
         return result > 0;
     }
 

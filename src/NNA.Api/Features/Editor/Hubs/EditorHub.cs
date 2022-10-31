@@ -1,6 +1,7 @@
 ﻿using NNA.Api.Features.Editor.Services;
 using NNA.Api.Features.Editor.Validators;
 using NNA.Api.Helpers;
+using NNA.Domain.DTOs.CharactersInBeats;
 using NNA.Domain.DTOs.Editor;
 using NNA.Domain.Exceptions.Editor;
 using NNA.Domain.Interfaces;
@@ -233,7 +234,34 @@ public class EditorHub : BaseEditorHub {
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
+    
+    public async Task AttachCharacterToBeat(AttachCharacterToBeatDto? characterToBeatDto) {
+        if (characterToBeatDto == null) {
+            await SendBackErrorResponse(BadRequest());
+            return;
+        }
+        
+        if (!Context.ContainsUser()) {
+            await SendBackErrorResponse(NotAuthorized());
+            return;
+        }
+        
+        var validationResult = await new AttachCharacterToBeatDtoValidator().ValidateAsync(characterToBeatDto);
+        if (!validationResult.IsValid) {
+            await SendBackErrorResponse(NotValid(validationResult));
+            return;
+        }
 
+        try {
+            await EditorService.AttachCharacterToBeat(characterToBeatDto, Context.GetCurrentUserId().GetValueOrDefault());
+        }
+        catch (AttachCharacterToBeatException ex) {
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
+            await DisconnectUser();
+            await SendBackErrorResponse(InternalServerError(ex.Message));
+        }
+    }
+    
     public async Task SanitizeTempIds(SanitizeTempIdsDto? update) {
         if (update == null) {
             await SendBackErrorResponse(BadRequest());

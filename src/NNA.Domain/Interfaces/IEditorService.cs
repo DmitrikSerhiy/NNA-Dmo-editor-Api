@@ -1,4 +1,5 @@
-﻿using NNA.Domain.DTOs.Editor;
+﻿using NNA.Domain.DTOs.CharactersInBeats;
+using NNA.Domain.DTOs.Editor;
 
 namespace NNA.Domain.Interfaces;
 
@@ -11,5 +12,7 @@ public interface IEditorService {
     Task RemoveBeat(RemoveBeatDto beatDto, Guid userId);
     Task UpdateBeat(UpdateBeatDto update, Guid userId);
     Task SwapBeats(SwapBeatsDto update, Guid userId);
+    Task AttachCharacterToBeat(AttachCharacterToBeatDto characterToBeatDto, Guid userId);
+    
     Task SanitizeTempIds(SanitizeTempIdsDto update, Guid userId);
 }
