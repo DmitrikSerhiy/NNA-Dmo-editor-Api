@@ -261,25 +261,67 @@ public class EditorService : IEditorService {
             beatId = loadedBeatId;
         }
 
+        var characterInBeatEntity = new NnaMovieCharacterInBeat {
+            CharacterId = characterId,
+            BeatId = beatId,
+            TempId = characterToBeatDto.Id
+        };
+
         try {
-            isAttached = await _editorRepository.AttachCharacterToBeatAsync(beatId, characterId);
-        }
-        catch (Exception ex) {
+            isAttached = await _editorRepository.CreateCharacterInBeatAsync(characterInBeatEntity);
+        } catch (Exception ex) {
             throw new AttachCharacterToBeatException(ex, dmoId, userId, beatId, characterId);
         }
         
         if (!isAttached) {
             throw new AttachCharacterToBeatException(dmoId, userId);
         }
+    }
+
+    public async Task DetachCharacterFromBeat(DetachCharacterToBeatDto characterToDetachDto, Guid userId) {
+        if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+        if (characterToDetachDto == null) throw new ArgumentNullException(nameof(characterToDetachDto));
+
+        var isCharacterInBeatIdGuid = Guid.TryParse(characterToDetachDto.Id, out var characterInBeatIdGuid);
+        var isBeatIdIsGuid = Guid.TryParse(characterToDetachDto.BeatId, out var beatIdGuid);
+        var dmoId = Guid.Parse(characterToDetachDto.DmoId);
+        Guid beatId;
+        bool isRemoved;
+
+        if (isBeatIdIsGuid) {
+            beatId = beatIdGuid;
+        } else {
+            var loadedBeatId = await _editorRepository.LoadBeatIdByTempId(dmoId, characterToDetachDto.BeatId, userId);
+            beatId = loadedBeatId;
+        }
+        
+        var characterInBeatEntity = new NnaMovieCharacterInBeat {
+            BeatId = beatId
+        };
+
+        if (isCharacterInBeatIdGuid) {
+            characterInBeatEntity.SetIdExplicitly(characterInBeatIdGuid);
+        } else {
+            characterInBeatEntity.TempId = characterToDetachDto.Id;
+        }
+        
+        try {
+            isRemoved = isCharacterInBeatIdGuid
+                ? await _editorRepository.DeleteCharacterFromBeatByIdAsync(characterInBeatEntity)
+                : await _editorRepository.DeleteCharacterFromBeatByTempIdAsync(characterInBeatEntity);
+            
+        } catch (Exception ex) {
+            throw new RemoveCharacterFromBeatException(ex, dmoId, userId, beatId);
+        }
+        
+        if (!isRemoved) {
+            throw new RemoveCharacterFromBeatException(dmoId, userId);
+        }
+        
+        
 
     }
-    
-    
-    
-    
-    
-    
-    
+
 
     public async Task SanitizeTempIds(SanitizeTempIdsDto update, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
@@ -291,6 +333,7 @@ public class EditorService : IEditorService {
 
         try {
             isUpdated = await _editorRepository.SanitizeTempIdsForDmoAsync(dmoId, userId);
+            // todo: sanitize temp ids for characters in beats and clean up temp ids in beats data
         }
         catch (Exception ex) {
             throw new SanitizeTempIdsException(ex, dmoId, userId);

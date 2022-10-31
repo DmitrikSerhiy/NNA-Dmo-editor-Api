@@ -84,10 +84,18 @@ internal sealed class EditorRepository : IEditorRepository {
         "SET [Order] = @order " +
         "WHERE TempId = @tempId AND [DmoId] = @dmoId AND UserId = @userId";
 
-    private const string AttachCharacterToBeatScript =
-        "INSERT INTO [dbo].[NnaCharactersBeats] ([BeatsId], [CharactersId]) " +
-        "VALUES (@beatId, @characterId)";
+    private const string InsertCharacterIntoBeatScript =
+        "INSERT INTO [dbo].[CharacterInBeats] ([Id], [BeatId], [CharacterId], [DateOfCreation], [TempId]) " +
+        "VALUES (@id, @beatId, @characterId, @dateOfCreation, @tempId)";
     
+    private const string RemoveCharacterFromBeatByIdScript =
+        "DELETE FROM [dbo].[CharacterInBeats] " +
+        "WHERE [Id] = @id AND [BeatId] = @beatId";
+    
+    private const string RemoveCharacterFromBeatByTempIdScript =
+        "DELETE FROM [dbo].[CharacterInBeats] " +
+        "WHERE [TempId] = @tempId AND [BeatId] = @beatId";
+
     private const string SanitizeTempIdsScript = 
         "UPDATE [dbo].[Beats] " +
         "SET TempId = NULL " +
@@ -248,10 +256,30 @@ internal sealed class EditorRepository : IEditorRepository {
 
         return result > 0;
     }
-    public async Task<bool> AttachCharacterToBeatAsync(Guid beatId, Guid characterId) {
-        var result = await ExecuteAsync(AttachCharacterToBeatScript, new {
-            beatId = beatId,
-            characterId = characterId
+    public async Task<bool> CreateCharacterInBeatAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat) {
+        var result = await ExecuteAsync(InsertCharacterIntoBeatScript, new {
+            id = nnaMovieCharacterInBeat.Id,
+            beatId = nnaMovieCharacterInBeat.BeatId,
+            characterId = nnaMovieCharacterInBeat.CharacterId,
+            dateOfCreation = nnaMovieCharacterInBeat.DateOfCreation,
+            tempId = nnaMovieCharacterInBeat.TempId ?? null
+        });
+        
+        return result > 0;
+    }
+    public async Task<bool> DeleteCharacterFromBeatByIdAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat) {
+        var result = await ExecuteAsync(RemoveCharacterFromBeatByIdScript, new {
+            id = nnaMovieCharacterInBeat.Id,
+            beatId = nnaMovieCharacterInBeat.BeatId
+        });
+        
+        return result > 0;    
+    }
+    
+    public async Task<bool> DeleteCharacterFromBeatByTempIdAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat) {
+        var result = await ExecuteAsync(RemoveCharacterFromBeatByTempIdScript, new {
+            tempId = nnaMovieCharacterInBeat.TempId,
+            beatId = nnaMovieCharacterInBeat.BeatId
         });
         
         return result > 0;

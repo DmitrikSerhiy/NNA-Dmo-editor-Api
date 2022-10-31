@@ -12,9 +12,19 @@ public static class CharacterConfiguration {
             .OnDelete(DeleteBehavior.Cascade)
             .IsRequired(true);
 
-        modelBuilder.Entity<NnaMovieCharacter>()
-            .HasMany(mch => mch.Beats)
-            .WithMany(mch => mch.Characters)
-            .UsingEntity(j => j.ToTable("NnaCharactersBeats"));
+        modelBuilder.Entity<NnaMovieCharacterInBeat>()
+            .HasOne(mchInBeat => mchInBeat.Beat)
+            .WithMany(b => b.Characters)
+            .HasForeignKey(mchInBeat => mchInBeat.BeatId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<NnaMovieCharacterInBeat>()
+            .HasOne(mchInBeat => mchInBeat.Character)
+            .WithMany(cha => cha.Beats)
+            .HasForeignKey(mchInBeat => mchInBeat.CharacterId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<NnaMovieCharacterInBeat>()
+            .HasKey(mchInBeat => mchInBeat.Id);
     }
 }

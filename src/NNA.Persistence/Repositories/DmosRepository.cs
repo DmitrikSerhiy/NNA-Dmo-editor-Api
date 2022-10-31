@@ -45,6 +45,7 @@ internal sealed class DmosRepository : IDmosRepository {
             .AsNoTracking()
             .Include(d => d.Beats)
                 .ThenInclude(dc => dc.Characters)
+                    .ThenInclude(cha => cha.Character)
             .Include(d => d.Characters)
             .FirstOrDefaultAsync(b => b.Id == dmoId && b.NnaUserId == userId, cancellationToken);
     }

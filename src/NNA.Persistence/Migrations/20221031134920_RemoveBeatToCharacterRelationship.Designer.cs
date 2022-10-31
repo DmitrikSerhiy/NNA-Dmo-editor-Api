@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NNA.Persistence;
 
@@ -11,9 +12,10 @@ using NNA.Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NnaContext))]
-    partial class NnaContextModelSnapshot : ModelSnapshot
+    [Migration("20221031134920_RemoveBeatToCharacterRelationship")]
+    partial class RemoveBeatToCharacterRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -315,8 +317,8 @@ namespace Persistence.Migrations
                     b.Property<long>("DateOfCreation")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("TempId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -324,7 +326,7 @@ namespace Persistence.Migrations
 
                     b.HasIndex("CharacterId");
 
-                    b.ToTable("CharacterInBeats");
+                    b.ToTable("NnaMovieCharacterInBeat");
                 });
 
             modelBuilder.Entity("NNA.Domain.Entities.NnaRole", b =>

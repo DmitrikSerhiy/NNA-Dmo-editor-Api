@@ -14,6 +14,7 @@ public class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
     public DbSet<NnaToken> Tokens => Set<NnaToken>();
     public DbSet<Beat> Beats => Set<Beat>();
     public DbSet<NnaMovieCharacter> Characters => Set<NnaMovieCharacter>();
+    public DbSet<NnaMovieCharacterInBeat> CharacterInBeats => Set<NnaMovieCharacterInBeat>();
 
     public NnaContext(DbContextOptions<NnaContext> options)
         : base(options) { }

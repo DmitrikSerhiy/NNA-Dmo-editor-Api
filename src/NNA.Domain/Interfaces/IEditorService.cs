@@ -13,6 +13,7 @@ public interface IEditorService {
     Task UpdateBeat(UpdateBeatDto update, Guid userId);
     Task SwapBeats(SwapBeatsDto update, Guid userId);
     Task AttachCharacterToBeat(AttachCharacterToBeatDto characterToBeatDto, Guid userId);
+    Task DetachCharacterFromBeat(DetachCharacterToBeatDto characterToDetachDto, Guid userId);
     
     Task SanitizeTempIds(SanitizeTempIdsDto update, Guid userId);
 }

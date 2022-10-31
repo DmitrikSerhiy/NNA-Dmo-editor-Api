@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NNA.Persistence;
 
@@ -11,9 +12,10 @@ using NNA.Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NnaContext))]
-    partial class NnaContextModelSnapshot : ModelSnapshot
+    [Migration("20221031140133_AddCustomManyToManyBeatToCharacterRelationship")]
+    partial class AddCustomManyToManyBeatToCharacterRelationship
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -315,8 +317,8 @@ namespace Persistence.Migrations
                     b.Property<long>("DateOfCreation")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("TempId")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Order")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -593,13 +595,13 @@ namespace Persistence.Migrations
                     b.HasOne("NNA.Domain.Entities.Beat", "Beat")
                         .WithMany("Characters")
                         .HasForeignKey("BeatId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("NNA.Domain.Entities.NnaMovieCharacter", "Character")
                         .WithMany("Beats")
                         .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Beat");

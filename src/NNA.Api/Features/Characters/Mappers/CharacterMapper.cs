@@ -9,6 +9,8 @@ public sealed class CharacterMapper : Profile {
     public CharacterMapper() {
         CreateMap<NnaMovieCharacter, DmoCharacterDto>();
         CreateMap<CreateCharacterDto, NnaMovieCharacter>();
-        CreateMap<NnaMovieCharacter, NnaMovieCharacterInBeatDto>();
+        CreateMap<NnaMovieCharacterInBeat, NnaMovieCharacterInBeatDto>()
+            .ForMember(dto => dto.CharacterId, entity => entity.MapFrom(chaEn => chaEn.Character.Id))
+            .ForMember(dto => dto.Name, entity => entity.MapFrom(chaEn => chaEn.Character.Name));
     }
 }

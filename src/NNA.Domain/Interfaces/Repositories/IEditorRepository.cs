@@ -19,7 +19,9 @@ public interface IEditorRepository {
     Task<bool> SetBeatOrderByTempIdAsync(Beat beat);
     Task<bool> SetBeatOrderByIdAsync(Beat beat);
 
-    Task<bool> AttachCharacterToBeatAsync(Guid beatId, Guid characterId);
-    
+    Task<bool> CreateCharacterInBeatAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat);
+    Task<bool> DeleteCharacterFromBeatByIdAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat);
+    Task<bool> DeleteCharacterFromBeatByTempIdAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat);
+
     Task<bool> SanitizeTempIdsForDmoAsync(Guid dmoId, Guid userId);
 }

@@ -9,5 +9,5 @@ public sealed class NnaMovieCharacter : Entity {
     public Guid DmoId { get; set; }
     public Dmo Dmo { get; set; } = null!;
 
-    public ICollection<Beat> Beats { get; set; } = new List<Beat>();
+    public ICollection<NnaMovieCharacterInBeat> Beats { get; set; } = new List<NnaMovieCharacterInBeat>();
 }

@@ -262,6 +262,35 @@ public class EditorHub : BaseEditorHub {
         }
     }
     
+    public async Task DetachCharacterFromBeat(DetachCharacterToBeatDto? characterToDetachDto) {
+        if (characterToDetachDto == null) {
+            await SendBackErrorResponse(BadRequest());
+            return;
+        }
+        
+        if (!Context.ContainsUser()) {
+            await SendBackErrorResponse(NotAuthorized());
+            return;
+        }
+        
+        var validationResult = await new DetachCharacterToBeatDtoValidator().ValidateAsync(characterToDetachDto);
+        if (!validationResult.IsValid) {
+            await SendBackErrorResponse(NotValid(validationResult));
+            return;
+        }
+
+        try {
+            await EditorService.DetachCharacterFromBeat(characterToDetachDto, Context.GetCurrentUserId().GetValueOrDefault());
+        }
+        catch (RemoveCharacterFromBeatException ex) {
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
+            await DisconnectUser();
+            await SendBackErrorResponse(InternalServerError(ex.Message));
+        }
+    }
+    
+    
+    
     public async Task SanitizeTempIds(SanitizeTempIdsDto? update) {
         if (update == null) {
             await SendBackErrorResponse(BadRequest());
