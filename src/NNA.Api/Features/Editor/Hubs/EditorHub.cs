@@ -290,7 +290,7 @@ public class EditorHub : BaseEditorHub {
     }
     
     
-    
+    [Obsolete("Moved to Http end-point")]
     public async Task SanitizeTempIds(SanitizeTempIdsDto? update) {
         if (update == null) {
             await SendBackErrorResponse(BadRequest());

@@ -50,6 +50,14 @@ internal sealed class DmosRepository : IDmosRepository {
             .FirstOrDefaultAsync(b => b.Id == dmoId && b.NnaUserId == userId, cancellationToken);
     }
 
+    public async Task<List<Beat>> LoadBeatsWithCharactersAsync(Guid userId, Guid dmoId) {
+        return await _context.Beats
+            .AsTracking()
+            .Where(d => d.DmoId == dmoId && d.UserId == userId)
+            .Include(d => d.Characters)
+            .ToListAsync();
+    }
+
     public string GetContextId() {
         return _context.ContextId.ToString();
     }

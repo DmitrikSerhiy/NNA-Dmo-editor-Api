@@ -22,7 +22,7 @@ public sealed class BeatsMapper : Profile {
             .ForMember(beat => beat.BeatId, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Id))
             .ForMember(beat => beat.Text, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Description))
             .ForMember(beat => beat.Time, beatConfig => beatConfig.MapFrom(beatDto => MapFromSeconds(beatDto.BeatTime)))
-            .ForMember(beat => beat.Characters, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Characters))
+            .ForMember(beat => beat.CharactersInBeat, beatConfig => beatConfig.MapFrom(beatDto => beatDto.Characters))
             .ReverseMap();
 
         CreateMap<CreateBeatDto, Beat>()

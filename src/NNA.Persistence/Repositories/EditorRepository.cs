@@ -296,7 +296,7 @@ internal sealed class EditorRepository : IEditorRepository {
         return result > 0;
     }
     
-    public async Task<bool> SanitizeTempIdsForDmoAsync(Guid dmoId, Guid userId) {
+    public async Task<bool> SanitizeTempIdsForBeatsAsync(Guid dmoId, Guid userId) {
         var result = await ExecuteAsync(SanitizeTempIdsScript, new { dmoId, userId });
         return result > 0;
     }

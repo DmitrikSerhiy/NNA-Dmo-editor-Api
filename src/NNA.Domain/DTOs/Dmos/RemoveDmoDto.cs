@@ -1,5 +1,5 @@
 ﻿namespace NNA.Domain.DTOs.Dmos;
 
-public class RemoveDmoDto : BaseDto {
+public sealed class RemoveDmoDto : BaseDto {
     public Guid? DmoId { get; set; }
 }

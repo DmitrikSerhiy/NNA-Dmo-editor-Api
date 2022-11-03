@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Domain.DTOs.Beats;
@@ -6,6 +7,7 @@ using NNA.Domain.DTOs.Characters;
 using NNA.Domain.DTOs.DmoCollections;
 using NNA.Domain.DTOs.Dmos;
 using NNA.Domain.DTOs.Editor;
+using NNA.Domain.Entities;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
@@ -71,5 +73,52 @@ public class DmosController : NnaController {
             Characters = dmoWithData.Characters.Select(_mapper.Map<DmoCharacterDto>).ToList()
         };
         return OkWithData(dmoWithDataDto);
+    }
+    
+    [HttpDelete]
+    [Route("{DmoId}/tempIds")]
+    public async Task<IActionResult> SanitizeTempIds([FromRoute] SanitizeTempIdsInDmoDto sanitizeTempIdsInDmoDto ) { // do not add cancellation token here
+        var beats = await _dmosRepository.LoadBeatsWithCharactersAsync(
+            _authenticatedIdentityProvider.AuthenticatedUserId, 
+            Guid.Parse(sanitizeTempIdsInDmoDto.DmoId));
+
+        foreach (var beat in beats) {
+            SanitizeTempIdInBeatDescription(beat);
+            if (beat.TempId != null) {
+                beat.TempId = null;
+            }
+        }
+        
+        return NoContent();
+    }
+
+
+    private void SanitizeTempIdInBeatDescription(Beat beat) {
+        if (string.IsNullOrWhiteSpace(beat.Description)) {
+            return;
+        }
+        if (beat.Characters.Count == 0) {
+            return;
+        }
+
+        var charactersWithTempIds = beat.Characters
+            .Where(cha => cha.TempId != null)
+            .ToList();
+
+        if (charactersWithTempIds.Count == 0) {
+            return;
+        }
+
+        var beatDesc = Uri.UnescapeDataString(beat.Description);
+        if (string.IsNullOrWhiteSpace(beatDesc)) {
+            return;
+        }
+
+        foreach (var characterWithTempIds in charactersWithTempIds) {
+            beatDesc = beatDesc.Replace(characterWithTempIds.TempId!, characterWithTempIds.Id.ToString());
+            characterWithTempIds.TempId = null;
+        }
+
+        beat.Description = Uri.EscapeDataString(beatDesc);
     }
 }

@@ -40,7 +40,7 @@ public class SanitizeTempIdsTests : BaseHubServiceTests {
     public void ShouldCallRepositoryMethodTest() {
         //Arrange
         SetupMocksAndVariables();
-        RepositoryMock.Setup(rm => rm.SanitizeTempIdsForDmoAsync(dmoId, userId))
+        RepositoryMock.Setup(rm => rm.SanitizeTempIdsForBeatsAsync(dmoId, userId))
             .ReturnsAsync(true)
             .Verifiable();
         Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
@@ -50,7 +50,7 @@ public class SanitizeTempIdsTests : BaseHubServiceTests {
         act.Invoke();
 
         //Assert
-        RepositoryMock.Verify(rep => rep.SanitizeTempIdsForDmoAsync(dmoId, userId), Times.Once);
+        RepositoryMock.Verify(rep => rep.SanitizeTempIdsForBeatsAsync(dmoId, userId), Times.Once);
     }
     
     [Fact]
@@ -58,7 +58,7 @@ public class SanitizeTempIdsTests : BaseHubServiceTests {
         //Arrange
         SetupMocksAndVariables();
         var repositoryExceptionMessage = "some message from repository";
-        RepositoryMock.Setup(rm => rm.SanitizeTempIdsForDmoAsync(dmoId, userId))
+        RepositoryMock.Setup(rm => rm.SanitizeTempIdsForBeatsAsync(dmoId, userId))
             .ThrowsAsync(new Exception(repositoryExceptionMessage));
         Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
@@ -76,7 +76,7 @@ public class SanitizeTempIdsTests : BaseHubServiceTests {
     public void ShouldThrowIfDmoWasNotUpdatedTest() {
         //Arrange
         SetupMocksAndVariables();
-        RepositoryMock.Setup(rm => rm.SanitizeTempIdsForDmoAsync(dmoId, userId)).ReturnsAsync(false);
+        RepositoryMock.Setup(rm => rm.SanitizeTempIdsForBeatsAsync(dmoId, userId)).ReturnsAsync(false);
         Subject = new EditorService(RepositoryMock.Object, MapperMock.Object);
 
         //Act

@@ -332,8 +332,7 @@ public class EditorService : IEditorService {
         bool isUpdated;
 
         try {
-            isUpdated = await _editorRepository.SanitizeTempIdsForDmoAsync(dmoId, userId);
-            // todo: sanitize temp ids for characters in beats and clean up temp ids in beats data
+            isUpdated = await _editorRepository.SanitizeTempIdsForBeatsAsync(dmoId, userId);
         }
         catch (Exception ex) {
             throw new SanitizeTempIdsException(ex, dmoId, userId);

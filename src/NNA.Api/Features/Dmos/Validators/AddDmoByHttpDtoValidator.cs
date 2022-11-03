@@ -4,7 +4,7 @@ using NNA.Domain.DTOs.Dmos;
 
 namespace NNA.Api.Features.Dmos.Validators;
 
-public class AddDmoByHttpDtoValidator: AbstractValidator<CreateDmoByHttpDto> {
+public sealed class AddDmoByHttpDtoValidator: AbstractValidator<CreateDmoByHttpDto> {
     public AddDmoByHttpDtoValidator() {
         RuleFor(d => d.Name)
             .NotEmpty()
