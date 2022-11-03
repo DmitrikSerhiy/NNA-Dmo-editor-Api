@@ -7,7 +7,8 @@ namespace NNA.Api.Features.Characters.Mappers;
 
 public sealed class CharacterMapper : Profile {
     public CharacterMapper() {
-        CreateMap<NnaMovieCharacter, DmoCharacterDto>();
+        CreateMap<NnaMovieCharacter, DmoCharacterDto>()
+            .ForMember(dto => dto.Count, entity => entity.MapFrom(chaEn => chaEn.Beats.Count));
         CreateMap<CreateCharacterDto, NnaMovieCharacter>();
         CreateMap<NnaMovieCharacterInBeat, NnaMovieCharacterInBeatDto>()
             .ForMember(dto => dto.CharacterId, entity => entity.MapFrom(chaEn => chaEn.Character.Id))

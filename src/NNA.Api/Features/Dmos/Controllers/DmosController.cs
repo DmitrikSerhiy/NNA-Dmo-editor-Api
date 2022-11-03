@@ -72,6 +72,17 @@ public class DmosController : NnaController {
             Beats = dmoWithData.Beats.Select(_mapper.Map<BeatDto>).OrderBy(b => b.Order).ToList(),
             Characters = dmoWithData.Characters.Select(_mapper.Map<DmoCharacterDto>).ToList()
         };
+
+        var allCharacters = new List<NnaMovieCharacterInBeatDto>();
+        allCharacters.AddRange(dmoWithDataDto.Beats.SelectMany(beat => beat.CharactersInBeat).ToList());
+        var groupedCharacters = allCharacters.GroupBy(cha => cha.CharacterId).ToList();
+        
+        foreach (var characterInDmo in dmoWithDataDto.Characters) {
+            var group = groupedCharacters
+                .FirstOrDefault(gCha => gCha.Key.ToString() == characterInDmo.Id);
+            characterInDmo.Count = group?.Count() ?? 0;
+        }
+        
         return OkWithData(dmoWithDataDto);
     }
     
@@ -91,7 +102,6 @@ public class DmosController : NnaController {
         
         return NoContent();
     }
-
 
     private void SanitizeTempIdInBeatDescription(Beat beat) {
         if (string.IsNullOrWhiteSpace(beat.Description)) {

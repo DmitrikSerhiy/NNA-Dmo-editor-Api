@@ -3,7 +3,7 @@
 namespace NNA.Domain.Interfaces.Repositories;
 
 public interface ICharactersRepository {
-    Task<List<NnaMovieCharacter>> GetDmoCharactersAsync(Guid dmoId, CancellationToken cancellationToken);
+    Task<List<NnaMovieCharacter>> GetDmoCharactersWithBeatsAsync(Guid dmoId, CancellationToken cancellationToken);
     Task<NnaMovieCharacter?> GetCharacterByIdAsync(Guid characterId, CancellationToken cancellationToken);
     Task<NnaMovieCharacter?> GetCharacterByNameAsync(string characterName, CancellationToken cancellationToken);
     void CreateCharacter(NnaMovieCharacter? character);

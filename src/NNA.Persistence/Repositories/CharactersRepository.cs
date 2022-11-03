@@ -14,10 +14,11 @@ public sealed class CharactersRepository : ICharactersRepository {
         _context = (contextOrchestrator.Context as NnaContext)!;
     }
     
-    public async Task<List<NnaMovieCharacter>> GetDmoCharactersAsync(Guid dmoId, CancellationToken cancellationToken) {
+    public async Task<List<NnaMovieCharacter>> GetDmoCharactersWithBeatsAsync(Guid dmoId, CancellationToken cancellationToken) {
         if (dmoId == Guid.Empty) throw new ArgumentException("Empty dmoId", nameof(dmoId));
         return await _context.Characters
             .Where(cha => cha.DmoId == dmoId)
+            .Include(cha => cha.Beats)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
     }

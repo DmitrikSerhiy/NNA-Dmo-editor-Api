@@ -22,7 +22,7 @@ public sealed class CharactersController : NnaController {
     [HttpGet]
     [Route("")]
     public async Task<IActionResult> GetDmoCharacters([FromQuery] GetCharactersDto charactersDto, CancellationToken cancellationToken) {
-        var characters = await _repository.GetDmoCharactersAsync(Guid.Parse(charactersDto.DmoId), cancellationToken);
+        var characters = await _repository.GetDmoCharactersWithBeatsAsync(Guid.Parse(charactersDto.DmoId), cancellationToken);
         return OkWithData(characters.Select(_mapper.Map<DmoCharacterDto>));
     }
 
