@@ -65,6 +65,7 @@ public class DmosController : NnaController {
     [HttpGet]
     [Route("{Id}/withBeats")]
     public async Task<IActionResult> LoadDmoWithData([FromRoute] GetDmoWithDataDto getDmoWithDataDto, CancellationToken cancellationToken) {
+        // todo: sanitize tempIds here before loading data
         var dmoWithData = await _dmosRepository.GetDmoWithDataAsync(_authenticatedIdentityProvider.AuthenticatedUserId, Guid.Parse(getDmoWithDataDto.Id), cancellationToken);
         if (dmoWithData is null) {
             return NoContent();
