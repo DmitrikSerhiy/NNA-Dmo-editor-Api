@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using FluentValidation;
 using NNA.Api.Features.Account.Services;
+using NNA.Api.Features.Characters.Services;
 using NNA.Api.Features.Editor.Services;
 using NNA.Api.Helpers;
 using NNA.Domain.Interfaces;
@@ -38,6 +39,12 @@ public class ApiModule : Module {
             .RegisterType<EditorService>()
             .As<IEditorService>()
             .InstancePerLifetimeScope();
+        
+        builder
+            .RegisterType<CharactersService>()
+            .AsSelf()
+            .InstancePerLifetimeScope();
+        
 
         builder
             .RegisterAssemblyTypes(typeof(Program).Assembly)

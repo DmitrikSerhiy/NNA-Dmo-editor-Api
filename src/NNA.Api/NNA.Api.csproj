@@ -27,8 +27,4 @@
       <ProjectReference Include="..\NNA.Persistence\NNA.Persistence.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Remove="Features\Characters\Services\CharactersService.cs" />
-    </ItemGroup>
-
 </Project>

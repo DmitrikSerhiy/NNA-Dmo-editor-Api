@@ -9,4 +9,5 @@ public interface IDmosRepository : IRepository {
     void DeleteDmo(Dmo? dmo);
     Task<Dmo?> GetDmoWithDataAsync(Guid userId, Guid dmoId, CancellationToken cancellationToken);
     Task<List<Beat>> LoadBeatsWithCharactersAsync(Guid userId, Guid dmoId);
+    Task<List<Beat>> LoadBeatsAsync(Guid userId, Guid dmoId);
 }

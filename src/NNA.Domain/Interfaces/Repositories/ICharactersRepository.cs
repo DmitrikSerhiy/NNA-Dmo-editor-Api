@@ -10,4 +10,5 @@ public interface ICharactersRepository {
     void UpdateCharactersNameAndAliases(NnaMovieCharacter? characterToUpdate, string newName, string? aliases);
     void DeleteCharacter(NnaMovieCharacter characterToDelete);
     Task<bool> IsExistAsync(string characterName, Guid dmoId, CancellationToken cancellationToken);
+    Task<List<Guid>> LoadCharacterInBeatIdsAsync(Guid characterId);
 }

@@ -30,6 +30,14 @@ public sealed class CharactersRepository : ICharactersRepository {
             .AnyAsync(cha => cha.Name == characterName && cha.DmoId == dmoId, cancellationToken);
     }
 
+    public async Task<List<Guid>> LoadCharacterInBeatIdsAsync(Guid characterId) {
+        return await _context.CharacterInBeats
+            .AsTracking()
+            .Where(cha => cha.CharacterId == characterId)
+            .Select(cha => cha.Id)
+            .ToListAsync();
+    }
+
     public async Task<NnaMovieCharacter?> GetCharacterByIdAsync(Guid characterId, CancellationToken cancellationToken) {
         if (characterId == Guid.Empty) throw new ArgumentException("Empty characterId", nameof(characterId));
         return await _context.Characters
