@@ -13,6 +13,11 @@ public static class CharacterConfiguration {
             // ReSharper disable once RedundantArgumentDefaultValue
             .IsRequired(true);
 
+        modelBuilder.Entity<NnaMovieCharacter>()
+            .Property(b => b.Color)
+            .HasMaxLength(7)
+            .HasDefaultValue("#000000");
+
         modelBuilder.Entity<NnaMovieCharacterInBeat>()
             .HasOne(mchInBeat => mchInBeat.Beat)
             .WithMany(b => b.Characters)

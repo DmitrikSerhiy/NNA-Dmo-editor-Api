@@ -84,8 +84,16 @@ public sealed class DmosController : NnaController {
             var group = groupedCharacters
                 .FirstOrDefault(gCha => gCha.Key.ToString() == characterInDmo.Id);
             characterInDmo.Count = group?.Count() ?? 0;
+            characterInDmo.Color = dmoWithDataDto.Characters
+                .FirstOrDefault(cha => cha.Id == group?.Key.ToString())?.Color ?? "#000000";
         }
 
+        foreach (var beat in dmoWithDataDto.Beats) {
+            foreach (var characterInBeat in beat.CharactersInBeat) {
+                characterInBeat.Color = dmoWithDataDto.Characters
+                    .FirstOrDefault(cha => cha.Id == characterInBeat.CharacterId.ToString())?.Color ?? "#000000";
+            }
+        }
         dmoWithDataDto.Characters = dmoWithDataDto.Characters.OrderByDescending(cha => cha.Count).ToList();
         return OkWithData(dmoWithDataDto);
     }
