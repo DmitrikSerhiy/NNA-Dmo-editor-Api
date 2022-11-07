@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.DTOs.Account;
 
-public class PersonalInfoDto : BaseDto {
+public sealed class PersonalInfoDto : BaseDto {
     public PersonalInfoDto(string userName, string userEmail, string userId, string[] authProviders) {
         UserName = userName;
         UserEmail = userEmail;

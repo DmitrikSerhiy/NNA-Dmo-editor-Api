@@ -15,7 +15,7 @@ namespace NNA.Api.Features.Dmos.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class DmosController : NnaController {
+public sealed class DmosController : NnaController {
     private readonly IMapper _mapper;
     private readonly CharactersService _charactersService;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
@@ -66,7 +66,7 @@ public class DmosController : NnaController {
     [Route("{Id}/withBeats")]
     public async Task<IActionResult> LoadDmoWithData([FromRoute] GetDmoWithDataDto getDmoWithDataDto, CancellationToken cancellationToken) {
         // todo: sanitize tempIds here before loading data
-        var dmoWithData = await _dmosRepository.GetDmoWithDataAsync(_authenticatedIdentityProvider.AuthenticatedUserId, Guid.Parse(getDmoWithDataDto.Id), cancellationToken);
+        var dmoWithData = await _dmosRepository.GetDmoWithDataAsync(_authenticatedIdentityProvider.AuthenticatedUserId, getDmoWithDataDto.Id, cancellationToken);
         if (dmoWithData is null) {
             return NoContent();
         }
@@ -94,7 +94,7 @@ public class DmosController : NnaController {
     public async Task<IActionResult> SanitizeTempIds([FromRoute] SanitizeTempIdsInDmoDto sanitizeTempIdsInDmoDto ) { // do not add cancellation token here
         var beats = await _dmosRepository.LoadBeatsWithCharactersAsync(
             _authenticatedIdentityProvider.AuthenticatedUserId, 
-            Guid.Parse(sanitizeTempIdsInDmoDto.DmoId));
+            sanitizeTempIdsInDmoDto.DmoId);
 
         foreach (var beat in beats) {
             if (beat.TempId != null) {
@@ -105,27 +105,4 @@ public class DmosController : NnaController {
         
         return NoContent();
     }
-    
-    [HttpDelete]
-    [Route("{DmoId}/characters/interpolated")]
-    public async Task<IActionResult> SanitizeInterpolatedCharacterInBeats([FromRoute] string? dmoId, [FromBody] SanitizeInterpolatedCharacterInBeatsDto characterInBeatsDto, CancellationToken cancellationToken) {
-        if (string.IsNullOrWhiteSpace(dmoId)) {
-            return InvalidRequestWithValidationMessagesToToastr("dmoId", "Missing dmo id");
-        }
-        var beats = await _dmosRepository.LoadBeatsWithCharactersAsync(
-            _authenticatedIdentityProvider.AuthenticatedUserId, 
-            Guid.Parse(dmoId));
-    
-        foreach (var beat in beats) {
-            if (beat.TempId != null) {
-                beat.TempId = null;
-            }
-            
-            _charactersService.SanitizeCharactersTempIdsInBeatDescription(beat);
-            _charactersService.SanitizeRemovedCharactersInBeatDescription(beat, characterInBeatsDto.CharacterIds.Select(chaId => Guid.Parse(chaId)).ToList());
-        }
-        
-        return NoContent();
-    }
-    
 }

@@ -11,7 +11,7 @@ namespace NNA.Api.Features.DmoCollections.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Authorize]
-public class DmoCollectionsController : NnaController {
+public sealed class DmoCollectionsController : NnaController {
     private readonly IDmoCollectionsRepository _dmoCollectionsRepository;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
     private readonly IMapper _mapper;

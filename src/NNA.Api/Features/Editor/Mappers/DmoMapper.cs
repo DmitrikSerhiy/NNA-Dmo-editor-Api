@@ -4,7 +4,7 @@ using NNA.Domain.Entities;
 
 namespace NNA.Api.Features.Editor.Mappers;
 
-public class DmoMapper : Profile {
+public sealed class DmoMapper : Profile {
     public DmoMapper() {
         CreateMap<CreateDmoDto, Dmo>();
         CreateMap<Dmo, CreatedDmoDto>();

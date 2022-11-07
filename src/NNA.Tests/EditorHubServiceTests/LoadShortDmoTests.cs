@@ -8,7 +8,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubServiceTests;
 
-public class LoadShortDmoTests : BaseHubServiceTests {
+public sealed class LoadShortDmoTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
 

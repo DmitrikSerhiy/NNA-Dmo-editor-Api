@@ -2,7 +2,7 @@
 
 namespace NNA.Domain.DTOs.Account;
 
-public class SetOrResetPasswordDto : BaseDto {
+public sealed class SetOrResetPasswordDto : BaseDto {
     public string Token { get; set; } = null!;
     public string Email { get; set; } = null!;
     public string NewPassword { get; set; } = null!;

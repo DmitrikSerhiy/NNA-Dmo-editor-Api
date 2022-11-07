@@ -10,7 +10,7 @@ using SendGrid.Helpers.Mail;
 
 namespace NNA.Api.Features.Account.Services;
 
-public class MailService {
+public sealed class MailService {
     private readonly SendGridConfiguration _sendGridConfiguration;
     private readonly string _sendGridApiKey;
     private readonly NnaUserManager _nnaUserManager;

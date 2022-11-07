@@ -7,7 +7,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubServiceTests;
 
-public class SanitizeTempIdsTests : BaseHubServiceTests {
+public sealed class SanitizeTempIdsTests : BaseHubServiceTests {
     private Guid userId { get; set; }
     private Guid dmoId { get; set; }
     private SanitizeTempIdsDto update { get; set; } = null!;

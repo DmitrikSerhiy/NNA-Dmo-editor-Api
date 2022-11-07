@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.Exceptions.Data;
 
-public class InconsistentDataException : Exception {
+public sealed class InconsistentDataException : Exception {
     public InconsistentDataException() { }
 
     public InconsistentDataException(string message) : base(message) { }

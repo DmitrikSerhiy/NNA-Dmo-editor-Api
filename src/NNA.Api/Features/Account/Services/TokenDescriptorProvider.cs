@@ -6,7 +6,7 @@ using NNA.Domain.Models;
 
 namespace NNA.Api.Features.Account.Services;
 
-public class TokenDescriptorProvider {
+public sealed class TokenDescriptorProvider {
     private readonly JwtOptions _jwtOptions;
 
     public TokenDescriptorProvider(JwtOptions jwtOptions) {

@@ -64,7 +64,7 @@ public class BaseEditorTests {
         EditorConnection = new EditorConnection { UserId = UserId, ConnectionId = ConnectionId };
     }
 
-    public class EditorClient : IEditorClient {
+    public  class EditorClient : IEditorClient {
         public virtual Task OnServerError(object notificationBody) {
             return Task.CompletedTask;
         }

@@ -1,5 +1,5 @@
 ﻿namespace NNA.Domain.DTOs.DmoCollections;
 
-public class DeleteCollectionDto : BaseDto {
-    public Guid? CollectionId { get; set; }
+public sealed class DeleteCollectionDto : BaseDto {
+    public Guid CollectionId { get; set; }
 }

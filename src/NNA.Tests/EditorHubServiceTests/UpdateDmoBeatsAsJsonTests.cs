@@ -7,7 +7,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubServiceTests;
 
-public class UpdateDmoBeatsAsJsonTests : BaseHubServiceTests {
+public sealed class UpdateDmoBeatsAsJsonTests : BaseHubServiceTests {
     // ReSharper disable once InconsistentNaming
     private Guid userId { get; set; }
 

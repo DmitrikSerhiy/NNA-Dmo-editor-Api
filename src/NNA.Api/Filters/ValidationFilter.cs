@@ -9,7 +9,7 @@ using NNA.Domain.DTOs;
 
 namespace NNA.Api.Filters;
 
-public class ValidationFilter : IAsyncActionFilter {
+public sealed class ValidationFilter : IAsyncActionFilter {
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next) {
         var dtoToValidate = context.ActionArguments
             .FirstOrDefault(arg => arg.Value?.GetType().IsSubclassOf(typeof(BaseDto)) == true)

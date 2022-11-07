@@ -8,7 +8,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubServiceTests;
 
-public class SwapBeatsTests : BaseHubServiceTests {
+public sealed class SwapBeatsTests : BaseHubServiceTests {
     private Guid userId { get; set; }
     private string dmoId { get; set; } = null!;
     private SwapBeatsDto update { get; set; } = null!;

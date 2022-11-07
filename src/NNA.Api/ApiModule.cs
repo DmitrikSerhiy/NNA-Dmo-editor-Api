@@ -8,7 +8,7 @@ using NNA.Domain.Interfaces;
 
 namespace NNA.Api;
 
-public class ApiModule : Module {
+public sealed class ApiModule : Module {
     protected override void Load(ContainerBuilder builder) {
         builder
             .RegisterType<NnaTokenHandler>()

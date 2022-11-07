@@ -6,7 +6,7 @@ using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 
-public class RegisterValidator : AbstractValidator<RegisterDto> {
+public sealed class RegisterValidator : AbstractValidator<RegisterDto> {
     public RegisterValidator() {
         RuleFor(u => u.Email)
             .NotEmpty()

@@ -6,7 +6,7 @@ using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 
-public class UpdateUserNameDtoValidator : AbstractValidator<UpdateUserNameDto> {
+public sealed class UpdateUserNameDtoValidator : AbstractValidator<UpdateUserNameDto> {
     public UpdateUserNameDtoValidator() {
         RuleFor(u => u.Email)
             .NotEmpty()

@@ -5,7 +5,7 @@ using Serilog;
 namespace NNA.Persistence;
 
 // Unit of work
-public class ContextOrchestrator : IContextOrchestrator {
+public sealed class ContextOrchestrator : IContextOrchestrator {
     private NnaContext? _context;
     private bool _disposed;
     public ContextOrchestrator() { }

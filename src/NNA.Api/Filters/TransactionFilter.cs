@@ -3,7 +3,7 @@ using NNA.Domain.Interfaces;
 
 namespace NNA.Api.Filters;
 
-public class TransactionFilter : IAsyncActionFilter {
+public sealed class TransactionFilter : IAsyncActionFilter {
     private readonly IContextOrchestrator _contextOrchestrator;
 
     public TransactionFilter(IContextOrchestrator contextOrchestrator) {

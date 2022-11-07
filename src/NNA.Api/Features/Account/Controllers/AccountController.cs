@@ -56,7 +56,8 @@ public sealed class AccountController : NnaController {
     [Route("authproviders")]
     [AllowAnonymous]
     public async Task<IActionResult> GetAuthProviderForPasswordlessEmail([FromQuery] SsoCheckDto ssoCheckDto) {
-        var user = await _userManager.FindByEmailAsync(ssoCheckDto.Email);
+        var email = Uri.UnescapeDataString(ssoCheckDto.Email);
+        var user = await _userManager.FindByEmailAsync(email);
         if (user == null) {
             return NoContent();
         }

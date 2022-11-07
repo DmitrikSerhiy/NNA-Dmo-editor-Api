@@ -10,7 +10,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubTests;
 
-public class LoadShortTests : BaseEditorTests {
+public sealed class LoadShortTests : BaseEditorTests {
     private LoadShortDmoDto DmoDto { get; set; } = null!;
 
     private void SetMockAndVariables() {

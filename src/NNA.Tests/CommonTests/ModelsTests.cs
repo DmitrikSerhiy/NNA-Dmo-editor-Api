@@ -4,7 +4,7 @@ using Xunit;
 
 namespace NNA.Tests.CommonTests;
 
-public class ModelsTests {
+public sealed class ModelsTests {
     [Fact]
     public void AllDtoShouldInheritBaseDtoClass() {
         //Arrange

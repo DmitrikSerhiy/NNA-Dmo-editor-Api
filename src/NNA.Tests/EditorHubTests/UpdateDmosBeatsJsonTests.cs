@@ -9,7 +9,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubTests;
 
-public class UpdateDmosBeatsJsonTests : BaseEditorTests {
+public sealed class UpdateDmosBeatsJsonTests : BaseEditorTests {
     // ReSharper disable once InconsistentNaming
     private UpdateDmoBeatsAsJsonDto update { get; set; } = null!;
 

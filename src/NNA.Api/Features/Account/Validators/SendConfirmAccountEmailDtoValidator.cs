@@ -5,7 +5,7 @@ using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 
-public class SendConfirmAccountEmailDtoValidator : AbstractValidator<SendConfirmAccountEmailDto> {
+public sealed class SendConfirmAccountEmailDtoValidator : AbstractValidator<SendConfirmAccountEmailDto> {
     public SendConfirmAccountEmailDtoValidator() {
         RuleFor(u => u.Email)
             .NotEmpty()

@@ -5,7 +5,7 @@ using NNA.Persistence.Configuration;
 
 namespace NNA.Persistence;
 
-public class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
+public sealed class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
     public DbSet<NnaUser> ApplicationUsers => Set<NnaUser>();
     public DbSet<Dmo> Dmos => Set<Dmo>();
     public DbSet<DmoCollection> DmoCollections => Set<DmoCollection>();

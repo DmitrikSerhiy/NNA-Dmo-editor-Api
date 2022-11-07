@@ -8,7 +8,7 @@ using NNA.Domain.Interfaces;
 
 namespace NNA.Api.Features.Account.Services;
 
-public class AuthenticatedIdentityMiddleware {
+public sealed class AuthenticatedIdentityMiddleware {
     private readonly RequestDelegate _next;
 
     public AuthenticatedIdentityMiddleware(RequestDelegate next) {

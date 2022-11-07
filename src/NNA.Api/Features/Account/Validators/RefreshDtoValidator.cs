@@ -3,7 +3,7 @@ using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 
-public class RefreshDtoValidator : AbstractValidator<RefreshDto> {
+public sealed class RefreshDtoValidator : AbstractValidator<RefreshDto> {
     public RefreshDtoValidator() {
         RuleFor(u => u.AccessToken)
             .NotEmpty()

@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.DTOs.Editor.Response;
 
-public class EditorValidationDetailsDto : BaseDto {
+public sealed class EditorValidationDetailsDto : BaseDto {
     public EditorValidationDetailsDto(string validationMessage, string fieldName) {
         ValidationMessage = validationMessage;
         FieldName = fieldName;

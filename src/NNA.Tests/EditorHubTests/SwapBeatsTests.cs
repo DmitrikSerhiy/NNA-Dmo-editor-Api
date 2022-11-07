@@ -9,7 +9,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubTests;
 
-public class SwapBeatsTests : BaseEditorTests {
+public sealed class SwapBeatsTests : BaseEditorTests {
 
     private SwapBeatsDto SwapBeatsDto { get; set; } = null!;
     

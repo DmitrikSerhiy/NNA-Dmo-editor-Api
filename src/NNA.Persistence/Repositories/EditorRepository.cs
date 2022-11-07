@@ -129,7 +129,7 @@ internal sealed class EditorRepository : IEditorRepository {
     }
 
     public async Task<Guid> LoadBeatIdByTempId(Guid dmoId, string tempId, Guid userId) {
-        return await QueryAsync<Guid>(LoadBeatIdByTempIdScript, new { dmoId = dmoId, tempId = tempId, userId = userId });
+        return await QueryAsync<Guid>(LoadBeatIdByTempIdScript, new { dmoId, tempId, userId });
     }
 
     public async Task<Dmo> LoadDmoAsync(Guid id, Guid nnaUserId) {

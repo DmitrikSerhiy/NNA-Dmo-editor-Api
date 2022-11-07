@@ -5,7 +5,7 @@ using NNA.Domain.Mappers;
 
 namespace NNA.Api.Features.DmoCollections.Mappers;
 
-public class DmoCollectionsMappers : Profile {
+public sealed class DmoCollectionsMappers : Profile {
     public DmoCollectionsMappers() {
         CreateMap<DmoCollection, DmoCollectionShortDto>()
             .ForMember(udc => udc.DmoCount, dcd => dcd.MapFrom(dd => dd.DmoCollectionDmos.Count))

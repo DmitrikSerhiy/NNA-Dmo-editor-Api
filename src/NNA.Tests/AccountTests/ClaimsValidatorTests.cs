@@ -10,7 +10,7 @@ using Xunit;
 
 namespace NNA.Tests.AccountTests;
 
-public class ClaimsValidatorTests {
+public sealed class ClaimsValidatorTests {
     private readonly List<Claim> _claimsToValidate;
     private Mock<IUserRepository> _userRepositoryMock = null!;
 

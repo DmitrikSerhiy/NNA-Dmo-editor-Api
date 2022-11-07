@@ -6,7 +6,7 @@ namespace NNA.Api.Features.HealthCheck.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class HealthController : ControllerBase {
+public sealed class HealthController : ControllerBase {
     private readonly IUserRepository _repository;
 
     public HealthController(IUserRepository repository) {

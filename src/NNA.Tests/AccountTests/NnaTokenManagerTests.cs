@@ -12,7 +12,7 @@ using Xunit;
 
 namespace NNA.Tests.AccountTests;
 
-public class NnaTokenManagerTests {
+public sealed class NnaTokenManagerTests {
     private Mock<IUserRepository> _userRepositoryMock = null!;
     private Mock<NnaTokenHandler> _nnaTokenHandlerMock = null!;
     private Mock<IAuthenticatedIdentityProvider> _authenticatedIdentityProviderMock = null!;

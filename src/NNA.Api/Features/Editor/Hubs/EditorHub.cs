@@ -10,7 +10,7 @@ using Serilog;
 
 namespace NNA.Api.Features.Editor.Hubs;
 
-public class EditorHub : BaseEditorHub {
+public sealed class EditorHub : BaseEditorHub {
     public EditorHub(
         IEditorService editorService,
         IHostEnvironment webHostEnvironment,

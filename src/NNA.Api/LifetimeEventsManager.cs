@@ -4,7 +4,7 @@ using Serilog;
 
 namespace NNA.Api;
 
-internal class LifetimeEventsManager : IHostedService {
+internal sealed class LifetimeEventsManager : IHostedService {
     private readonly IHostEnvironment _environment;
     private readonly IHostApplicationLifetime _appLifetime;
     private readonly IUserRepository _repository;

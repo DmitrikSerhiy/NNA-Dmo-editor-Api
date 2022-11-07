@@ -5,7 +5,7 @@ using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 
-public class CheckNameDtoValidator : AbstractValidator<CheckNameDto> {
+public sealed class CheckNameDtoValidator : AbstractValidator<CheckNameDto> {
     public CheckNameDtoValidator() {
         RuleFor(u => u.Name)
             .NotEmpty()

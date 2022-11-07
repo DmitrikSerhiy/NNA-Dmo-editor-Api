@@ -9,7 +9,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubTests;
 
-public class UpdateShortDmoTests : BaseEditorTests {
+public sealed class UpdateShortDmoTests : BaseEditorTests {
     private UpdateShortDmoDto DmoDto { get; set; } = null!;
 
     private void SetMockAndVariables() {

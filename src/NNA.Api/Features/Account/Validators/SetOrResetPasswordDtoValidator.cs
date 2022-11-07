@@ -5,7 +5,7 @@ using NNA.Domain.DTOs.Account;
 
 namespace NNA.Api.Features.Account.Validators;
 
-public class SetOrResetPasswordDtoValidator : AbstractValidator<SetOrResetPasswordDto> {
+public sealed class SetOrResetPasswordDtoValidator : AbstractValidator<SetOrResetPasswordDto> {
     public SetOrResetPasswordDtoValidator() {
         RuleFor(u => u.Email)
             .NotEmpty()

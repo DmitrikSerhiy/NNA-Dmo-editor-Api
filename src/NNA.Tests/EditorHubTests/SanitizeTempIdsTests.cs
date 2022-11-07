@@ -9,7 +9,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubTests;
 
-public class SanitizeTempIdsTests : BaseEditorTests {
+public sealed class SanitizeTempIdsTests : BaseEditorTests {
     private SanitizeTempIdsDto update { get; set; } = null!;
 
     private void SetMockAndVariables() {
@@ -29,7 +29,9 @@ public class SanitizeTempIdsTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0618
         Func<Task> act = async () => await Subject.SanitizeTempIds(null);
+#pragma warning restore CS0618
         await act.Invoke();
 
         //Assert
@@ -51,7 +53,9 @@ public class SanitizeTempIdsTests : BaseEditorTests {
         Subject.Context = hubContext.Object;
 
         //Act
+#pragma warning disable CS0618
         Func<Task> act = async () => await Subject.SanitizeTempIds(update);
+#pragma warning restore CS0618
         await act.Invoke();
 
         //Assert
@@ -71,7 +75,9 @@ public class SanitizeTempIdsTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0618
         Func<Task> act = async () => await Subject.SanitizeTempIds(update);
+#pragma warning restore CS0618
         await act.Invoke();
 
         //Assert
@@ -92,7 +98,9 @@ public class SanitizeTempIdsTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0618
         Func<Task> act = async () => await Subject.SanitizeTempIds(update);
+#pragma warning restore CS0618
         await act.Invoke();
 
         //Assert
@@ -116,7 +124,9 @@ public class SanitizeTempIdsTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0618
         Func<Task> act = async () => await Subject.SanitizeTempIds(update);
+#pragma warning restore CS0618
         await act.Invoke();
 
         //Assert
@@ -148,7 +158,9 @@ public class SanitizeTempIdsTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0618
         Func<Task> act = async () => await Subject.SanitizeTempIds(update);
+#pragma warning restore CS0618
         await act.Invoke();
 
         //Assert

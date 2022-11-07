@@ -10,7 +10,7 @@ using Xunit;
 
 namespace NNA.Tests.EditorHubTests;
 
-public class UpdateBeatTest : BaseEditorTests {
+public sealed class UpdateBeatTest : BaseEditorTests {
     private UpdateBeatDto BeatDto { get; set; } = null!;
 
     private void SetMockAndVariables() {

@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.DTOs.Account;
 
-public class TokensDto : BaseDto {
+public sealed class TokensDto : BaseDto {
     public string AccessToken { get; set; } = null!;
     public string AccessTokenKeyId { get; set; } = null!;
     public string RefreshToken { get; set; } = null!;

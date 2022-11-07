@@ -10,6 +10,7 @@ public static class CharacterConfiguration {
             .WithMany(mch => mch.Characters)
             .HasForeignKey(mch => mch.DmoId)
             .OnDelete(DeleteBehavior.Cascade)
+            // ReSharper disable once RedundantArgumentDefaultValue
             .IsRequired(true);
 
         modelBuilder.Entity<NnaMovieCharacterInBeat>()

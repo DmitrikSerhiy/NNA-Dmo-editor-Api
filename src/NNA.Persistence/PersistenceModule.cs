@@ -3,7 +3,7 @@ using NNA.Domain.Interfaces;
 
 namespace NNA.Persistence;
 
-public class PersistenceModule : Module {
+public sealed class PersistenceModule : Module {
     protected override void Load(ContainerBuilder builder) {
         builder
             .RegisterAssemblyTypes(typeof(NnaContext).Assembly)

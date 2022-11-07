@@ -4,7 +4,7 @@ using NNA.Domain.Enums;
 
 namespace NNA.Api.Features.Account.Services;
 
-public class TokenMapper {
+public sealed class TokenMapper {
     public static NnaToken MapToAccessTokenByPasswordAuth(
         Guid userId,
         TokensDto tokensDto,

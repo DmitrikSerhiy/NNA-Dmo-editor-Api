@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.DTOs.Editor;
 
-public class CreatedDmoDto : BaseDto {
+public sealed class CreatedDmoDto : BaseDto {
     // ReSharper disable InconsistentNaming
     public string id { get; set; } = null!;
     public string name { get; set; } = null!;
