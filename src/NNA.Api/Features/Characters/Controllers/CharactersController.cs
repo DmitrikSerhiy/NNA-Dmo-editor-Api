@@ -36,7 +36,7 @@ public sealed class CharactersController : NnaController {
     [Route("")]
     public async Task<IActionResult> GetDmoCharacters([FromQuery] GetCharactersDto charactersDto, CancellationToken cancellationToken) {
         var characters = await _charactersRepository.GetDmoCharactersWithBeatsAsync(charactersDto.DmoId, cancellationToken);
-        return OkWithData(characters.Select(_mapper.Map<DmoCharacterDto>));
+        return OkWithData(characters.Select(_mapper.Map<DmoCharacterDto>).OrderByDescending(cha => cha.Count));
     }
 
     [HttpPost]

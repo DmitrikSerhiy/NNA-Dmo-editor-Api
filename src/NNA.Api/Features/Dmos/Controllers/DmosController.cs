@@ -85,7 +85,8 @@ public sealed class DmosController : NnaController {
                 .FirstOrDefault(gCha => gCha.Key.ToString() == characterInDmo.Id);
             characterInDmo.Count = group?.Count() ?? 0;
         }
-        
+
+        dmoWithDataDto.Characters = dmoWithDataDto.Characters.OrderByDescending(cha => cha.Count).ToList();
         return OkWithData(dmoWithDataDto);
     }
     
