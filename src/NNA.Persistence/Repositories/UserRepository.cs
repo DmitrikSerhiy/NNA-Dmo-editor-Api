@@ -7,34 +7,28 @@ using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Persistence.Repositories;
 
-internal sealed class UserRepository : IUserRepository {
-    private readonly NnaContext _context;
-
-    public UserRepository(IContextOrchestrator contextOrchestrator) {
-        if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
-
-        _context = (contextOrchestrator.Context as NnaContext)!;
-    }
+internal sealed class UserRepository : CommonRepository, IUserRepository {
+    public UserRepository(IContextOrchestrator contextOrchestrator): base(contextOrchestrator) { }
 
     public void UpdateUser(NnaUser user) {
-        _context.Set<NnaUser>().Attach(user);
-        _context.Update(user);
+        Context.Set<NnaUser>().Attach(user);
+        Context.Update(user);
     }
 
     public async Task<bool> HasEditorConnectionAsync(Guid userId, CancellationToken token) {
-        return await _context.EditorConnections.AnyAsync(ec => ec.UserId == userId, token);
+        return await Context.EditorConnections.AnyAsync(ec => ec.UserId == userId, token);
     }
 
     public void AddEditorConnection(EditorConnection connection) {
-        _context.EditorConnections.Add(connection);
+        Context.EditorConnections.Add(connection);
     }
 
     public void RemoveEditorConnection(EditorConnection connection) {
-        _context.EditorConnections.Remove(connection);
+        Context.EditorConnections.Remove(connection);
     }
 
     public async Task RemoveEditorConnectionOnLogout(Guid userId, CancellationToken token) {
-        var connections = await _context.EditorConnections
+        var connections = await Context.EditorConnections
             .Where(ec => ec.UserId == userId)
             .ToListAsync(token);
 
@@ -42,43 +36,43 @@ internal sealed class UserRepository : IUserRepository {
             return;
         }
 
-        _context.EditorConnections.RemoveRange(connections);
+        Context.EditorConnections.RemoveRange(connections);
     }
 
     public async Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email, CancellationToken token) {
-        return await _context.Set<UsersTokens>().SingleOrDefaultAsync(ut => ut.Email == email, token);
+        return await Context.Set<UsersTokens>().SingleOrDefaultAsync(ut => ut.Email == email, token);
     }
 
     public void SaveTokens(NnaToken accessToken, NnaToken refreshToken) {
         if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
         if (refreshToken == null) throw new ArgumentNullException(nameof(refreshToken));
 
-        _context.AddRange(accessToken, refreshToken);
+        Context.AddRange(accessToken, refreshToken);
     }
 
     public async Task ClearTokensAsync(NnaUser user, CancellationToken token) {
         if (user == null) throw new ArgumentNullException(nameof(user));
-        var tokens = await _context.Tokens.Where(tkn => tkn.UserId == user.Id).ToListAsync(token);
-        _context.Tokens.RemoveRange(tokens);
+        var tokens = await Context.Tokens.Where(tkn => tkn.UserId == user.Id).ToListAsync(token);
+        Context.Tokens.RemoveRange(tokens);
     }
 
     public void UpdateTokens(NnaToken accessToken, NnaToken refreshToken) {
         if (accessToken == null) throw new ArgumentNullException(nameof(accessToken));
         if (refreshToken == null) throw new ArgumentNullException(nameof(refreshToken));
 
-        _context.AttachRange(accessToken, refreshToken);
-        _context.Tokens.UpdateRange(accessToken, refreshToken);
+        Context.AttachRange(accessToken, refreshToken);
+        Context.Tokens.UpdateRange(accessToken, refreshToken);
     }
 
     public void ConfirmUserEmail(NnaUser user) {
         if (user == null) throw new ArgumentNullException(nameof(user));
-        _context.Attach(user);
+        Context.Attach(user);
         user.EmailConfirmed = true;
-        _context.Update(user);
+        Context.Update(user);
     }
 
     public async Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId, CancellationToken token) {
-        var tokens = await _context.Tokens
+        var tokens = await Context.Tokens
             .Where(tkn => tkn.UserId == userId)
             .AsNoTracking()
             .ToListAsync(token);
@@ -98,31 +92,23 @@ internal sealed class UserRepository : IUserRepository {
     }
 
     public async Task<NnaUser> FirstUserAsync(CancellationToken token) {
-        return await _context.ApplicationUsers.FirstAsync(token);
+        return await Context.ApplicationUsers.FirstAsync(token);
     }
 
     public async Task<NnaUser?> WithIdAsync(Guid id, CancellationToken token) {
-        return await _context.ApplicationUsers.FirstOrDefaultAsync(user => user.Id == id, token);
-    }
-
-    public async Task SyncContextImmediatelyAsync(CancellationToken token) {
-        await _context.SaveChangesAsync(token);
+        return await Context.ApplicationUsers.FirstOrDefaultAsync(user => user.Id == id, token);
     }
 
     // do not use it in normal app lifecycle
     public void SanitiseEditorConnections() {
-        var editorConnections = _context.EditorConnections.ToList();
-        _context.RemoveRange(editorConnections);
-        _context.SaveChanges();
+        var editorConnections = Context.EditorConnections.ToList();
+        Context.RemoveRange(editorConnections);
+        Context.SaveChanges();
     }
 
     public void SanitiseUserTokens() {
-        var tokens = _context.Tokens.ToList();
-        _context.RemoveRange(tokens);
-        _context.SaveChanges();
-    }
-
-    public string GetContextId() {
-        return _context.ContextId.ToString();
+        var tokens = Context.Tokens.ToList();
+        Context.RemoveRange(tokens);
+        Context.SaveChanges();
     }
 }

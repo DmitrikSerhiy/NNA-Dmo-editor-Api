@@ -2,7 +2,7 @@
 
 namespace NNA.Domain.Interfaces.Repositories;
 
-public interface ICharactersRepository {
+public interface ICharactersRepository : IRepository {
     Task<List<NnaMovieCharacter>> GetDmoCharactersWithBeatsAsync(Guid dmoId, CancellationToken cancellationToken);
     Task<NnaMovieCharacter?> GetCharacterByIdAsync(Guid characterId, CancellationToken cancellationToken);
     Task<NnaMovieCharacter?> GetCharacterByNameAsync(string characterName, CancellationToken cancellationToken);

@@ -10,7 +10,7 @@ public static class UsersTokensConfiguration {
             .ToView(nameof(UsersTokens))
             .HasNoKey();
 
-        // todo: not working for some reason. Migration file was edited manually.
+        // mMgration file was invalid for some reason. Migration file was edited manually.
         modelBuilder
             .Entity<NnaToken>(token => {
                 // ReSharper disable once RedundantArgumentDefaultValue

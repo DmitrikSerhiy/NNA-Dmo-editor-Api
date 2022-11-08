@@ -5,28 +5,22 @@ using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Persistence.Repositories;
 
-internal sealed class DmosRepository : IDmosRepository {
-    private readonly NnaContext _context;
-
-    public DmosRepository(IContextOrchestrator contextOrchestrator) {
-        if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
-        _context = (contextOrchestrator.Context as NnaContext)!;
-    }
-
+internal sealed class DmosRepository : CommonRepository, IDmosRepository {
+    public DmosRepository(IContextOrchestrator contextOrchestrator): base(contextOrchestrator) { }
     public async Task<List<Dmo>> GetAllAsync(Guid userId, CancellationToken token) {
-        return await _context.Dmos.Where(dmo => dmo.NnaUserId == userId)
+        return await Context.Dmos.Where(dmo => dmo.NnaUserId == userId)
             .OrderByDescending(dmo => dmo.DateOfCreation)
             .ToListAsync(token);
     }
 
     public async Task<Dmo?> GetShortDmoAsync(Guid userId, Guid? dmoId, CancellationToken token) {
         if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
-        return await _context.Dmos.FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId.Value, token);
+        return await Context.Dmos.FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId.Value, token);
     }
 
     public async Task<Dmo?> GetDmoAsync(Guid userId, Guid? dmoId, CancellationToken token) {
         if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
-        return await _context.Dmos
+        return await Context.Dmos
             .Include(d => d.DmoCollectionDmos)
             .ThenInclude(dd => dd.DmoCollection)
             .Include(d => d.Beats)
@@ -36,12 +30,12 @@ internal sealed class DmosRepository : IDmosRepository {
     public void DeleteDmo(Dmo? dmo) {
         if (dmo == null) throw new ArgumentNullException(nameof(dmo));
         dmo.DmoCollectionDmos.Clear();
-        _context.Beats.RemoveRange(dmo.Beats);
-        _context.Dmos.Remove(dmo);
+        Context.Beats.RemoveRange(dmo.Beats);
+        Context.Dmos.Remove(dmo);
     }
 
     public async Task<Dmo?> GetDmoWithDataAsync(Guid userId, Guid dmoId, CancellationToken cancellationToken) {
-        return await _context.Dmos
+        return await Context.Dmos
             .AsNoTracking()
             .Include(d => d.Beats)
                 .ThenInclude(dc => dc.Characters)
@@ -51,7 +45,7 @@ internal sealed class DmosRepository : IDmosRepository {
     }
 
     public async Task<List<Beat>> LoadBeatsWithCharactersAsync(Guid userId, Guid dmoId) {
-        return await _context.Beats
+        return await Context.Beats
             .AsTracking()
             .Where(d => d.DmoId == dmoId && d.UserId == userId)
             .Include(d => d.Characters)
@@ -59,13 +53,9 @@ internal sealed class DmosRepository : IDmosRepository {
     }
     
     public async Task<List<Beat>> LoadBeatsAsync(Guid userId, Guid dmoId) {
-        return await _context.Beats
+        return await Context.Beats
             .AsTracking()
             .Where(d => d.DmoId == dmoId && d.UserId == userId)
             .ToListAsync();
-    }
-
-    public string GetContextId() {
-        return _context.ContextId.ToString();
     }
 }

@@ -5,18 +5,12 @@ using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Persistence.Repositories;
 
-public sealed class CharactersRepository : ICharactersRepository {
-
-    private readonly NnaContext _context;
-
-    public CharactersRepository(IContextOrchestrator contextOrchestrator) {
-        if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
-        _context = (contextOrchestrator.Context as NnaContext)!;
-    }
+internal sealed class CharactersRepository : CommonRepository, ICharactersRepository {
+    public CharactersRepository(IContextOrchestrator contextOrchestrator): base(contextOrchestrator) { }
     
     public async Task<List<NnaMovieCharacter>> GetDmoCharactersWithBeatsAsync(Guid dmoId, CancellationToken cancellationToken) {
         if (dmoId == Guid.Empty) throw new ArgumentException("Empty dmoId", nameof(dmoId));
-        return await _context.Characters
+        return await Context.Characters
             .Where(cha => cha.DmoId == dmoId)
             .Include(cha => cha.Beats)
             .AsNoTracking()
@@ -26,12 +20,12 @@ public sealed class CharactersRepository : ICharactersRepository {
     public async Task<bool> IsExistAsync(string characterName, Guid dmoId, CancellationToken cancellationToken) {
         if (characterName is null) throw new ArgumentNullException(nameof(characterName));
         if (dmoId == Guid.Empty) throw new ArgumentException("Empty dmoId", nameof(dmoId));
-        return await _context.Characters
+        return await Context.Characters
             .AnyAsync(cha => cha.Name == characterName && cha.DmoId == dmoId, cancellationToken);
     }
 
     public async Task<List<Guid>> LoadCharacterInBeatIdsAsync(Guid characterId) {
-        return await _context.CharacterInBeats
+        return await Context.CharacterInBeats
             .AsTracking()
             .Where(cha => cha.CharacterId == characterId)
             .Select(cha => cha.Id)
@@ -40,19 +34,19 @@ public sealed class CharactersRepository : ICharactersRepository {
 
     public async Task<NnaMovieCharacter?> GetCharacterByIdAsync(Guid characterId, CancellationToken cancellationToken) {
         if (characterId == Guid.Empty) throw new ArgumentException("Empty characterId", nameof(characterId));
-        return await _context.Characters
+        return await Context.Characters
             .FirstOrDefaultAsync(cha => cha.Id == characterId, cancellationToken);
     }
     
     public async Task<NnaMovieCharacter?> GetCharacterByNameAsync(string characterName, CancellationToken cancellationToken) {
         if (characterName is null) throw new ArgumentNullException(nameof(characterName));
-        return await _context.Characters
+        return await Context.Characters
             .FirstOrDefaultAsync(cha => cha.Name == characterName, cancellationToken);
     }
 
     public void CreateCharacter(NnaMovieCharacter? character) {
         if (character is null) throw new ArgumentNullException(nameof(character));
-        _context.Characters.Add(character);
+        Context.Characters.Add(character);
     }
 
     public void UpdateCharacter(NnaMovieCharacter? characterToUpdate, string newName, string color, string? aliases) {
@@ -62,11 +56,11 @@ public sealed class CharactersRepository : ICharactersRepository {
         characterToUpdate.Aliases = aliases;
         characterToUpdate.Name = newName;
         characterToUpdate.Color = color;
-        _context.Characters.Update(characterToUpdate);
+        Context.Characters.Update(characterToUpdate);
     }
 
     public void DeleteCharacter(NnaMovieCharacter characterToDelete) {
         if (characterToDelete is null) throw new ArgumentNullException(nameof(characterToDelete));
-        _context.Characters.Remove(characterToDelete);
+        Context.Characters.Remove(characterToDelete);
     }
 }

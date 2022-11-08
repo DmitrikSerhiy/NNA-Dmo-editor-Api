@@ -5,16 +5,11 @@ using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Persistence.Repositories;
 
-internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
-    private readonly NnaContext _context;
-
-    public DmoCollectionsRepository(IContextOrchestrator contextOrchestrator) {
-        if (contextOrchestrator == null) throw new ArgumentNullException(nameof(contextOrchestrator));
-        _context = (contextOrchestrator.Context as NnaContext)!;
-    }
+internal sealed class DmoCollectionsRepository : CommonRepository, IDmoCollectionsRepository {
+    public DmoCollectionsRepository(IContextOrchestrator contextOrchestrator): base(contextOrchestrator) { }
 
     public async Task<List<DmoCollection>> GetCollectionsAsync(Guid userId, CancellationToken token) {
-        return await _context.DmoCollections
+        return await Context.DmoCollections
             .Where(dmo => dmo.NnaUserId == userId)
             .Include(dmo => dmo.DmoCollectionDmos)
             .AsNoTracking()
@@ -24,18 +19,18 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
 
     public async Task<DmoCollection?> GetCollectionAsync(Guid userId, Guid? collectionId, CancellationToken token) {
         if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
-        return await _context.DmoCollections
+        return await Context.DmoCollections
             .FirstOrDefaultAsync(udc => udc.Id == collectionId && udc.NnaUserId == userId, token);
     }
 
     public async Task<Dmo?> GetDmoAsync(Guid userId, Guid? dmoId, CancellationToken token) {
         if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
-        return await _context.Dmos.FirstOrDefaultAsync(d => d.Id == dmoId && d.NnaUserId == userId, token);
+        return await Context.Dmos.FirstOrDefaultAsync(d => d.Id == dmoId && d.NnaUserId == userId, token);
     }
 
     public async Task<bool> IsCollectionExistAsync(Guid userId, string collectionName, CancellationToken token) {
         if (string.IsNullOrWhiteSpace(collectionName)) throw new ArgumentNullException(nameof(collectionName));
-        return await _context.DmoCollections.AnyAsync(udc =>
+        return await Context.DmoCollections.AnyAsync(udc =>
             udc.CollectionName.Equals(collectionName) && udc.NnaUserId == userId, token);
     }
 
@@ -44,23 +39,23 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
         if (newDmoCollection == null) throw new ArgumentNullException(nameof(newDmoCollection));
 
         oldDmoCollection.CollectionName = newDmoCollection.CollectionName;
-        _context.DmoCollections.Update(oldDmoCollection);
+        Context.DmoCollections.Update(oldDmoCollection);
     }
 
     public void AddCollection(DmoCollection? dmoCollection) {
         if (dmoCollection == null) throw new ArgumentNullException(nameof(dmoCollection));
-        _context.DmoCollections.Add(dmoCollection);
+        Context.DmoCollections.Add(dmoCollection);
     }
 
     public void DeleteCollection(DmoCollection? collection) {
         if (collection == null) throw new ArgumentNullException(nameof(collection));
         collection.DmoCollectionDmos.Clear();
-        _context.DmoCollections.Remove(collection);
+        Context.DmoCollections.Remove(collection);
     }
 
     public async Task<DmoCollection?> GetCollectionWithDmosAsync(Guid userId, Guid? collectionId, CancellationToken token) {
         if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
-        var dmoCollection = await _context.DmoCollections
+        var dmoCollection = await Context.DmoCollections
             .Where(dmo => dmo.NnaUserId == userId && dmo.Id == collectionId)
             .Include(dmoCollection => dmoCollection.DmoCollectionDmos)
             .ThenInclude(dmo => dmo.Dmo)
@@ -98,7 +93,7 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
     public async Task<List<Dmo>> GetExcludedDmosAsync(Guid userId, Guid? collectionId, CancellationToken token) {
         if (!collectionId.HasValue) throw new ArgumentNullException(nameof(collectionId));
 
-        return await _context.Dmos
+        return await Context.Dmos
             .Where(d => d.NnaUserId == userId &&
                         d.DmoCollectionDmos.All(dc => dc.DmoCollectionId != collectionId.Value))
             .ToListAsync(token);
@@ -109,9 +104,5 @@ internal sealed class DmoCollectionsRepository : IDmoCollectionsRepository {
 
         var dmoDmoCollection = dmo.DmoCollectionDmos.First(d => d.DmoId == dmo.Id);
         dmoDmoCollection.DmoCollection = null;
-    }
-
-    public string GetContextId() {
-        return _context.ContextId.ToString();
     }
 }

@@ -63,9 +63,13 @@ public sealed class DmosController : NnaController {
     }
     
     [HttpGet]
-    [Route("{Id}/withBeats")]
-    public async Task<IActionResult> LoadDmoWithData([FromRoute] GetDmoWithDataDto getDmoWithDataDto, CancellationToken cancellationToken) {
-        // todo: sanitize tempIds here before loading data
+    [Route("{Id}/withData")]
+    public async Task<IActionResult> LoadDmoWithData([FromRoute] GetDmoWithDataDto getDmoWithDataDto, CancellationToken cancellationToken, [FromQuery] bool sanitizeBeforeLoad = false) {
+        if (sanitizeBeforeLoad) {
+            await SanitizeTempIds(new SanitizeTempIdsInDmoDto { DmoId = getDmoWithDataDto.Id} );
+            await _dmosRepository.SyncContextImmediatelyAsync(cancellationToken);
+        }
+        
         var dmoWithData = await _dmosRepository.GetDmoWithDataAsync(_authenticatedIdentityProvider.AuthenticatedUserId, getDmoWithDataDto.Id, cancellationToken);
         if (dmoWithData is null) {
             return NoContent();
