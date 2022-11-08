@@ -7,7 +7,7 @@ public interface ICharactersRepository {
     Task<NnaMovieCharacter?> GetCharacterByIdAsync(Guid characterId, CancellationToken cancellationToken);
     Task<NnaMovieCharacter?> GetCharacterByNameAsync(string characterName, CancellationToken cancellationToken);
     void CreateCharacter(NnaMovieCharacter? character);
-    void UpdateCharactersNameAndAliases(NnaMovieCharacter? characterToUpdate, string newName, string? aliases);
+    void UpdateCharacter(NnaMovieCharacter? characterToUpdate, string newName, string color, string? aliases);
     void DeleteCharacter(NnaMovieCharacter characterToDelete);
     Task<bool> IsExistAsync(string characterName, Guid dmoId, CancellationToken cancellationToken);
     Task<List<Guid>> LoadCharacterInBeatIdsAsync(Guid characterId);

@@ -55,11 +55,13 @@ public sealed class CharactersRepository : ICharactersRepository {
         _context.Characters.Add(character);
     }
 
-    public void UpdateCharactersNameAndAliases(NnaMovieCharacter? characterToUpdate, string newName, string? aliases) {
+    public void UpdateCharacter(NnaMovieCharacter? characterToUpdate, string newName, string color, string? aliases) {
         if (characterToUpdate is null) throw new ArgumentNullException(nameof(characterToUpdate));
         if (newName is null) throw new ArgumentNullException(nameof(newName));
+        if (color is null) throw new ArgumentNullException(nameof(color));
         characterToUpdate.Aliases = aliases;
         characterToUpdate.Name = newName;
+        characterToUpdate.Color = color;
         _context.Characters.Update(characterToUpdate);
     }
 

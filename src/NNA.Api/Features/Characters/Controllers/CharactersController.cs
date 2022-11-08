@@ -88,7 +88,7 @@ public sealed class CharactersController : NnaController {
             }
         }
 
-        _charactersRepository.UpdateCharactersNameAndAliases(characterToUpdate, updateCharacterDto.Name, updateCharacterDto.Aliases);
+        _charactersRepository.UpdateCharacter(characterToUpdate, updateCharacterDto.Name, updateCharacterDto.Color, updateCharacterDto.Aliases);
         return NoContent();
     }
     

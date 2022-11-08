@@ -14,5 +14,8 @@ public sealed class UpdateCharacterDtoValidator : AbstractValidator<UpdateCharac
         RuleFor(cha => cha.Name)
             .NotEmpty()
             .WithMessage("Character's name is missing");
+        RuleFor(cha => cha.Color)
+            .NotEmpty()
+            .WithMessage("Color is missing");
     }
 }

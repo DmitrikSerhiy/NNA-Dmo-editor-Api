@@ -11,5 +11,8 @@ public sealed class CreateCharacterDtoValidator: AbstractValidator<CreateCharact
         RuleFor(cha => cha.Name)
             .NotEmpty()
             .WithMessage("Character's name is missing");
+        RuleFor(cha => cha.Color)
+            .NotEmpty()
+            .WithMessage("Color is missing");
     }
 }
