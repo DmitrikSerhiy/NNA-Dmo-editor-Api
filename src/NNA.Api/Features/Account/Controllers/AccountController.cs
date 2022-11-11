@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Features.Account.Services;
 using NNA.Api.Helpers;
+using NNA.Domain;
 using NNA.Domain.DTOs.Account;
 using NNA.Domain.Entities;
 using NNA.Domain.Enums;
@@ -175,7 +176,11 @@ public sealed class AccountController : NnaController {
         }
 
         if (string.IsNullOrWhiteSpace(authGoogleDto.Name)) {
-            authGoogleDto.Name = authGoogleDto.Email;
+            authGoogleDto.Name = authGoogleDto.Email.Split("@gmail.com")[0];
+        }
+        
+        if (authGoogleDto.Name.Length > ApplicationConstants.MaxUserNameLength) {
+            authGoogleDto.Name = authGoogleDto.Name[..(ApplicationConstants.MaxUserNameLength - 2)];
         }
 
         var userWithTakenName = await _userManager.FindByNameAsync(authGoogleDto.Name);
@@ -183,7 +188,7 @@ public sealed class AccountController : NnaController {
             var isNameUnique = false;
             string newName;
             do {
-                newName = $"{authGoogleDto.Name}{new Random().Next(1000, 9999)}";
+                newName = $"{authGoogleDto.Name}{new Random().Next(10, 99)}";
                 var nnaUser = await _userManager.FindByNameAsync(newName);
                 if (nnaUser == null) {
                     isNameUnique = true;
@@ -192,7 +197,7 @@ public sealed class AccountController : NnaController {
 
             authGoogleDto.Name = newName;
         }
-
+        
         var googleUser = new NnaUser(authGoogleDto.Email, authGoogleDto.Name);
         googleUser.AddAuthProvider(Enum.GetName(LoginProviderName.google));
         var result = await _userManager.CreateAsync(googleUser);

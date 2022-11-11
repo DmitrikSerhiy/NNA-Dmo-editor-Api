@@ -40,7 +40,7 @@ public sealed class DmoCollectionsController : NnaController {
     public async Task<IActionResult> AddCollection(AddNewDmoCollectionDto dto, CancellationToken cancellationToken) {
         if (await _dmoCollectionsRepository.IsCollectionExistAsync(_authenticatedIdentityProvider.AuthenticatedUserId,
                 dto.CollectionName, cancellationToken)) {
-            return BadRequestWithMessageToToastr($"List with name '{dto.CollectionName}' is already exist");
+            return BadRequestWithMessageToToastr($"Collection with name '{dto.CollectionName}' is already exist");
         }
     
         _dmoCollectionsRepository.AddCollection(new DmoCollection {
@@ -87,6 +87,11 @@ public sealed class DmoCollectionsController : NnaController {
             .GetCollectionAsync(_authenticatedIdentityProvider.AuthenticatedUserId, updateDmoCollectionNameDto.Id, cancellationToken);
         if (collectionForUpdate is null) {
             return BadRequestWithMessageToToastr($"'{updateDmoCollectionNameDto.CollectionName}' has been removed or invalid");
+        }
+        
+        if (await _dmoCollectionsRepository.IsCollectionExistAsync(_authenticatedIdentityProvider.AuthenticatedUserId,
+                updateDmoCollectionNameDto.CollectionName, cancellationToken)) {
+            return BadRequestWithMessageToToastr($"Collection with name '{updateDmoCollectionNameDto.CollectionName}' is already exist");
         }
     
         _dmoCollectionsRepository.UpdateCollectionName(collectionForUpdate,

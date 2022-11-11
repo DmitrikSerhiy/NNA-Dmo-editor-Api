@@ -7,6 +7,6 @@ public sealed class DeleteCharacterDtoValidator : AbstractValidator<DeleteCharac
     public DeleteCharacterDtoValidator() {
         RuleFor(cha => cha.Id)
             .NotEmpty()
-            .WithMessage("Character's id is missing");
+            .WithMessage("Character id is missing");
     }
 }

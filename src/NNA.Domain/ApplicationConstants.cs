@@ -1,7 +1,7 @@
 ﻿namespace NNA.Domain;
 
 public static class ApplicationConstants {
-    public const short MaxCollectionNameLength = 20;
+    public const short MaxCollectionNameLength = 60;
     public const short MaxDmoNameLength = 50;
     public const short MaxMovieTitleLength = 50;
     public const short MaxShortCommentLength = 100;
@@ -11,4 +11,7 @@ public static class ApplicationConstants {
     public const short MaxUserNameLength = 50;
     public const short MaxPasswordLength = 30;
     public const short MinPasswordLength = 10;
+
+    public const short MaxCharacterNameLength = 60;
+    public const short MaxCharacterAliasesLength = 100;
 }

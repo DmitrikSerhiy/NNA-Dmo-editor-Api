@@ -52,7 +52,8 @@ public sealed class TokenDescriptorProvider {
             TokenType = "JWT",
             Claims = new Dictionary<string, object> {
                 { nameof(NnaCustomTokenClaims.oid), Guid.NewGuid() }
-            }
+            },
+            
         };
     }
 }

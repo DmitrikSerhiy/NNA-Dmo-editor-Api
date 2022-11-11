@@ -8,7 +8,7 @@ public sealed class AddNewDmoCollectionDtoValidator : AbstractValidator<AddNewDm
     public AddNewDmoCollectionDtoValidator() {
         RuleFor(d => d.CollectionName)
             .NotEmpty()
-            .WithMessage("Collection id is missing")
+            .WithMessage("Collection name is missing")
             .MaximumLength(ApplicationConstants.MaxCollectionNameLength)
             .WithMessage($"Maximum collection name length is {ApplicationConstants.MaxCollectionNameLength}");
     }
