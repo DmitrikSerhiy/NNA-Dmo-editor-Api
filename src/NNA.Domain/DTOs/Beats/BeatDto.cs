@@ -3,7 +3,7 @@
 public sealed class BeatDto : BaseDto {
     public string BeatId { get; set; } = null!;
     public string Text { get; set; } = null!;
-    public string Order { get; set; } = null!;
+    public int Order { get; set; }
     public int Type { get; set; }
     public NnaMovieCharacterInBeatDto[] CharactersInBeat { get; set; } = Array.Empty<NnaMovieCharacterInBeatDto>();
     public BeatTimeDto Time { get; set; } = null!;
