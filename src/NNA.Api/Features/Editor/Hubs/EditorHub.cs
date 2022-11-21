@@ -234,6 +234,33 @@ public sealed class EditorHub : BaseEditorHub {
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
+
+    public async Task MoveBeat(MoveBeatDto? update) {
+        if (update == null) {
+            await SendBackErrorResponse(BadRequest());
+            return;
+        }
+        
+        if (!Context.ContainsUser()) {
+            await SendBackErrorResponse(NotAuthorized());
+            return;
+        }
+        
+        var validationResult = await new MoveBeatDtoValidator().ValidateAsync(update);
+        if (!validationResult.IsValid) {
+            await SendBackErrorResponse(NotValid(validationResult));
+            return;
+        }
+
+        try {
+            await EditorService.MoveBeat(update, Context.GetCurrentUserId().GetValueOrDefault());
+        }
+        catch (MoveBeatException ex) {
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
+            await DisconnectUser();
+            await SendBackErrorResponse(InternalServerError(ex.Message));
+        }
+    }
     
     public async Task AttachCharacterToBeat(AttachCharacterToBeatDto? characterToBeatDto) {
         if (characterToBeatDto == null) {

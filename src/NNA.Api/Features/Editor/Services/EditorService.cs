@@ -211,15 +211,13 @@ public class EditorService : IEditorService {
 
         if (!isBeatToMoveIdIsGuid) {
             beatToMove.TempId = update.beatToMove.id;
-        }
-        else {
+        } else {
             beatToMove.SetIdExplicitly(beatIdToMove);
         }
 
         if (!isBeatToReplaceIdIsGuid) {
             beatToReplace.TempId = update.beatToReplace.id;
-        }
-        else {
+        } else {
             beatToReplace.SetIdExplicitly(beatIdToReplace);
         }
         
@@ -241,6 +239,43 @@ public class EditorService : IEditorService {
         
         if (!isBeatToMoveUpdated || !isBeatToReplaceUpdated) {
             throw new SwapBeatsException(dmoId, userId);
+        }
+    }
+
+    public async Task MoveBeat(MoveBeatDto update, Guid userId) {
+        if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+        if (update == null) throw new ArgumentNullException(nameof(update));
+        if (update.order == update.previousOrder) {
+            return;
+        }
+        
+        var dmoId = Guid.Parse(update.dmoId);
+        var beatToMove = new Beat {
+            UserId = userId,
+            DmoId = dmoId,
+            Order = update.order
+        };
+        
+        var isBeatToMoveIdIsGuid = Guid.TryParse(update.id, out var beatIdToMove);
+        if (!isBeatToMoveIdIsGuid) {
+            beatToMove.TempId = update.id;
+        } else {
+            beatToMove.SetIdExplicitly(beatIdToMove);
+        }
+        
+        bool isBeatToMoveUpdated;
+        
+        try {
+            isBeatToMoveUpdated = isBeatToMoveIdIsGuid
+                ? await _editorRepository.ResetBeatsOrderByIdAsync(beatToMove, update.previousOrder)
+                : await _editorRepository.ResetBeatsOrderByTempIdAsync(beatToMove, update.previousOrder);
+        }
+        catch (Exception ex) {
+            throw new MoveBeatException(ex, dmoId, userId, update.id);
+        }
+        
+        if (!isBeatToMoveUpdated) {
+            throw new MoveBeatException(dmoId, userId, update.id);
         }
     }
 

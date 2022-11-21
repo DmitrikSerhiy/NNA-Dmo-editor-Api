@@ -95,7 +95,37 @@ internal sealed class EditorRepository : IEditorRepository {
     private const string RemoveCharacterFromBeatByTempIdScript =
         "DELETE FROM [dbo].[CharacterInBeats] " +
         "WHERE [TempId] = @tempId AND [BeatId] = @beatId";
+    
+    private const string SetBeatOrderAfterMoveByIdScript =
+        "UPDATE [dbo].[Beats] " +
+        "SET [Order] = @order " +
+        "WHERE Id = @id AND [DmoId] = @dmoId AND UserId = @userId";
+    
+    private const string SetBeatOrderAfterMoveByTempIdScript =
+        "UPDATE [dbo].[Beats] " +
+        "SET [Order] = @order " +
+        "WHERE [TempId] = @tempId AND [DmoId] = @dmoId AND [UserId] = @userId";
 
+    private const string IncrementBeatsOrderAfterMoveByIdScript =
+        "UPDATE [dbo].[Beats] " +
+        "SET [Order] = [Order] + 1 " +
+        "WHERE [Order] < @previousOrder AND [Order] >= @order AND [DmoId] = @dmoId AND [UserId] = @userId";
+    
+    private const string ReduceBeatsOrderAfterMoveByIdScript =
+        "UPDATE [dbo].[Beats] " +
+        "SET [Order] = [Order] - 1 " +
+        "WHERE [Order] > @previousOrder AND [Order] <= @order AND [DmoId] = @dmoId AND [UserId] = @userId";
+    
+    private const string IncrementBeatsOrderAfterMoveByTempIdScript =
+        "UPDATE [dbo].[Beats] " +
+        "SET [Order] = [Order] + 1 " +
+        "WHERE [Order] < @previousOrder AND [Order] >= @order AND [DmoId] = @dmoId AND [UserId] = @userId";
+    
+    private const string ReduceBeatsOrderAfterMoveByTempIdScript =
+        "UPDATE [dbo].[Beats] " +
+        "SET [Order] = [Order] - 1 " +
+        "WHERE [Order] > @previousOrder AND [Order] <= @order AND [DmoId] = @dmoId AND [UserId] = @userId";
+    
     private const string SanitizeTempIdsScript = 
         "UPDATE [dbo].[Beats] " +
         "SET TempId = NULL " +
@@ -256,6 +286,65 @@ internal sealed class EditorRepository : IEditorRepository {
 
         return result > 0;
     }
+
+    public async Task<bool> ResetBeatsOrderByIdAsync(Beat movedBeat, int previousOrder) {
+        var commandsWithParameters = new List<(string, object)>();
+        if (movedBeat.Order < previousOrder) {
+            commandsWithParameters.Add((IncrementBeatsOrderAfterMoveByIdScript, new {
+                dmoId = movedBeat.DmoId,
+                userId = movedBeat.UserId,
+                order = movedBeat.Order,
+                previousOrder
+            }));
+        } else {
+            commandsWithParameters.Add((ReduceBeatsOrderAfterMoveByIdScript, new {
+                dmoId = movedBeat.DmoId,
+                userId = movedBeat.UserId,
+                order = movedBeat.Order,
+                previousOrder
+            }));
+        }
+
+        commandsWithParameters.Add((SetBeatOrderAfterMoveByIdScript, new {
+            id = movedBeat.Id,
+            dmoId = movedBeat.DmoId,
+            userId = movedBeat.UserId,
+            order = movedBeat.Order
+        }));
+        
+        await ExecuteTransactionAsync(commandsWithParameters);
+        return true;
+    }
+
+    public async Task<bool> ResetBeatsOrderByTempIdAsync(Beat movedBeat, int previousOrder) {
+        var commandsWithParameters = new List<(string, object)>();
+        if (movedBeat.Order < previousOrder) {
+            commandsWithParameters.Add((IncrementBeatsOrderAfterMoveByTempIdScript, new {
+                dmoId = movedBeat.DmoId,
+                userId = movedBeat.UserId,
+                order = movedBeat.Order,
+                previousOrder
+            }));
+        } else {
+            commandsWithParameters.Add((ReduceBeatsOrderAfterMoveByTempIdScript, new {
+                dmoId = movedBeat.DmoId,
+                userId = movedBeat.UserId,
+                order = movedBeat.Order,
+                previousOrder
+            }));
+        }
+        
+        commandsWithParameters.Add((SetBeatOrderAfterMoveByTempIdScript, new {
+            tempId = movedBeat.TempId,
+            dmoId = movedBeat.DmoId,
+            userId = movedBeat.UserId,
+            order = movedBeat.Order
+        }));
+        
+        await ExecuteTransactionAsync(commandsWithParameters);
+        return true;
+    }
+
     public async Task<bool> CreateCharacterInBeatAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat) {
         var result = await ExecuteAsync(InsertCharacterIntoBeatScript, new {
             id = nnaMovieCharacterInBeat.Id,
