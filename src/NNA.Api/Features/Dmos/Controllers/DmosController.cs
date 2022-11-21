@@ -76,7 +76,7 @@ public sealed class DmosController : NnaController {
         }
 
         var dmoWithDataDto = new DmoWithDataDto {
-            Beats = dmoWithData.Beats.Select(_mapper.Map<BeatDto>).OrderBy(b => b.Order).ToList(),
+            Beats = dmoWithData.Beats.Select(_mapper.Map<BeatDto>).ToList(),
             Characters = dmoWithData.Characters.Select(_mapper.Map<DmoCharacterDto>).ToList()
         };
 
@@ -97,6 +97,7 @@ public sealed class DmosController : NnaController {
             }
         }
         dmoWithDataDto.Characters = dmoWithDataDto.Characters.OrderByDescending(cha => cha.Count).ToList();
+        dmoWithDataDto.Beats = dmoWithDataDto.Beats.OrderBy(b => b.Order).ToList();
         return OkWithData(dmoWithDataDto);
     }
     
