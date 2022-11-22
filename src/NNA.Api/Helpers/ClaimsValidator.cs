@@ -6,7 +6,7 @@ using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Helpers;
 
-public sealed class ClaimsValidator {
+public class ClaimsValidator {
     private readonly IUserRepository _repository = null!;
 
     public ClaimsValidator() { }
