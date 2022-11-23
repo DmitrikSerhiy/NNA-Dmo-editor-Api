@@ -29,10 +29,10 @@ internal sealed class LifetimeEventsManager : IHostedService {
     }
 
     private void OnStopping() {
-        _repository.SanitiseEditorConnections();
-        Log.Information("Editor connections are sanitised");
-
         if (!_environment.IsLocalMachine()) {
+            _repository.SanitiseEditorConnections();
+            Log.Information("Editor connections are sanitised");
+            
             _repository.SanitiseUserTokens();
             Log.Information("Tokens are sanitised");
         }

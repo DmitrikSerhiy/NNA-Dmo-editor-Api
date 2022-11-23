@@ -31,7 +31,9 @@ public sealed class LoadShortTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.LoadShortDmo(null);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -56,7 +58,9 @@ public sealed class LoadShortTests : BaseEditorTests {
         Subject.Context = hubContext.Object;
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -78,7 +82,9 @@ public sealed class LoadShortTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -112,7 +118,9 @@ public sealed class LoadShortTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -142,7 +150,9 @@ public sealed class LoadShortTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
+#pragma warning restore CS0612
         var response = await act.Invoke();
 
         //Assert
@@ -179,7 +189,9 @@ public sealed class LoadShortTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task<object>> act = async () => await Subject.LoadShortDmo(DmoDto);
+#pragma warning restore CS0612
         await act.Invoke();
 
         //Assert

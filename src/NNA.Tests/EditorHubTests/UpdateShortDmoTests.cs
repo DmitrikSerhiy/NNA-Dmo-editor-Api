@@ -34,7 +34,9 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task> act = async () => await Subject.UpdateShortDmo(null);
+#pragma warning restore CS0612
         await act.Invoke();
 
         //Assert
@@ -56,7 +58,9 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         Subject.Context = hubContext.Object;
 
         //Act
+#pragma warning disable CS0612
         Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+#pragma warning restore CS0612
         await act.Invoke();
 
         //Assert
@@ -76,7 +80,9 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+#pragma warning restore CS0612
         await act.Invoke();
 
         //Assert
@@ -97,7 +103,9 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+#pragma warning restore CS0612
         await act.Invoke();
 
         //Assert
@@ -121,7 +129,9 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+#pragma warning restore CS0612
         await act.Invoke();
 
         //Assert
@@ -153,7 +163,9 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
+#pragma warning disable CS0612
         Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
+#pragma warning restore CS0612
         await act.Invoke();
 
         //Assert

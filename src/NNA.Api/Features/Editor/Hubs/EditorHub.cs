@@ -18,6 +18,7 @@ public sealed class EditorHub : BaseEditorHub {
         IUserRepository userRepository)
         : base(editorService, webHostEnvironment, claimsValidator, userRepository) { }
 
+    [Obsolete]
     public async Task<object> LoadShortDmo(LoadShortDmoDto? dmoDto) {
         if (dmoDto == null) return BadRequest();
 
@@ -36,7 +37,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (LoadShortDmoException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             return InternalServerError(ex.Message);
         }
     }
@@ -61,16 +62,17 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (CreateDmoException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             return InternalServerError(ex.Message);
         }
         catch (LoadShortDmoException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             return InternalServerError(ex.Message);
         }
     }
 
+    [Obsolete]
     public async Task UpdateShortDmo(UpdateShortDmoDto? dmoDto) {
         if (dmoDto == null) {
             await SendBackErrorResponse(BadRequest());
@@ -93,7 +95,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (UpdateShortDmoException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -120,7 +122,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (UpdateDmoBeatsAsJsonException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -147,7 +149,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (InsertNewBeatException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -174,7 +176,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (DeleteBeatException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -203,7 +205,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (UpdateBeatException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -230,7 +232,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (SwapBeatsException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -257,7 +259,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (MoveBeatException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -284,7 +286,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (AttachCharacterToBeatException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -311,7 +313,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (RemoveCharacterFromBeatException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }
@@ -340,7 +342,7 @@ public sealed class EditorHub : BaseEditorHub {
         }
         catch (SanitizeTempIdsException ex) {
             Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
-            await DisconnectUser();
+            await RemoveUserAndRemoveConnection();
             await SendBackErrorResponse(InternalServerError(ex.Message));
         }
     }

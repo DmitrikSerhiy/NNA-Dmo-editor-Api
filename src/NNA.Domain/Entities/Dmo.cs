@@ -3,8 +3,8 @@
 namespace NNA.Domain.Entities;
 
 public sealed class Dmo : Entity {
-    public string Name { get; set; } = null!;
     public string MovieTitle { get; set; } = null!;
+    public string? Name { get; set; }
     public short DmoStatus { get; set; }
     public string? ShortComment { get; set; }
     public short? Mark { get; set; }

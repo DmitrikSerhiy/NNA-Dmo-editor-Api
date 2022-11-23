@@ -1,8 +1,8 @@
 ﻿namespace NNA.Domain.DTOs.Dmos;
 
-public sealed class CreatedDmoByHttpDto : BaseDto {
+public sealed class CreatedDmoDto : BaseDto {
     public string Id { get; set; } = null!;
-    public string Name { get; set; } = null!;
     public string MovieTitle { get; set; } = null!;
+    public string? Name { get; set; }
     public string? ShortComment { get; set; }
 }

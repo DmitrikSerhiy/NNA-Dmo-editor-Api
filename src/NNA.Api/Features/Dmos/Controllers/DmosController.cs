@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Features.Characters.Services;
 using NNA.Domain.DTOs.Beats;
 using NNA.Domain.DTOs.Characters;
 using NNA.Domain.DTOs.DmoCollections;
 using NNA.Domain.DTOs.Dmos;
-using NNA.Domain.DTOs.Editor;
+using NNA.Domain.Entities;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
@@ -43,12 +44,29 @@ public sealed class DmosController : NnaController {
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateDmo(CreateDmoByHttpDto newDmoDto) {
-        var dmoDtoForEditor = _mapper.Map<CreateDmoDto>(newDmoDto);
+    public async Task<IActionResult> CreateDmo(CreateDmoDto newDmoDto) {
+        var dmoDtoForEditor = _mapper.Map<Domain.DTOs.Editor.CreateDmoDto>(newDmoDto);
         var newDmo = await _editorService.CreateAndLoadDmo(dmoDtoForEditor, _authenticatedIdentityProvider.AuthenticatedUserId);
-        return OkWithData(_mapper.Map<CreatedDmoByHttpDto>(newDmo));
+        return OkWithData(_mapper.Map<CreatedDmoDto>(newDmo));
     }
 
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetDmoDetails([FromRoute] string id, CancellationToken cancellationToken) {
+        var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken);
+        return dmo == null 
+            ? NoContent() 
+            : OkWithData(_mapper.Map<DmoShortDto>(dmo));
+    }
+    
+    [HttpPatch]
+    public async Task<IActionResult> UpdateDmoDetails(JsonPatchDocument<UpdateDmoDetailsDto> patchDocument, CancellationToken cancellationToken) {
+        var update = new UpdateDmoDetailsDto();
+        patchDocument.ApplyTo(update);
+        var dmo = _mapper.Map<Dmo>(update);
+        _dmosRepository.UpdateDmoDetails(dmo);
+        return NoContent();
+    }
+    
     [HttpDelete]
     public async Task<IActionResult> RemoveDmo([FromQuery] RemoveDmoDto dto, CancellationToken cancellationToken) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));

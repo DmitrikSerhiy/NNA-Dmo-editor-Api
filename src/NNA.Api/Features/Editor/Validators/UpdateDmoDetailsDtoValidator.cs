@@ -2,14 +2,16 @@
 using NNA.Domain;
 using NNA.Domain.DTOs.Dmos;
 
-namespace NNA.Api.Features.Dmos.Validators;
+namespace NNA.Api.Features.Editor.Validators;
 
-public sealed class AddDmoByHttpDtoValidator: AbstractValidator<CreateDmoDto> {
-    public AddDmoByHttpDtoValidator() {
+public sealed class UpdateDmoDetailsDtoValidator : AbstractValidator<UpdateDmoDetailsDto> {
+    public UpdateDmoDetailsDtoValidator() {
+        RuleFor(d => d.Id)
+            .NotEmpty()
+            .WithMessage("Dmo Id is missing");
         RuleFor(d => d.Name)
             .MaximumLength(ApplicationConstants.MaxDmoNameLength)
             .WithMessage($"Maximum dmo name length is {ApplicationConstants.MaxDmoNameLength}");
-
         RuleFor(d => d.MovieTitle)
             .NotEmpty()
             .WithMessage("Movie title is missing")

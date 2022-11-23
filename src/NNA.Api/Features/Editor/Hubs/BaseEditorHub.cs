@@ -45,7 +45,10 @@ public class BaseEditorHub : Hub<IEditorClient> {
 
         var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(Context.User.Claims.ToList(), CancellationToken.None);
         if (await _userRepository.HasEditorConnectionAsync(authData.UserId, CancellationToken.None)) {
-            throw new AuthenticationException("User already have active connection.");
+            if (Environment.IsLocal()) {
+                Log.Information($"{Context.GetCurrentUserEmail()} already has connection. Connection will be replaced with new one.");
+            }
+            await RemoveUserAndRemoveConnection();
         }
 
         if (Environment.IsLocal()) {
@@ -71,19 +74,23 @@ public class BaseEditorHub : Hub<IEditorClient> {
             Log.Information($"{Context.GetCurrentUserEmail()} disconnected from the editor");
         }
 
-        await DisconnectUser();
+        await RemoveUserAndRemoveConnection();
         await base.OnDisconnectedAsync(exception);
     }
 
-    protected async Task DisconnectUser() {
+    protected async Task RemoveUserAndRemoveConnection() {
+        await RemoveConnectionAsync();
+        Context.LogoutUser();
+    }
+
+    private async Task RemoveConnectionAsync() {
         _userRepository.RemoveEditorConnection(new EditorConnection {
             UserId = Context.GetCurrentUserId().GetValueOrDefault(),
             ConnectionId = Context.ConnectionId
         });
         await _userRepository.SyncContextImmediatelyAsync(CancellationToken.None);
-        Context.LogoutUser();
     }
-
+    
     public virtual async Task SendBackErrorResponse(object response) {
         await Clients.Caller.OnServerError(response);
     }
