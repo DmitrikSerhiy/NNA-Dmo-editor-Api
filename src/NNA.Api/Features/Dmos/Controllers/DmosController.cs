@@ -74,7 +74,7 @@ public sealed class DmosController : NnaController {
             return NoContent();
         }
 
-        var updateDto = new UpdateDmoDetailsDto();
+        var updateDto = _mapper.Map(dmo, new UpdateDmoDetailsDto());
         patchDocument.ApplyTo(updateDto);
         
         var validationResult = await new UpdateDmoDetailsDtoValidator().ValidateAsync(updateDto, cancellationToken);
