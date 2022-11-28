@@ -15,7 +15,9 @@ if (builder.Environment.IsLocalMachine()) {
 }
 
 try {
-    builder.Services.AddControllers(options => options.ModelValidatorProviders.Clear());
+    builder.Services
+        .AddControllers(options => { options.ModelValidatorProviders.Clear(); })
+        .AddNewtonsoftJson();
     builder.Services.Configure<ApiBehaviorOptions>(options => {
         options.SuppressModelStateInvalidFilter = true;
         options.SuppressMapClientErrors = true;

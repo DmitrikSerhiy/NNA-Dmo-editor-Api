@@ -48,19 +48,21 @@ public class BaseEditorHub : Hub<IEditorClient> {
             if (Environment.IsLocal()) {
                 Log.Information($"{Context.GetCurrentUserEmail()} already has connection. Connection will be replaced with new one.");
             }
-            await RemoveUserAndRemoveConnection();
-        }
 
-        if (Environment.IsLocal()) {
-            Log.Information($"{Context.GetCurrentUserEmail()} just connected to the editor");
+            await _userRepository.RemoveUserConnectionsAsync(authData.UserId, CancellationToken.None);
         }
-
+        
         _userRepository.AddEditorConnection(new EditorConnection {
             UserId = authData.UserId,
             ConnectionId = Context.ConnectionId
         });
+        
         await _userRepository.SyncContextImmediatelyAsync(CancellationToken.None);
         Context.AuthenticateUser(authData);
+        
+        if (Environment.IsLocal()) {
+            Log.Information($"{Context.GetCurrentUserEmail()} just connected to the editor");
+        }
         await base.OnConnectedAsync();
     }
 
@@ -79,18 +81,11 @@ public class BaseEditorHub : Hub<IEditorClient> {
     }
 
     protected async Task RemoveUserAndRemoveConnection() {
-        await RemoveConnectionAsync();
+        await _userRepository.RemoveUserConnectionsAsync(Context.GetCurrentUserId().GetValueOrDefault(), CancellationToken.None);
+        await _userRepository.SyncContextImmediatelyAsync(CancellationToken.None);
         Context.LogoutUser();
     }
 
-    private async Task RemoveConnectionAsync() {
-        _userRepository.RemoveEditorConnection(new EditorConnection {
-            UserId = Context.GetCurrentUserId().GetValueOrDefault(),
-            ConnectionId = Context.ConnectionId
-        });
-        await _userRepository.SyncContextImmediatelyAsync(CancellationToken.None);
-    }
-    
     public virtual async Task SendBackErrorResponse(object response) {
         await Clients.Caller.OnServerError(response);
     }

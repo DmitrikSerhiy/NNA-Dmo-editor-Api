@@ -7,9 +7,24 @@ namespace NNA.Persistence.Repositories;
 
 internal sealed class DmosRepository : CommonRepository, IDmosRepository {
     public DmosRepository(IContextOrchestrator contextOrchestrator): base(contextOrchestrator) { }
-    public async Task<Dmo?> GetById(Guid id, CancellationToken token) {
+    public async Task<Dmo?> GetById(Guid id, CancellationToken token, bool withTracking = false) {
         if (id == Guid.Empty) throw new ArgumentException(nameof(id));
-        return await Context.Dmos.AsNoTracking().FirstOrDefaultAsync(dmo => dmo.Id == id, token);
+        return withTracking
+            ? await Context.Dmos.FirstOrDefaultAsync(dmo => dmo.Id == id, token)
+            : await Context.Dmos.AsNoTracking().FirstOrDefaultAsync(dmo => dmo.Id == id, token);
+    }
+    
+    public async Task<Dmo?> GetShortById(Guid id, CancellationToken token, bool withTracking = false) {
+        if (id == Guid.Empty) throw new ArgumentException(nameof(id));
+        var query = withTracking 
+                ? Context.Dmos.Where(dmo => dmo.Id == id)
+                : Context.Dmos.AsNoTracking().Where(dmo => dmo.Id == id);
+
+        return await query.Select(dmo => new Dmo {
+                DmoStatus = dmo.DmoStatus,
+                MovieTitle = dmo.MovieTitle
+            })
+            .FirstOrDefaultAsync(token);
     }
 
     public async Task<List<Dmo>> GetAllAsync(Guid userId, CancellationToken token) {
@@ -41,7 +56,6 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
 
     public void UpdateDmoDetails(Dmo? dmo) {
         if (dmo is null) throw new ArgumentNullException(nameof(dmo));
-        Context.Dmos.Attach(dmo);
         Context.Update(dmo);
     }
 

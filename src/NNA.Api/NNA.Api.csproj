@@ -17,6 +17,7 @@
       <PackageReference Include="Google.Apis.Auth" Version="1.57.0" />
       <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.8" />
       <PackageReference Include="Microsoft.AspNetCore.JsonPatch" Version="6.0.9" />
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.8" />
       <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="6.0.8" />
       <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="6.0.1" />
       <PackageReference Include="SendGrid" Version="9.28.1" />

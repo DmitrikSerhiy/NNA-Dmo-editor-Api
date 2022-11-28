@@ -27,7 +27,7 @@ internal sealed class UserRepository : CommonRepository, IUserRepository {
         Context.EditorConnections.Remove(connection);
     }
 
-    public async Task RemoveEditorConnectionOnLogout(Guid userId, CancellationToken token) {
+    public async Task RemoveUserConnectionsAsync(Guid userId, CancellationToken token) {
         var connections = await Context.EditorConnections
             .Where(ec => ec.UserId == userId)
             .ToListAsync(token);

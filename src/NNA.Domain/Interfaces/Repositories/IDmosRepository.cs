@@ -3,7 +3,8 @@
 namespace NNA.Domain.Interfaces.Repositories;
 
 public interface IDmosRepository : IRepository {
-    Task<Dmo?> GetById(Guid id, CancellationToken token);
+    Task<Dmo?> GetById(Guid id, CancellationToken token, bool withTracking = false);
+    Task<Dmo?> GetShortById(Guid id, CancellationToken token, bool withTracking = false);
     Task<List<Dmo>> GetAllAsync(Guid userId, CancellationToken token);
     Task<Dmo?> GetShortDmoAsync(Guid userId, Guid? dmoId, CancellationToken token);
     Task<Dmo?> GetDmoAsync(Guid userId, Guid? dmoId, CancellationToken token);

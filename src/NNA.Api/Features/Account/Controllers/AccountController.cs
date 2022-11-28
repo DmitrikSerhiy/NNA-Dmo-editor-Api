@@ -405,7 +405,7 @@ public sealed class AccountController : NnaController {
         }
 
         await _nnaTokenManager.ClearTokensAsync(user, cancellationToken);
-        await _userRepository.RemoveEditorConnectionOnLogout(user.Id, cancellationToken);
+        await _userRepository.RemoveUserConnectionsAsync(user.Id, cancellationToken);
         return NoContent();
     }
 

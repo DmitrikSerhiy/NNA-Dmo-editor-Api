@@ -13,10 +13,10 @@ public sealed class CreateCharacterDtoValidator: AbstractValidator<CreateCharact
             .NotEmpty()
             .WithMessage("Character name is missing")
             .MaximumLength(ApplicationConstants.MaxCharacterNameLength)
-            .WithMessage("Maximum character's name length exceeded");
+            .WithMessage("Maximum character name length exceeded");
         RuleFor(cha => cha.Aliases)
             .MaximumLength(ApplicationConstants.MaxCharacterAliasesLength)
-            .WithMessage("Maximum character's aliases length exceeded");
+            .WithMessage("Maximum character aliases length exceeded");
         RuleFor(cha => cha.Color)
             .NotEmpty()
             .WithMessage("Color is missing");

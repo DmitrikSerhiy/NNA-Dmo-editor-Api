@@ -2,13 +2,14 @@
 using NNA.Domain;
 using NNA.Domain.DTOs.Dmos;
 
-namespace NNA.Api.Features.Editor.Validators;
+namespace NNA.Api.Features.Dmos.Validators;
 
-public sealed class UpdateDmoDetailsDtoValidator : AbstractValidator<UpdateDmoDetailsDto> {
+public sealed class UpdateDmoDetailsDtoValidator: AbstractValidator<UpdateDmoDetailsDto> {
     public UpdateDmoDetailsDtoValidator() {
         RuleFor(d => d.Name)
             .MaximumLength(ApplicationConstants.MaxDmoNameLength)
             .WithMessage($"Maximum dmo name length is {ApplicationConstants.MaxDmoNameLength}");
+
         RuleFor(d => d.MovieTitle)
             .NotEmpty()
             .WithMessage("Movie title is missing")
@@ -18,5 +19,9 @@ public sealed class UpdateDmoDetailsDtoValidator : AbstractValidator<UpdateDmoDe
         RuleFor(d => d.ShortComment)
             .MaximumLength(ApplicationConstants.MaxShortCommentLength)
             .WithMessage($"Maximum comment length is {ApplicationConstants.MaxShortCommentLength}");
+        
+        RuleFor(d => d.DmoStatusId)
+            .IsInEnum()
+            .WithMessage("Invalid status id");
     }
 }

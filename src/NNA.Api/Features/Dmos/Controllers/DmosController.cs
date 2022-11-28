@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Features.Characters.Services;
+using NNA.Api.Features.Editor.Validators;
 using NNA.Domain.DTOs.Beats;
 using NNA.Domain.DTOs.Characters;
 using NNA.Domain.DTOs.DmoCollections;
@@ -50,20 +51,39 @@ public sealed class DmosController : NnaController {
         return OkWithData(_mapper.Map<CreatedDmoDto>(newDmo));
     }
 
+    [HttpGet("short/{id}")]
+    public async Task<IActionResult> GetDmoDetailsShort([FromRoute] string id, CancellationToken cancellationToken) {
+        var dmo = await _dmosRepository.GetShortById(Guid.Parse(id), cancellationToken);
+        return dmo == null 
+            ? NoContent() 
+            : OkWithData(_mapper.Map<DmoDetailsShortDto>(dmo));
+    }
+    
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDmoDetails([FromRoute] string id, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken);
         return dmo == null 
             ? NoContent() 
-            : OkWithData(_mapper.Map<DmoShortDto>(dmo));
+            : OkWithData(_mapper.Map<DmoDetailsDto>(dmo));
     }
-    
-    [HttpPatch]
-    public async Task<IActionResult> UpdateDmoDetails(JsonPatchDocument<UpdateDmoDetailsDto> patchDocument, CancellationToken cancellationToken) {
-        var update = new UpdateDmoDetailsDto();
-        patchDocument.ApplyTo(update);
-        var dmo = _mapper.Map<Dmo>(update);
-        _dmosRepository.UpdateDmoDetails(dmo);
+
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateDmoDetails([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateDmoDetailsDto> patchDocument, CancellationToken cancellationToken) {
+        var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken, true);
+        if (dmo is null) {
+            return NoContent();
+        }
+
+        var updateDto = new UpdateDmoDetailsDto();
+        patchDocument.ApplyTo(updateDto);
+        
+        var validationResult = await new UpdateDmoDetailsDtoValidator().ValidateAsync(updateDto, cancellationToken);
+        if (!validationResult.IsValid) {
+            return InvalidRequest(validationResult.Errors);
+        }
+        
+        var update = _mapper.Map(updateDto, dmo);
+        _dmosRepository.UpdateDmoDetails(update);
         return NoContent();
     }
     

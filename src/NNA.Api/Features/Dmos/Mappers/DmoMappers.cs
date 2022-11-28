@@ -2,7 +2,6 @@
 using NNA.Domain.DTOs.DmoCollections;
 using NNA.Domain.DTOs.Dmos;
 using NNA.Domain.Entities;
-using NNA.Domain.Mappers;
 
 namespace NNA.Api.Features.Dmos.Mappers;
 
@@ -12,11 +11,11 @@ public sealed class DmoMappers : Profile {
         CreateMap<Domain.DTOs.Editor.CreatedDmoDto, CreatedDmoDto>().ReverseMap();
 
         CreateMap<Dmo, DmoDetailsDto>()
-            .ForMember(udc => udc.DmoStatus,
-                dcd => dcd.MapFrom(dd => DmoStatusMapper.GetDmoStatusString(dd.DmoStatus)))
             .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus));
 
-        CreateMap<UpdateDmoDetailsDto, Dmo>();
-
+        CreateMap<Dmo, DmoDetailsShortDto>()
+            .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus));
+        
+        CreateMap<UpdateDmoDetailsDto, Dmo>().ReverseMap();
     }
 }
