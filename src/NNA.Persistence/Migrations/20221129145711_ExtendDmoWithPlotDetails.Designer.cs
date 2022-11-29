@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NNA.Persistence;
 
@@ -11,9 +12,10 @@ using NNA.Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NnaContext))]
-    partial class NnaContextModelSnapshot : ModelSnapshot
+    [Migration("20221129145711_ExtendDmoWithPlotDetails")]
+    partial class ExtendDmoWithPlotDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -191,10 +193,8 @@ namespace Persistence.Migrations
                     b.Property<string>("ControllingIdea")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<short>("ControllingIdeaId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint")
-                        .HasDefaultValue((short)0);
+                    b.Property<int?>("ControllingIdeaId")
+                        .HasColumnType("int");
 
                     b.Property<long>("DateOfCreation")
                         .HasColumnType("bigint");

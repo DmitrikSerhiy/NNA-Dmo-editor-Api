@@ -11,7 +11,9 @@ public sealed class DmoMappers : Profile {
         CreateMap<Domain.DTOs.Editor.CreatedDmoDto, CreatedDmoDto>().ReverseMap();
 
         CreateMap<Dmo, DmoDetailsDto>()
-            .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus));
+            .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus))
+            .ForMember(udc => udc.ControllingIdeaId, dcd => dcd.MapFrom(dd => dd.ControllingIdeaId));
+
 
         CreateMap<Dmo, DmoDetailsShortDto>()
             .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus));
@@ -19,5 +21,11 @@ public sealed class DmoMappers : Profile {
         CreateMap<UpdateDmoDetailsDto, Dmo>()
             .ForMember(udc => udc.DmoStatus, dcd => dcd.MapFrom(dd => dd.DmoStatusId))
             .ReverseMap();
+        
+        CreateMap<UpdateDmoPlotDetailsDto, Dmo>()
+            .ForMember(udc => udc.ControllingIdeaId, dcd => dcd.MapFrom(dd => dd.ControllingIdeaId))
+            .ReverseMap();
+        
+        
     }
 }

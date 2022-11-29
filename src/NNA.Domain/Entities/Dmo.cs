@@ -10,8 +10,14 @@ public sealed class Dmo : Entity {
     public short? Mark { get; set; }
     public string? BeatsJson { get; set; }
     public bool HasBeats { get; set; }
-
-
+    
+    
+    public string? Premise { get; set; }
+    public string? ControllingIdea { get; set; }
+    public short ControllingIdeaId { get; set; }
+    public bool? Didacticism { get; set; }
+    public string? DidacticismDescription { get; set; }
+    
     public NnaUser NnaUser { get; set; } = null!;
     public Guid NnaUserId { get; set; }
 

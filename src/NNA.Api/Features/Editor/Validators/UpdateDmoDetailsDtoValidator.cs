@@ -7,8 +7,8 @@ namespace NNA.Api.Features.Editor.Validators;
 public sealed class UpdateDmoDetailsDtoValidator : AbstractValidator<UpdateDmoDetailsDto> {
     public UpdateDmoDetailsDtoValidator() {
         RuleFor(d => d.Name)
-            .MaximumLength(ApplicationConstants.MaxDmoNameLength)
-            .WithMessage($"Maximum dmo name length is {ApplicationConstants.MaxDmoNameLength}");
+            .MaximumLength(ApplicationConstants.MaxEntityNameLength)
+            .WithMessage($"Maximum dmo name length is {ApplicationConstants.MaxEntityNameLength}");
         RuleFor(d => d.MovieTitle)
             .NotEmpty()
             .WithMessage("Movie title is missing")
@@ -16,7 +16,7 @@ public sealed class UpdateDmoDetailsDtoValidator : AbstractValidator<UpdateDmoDe
             .WithMessage($"Maximum movie title length is {ApplicationConstants.MaxMovieTitleLength}");
 
         RuleFor(d => d.ShortComment)
-            .MaximumLength(ApplicationConstants.MaxShortCommentLength)
-            .WithMessage($"Maximum comment length is {ApplicationConstants.MaxShortCommentLength}");
+            .MaximumLength(ApplicationConstants.MaxEntityNameLongLength)
+            .WithMessage($"Maximum comment length is {ApplicationConstants.MaxEntityNameLongLength}");
     }
 }

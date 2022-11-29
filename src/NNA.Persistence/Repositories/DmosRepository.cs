@@ -54,7 +54,7 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
         Context.Dmos.Remove(dmo);
     }
 
-    public void UpdateDmoDetails(Dmo? dmo) {
+    public void UpdateDmo(Dmo? dmo) {
         if (dmo is null) throw new ArgumentNullException(nameof(dmo));
         Context.Update(dmo);
     }

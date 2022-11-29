@@ -8,7 +8,6 @@ using NNA.Domain.DTOs.Beats;
 using NNA.Domain.DTOs.Characters;
 using NNA.Domain.DTOs.DmoCollections;
 using NNA.Domain.DTOs.Dmos;
-using NNA.Domain.Entities;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
@@ -67,7 +66,7 @@ public sealed class DmosController : NnaController {
             : OkWithData(_mapper.Map<DmoDetailsDto>(dmo));
     }
 
-    [HttpPatch("{id}")]
+    [HttpPatch("details/{id}")]
     public async Task<IActionResult> UpdateDmoDetails([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateDmoDetailsDto> patchDocument, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken, true);
         if (dmo is null) {
@@ -83,7 +82,27 @@ public sealed class DmosController : NnaController {
         }
         
         var update = _mapper.Map(updateDto, dmo);
-        _dmosRepository.UpdateDmoDetails(update);
+        _dmosRepository.UpdateDmo(update);
+        return NoContent();
+    }
+    
+    [HttpPatch("plot/{id}")]
+    public async Task<IActionResult> UpdateDmoPlotDetails([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateDmoPlotDetailsDto> patchDocument, CancellationToken cancellationToken) {
+        var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken, true);
+        if (dmo is null) {
+            return NoContent();
+        }
+
+        var updateDto = _mapper.Map(dmo, new UpdateDmoPlotDetailsDto());
+        patchDocument.ApplyTo(updateDto);
+        
+        var validationResult = await new UpdateDmoPlotDetailsDtoValidator().ValidateAsync(updateDto, cancellationToken);
+        if (!validationResult.IsValid) {
+            return InvalidRequest(validationResult.Errors);
+        }
+        
+        var update = _mapper.Map(updateDto, dmo);
+        _dmosRepository.UpdateDmo(update);
         return NoContent();
     }
     

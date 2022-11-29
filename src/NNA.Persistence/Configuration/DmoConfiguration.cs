@@ -15,5 +15,9 @@ public static class DmoConfiguration {
             .WithOne(d => d.Dmo)
             .HasForeignKey(d => d.DmoId)
             .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<Dmo>()
+            .Property(b => b.ControllingIdeaId)
+            .HasDefaultValue(0);
     }
 }

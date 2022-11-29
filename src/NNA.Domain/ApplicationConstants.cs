@@ -2,9 +2,12 @@
 
 public static class ApplicationConstants {
     public const short MaxCollectionNameLength = 60;
-    public const short MaxDmoNameLength = 100;
     public const short MaxMovieTitleLength = 100;
-    public const short MaxShortCommentLength = 500;
+    
+    public const short MaxEntityNameLength = 100;
+    public const short MaxEntityNameLongLength = 500;
+    
+    
 
     public const short MaxUserEmailLength = 50;
 

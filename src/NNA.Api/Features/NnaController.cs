@@ -2,7 +2,6 @@
 using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Helpers;
-using NuGet.Packaging;
 
 namespace NNA.Api.Features;
 
