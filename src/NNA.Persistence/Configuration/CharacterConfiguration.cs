@@ -17,6 +17,8 @@ public static class CharacterConfiguration {
             .Property(b => b.Color)
             .HasMaxLength(7)
             .HasDefaultValue("#000000");
+        // todo: configure entity
+        // todo: add migration
 
         modelBuilder.Entity<NnaMovieCharacterInBeat>()
             .HasOne(mchInBeat => mchInBeat.Beat)
