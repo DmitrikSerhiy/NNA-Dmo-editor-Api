@@ -49,7 +49,7 @@ internal sealed class CharactersRepository : CommonRepository, ICharactersReposi
         Context.Characters.Add(character);
     }
 
-    public void UpdateCharacter(NnaMovieCharacter update) {
+    public void UpdateCharacter(NnaMovieCharacter? update) {
         if (update is null) throw new ArgumentNullException(nameof(update));
         Context.Characters.Update(update);
     }

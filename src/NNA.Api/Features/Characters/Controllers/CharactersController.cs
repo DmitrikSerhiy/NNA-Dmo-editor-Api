@@ -37,10 +37,20 @@ public sealed class CharactersController : NnaController {
     [HttpGet]
     public async Task<IActionResult> GetDmoCharacters([FromQuery] GetCharactersDto charactersDto, CancellationToken cancellationToken) {
         var characters = await _charactersRepository.GetDmoCharactersWithBeatsAsync(charactersDto.DmoId, cancellationToken);
-        //todo: load character
-        return OkWithData(characters.Select(_mapper.Map<DmoCharacterDto>).OrderByDescending(cha => cha.Count));
-    }
+        var charactersWithBeatsDto = characters
+            .Select(character => {
+                var characterWithBeat = _mapper.Map<DmoCharacterDto>(character);
+                if (character.Beats.Count > 0) {
+                    characterWithBeat.CharacterBeatIds = character.Beats.Select(cha => cha.BeatId).ToArray();
+                }
+                return characterWithBeat;
+            })
+            .OrderByDescending(cha => cha.Count)
+            .ToList();
 
+        return OkWithData(charactersWithBeatsDto);
+    }
+ 
     [HttpPost]
     public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterDto createCharacterDto, CancellationToken cancellationToken) {
         var isCharacterNameTaken =

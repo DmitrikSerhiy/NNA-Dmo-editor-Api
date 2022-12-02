@@ -8,7 +8,7 @@ public sealed class DmoCharacterDto : BaseDto {
     public string Color { get; set; } = "#000000";
     public string? Goal { get; set; }
     public string? UnconsciousGoal { get; set; }
-    public string[] Character { get; set; } = Array.Empty<string>();
+    public Guid[] CharacterBeatIds { get; set; } = Array.Empty<Guid>();
     public string? Characterization { get; set; }
     public bool CharacterContradictsCharacterization { get; set; }
     public string? CharacterContradictsCharacterizationDescription { get; set; }
