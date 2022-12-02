@@ -9,7 +9,8 @@ public sealed class CharacterMapper : Profile {
     public CharacterMapper() {
         CreateMap<NnaMovieCharacter, DmoCharacterDto>()
             .ForMember(dto => dto.Count, entity => entity.MapFrom(chaEn => chaEn.Beats.Count));
-        CreateMap<CreateCharacterDto, NnaMovieCharacter>();
+        CreateMap<CreateCharacterDto, NnaMovieCharacter>().ReverseMap();
+        CreateMap<UpdateCharacterDto, NnaMovieCharacter>().ReverseMap();
         CreateMap<NnaMovieCharacterInBeat, NnaMovieCharacterInBeatDto>()
             .ForMember(dto => dto.CharacterId, entity => entity.MapFrom(chaEn => chaEn.Character.Id))
             .ForMember(dto => dto.Name, entity => entity.MapFrom(chaEn => chaEn.Character.Name));

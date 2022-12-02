@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Features.Characters.Services;
+using NNA.Api.Features.Characters.Validators;
 using NNA.Domain.DTOs.Characters;
 using NNA.Domain.Entities;
 using NNA.Domain.Interfaces;
@@ -33,20 +35,19 @@ public sealed class CharactersController : NnaController {
     }
     
     [HttpGet]
-    [Route("")]
     public async Task<IActionResult> GetDmoCharacters([FromQuery] GetCharactersDto charactersDto, CancellationToken cancellationToken) {
         var characters = await _charactersRepository.GetDmoCharactersWithBeatsAsync(charactersDto.DmoId, cancellationToken);
+        //todo: load character
         return OkWithData(characters.Select(_mapper.Map<DmoCharacterDto>).OrderByDescending(cha => cha.Count));
     }
 
     [HttpPost]
-    [Route("")]
     public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterDto createCharacterDto, CancellationToken cancellationToken) {
         var isCharacterNameTaken =
             await _charactersRepository.IsExistAsync(createCharacterDto.Name, createCharacterDto.DmoId, cancellationToken);
 
         if (isCharacterNameTaken) {
-            return BadRequestWithMessageForUi("Character name is already taken");
+            return BadRequestWithMessageToToastr("Character name is already taken");
         }
         
         var characterEntity = _mapper.Map<NnaMovieCharacter>(createCharacterDto);
@@ -54,19 +55,27 @@ public sealed class CharactersController : NnaController {
         return NoContent();
     }
     
-    [HttpPut]
-    [Route("")]
-    public async Task<IActionResult> UpdateCharacter([FromBody] UpdateCharacterDto updateCharacterDto, CancellationToken cancellationToken) {
-        var characterToUpdate = await _charactersRepository.GetCharacterByIdAsync(updateCharacterDto.Id, cancellationToken);
+    [HttpPatch("{id}")]
+    public async Task<IActionResult> UpdateCharacter([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateCharacterDto> patchDocument, CancellationToken cancellationToken) {
+        var characterToUpdate = await _charactersRepository.GetCharacterByIdAsync(Guid.Parse(id), cancellationToken);
         if (characterToUpdate is null) {
             return NoContent();
         }
-        if (characterToUpdate.Name != updateCharacterDto.Name) {
+        
+        var updateDto = _mapper.Map(characterToUpdate, new UpdateCharacterDto());
+        patchDocument.ApplyTo(updateDto);
+        
+        var validationResult = await new UpdateCharacterDtoValidator().ValidateAsync(updateDto, cancellationToken);
+        if (!validationResult.IsValid) {
+            return InvalidRequest(validationResult.Errors);
+        }
+        
+        if (characterToUpdate.Name != updateDto.Name) {
             var isCharacterNameTaken =
-                await _charactersRepository.IsExistAsync(updateCharacterDto.Name, updateCharacterDto.DmoId, cancellationToken);
+                await _charactersRepository.IsExistAsync(updateDto.Name, updateDto.DmoId, cancellationToken);
             
             if (isCharacterNameTaken) {
-                return BadRequestWithMessageForUi("Character name is already taken");
+                return BadRequestWithMessageToToastr("Character name is already taken");
             }
         }
         
@@ -88,12 +97,12 @@ public sealed class CharactersController : NnaController {
             }
         }
 
-        _charactersRepository.UpdateCharacter(characterToUpdate, updateCharacterDto.Name, updateCharacterDto.Color, updateCharacterDto.Aliases);
+        var update = _mapper.Map(updateDto, characterToUpdate);
+        _charactersRepository.UpdateCharacter(update);
         return NoContent();
     }
     
     [HttpDelete]
-    [Route("")]
     public async Task<IActionResult> DeleteCharacter([FromQuery] DeleteCharacterDto deleteCharacterDto, CancellationToken cancellationToken) {
         var characterToDelete = await _charactersRepository.GetCharacterByIdAsync(deleteCharacterDto.Id, cancellationToken);
         if (characterToDelete is null) {

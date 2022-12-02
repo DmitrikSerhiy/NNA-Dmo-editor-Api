@@ -9,9 +9,6 @@ public sealed class UpdateCharacterDtoValidator : AbstractValidator<UpdateCharac
         RuleFor(cha => cha.DmoId)
             .NotEmpty()
             .WithMessage("Dmo id is missing");
-        RuleFor(cha => cha.Id)
-            .NotEmpty()
-            .WithMessage("Character id is missing");
         RuleFor(cha => cha.Name)
             .NotEmpty()
             .WithMessage("Character name is missing")
@@ -23,5 +20,23 @@ public sealed class UpdateCharacterDtoValidator : AbstractValidator<UpdateCharac
         RuleFor(cha => cha.Color)
             .NotEmpty()
             .WithMessage("Color is missing");
+        RuleFor(cha => cha.Goal)
+            .MaximumLength(ApplicationConstants.MaxEntityNameLongLength)
+            .WithMessage("Maximum goal length exceeded");
+        RuleFor(cha => cha.UnconsciousGoal)
+            .MaximumLength(ApplicationConstants.MaxEntityNameLongLength)
+            .WithMessage("Maximum unconscious goal length exceeded");
+        RuleFor(cha => cha.Characterization)
+            .MaximumLength(ApplicationConstants.MaxEntityNameLongLength)
+            .WithMessage("Maximum characterization length exceeded");
+        RuleFor(cha => cha.CharacterContradictsCharacterizationDescription)
+            .MaximumLength(ApplicationConstants.MaxEntityNameLongLength)
+            .WithMessage("Maximum character contradicts characterization length exceeded");
+        RuleFor(cha => cha.EmphatheticDescription)
+            .MaximumLength(ApplicationConstants.MaxEntityNameLongLength)
+            .WithMessage("Maximum emphathetic description length exceeded");
+        RuleFor(cha => cha.SympatheticDescription)
+            .MaximumLength(ApplicationConstants.MaxEntityNameLongLength)
+            .WithMessage("Maximum sympathetic description length exceeded");
     }
 }

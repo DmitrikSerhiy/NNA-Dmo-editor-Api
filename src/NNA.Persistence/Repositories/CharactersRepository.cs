@@ -49,14 +49,9 @@ internal sealed class CharactersRepository : CommonRepository, ICharactersReposi
         Context.Characters.Add(character);
     }
 
-    public void UpdateCharacter(NnaMovieCharacter? characterToUpdate, string newName, string color, string? aliases) {
-        if (characterToUpdate is null) throw new ArgumentNullException(nameof(characterToUpdate));
-        if (newName is null) throw new ArgumentNullException(nameof(newName));
-        if (color is null) throw new ArgumentNullException(nameof(color));
-        characterToUpdate.Aliases = aliases;
-        characterToUpdate.Name = newName;
-        characterToUpdate.Color = color;
-        Context.Characters.Update(characterToUpdate);
+    public void UpdateCharacter(NnaMovieCharacter update) {
+        if (update is null) throw new ArgumentNullException(nameof(update));
+        Context.Characters.Update(update);
     }
 
     public void DeleteCharacter(NnaMovieCharacter characterToDelete) {
