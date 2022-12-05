@@ -58,4 +58,20 @@ internal sealed class CharactersRepository : CommonRepository, ICharactersReposi
         if (characterToDelete is null) throw new ArgumentNullException(nameof(characterToDelete));
         Context.Characters.Remove(characterToDelete);
     }
+
+    public void AddCharacterConflict(NnaMovieCharacterConflictInDmo conflict) {
+        if (conflict is null) throw new ArgumentNullException(nameof(conflict));
+        Context.NnaMovieCharacterConflicts.Add(conflict);
+    }
+
+    public async Task<NnaMovieCharacterConflictInDmo?> LoadNnaCharacterConflictAsync(Guid id, CancellationToken cancellationToken) {
+        if (id == Guid.Empty) throw new ArgumentException("Empty conflict", nameof(id));
+
+        return await Context.NnaMovieCharacterConflicts.FirstOrDefaultAsync(c => c.Id == id, cancellationToken); 
+    }
+    
+    public void UpdateCharacterConflictInDmo(NnaMovieCharacterConflictInDmo? conflictInDmo) {
+        if (conflictInDmo is null) throw new ArgumentNullException(nameof(conflictInDmo));
+        Context.Update(conflictInDmo);
+    }
 }

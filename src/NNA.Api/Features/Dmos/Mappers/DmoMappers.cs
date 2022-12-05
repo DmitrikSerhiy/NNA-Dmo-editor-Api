@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using NNA.Domain.DTOs.DmoCollections;
 using NNA.Domain.DTOs.Dmos;
 using NNA.Domain.Entities;
 
@@ -10,10 +9,17 @@ public sealed class DmoMappers : Profile {
         CreateMap<CreateDmoDto, Domain.DTOs.Editor.CreateDmoDto>().ReverseMap();
         CreateMap<Domain.DTOs.Editor.CreatedDmoDto, CreatedDmoDto>().ReverseMap();
 
+        CreateMap<NnaMovieCharacterConflictInDmo, DmoConflictDto>()
+            .ForMember(udc => udc.PairId, dcd => dcd.MapFrom(dd => dd.Id));
+            
+        CreateMap<NnaMovieCharacter, DmoCharactersForConflictDto>()
+            .ForMember(udc => udc.CharacterId, dcd => dcd.MapFrom(dd => dd.Id));
+
         CreateMap<Dmo, DmoDetailsDto>()
             .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus))
-            .ForMember(udc => udc.ControllingIdeaId, dcd => dcd.MapFrom(dd => dd.ControllingIdeaId));
-
+            .ForMember(udc => udc.ControllingIdeaId, dcd => dcd.MapFrom(dd => dd.ControllingIdeaId))
+            .ForMember(udc => udc.CharactersForConflict, dcd => dcd.MapFrom(dd => dd.Characters))
+            .ForMember(udc => udc.Conflicts, dcd => dcd.MapFrom(dd => dd.Characters.SelectMany(cha => cha.Conflicts)));
 
         CreateMap<Dmo, DmoDetailsShortDto>()
             .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus));

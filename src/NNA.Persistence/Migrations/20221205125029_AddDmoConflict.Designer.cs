@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NNA.Persistence;
 
@@ -11,9 +12,10 @@ using NNA.Persistence;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(NnaContext))]
-    partial class NnaContextModelSnapshot : ModelSnapshot
+    [Migration("20221205125029_AddDmoConflict")]
+    partial class AddDmoConflict
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -290,6 +292,35 @@ namespace Persistence.Migrations
                     b.ToTable("EditorConnections");
                 });
 
+            modelBuilder.Entity("NNA.Domain.Entities.NnaDmoConflict", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("Achieved")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false);
+
+                    b.Property<Guid>("CharacterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<short>("CharacterType")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("smallint")
+                        .HasDefaultValue((short)1);
+
+                    b.Property<long>("DateOfCreation")
+                        .HasColumnType("bigint");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CharacterId");
+
+                    b.ToTable("NnaDmoConflicts");
+                });
+
             modelBuilder.Entity("NNA.Domain.Entities.NnaMovieCharacter", b =>
                 {
                     b.Property<Guid>("Id")
@@ -348,38 +379,6 @@ namespace Persistence.Migrations
                     b.HasIndex("DmoId");
 
                     b.ToTable("Characters");
-                });
-
-            modelBuilder.Entity("NNA.Domain.Entities.NnaMovieCharacterConflictInDmo", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("Achieved")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false);
-
-                    b.Property<Guid>("CharacterId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<short>("CharacterType")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("smallint")
-                        .HasDefaultValue((short)1);
-
-                    b.Property<long>("DateOfCreation")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("PairOrder")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CharacterId");
-
-                    b.ToTable("NnaMovieCharacterConflicts");
                 });
 
             modelBuilder.Entity("NNA.Domain.Entities.NnaMovieCharacterInBeat", b =>
@@ -659,6 +658,17 @@ namespace Persistence.Migrations
                     b.Navigation("DmoCollection");
                 });
 
+            modelBuilder.Entity("NNA.Domain.Entities.NnaDmoConflict", b =>
+                {
+                    b.HasOne("NNA.Domain.Entities.NnaMovieCharacter", "Character")
+                        .WithMany("Conflicts")
+                        .HasForeignKey("CharacterId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Character");
+                });
+
             modelBuilder.Entity("NNA.Domain.Entities.NnaMovieCharacter", b =>
                 {
                     b.HasOne("NNA.Domain.Entities.Dmo", "Dmo")
@@ -668,17 +678,6 @@ namespace Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Dmo");
-                });
-
-            modelBuilder.Entity("NNA.Domain.Entities.NnaMovieCharacterConflictInDmo", b =>
-                {
-                    b.HasOne("NNA.Domain.Entities.NnaMovieCharacter", "Character")
-                        .WithMany("Conflicts")
-                        .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Character");
                 });
 
             modelBuilder.Entity("NNA.Domain.Entities.NnaMovieCharacterInBeat", b =>

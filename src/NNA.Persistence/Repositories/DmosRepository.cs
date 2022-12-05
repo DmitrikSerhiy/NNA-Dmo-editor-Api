@@ -14,6 +14,13 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
             : await Context.Dmos.AsNoTracking().FirstOrDefaultAsync(dmo => dmo.Id == id, token);
     }
     
+    public async Task<Dmo?> GetByIdWithCharactersAndConflicts(Guid id, CancellationToken token, bool withTracking = false) {
+        if (id == Guid.Empty) throw new ArgumentException(nameof(id));
+        return withTracking
+            ? await Context.Dmos.Include(dmo => dmo.Characters).ThenInclude(cha => cha.Conflicts).FirstOrDefaultAsync(dmo => dmo.Id == id, token)
+            : await Context.Dmos.Include(dmo => dmo.Characters).ThenInclude(cha => cha.Conflicts).AsNoTracking().FirstOrDefaultAsync(dmo => dmo.Id == id, token);
+    }
+    
     public async Task<Dmo?> GetShortById(Guid id, CancellationToken token, bool withTracking = false) {
         if (id == Guid.Empty) throw new ArgumentException(nameof(id));
         var query = withTracking 

@@ -29,8 +29,24 @@ public static class CharacterConfiguration {
             .WithMany(cha => cha.Beats)
             .HasForeignKey(mchInBeat => mchInBeat.CharacterId)
             .OnDelete(DeleteBehavior.Cascade);
-        
+
         modelBuilder.Entity<NnaMovieCharacterInBeat>()
             .HasKey(mchInBeat => mchInBeat.Id);
+        
+        modelBuilder.Entity<NnaMovieCharacterConflictInDmo>()
+            .HasOne(c => c.Character)
+            .WithMany(cha => cha.Conflicts)
+            .HasForeignKey(c => c.CharacterId)
+            .OnDelete(DeleteBehavior.Cascade);
+        
+        modelBuilder.Entity<NnaMovieCharacterConflictInDmo>()
+            .Property(b => b.Achieved)
+            .HasDefaultValue(0);
+        
+        modelBuilder.Entity<NnaMovieCharacterConflictInDmo>()
+            .Property(b => b.CharacterType)
+            .HasDefaultValue(1);
+        
+        
     }
 }

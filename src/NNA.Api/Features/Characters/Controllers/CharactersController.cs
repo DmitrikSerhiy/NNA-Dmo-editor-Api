@@ -4,7 +4,9 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Features.Characters.Services;
 using NNA.Api.Features.Characters.Validators;
+using NNA.Api.Features.Dmos.Validators;
 using NNA.Domain.DTOs.Characters;
+using NNA.Domain.DTOs.Dmos;
 using NNA.Domain.Entities;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
@@ -141,4 +143,39 @@ public sealed class CharactersController : NnaController {
         _charactersRepository.DeleteCharacter(characterToDelete);
         return NoContent();
     }
+    
+    [HttpPost("conflict/pair")]
+    public IActionResult AddCharacterConflictPairToDmo(AddConflictPairToDmoDto conflictPairDto) {
+        var antagonistInConflict = _mapper.Map<NnaMovieCharacterConflictInDmo>(conflictPairDto.Antagonist);
+        var protagonistInConflict = _mapper.Map<NnaMovieCharacterConflictInDmo>(conflictPairDto.Protagonist);
+
+        antagonistInConflict.PairOrder = conflictPairDto.Order;
+        protagonistInConflict.PairOrder = conflictPairDto.Order;
+
+        _charactersRepository.AddCharacterConflict(antagonistInConflict);
+        _charactersRepository.AddCharacterConflict(protagonistInConflict);
+        
+        return NoContent();
+    }
+    
+    [HttpPatch("conflict/pair")]
+    public async Task<IActionResult> UpdateCharacterConflictPairToDmo([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateCharacterConflictPairInDmo> patchDocument, CancellationToken cancellationToken) {
+        var conflict = await _charactersRepository.LoadNnaCharacterConflictAsync(Guid.Parse(id), cancellationToken);
+        if (conflict is null) {
+            return NoContent();
+        }
+
+        var updateDto = _mapper.Map(conflict, new UpdateCharacterConflictPairInDmo());
+        patchDocument.ApplyTo(updateDto);
+        
+        var validationResult = await new UpdateCharacterConflictPairInDmoValidator().ValidateAsync(updateDto, cancellationToken);
+        if (!validationResult.IsValid) {
+            return InvalidRequest(validationResult.Errors);
+        }
+        
+        var update = _mapper.Map(updateDto, conflict);
+        _charactersRepository.UpdateCharacterConflictInDmo(update);
+        return NoContent();
+    }
+    
 }

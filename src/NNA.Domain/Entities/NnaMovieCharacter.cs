@@ -22,4 +22,5 @@ public sealed class NnaMovieCharacter : Entity {
     public Dmo Dmo { get; set; } = null!;
 
     public ICollection<NnaMovieCharacterInBeat> Beats { get; set; } = new List<NnaMovieCharacterInBeat>();
+    public ICollection<NnaMovieCharacterConflictInDmo> Conflicts { get; set; } = new List<NnaMovieCharacterConflictInDmo>();
 }

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using NNA.Domain.DTOs.DmoCollections;
+using NNA.Domain.DTOs.Dmos;
 using NNA.Domain.Entities;
 using NNA.Domain.Mappers;
 

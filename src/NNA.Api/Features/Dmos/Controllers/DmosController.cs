@@ -6,7 +6,6 @@ using NNA.Api.Features.Characters.Services;
 using NNA.Api.Features.Editor.Validators;
 using NNA.Domain.DTOs.Beats;
 using NNA.Domain.DTOs.Characters;
-using NNA.Domain.DTOs.DmoCollections;
 using NNA.Domain.DTOs.Dmos;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
@@ -60,7 +59,8 @@ public sealed class DmosController : NnaController {
     
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDmoDetails([FromRoute] string id, CancellationToken cancellationToken) {
-        var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken);
+        var dmo = await _dmosRepository.GetByIdWithCharactersAndConflicts(Guid.Parse(id), cancellationToken);
+        
         return dmo == null 
             ? NoContent() 
             : OkWithData(_mapper.Map<DmoDetailsDto>(dmo));
@@ -118,7 +118,7 @@ public sealed class DmosController : NnaController {
         _dmosRepository.DeleteDmo(dmo);
         return NoContent();
     }
-    
+
     [HttpGet]
     [Route("{Id}/withData")]
     public async Task<IActionResult> LoadDmoWithData([FromRoute] GetDmoWithDataDto getDmoWithDataDto, CancellationToken cancellationToken, [FromQuery] bool sanitizeBeforeLoad = false) {

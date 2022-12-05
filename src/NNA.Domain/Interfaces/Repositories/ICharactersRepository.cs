@@ -11,4 +11,7 @@ public interface ICharactersRepository : IRepository {
     void DeleteCharacter(NnaMovieCharacter characterToDelete);
     Task<bool> IsExistAsync(string characterName, Guid dmoId, CancellationToken cancellationToken);
     Task<List<Guid>> LoadCharacterInBeatIdsAsync(Guid characterId);
+    void AddCharacterConflict(NnaMovieCharacterConflictInDmo conflict);
+    Task<NnaMovieCharacterConflictInDmo?> LoadNnaCharacterConflictAsync(Guid id, CancellationToken cancellationToken);
+    void UpdateCharacterConflictInDmo(NnaMovieCharacterConflictInDmo? conflictInDmo);
 }
