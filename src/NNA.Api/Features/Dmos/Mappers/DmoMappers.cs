@@ -9,9 +9,8 @@ public sealed class DmoMappers : Profile {
         CreateMap<CreateDmoDto, Domain.DTOs.Editor.CreateDmoDto>().ReverseMap();
         CreateMap<Domain.DTOs.Editor.CreatedDmoDto, CreatedDmoDto>().ReverseMap();
 
-        CreateMap<NnaMovieCharacterConflictInDmo, DmoConflictDto>()
-            .ForMember(udc => udc.PairId, dcd => dcd.MapFrom(dd => dd.Id));
-            
+        CreateMap<NnaMovieCharacterConflictInDmo, DmoConflictDto>();
+
         CreateMap<NnaMovieCharacter, DmoCharactersForConflictDto>()
             .ForMember(udc => udc.CharacterId, dcd => dcd.MapFrom(dd => dd.Id));
 

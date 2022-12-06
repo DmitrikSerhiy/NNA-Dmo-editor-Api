@@ -3,6 +3,7 @@
 namespace NNA.Domain.Entities;
 
 public sealed class NnaMovieCharacterConflictInDmo: Entity {
+    public Guid PairId { get; set; }
     public int PairOrder { get; set; }
     public short CharacterType { get; set; }
     public bool Achieved { get; set; }

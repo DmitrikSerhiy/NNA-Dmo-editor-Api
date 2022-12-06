@@ -3,6 +3,7 @@
 namespace NNA.Domain.DTOs.Dmos;
 
 public sealed class DmoConflictDto: BaseDto {
+    public Guid Id { get; set; }
     public Guid PairId { get; set; }
     public int PairOrder { get; set; }
     public string CharacterId { get; set; } = null!;
