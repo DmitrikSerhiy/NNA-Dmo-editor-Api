@@ -6,4 +6,5 @@ public sealed class DmoCharactersForConflictDto: BaseDto {
     public string? Aliases { get; set; }
     public string Color { get; set; } = "#000000";
     public string? Goal { get; set; }
+    public bool Achieved { get; set; }
 }
