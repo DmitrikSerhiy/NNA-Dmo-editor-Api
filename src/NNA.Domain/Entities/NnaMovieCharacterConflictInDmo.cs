@@ -8,6 +8,9 @@ public sealed class NnaMovieCharacterConflictInDmo: Entity {
     public short CharacterType { get; set; }
     public bool Achieved { get; set; }
     
-    public Guid CharacterId { get; set; }
-    public NnaMovieCharacter Character { get; set; } = null!;
+    public Guid DmoId { get; set; }
+    public Dmo Dmo { get; set; } = null!;
+    
+    public Guid? CharacterId { get; set; }
+    public NnaMovieCharacter? Character { get; set; }
 }

@@ -3,12 +3,16 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Features.Characters.Services;
+using NNA.Api.Features.Dmos.Validators;
 using NNA.Api.Features.Editor.Validators;
 using NNA.Domain.DTOs.Beats;
 using NNA.Domain.DTOs.Characters;
 using NNA.Domain.DTOs.Dmos;
+using NNA.Domain.Entities;
+using NNA.Domain.Enums;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
+using UpdateDmoDetailsDtoValidator = NNA.Api.Features.Editor.Validators.UpdateDmoDetailsDtoValidator;
 
 namespace NNA.Api.Features.Dmos.Controllers;
 
@@ -66,7 +70,7 @@ public sealed class DmosController : NnaController {
             : OkWithData(_mapper.Map<DmoDetailsDto>(dmo));
     }
 
-    [HttpPatch("details/{id}")]
+    [HttpPatch("{id}/details")]
     public async Task<IActionResult> UpdateDmoDetails([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateDmoDetailsDto> patchDocument, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken, true);
         if (dmo is null) {
@@ -86,7 +90,67 @@ public sealed class DmosController : NnaController {
         return NoContent();
     }
     
-    [HttpPatch("plot/{id}")]
+    [HttpPost("{id}/conflict")]
+    public IActionResult CreateConflict([FromRoute] string id, [FromBody] CreateConflictDto createConflictDto) {
+        var dmoId = Guid.Parse(id);
+        var pairId = Guid.NewGuid();
+        var protagonistInConflict = new NnaMovieCharacterConflictInDmo {
+            DmoId = dmoId,
+            PairOrder = createConflictDto.PairOrder,
+            PairId = pairId,
+            CharacterId = null,
+            Achieved = false,
+            CharacterType = (short)CharacterType.Protagonist
+        };
+        var antagonistInConflict = new NnaMovieCharacterConflictInDmo {
+            DmoId = dmoId,
+            PairOrder = createConflictDto.PairOrder,
+            PairId = pairId,
+            CharacterId = null,
+            Achieved = false,
+            CharacterType = (short)CharacterType.Antagonist
+        };
+        
+        _dmosRepository.CreateConflictInDmo(protagonistInConflict);
+        _dmosRepository.CreateConflictInDmo(antagonistInConflict);
+        return OkWithData(new { Protagonist = protagonistInConflict, Antagonist = antagonistInConflict });
+    }
+    
+    [HttpDelete("dmo/conflictPair/{conflictPairId}")]
+    public async Task<IActionResult> DeleteDmoConflict([FromRoute] string conflictPairId, CancellationToken cancellationToken) {
+        var conflicts = await _dmosRepository.GetNnaMovieCharacterConflictByPairId(Guid.Parse(conflictPairId), cancellationToken);
+        if (conflicts.Count == 0) {
+            return NoContent();
+        }
+
+        foreach (var conflict in conflicts) {
+            _dmosRepository.DeleteConflictInDmo(conflict);
+        }
+
+        return NoContent();
+    }
+    
+    [HttpPatch("dmo/conflict/{conflictId}")]
+    public async Task<IActionResult> UpdateDmoConflict([FromRoute] string conflictId, [FromBody] JsonPatchDocument<UpdateDmoConflictDto> patchDocument, CancellationToken cancellationToken) {
+        var conflict = await _dmosRepository.GetNnaMovieCharacterConflictById(Guid.Parse(conflictId), cancellationToken);
+        if (conflict is null) {
+            return NoContent();
+        }
+        
+        var updateDto = _mapper.Map(conflict, new UpdateDmoConflictDto());
+        patchDocument.ApplyTo(updateDto);
+
+        var validationResult = await new UpdateDmoConflictDtoValidator().ValidateAsync(updateDto, cancellationToken);
+        if (!validationResult.IsValid) {
+            return InvalidRequest(validationResult.Errors);
+        }
+        
+        var update = _mapper.Map(updateDto, conflict);
+        _dmosRepository.UpdateConflictInDmo(update);
+        return NoContent();
+    }
+    
+    [HttpPatch("{id}/plot")]
     public async Task<IActionResult> UpdateDmoPlotDetails([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateDmoPlotDetailsDto> patchDocument, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken, true);
         if (dmo is null) {

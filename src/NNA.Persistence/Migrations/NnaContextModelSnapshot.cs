@@ -361,7 +361,7 @@ namespace Persistence.Migrations
                         .HasColumnType("bit")
                         .HasDefaultValue(false);
 
-                    b.Property<Guid>("CharacterId")
+                    b.Property<Guid?>("CharacterId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<short>("CharacterType")
@@ -372,6 +372,9 @@ namespace Persistence.Migrations
                     b.Property<long>("DateOfCreation")
                         .HasColumnType("bigint");
 
+                    b.Property<Guid>("DmoId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("PairId")
                         .HasColumnType("uniqueidentifier");
 
@@ -381,6 +384,8 @@ namespace Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CharacterId");
+
+                    b.HasIndex("DmoId");
 
                     b.ToTable("NnaMovieCharacterConflicts");
                 });
@@ -678,10 +683,17 @@ namespace Persistence.Migrations
                     b.HasOne("NNA.Domain.Entities.NnaMovieCharacter", "Character")
                         .WithMany("Conflicts")
                         .HasForeignKey("CharacterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("NNA.Domain.Entities.Dmo", "Dmo")
+                        .WithMany("Conflicts")
+                        .HasForeignKey("DmoId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("Character");
+
+                    b.Navigation("Dmo");
                 });
 
             modelBuilder.Entity("NNA.Domain.Entities.NnaMovieCharacterInBeat", b =>
@@ -713,6 +725,8 @@ namespace Persistence.Migrations
                     b.Navigation("Beats");
 
                     b.Navigation("Characters");
+
+                    b.Navigation("Conflicts");
 
                     b.Navigation("DmoCollectionDmos");
                 });

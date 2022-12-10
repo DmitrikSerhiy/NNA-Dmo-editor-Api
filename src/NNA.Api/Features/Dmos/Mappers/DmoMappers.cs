@@ -10,6 +10,7 @@ public sealed class DmoMappers : Profile {
         CreateMap<Domain.DTOs.Editor.CreatedDmoDto, CreatedDmoDto>().ReverseMap();
 
         CreateMap<NnaMovieCharacterConflictInDmo, DmoConflictDto>();
+        CreateMap<NnaMovieCharacterConflictInDmo, UpdateDmoConflictDto>().ReverseMap();
 
         CreateMap<NnaMovieCharacter, DmoCharactersForConflictDto>()
             .ForMember(udc => udc.CharacterId, dcd => dcd.MapFrom(dd => dd.Id));
@@ -18,7 +19,7 @@ public sealed class DmoMappers : Profile {
             .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus))
             .ForMember(udc => udc.ControllingIdeaId, dcd => dcd.MapFrom(dd => dd.ControllingIdeaId))
             .ForMember(udc => udc.CharactersForConflict, dcd => dcd.MapFrom(dd => dd.Characters))
-            .ForMember(udc => udc.Conflicts, dcd => dcd.MapFrom(dd => dd.Characters.SelectMany(cha => cha.Conflicts)));
+            .ForMember(udc => udc.Conflicts, dcd => dcd.MapFrom(dd => dd.Conflicts));
 
         CreateMap<Dmo, DmoDetailsShortDto>()
             .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus));

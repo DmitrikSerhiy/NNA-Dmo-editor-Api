@@ -17,8 +17,8 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
     public async Task<Dmo?> GetByIdWithCharactersAndConflicts(Guid id, CancellationToken token, bool withTracking = false) {
         if (id == Guid.Empty) throw new ArgumentException(nameof(id));
         return withTracking
-            ? await Context.Dmos.Include(dmo => dmo.Characters).ThenInclude(cha => cha.Conflicts).FirstOrDefaultAsync(dmo => dmo.Id == id, token)
-            : await Context.Dmos.Include(dmo => dmo.Characters).ThenInclude(cha => cha.Conflicts).AsNoTracking().FirstOrDefaultAsync(dmo => dmo.Id == id, token);
+            ? await Context.Dmos.Include(dmo => dmo.Characters).Include(cha => cha.Conflicts).FirstOrDefaultAsync(dmo => dmo.Id == id, token)
+            : await Context.Dmos.Include(dmo => dmo.Characters).Include(cha => cha.Conflicts).AsNoTracking().FirstOrDefaultAsync(dmo => dmo.Id == id, token);
     }
     
     public async Task<Dmo?> GetShortById(Guid id, CancellationToken token, bool withTracking = false) {
@@ -35,8 +35,22 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
     }
 
     public async Task<List<Dmo>> GetAllAsync(Guid userId, CancellationToken token) {
+        if (userId == Guid.Empty) throw new ArgumentException(nameof(userId));
         return await Context.Dmos.Where(dmo => dmo.NnaUserId == userId)
             .OrderByDescending(dmo => dmo.DateOfCreation)
+            .ToListAsync(token);
+    }
+
+    public async Task<NnaMovieCharacterConflictInDmo?> GetNnaMovieCharacterConflictById(Guid conflictId, CancellationToken token) {
+        if (conflictId == Guid.Empty) throw new ArgumentException(nameof(conflictId));
+        return await Context.NnaMovieCharacterConflicts
+            .FirstOrDefaultAsync(c => c.Id == conflictId, token);
+    }
+
+    public async Task<List<NnaMovieCharacterConflictInDmo>> GetNnaMovieCharacterConflictByPairId(Guid conflictPairId, CancellationToken token) {
+        if (conflictPairId == Guid.Empty) throw new ArgumentException(nameof(conflictPairId));
+        return await Context.NnaMovieCharacterConflicts
+            .Where(c => c.PairId == conflictPairId)
             .ToListAsync(token);
     }
 
@@ -65,6 +79,20 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
         if (dmo is null) throw new ArgumentNullException(nameof(dmo));
         Context.Update(dmo);
     }
+    
+    public void UpdateConflictInDmo(NnaMovieCharacterConflictInDmo? conflict) {
+        if (conflict is null) throw new ArgumentNullException(nameof(conflict));
+        Context.Update(conflict);
+    }
+
+    public void CreateConflictInDmo(NnaMovieCharacterConflictInDmo? conflict) {
+        if (conflict is null) throw new ArgumentNullException(nameof(conflict));
+        Context.NnaMovieCharacterConflicts.Add(conflict);
+    }
+
+    public void DeleteConflictInDmo(NnaMovieCharacterConflictInDmo? conflict) {
+        if (conflict is null) throw new ArgumentNullException(nameof(conflict));
+        Context.NnaMovieCharacterConflicts.Remove(conflict);    }
 
     public async Task<Dmo?> GetDmoWithDataAsync(Guid userId, Guid dmoId, CancellationToken cancellationToken) {
         return await Context.Dmos

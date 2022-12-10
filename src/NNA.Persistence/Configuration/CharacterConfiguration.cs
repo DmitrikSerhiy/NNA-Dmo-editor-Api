@@ -32,12 +32,13 @@ public static class CharacterConfiguration {
 
         modelBuilder.Entity<NnaMovieCharacterInBeat>()
             .HasKey(mchInBeat => mchInBeat.Id);
-        
+
         modelBuilder.Entity<NnaMovieCharacterConflictInDmo>()
             .HasOne(c => c.Character)
             .WithMany(cha => cha.Conflicts)
             .HasForeignKey(c => c.CharacterId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .OnDelete(DeleteBehavior.SetNull)
+            .IsRequired(false);
         
         modelBuilder.Entity<NnaMovieCharacterConflictInDmo>()
             .Property(b => b.Achieved)

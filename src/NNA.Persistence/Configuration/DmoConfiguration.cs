@@ -19,5 +19,13 @@ public static class DmoConfiguration {
         modelBuilder.Entity<Dmo>()
             .Property(b => b.ControllingIdeaId)
             .HasDefaultValue(0);
+        
+        modelBuilder.Entity<Dmo>()
+            .HasMany(d => d.Conflicts)
+            .WithOne(c => c.Dmo)
+            .HasForeignKey(c => c.DmoId)
+            .OnDelete(DeleteBehavior.NoAction)
+            // ReSharper disable once RedundantArgumentDefaultValue
+            .IsRequired(true);
     }
 }
