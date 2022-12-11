@@ -378,9 +378,6 @@ namespace Persistence.Migrations
                     b.Property<Guid>("PairId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("PairOrder")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CharacterId");

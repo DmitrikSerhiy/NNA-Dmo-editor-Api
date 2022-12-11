@@ -64,10 +64,18 @@ public sealed class DmosController : NnaController {
     [HttpGet("{id}")]
     public async Task<IActionResult> GetDmoDetails([FromRoute] string id, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetByIdWithCharactersAndConflicts(Guid.Parse(id), cancellationToken);
+
+        if (dmo == null) {
+            return NoContent();
+        }
+
+        dmo.Conflicts = dmo.Conflicts
+            .OrderByDescending(d => d.DateOfCreation)
+            .ToList();
         
-        return dmo == null 
-            ? NoContent() 
-            : OkWithData(_mapper.Map<DmoDetailsDto>(dmo));
+        var dmoDto = _mapper.Map<DmoDetailsDto>(dmo);
+
+        return OkWithData(dmoDto);
     }
 
     [HttpPatch("{id}/details")]
@@ -91,12 +99,11 @@ public sealed class DmosController : NnaController {
     }
     
     [HttpPost("{id}/conflict")]
-    public IActionResult CreateConflict([FromRoute] string id, [FromBody] CreateConflictDto createConflictDto) {
+    public IActionResult CreateConflict([FromRoute] string id) {
         var dmoId = Guid.Parse(id);
         var pairId = Guid.NewGuid();
         var protagonistInConflict = new NnaMovieCharacterConflictInDmo {
             DmoId = dmoId,
-            PairOrder = createConflictDto.PairOrder,
             PairId = pairId,
             CharacterId = null,
             Achieved = false,
@@ -104,7 +111,6 @@ public sealed class DmosController : NnaController {
         };
         var antagonistInConflict = new NnaMovieCharacterConflictInDmo {
             DmoId = dmoId,
-            PairOrder = createConflictDto.PairOrder,
             PairId = pairId,
             CharacterId = null,
             Achieved = false,
