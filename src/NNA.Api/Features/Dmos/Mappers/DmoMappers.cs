@@ -10,6 +10,7 @@ public sealed class DmoMappers : Profile {
         CreateMap<Domain.DTOs.Editor.CreatedDmoDto, CreatedDmoDto>().ReverseMap();
 
         CreateMap<NnaMovieCharacterConflictInDmo, DmoConflictDto>();
+        CreateMap<NnaMovieCharacterConflictInDmo, CreatedDmoConflictDto>();
         CreateMap<NnaMovieCharacterConflictInDmo, UpdateDmoConflictDto>().ReverseMap();
 
         CreateMap<NnaMovieCharacter, DmoCharactersForConflictDto>()

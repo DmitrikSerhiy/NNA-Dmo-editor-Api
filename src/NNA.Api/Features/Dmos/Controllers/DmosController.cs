@@ -113,7 +113,7 @@ public sealed class DmosController : NnaController {
         
         _dmosRepository.CreateConflictInDmo(protagonistInConflict);
         _dmosRepository.CreateConflictInDmo(antagonistInConflict);
-        return OkWithData(new { Protagonist = protagonistInConflict, Antagonist = antagonistInConflict });
+        return OkWithData(new { Protagonist = _mapper.Map<CreatedDmoConflictDto>(protagonistInConflict), Antagonist = _mapper.Map<CreatedDmoConflictDto>(antagonistInConflict) });
     }
     
     [HttpDelete("dmo/conflictPair/{conflictPairId}")]
