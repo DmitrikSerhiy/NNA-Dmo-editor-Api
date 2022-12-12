@@ -145,11 +145,6 @@ public sealed class DmosController : NnaController {
         
         var updateDto = _mapper.Map(conflict, new UpdateDmoConflictDto());
         patchDocument.ApplyTo(updateDto);
-
-        var validationResult = await new UpdateDmoConflictDtoValidator().ValidateAsync(updateDto, cancellationToken);
-        if (!validationResult.IsValid) {
-            return InvalidRequest(validationResult.Errors);
-        }
         
         var update = _mapper.Map(updateDto, conflict);
         _dmosRepository.UpdateConflictInDmo(update);
