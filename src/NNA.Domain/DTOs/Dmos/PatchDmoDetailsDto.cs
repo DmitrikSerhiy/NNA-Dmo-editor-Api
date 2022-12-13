@@ -2,7 +2,7 @@
 
 namespace NNA.Domain.DTOs.Dmos;
 
-public sealed class UpdateDmoDetailsDto: BaseDto {
+public sealed class PatchDmoDetailsDto: BaseDto {
     public string MovieTitle { get; set; } = null!;
     public DmoStatus DmoStatusId { get; set; }
     public string? Name { get; set; }

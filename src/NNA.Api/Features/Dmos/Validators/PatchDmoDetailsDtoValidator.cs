@@ -4,8 +4,8 @@ using NNA.Domain.DTOs.Dmos;
 
 namespace NNA.Api.Features.Dmos.Validators;
 
-public sealed class UpdateDmoDetailsDtoValidator: AbstractValidator<UpdateDmoDetailsDto> {
-    public UpdateDmoDetailsDtoValidator() {
+public sealed class PatchDmoDetailsDtoValidator: AbstractValidator<PatchDmoDetailsDto> {
+    public PatchDmoDetailsDtoValidator() {
         RuleFor(d => d.Name)
             .MaximumLength(ApplicationConstants.MaxEntityNameLength)
             .WithMessage($"Maximum dmo name length is {ApplicationConstants.MaxEntityNameLength}");

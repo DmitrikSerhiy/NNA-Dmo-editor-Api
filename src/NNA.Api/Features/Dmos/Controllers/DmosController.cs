@@ -12,7 +12,6 @@ using NNA.Domain.Entities;
 using NNA.Domain.Enums;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
-using UpdateDmoDetailsDtoValidator = NNA.Api.Features.Editor.Validators.UpdateDmoDetailsDtoValidator;
 
 namespace NNA.Api.Features.Dmos.Controllers;
 
@@ -79,16 +78,16 @@ public sealed class DmosController : NnaController {
     }
 
     [HttpPatch("{id}/details")]
-    public async Task<IActionResult> UpdateDmoDetails([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateDmoDetailsDto> patchDocument, CancellationToken cancellationToken) {
+    public async Task<IActionResult> UpdateDmoDetails([FromRoute] string id, [FromBody] JsonPatchDocument<PatchDmoDetailsDto> patchDocument, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken, true);
         if (dmo is null) {
             return NoContent();
         }
 
-        var updateDto = _mapper.Map(dmo, new UpdateDmoDetailsDto());
+        var updateDto = _mapper.Map(dmo, new PatchDmoDetailsDto());
         patchDocument.ApplyTo(updateDto);
         
-        var validationResult = await new UpdateDmoDetailsDtoValidator().ValidateAsync(updateDto, cancellationToken);
+        var validationResult = await new PatchDmoDetailsDtoValidator().ValidateAsync(updateDto, cancellationToken);
         if (!validationResult.IsValid) {
             return InvalidRequest(validationResult.Errors);
         }

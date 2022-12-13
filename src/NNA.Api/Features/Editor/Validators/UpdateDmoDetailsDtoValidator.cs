@@ -4,7 +4,7 @@ using NNA.Domain.DTOs.Dmos;
 
 namespace NNA.Api.Features.Editor.Validators;
 
-public sealed class UpdateDmoDetailsDtoValidator : AbstractValidator<UpdateDmoDetailsDto> {
+public sealed class UpdateDmoDetailsDtoValidator : AbstractValidator<PatchDmoDetailsDto> {
     public UpdateDmoDetailsDtoValidator() {
         RuleFor(d => d.Name)
             .MaximumLength(ApplicationConstants.MaxEntityNameLength)

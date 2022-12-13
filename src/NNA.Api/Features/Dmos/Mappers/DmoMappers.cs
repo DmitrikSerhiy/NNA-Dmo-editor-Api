@@ -25,7 +25,7 @@ public sealed class DmoMappers : Profile {
         CreateMap<Dmo, DmoDetailsShortDto>()
             .ForMember(udc => udc.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus));
         
-        CreateMap<UpdateDmoDetailsDto, Dmo>()
+        CreateMap<PatchDmoDetailsDto, Dmo>()
             .ForMember(udc => udc.DmoStatus, dcd => dcd.MapFrom(dd => dd.DmoStatusId))
             .ReverseMap();
         
