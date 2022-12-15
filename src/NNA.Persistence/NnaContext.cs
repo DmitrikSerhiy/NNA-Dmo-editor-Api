@@ -16,6 +16,7 @@ public sealed class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
     public DbSet<NnaMovieCharacter> Characters => Set<NnaMovieCharacter>();
     public DbSet<NnaMovieCharacterInBeat> CharacterInBeats => Set<NnaMovieCharacterInBeat>();
     public DbSet<NnaMovieCharacterConflictInDmo> NnaMovieCharacterConflicts => Set<NnaMovieCharacterConflictInDmo>();
+    public DbSet<NnaTag> Tags => Set<NnaTag>();
 
     public NnaContext(DbContextOptions<NnaContext> options)
         : base(options) { }
