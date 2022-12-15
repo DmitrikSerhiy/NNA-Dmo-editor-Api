@@ -26,11 +26,8 @@ internal sealed class TagsRepository : CommonRepository, ITagsRepository
         }).ToList();
     }
 
-    public async Task<string> GetTagDescriptionAsync(Guid id, CancellationToken token)
+    public async Task<NnaTag?> GetTagAsync(Guid id, CancellationToken token)
     {
-        return await Context.Tags
-            .Where(tag => tag.Id == id)
-            .Select(tag => tag.Description)
-            .FirstAsync(token);
+        return await Context.Tags.FirstOrDefaultAsync(tag => tag.Id == id, token);
     }
 }

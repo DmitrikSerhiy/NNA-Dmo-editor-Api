@@ -5,5 +5,5 @@ namespace NNA.Domain.Interfaces.Repositories;
 public interface ITagsRepository
 {
     Task<List<NnaTag>> GetAllTagsWithoutDescriptionAsync(CancellationToken token);
-    Task<string> GetTagDescriptionAsync(Guid id, CancellationToken token);
+    Task<NnaTag?> GetTagAsync(Guid id, CancellationToken token);
 }
