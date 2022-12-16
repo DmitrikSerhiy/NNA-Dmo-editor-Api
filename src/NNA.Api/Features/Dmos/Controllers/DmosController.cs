@@ -20,7 +20,7 @@ namespace NNA.Api.Features.Dmos.Controllers;
 [Authorize]
 public sealed class DmosController : NnaController {
     private readonly IMapper _mapper;
-    private readonly CharactersService _charactersService;
+    private readonly TempIdSanitizer _tempIdSanitizer;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
     private readonly IDmosRepository _dmosRepository;
     private readonly IEditorService _editorService;
@@ -30,12 +30,12 @@ public sealed class DmosController : NnaController {
         IDmosRepository dmosRepository,
         IEditorService editorService,
         IAuthenticatedIdentityProvider authenticatedIdentityProvider, 
-        CharactersService charactersService) {
+        TempIdSanitizer tempIdSanitizer) {
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _dmosRepository = dmosRepository ?? throw new ArgumentNullException(nameof(dmosRepository));
         _editorService = editorService ?? throw new ArgumentNullException(nameof(editorService));
         _authenticatedIdentityProvider = authenticatedIdentityProvider ?? throw new ArgumentNullException(nameof(authenticatedIdentityProvider));
-        _charactersService = charactersService ?? throw new ArgumentNullException(nameof(charactersService));
+        _tempIdSanitizer = tempIdSanitizer ?? throw new ArgumentNullException(nameof(tempIdSanitizer));
     }
 
     // todo: add pagination here
@@ -227,7 +227,7 @@ public sealed class DmosController : NnaController {
     [HttpDelete]
     [Route("{DmoId}/tempIds")]
     public async Task<IActionResult> SanitizeTempIds([FromRoute] SanitizeTempIdsInDmoDto sanitizeTempIdsInDmoDto ) { // do not add cancellation token here
-        var beats = await _dmosRepository.LoadBeatsWithCharactersAsync(
+        var beats = await _dmosRepository.LoadBeatsWithNestedEntitiesAsync(
             _authenticatedIdentityProvider.AuthenticatedUserId, 
             sanitizeTempIdsInDmoDto.DmoId);
 
@@ -235,7 +235,8 @@ public sealed class DmosController : NnaController {
             if (beat.TempId != null) {
                 beat.TempId = null;
             }
-            _charactersService.SanitizeCharactersTempIdsInBeatDescription(beat);
+            _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beat);
+            _tempIdSanitizer.SanitizeTagsTempIdsInBeatDescription(beat);
         }
         
         return NoContent();

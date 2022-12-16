@@ -6,5 +6,6 @@ public sealed class BeatDto : BaseDto {
     public int Order { get; set; }
     public int Type { get; set; }
     public NnaMovieCharacterInBeatDto[] CharactersInBeat { get; set; } = Array.Empty<NnaMovieCharacterInBeatDto>();
+    public NnaTagInBeatDto[] TagsInBeat { get; set; } = Array.Empty<NnaTagInBeatDto>();
     public BeatTimeDto Time { get; set; } = null!;
 }

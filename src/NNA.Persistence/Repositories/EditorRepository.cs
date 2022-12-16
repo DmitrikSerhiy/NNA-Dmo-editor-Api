@@ -97,8 +97,8 @@ internal sealed class EditorRepository : IEditorRepository {
         "WHERE [TempId] = @tempId AND [BeatId] = @beatId";
     
     private const string InsertTagIntoBeatScript =
-        "INSERT INTO [dbo].[TagInBeats] ([Id], [BeatId], [CharacterId], [DateOfCreation], [TempId]) " +
-        "VALUES (@id, @beatId, @characterId, @dateOfCreation, @tempId)";
+        "INSERT INTO [dbo].[TagInBeats] ([Id], [BeatId], [TagId], [DateOfCreation], [TempId]) " +
+        "VALUES (@id, @beatId, @tagId, @dateOfCreation, @tempId)";
     
     
     private const string RemoveTagFromBeatByIdScript =

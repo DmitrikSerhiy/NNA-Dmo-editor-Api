@@ -389,8 +389,7 @@ public class EditorService : IEditorService {
         }    
     }
 
-    public async Task DetachTagFromBeat(DetachTagFromBeatDto detachTagFromBeatDto, Guid userId)
-    {
+    public async Task DetachTagFromBeat(DetachTagFromBeatDto detachTagFromBeatDto, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
         if (detachTagFromBeatDto == null) throw new ArgumentNullException(nameof(detachTagFromBeatDto));
         

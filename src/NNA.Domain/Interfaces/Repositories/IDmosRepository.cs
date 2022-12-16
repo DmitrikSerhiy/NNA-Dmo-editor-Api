@@ -20,5 +20,6 @@ public interface IDmosRepository : IRepository {
     
     Task<Dmo?> GetDmoWithDataAsync(Guid userId, Guid dmoId, CancellationToken cancellationToken);
     Task<List<Beat>> LoadBeatsWithCharactersAsync(Guid userId, Guid dmoId);
+    Task<List<Beat>> LoadBeatsWithNestedEntitiesAsync(Guid userId, Guid dmoId);
     Task<List<Beat>> LoadBeatsAsync(Guid userId, Guid dmoId);
 }

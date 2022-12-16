@@ -41,7 +41,7 @@ public sealed class ApiModule : Module {
             .InstancePerLifetimeScope();
         
         builder
-            .RegisterType<CharactersService>()
+            .RegisterType<TempIdSanitizer>()
             .AsSelf()
             .InstancePerLifetimeScope();
         

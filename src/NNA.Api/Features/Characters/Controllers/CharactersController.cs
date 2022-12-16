@@ -17,7 +17,7 @@ namespace NNA.Api.Features.Characters.Controllers;
 public sealed class CharactersController : NnaController {
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
     private readonly ICharactersRepository _charactersRepository;
-    private readonly CharactersService _charactersService; 
+    private readonly TempIdSanitizer _tempIdSanitizer; 
     private readonly IDmosRepository _dmosRepository;
     private readonly IMapper _mapper;
 
@@ -26,12 +26,12 @@ public sealed class CharactersController : NnaController {
         IMapper mapper, 
         IDmosRepository dmosRepository, 
         IAuthenticatedIdentityProvider authenticatedIdentityProvider,
-        CharactersService charactersService) {
+        TempIdSanitizer tempIdSanitizer) {
         _charactersRepository = repository ?? throw new ArgumentNullException(nameof(repository));
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         _dmosRepository = dmosRepository ?? throw new ArgumentNullException(nameof(dmosRepository));
         _authenticatedIdentityProvider = authenticatedIdentityProvider ?? throw new ArgumentNullException(nameof(authenticatedIdentityProvider));
-        _charactersService = charactersService ?? throw new ArgumentNullException(nameof(charactersService));
+        _tempIdSanitizer = tempIdSanitizer ?? throw new ArgumentNullException(nameof(tempIdSanitizer));
     }
     
     [HttpGet]
@@ -103,7 +103,7 @@ public sealed class CharactersController : NnaController {
                     continue;
                 }
 
-                _charactersService.SanitizeCharactersTempIdsInBeatDescription(beat);
+                _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beat);
             }
         }
 
@@ -133,8 +133,8 @@ public sealed class CharactersController : NnaController {
                     continue;
                 }
 
-                _charactersService.SanitizeCharactersTempIdsInBeatDescription(beat);
-                _charactersService.SanitizeRemovedCharactersInBeatDescription(beat, characterInBeatsIds);
+                _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beat);
+                _tempIdSanitizer.SanitizeRemovedCharactersInBeatDescription(beat, characterInBeatsIds);
             }
         }
         

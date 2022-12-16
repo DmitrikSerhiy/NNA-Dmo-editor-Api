@@ -101,6 +101,8 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
                 .ThenInclude(dc => dc.Characters)
                     .ThenInclude(cha => cha.Character)
             .Include(d => d.Beats)
+                .ThenInclude(tig => tig.Tags)
+                    .ThenInclude(t => t.Tag)
             .Include(d => d.Characters)
             .FirstOrDefaultAsync(b => b.Id == dmoId && b.NnaUserId == userId, cancellationToken);
     }
@@ -110,6 +112,15 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
             .AsTracking()
             .Where(d => d.DmoId == dmoId && d.UserId == userId)
             .Include(d => d.Characters)
+            .ToListAsync();
+    }
+    
+    public async Task<List<Beat>> LoadBeatsWithNestedEntitiesAsync(Guid userId, Guid dmoId) {
+        return await Context.Beats
+            .AsTracking()
+            .Where(d => d.DmoId == dmoId && d.UserId == userId)
+            .Include(d => d.Characters)
+            .Include(d => d.Tags)
             .ToListAsync();
     }
     
