@@ -85,8 +85,8 @@ internal sealed class EditorRepository : IEditorRepository {
         "WHERE TempId = @tempId AND [DmoId] = @dmoId AND UserId = @userId";
 
     private const string InsertCharacterIntoBeatScript =
-        "INSERT INTO [dbo].[CharacterInBeats] ([Id], [BeatId], [CharacterId], [DateOfCreation], [TempId]) " +
-        "VALUES (@id, @beatId, @characterId, @dateOfCreation, @tempId)";
+        "INSERT INTO [dbo].[CharacterInBeats] ([Id], [BeatId], [TagId], [DateOfCreation], [TempId]) " +
+        "VALUES (@id, @beatId, @TagId, @dateOfCreation, @tempId)";
     
     private const string RemoveCharacterFromBeatByIdScript =
         "DELETE FROM [dbo].[CharacterInBeats] " +
@@ -96,6 +96,19 @@ internal sealed class EditorRepository : IEditorRepository {
         "DELETE FROM [dbo].[CharacterInBeats] " +
         "WHERE [TempId] = @tempId AND [BeatId] = @beatId";
     
+    private const string InsertTagIntoBeatScript =
+        "INSERT INTO [dbo].[TagInBeats] ([Id], [BeatId], [CharacterId], [DateOfCreation], [TempId]) " +
+        "VALUES (@id, @beatId, @characterId, @dateOfCreation, @tempId)";
+    
+    
+    private const string RemoveTagFromBeatByIdScript =
+        "DELETE FROM [dbo].[TagInBeats] " +
+        "WHERE [Id] = @id AND [BeatId] = @beatId";
+
+    private const string RemoveTagFromBeatByTempIdScript =
+        "DELETE FROM [dbo].[TagInBeats] " +
+        "WHERE [TempId] = @tempId AND [BeatId] = @beatId";
+
     private const string SetBeatOrderAfterMoveByIdScript =
         "UPDATE [dbo].[Beats] " +
         "SET [Order] = @order " +
@@ -373,7 +386,36 @@ internal sealed class EditorRepository : IEditorRepository {
         
         return result > 0;
     }
-    
+
+    public async Task<bool> CreateTagInBeatAsync(NnaTagInBeat nnaTagInBeat) {
+        var result = await ExecuteAsync(InsertTagIntoBeatScript, new {
+            id = nnaTagInBeat.Id,
+            beatId = nnaTagInBeat.BeatId,
+            tagId = nnaTagInBeat.TagId,
+            dateOfCreation = nnaTagInBeat.DateOfCreation,
+            tempId = nnaTagInBeat.TempId ?? null
+        });
+        
+        return result > 0;
+    }
+
+    public async Task<bool> DeleteTagFromBeatByIdAsync(NnaTagInBeat nnaTagInBeat) {
+        var result = await ExecuteAsync(RemoveTagFromBeatByIdScript, new {
+            id = nnaTagInBeat.Id,
+            beatId = nnaTagInBeat.BeatId
+        });
+        
+        return result > 0; 
+    }
+
+    public async Task<bool> DeleteTagFromBeatByTempIdAsync(NnaTagInBeat nnaTagInBeat) {
+        var result = await ExecuteAsync(RemoveTagFromBeatByTempIdScript, new {
+            tempId = nnaTagInBeat.TempId,
+            beatId = nnaTagInBeat.BeatId
+        });
+        
+        return result > 0;    }
+
     public async Task<bool> SetBeatOrderByTempIdAsync(Beat beat) {
         var result = await ExecuteAsync(SetNewOrderByBeatTempIdScript, new {
             tempId = beat.TempId,

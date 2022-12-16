@@ -17,4 +17,8 @@ public sealed class Beat : Entity {
     public Guid DmoId { get; set; }
     public Dmo Dmo { get; set; } = null!;
     public ICollection<NnaMovieCharacterInBeat> Characters { get; set; } = new List<NnaMovieCharacterInBeat>();
+    public ICollection<NnaTagInBeat> Tags { get; set; } = new List<NnaTagInBeat>();
+
+    
+    
 }

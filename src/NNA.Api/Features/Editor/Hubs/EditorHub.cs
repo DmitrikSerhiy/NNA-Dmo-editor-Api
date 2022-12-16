@@ -3,6 +3,7 @@ using NNA.Api.Features.Editor.Validators;
 using NNA.Api.Helpers;
 using NNA.Domain.DTOs.CharactersInBeats;
 using NNA.Domain.DTOs.Editor;
+using NNA.Domain.DTOs.TagsInBeats;
 using NNA.Domain.Exceptions.Editor;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
@@ -318,6 +319,59 @@ public sealed class EditorHub : BaseEditorHub {
         }
     }
     
+    public async Task AttachTagToBeat(AttachTagToBeatDto? attachTagToBeatDto) {
+        if (attachTagToBeatDto == null) {
+            await SendBackErrorResponse(BadRequest());
+            return;
+        }
+        
+        if (!Context.ContainsUser()) {
+            await SendBackErrorResponse(NotAuthorized());
+            return;
+        }
+        
+        var validationResult = await new AttachTagToBeatDtoValidator().ValidateAsync(attachTagToBeatDto);
+        if (!validationResult.IsValid) {
+            await SendBackErrorResponse(NotValid(validationResult));
+            return;
+        }
+
+        try {
+            await EditorService.AttachTagToBeat(attachTagToBeatDto, Context.GetCurrentUserId().GetValueOrDefault());
+        }
+        catch (AttachTagToBeatException ex) {
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
+            await RemoveUserAndRemoveConnection();
+            await SendBackErrorResponse(InternalServerError(ex.Message));
+        }
+    }
+    
+    public async Task DetachTagFromBeat(DetachTagFromBeatDto? detachTagFromBeatDto) {
+        if (detachTagFromBeatDto == null) {
+            await SendBackErrorResponse(BadRequest());
+            return;
+        }
+        
+        if (!Context.ContainsUser()) {
+            await SendBackErrorResponse(NotAuthorized());
+            return;
+        }
+        
+        var validationResult = await new DetachTagFromBeatDtoValidator().ValidateAsync(detachTagFromBeatDto);
+        if (!validationResult.IsValid) {
+            await SendBackErrorResponse(NotValid(validationResult));
+            return;
+        }
+
+        try {
+            await EditorService.DetachTagFromBeat(detachTagFromBeatDto, Context.GetCurrentUserId().GetValueOrDefault());
+        }
+        catch (DetachTagFromBeatException ex) {
+            Log.Error(ex.InnerException ?? new Exception("No inner exception"), ex.Message);
+            await RemoveUserAndRemoveConnection();
+            await SendBackErrorResponse(InternalServerError(ex.Message));
+        }
+    }
     
     [Obsolete("Moved to Http end-point")]
     public async Task SanitizeTempIds(SanitizeTempIdsDto? update) {

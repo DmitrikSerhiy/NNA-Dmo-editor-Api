@@ -464,6 +464,33 @@ namespace Persistence.Migrations
                     b.ToTable("Tags");
                 });
 
+            modelBuilder.Entity("NNA.Domain.Entities.NnaTagInBeat", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("BeatId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<long>("DateOfCreation")
+                        .HasColumnType("bigint");
+
+                    b.Property<Guid>("TagId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TempId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BeatId");
+
+                    b.HasIndex("TagId");
+
+                    b.ToTable("TagInBeats");
+                });
+
             modelBuilder.Entity("NNA.Domain.Entities.NnaUser", b =>
                 {
                     b.Property<Guid>("Id")
@@ -734,9 +761,30 @@ namespace Persistence.Migrations
                     b.Navigation("Character");
                 });
 
+            modelBuilder.Entity("NNA.Domain.Entities.NnaTagInBeat", b =>
+                {
+                    b.HasOne("NNA.Domain.Entities.Beat", "Beat")
+                        .WithMany("Tags")
+                        .HasForeignKey("BeatId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("NNA.Domain.Entities.NnaTag", "Tag")
+                        .WithMany("Beats")
+                        .HasForeignKey("TagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Beat");
+
+                    b.Navigation("Tag");
+                });
+
             modelBuilder.Entity("NNA.Domain.Entities.Beat", b =>
                 {
                     b.Navigation("Characters");
+
+                    b.Navigation("Tags");
                 });
 
             modelBuilder.Entity("NNA.Domain.Entities.Dmo", b =>
@@ -760,6 +808,11 @@ namespace Persistence.Migrations
                     b.Navigation("Beats");
 
                     b.Navigation("Conflicts");
+                });
+
+            modelBuilder.Entity("NNA.Domain.Entities.NnaTag", b =>
+                {
+                    b.Navigation("Beats");
                 });
 
             modelBuilder.Entity("NNA.Domain.Entities.NnaUser", b =>

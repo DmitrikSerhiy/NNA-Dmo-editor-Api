@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using NNA.Domain.DTOs.CharactersInBeats;
 using NNA.Domain.DTOs.Editor;
+using NNA.Domain.DTOs.TagsInBeats;
 using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using NNA.Domain.Interfaces;
@@ -352,9 +353,82 @@ public class EditorService : IEditorService {
         if (!isRemoved) {
             throw new RemoveCharacterFromBeatException(dmoId, userId);
         }
-        
-        
+    }
 
+    public async Task AttachTagToBeat(AttachTagToBeatDto attachTagToBeatDto, Guid userId) {
+        if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+        if (attachTagToBeatDto == null) throw new ArgumentNullException(nameof(attachTagToBeatDto));
+        
+        var dmoId = Guid.Parse(attachTagToBeatDto.DmoId);
+        var tagId = Guid.Parse(attachTagToBeatDto.TagId); 
+        var isBeatIdIsGuid = Guid.TryParse(attachTagToBeatDto.BeatId, out var beatIdGuid);
+        Guid beatId;
+        bool isAttached;
+
+        if (isBeatIdIsGuid) {
+            beatId = beatIdGuid;
+        } else {
+            var loadedBeatId = await _editorRepository.LoadBeatIdByTempId(dmoId, attachTagToBeatDto.BeatId, userId);
+            beatId = loadedBeatId;
+        }
+
+        var characterInBeatEntity = new NnaTagInBeat {
+            TagId = tagId,
+            BeatId = beatId,
+            TempId = attachTagToBeatDto.Id
+        };
+
+        try {
+            isAttached = await _editorRepository.CreateTagInBeatAsync(characterInBeatEntity);
+        } catch (Exception ex) {
+            throw new AttachTagToBeatException(ex, dmoId, userId, beatId, tagId);
+        }
+        
+        if (!isAttached) {
+            throw new AttachTagToBeatException(dmoId, userId);
+        }    
+    }
+
+    public async Task DetachTagFromBeat(DetachTagFromBeatDto detachTagFromBeatDto, Guid userId)
+    {
+        if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
+        if (detachTagFromBeatDto == null) throw new ArgumentNullException(nameof(detachTagFromBeatDto));
+        
+        var isTagInBeatIdGuid = Guid.TryParse(detachTagFromBeatDto.Id, out var tagInBeatIdGuid);
+        var isBeatIdIsGuid = Guid.TryParse(detachTagFromBeatDto.BeatId, out var beatIdGuid);
+        var dmoId = Guid.Parse(detachTagFromBeatDto.DmoId);
+        Guid beatId;
+        bool isDetached;
+        
+        if (isBeatIdIsGuid) {
+            beatId = beatIdGuid;
+        } else {
+            var loadedBeatId = await _editorRepository.LoadBeatIdByTempId(dmoId, detachTagFromBeatDto.BeatId, userId);
+            beatId = loadedBeatId;
+        }
+        
+        var tagInBeatEntity = new NnaTagInBeat {
+            BeatId = beatId
+        };
+
+        if (isTagInBeatIdGuid) {
+            tagInBeatEntity.SetIdExplicitly(tagInBeatIdGuid);
+        } else {
+            tagInBeatEntity.TempId = detachTagFromBeatDto.Id;
+        }
+        
+        try {
+            isDetached = isTagInBeatIdGuid
+                ? await _editorRepository.DeleteTagFromBeatByIdAsync(tagInBeatEntity)
+                : await _editorRepository.DeleteTagFromBeatByTempIdAsync(tagInBeatEntity);
+            
+        } catch (Exception ex) {
+            throw new DetachTagFromBeatException(ex, dmoId, userId, beatId);
+        }
+        
+        if (!isDetached) {
+            throw new DetachTagFromBeatException(dmoId, userId);
+        }
     }
 
 

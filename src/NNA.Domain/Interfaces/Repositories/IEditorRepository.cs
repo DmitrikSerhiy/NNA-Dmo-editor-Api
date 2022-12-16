@@ -24,6 +24,12 @@ public interface IEditorRepository {
     Task<bool> CreateCharacterInBeatAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat);
     Task<bool> DeleteCharacterFromBeatByIdAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat);
     Task<bool> DeleteCharacterFromBeatByTempIdAsync(NnaMovieCharacterInBeat nnaMovieCharacterInBeat);
+    
+    Task<bool> CreateTagInBeatAsync(NnaTagInBeat nnaTagInBeat);
+    Task<bool> DeleteTagFromBeatByIdAsync(NnaTagInBeat nnaTagInBeat);
+    Task<bool> DeleteTagFromBeatByTempIdAsync(NnaTagInBeat nnaTagInBeat);
+    
+        
 
     Task<bool> SanitizeTempIdsForBeatsAsync(Guid dmoId, Guid userId);
 }
