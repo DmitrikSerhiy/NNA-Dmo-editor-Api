@@ -101,8 +101,6 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
                 .ThenInclude(dc => dc.Characters)
                     .ThenInclude(cha => cha.Character)
             .Include(d => d.Beats)
-                .ThenInclude(dc => dc.Tags)
-                    .ThenInclude(t => t.Tag)
             .Include(d => d.Characters)
             .FirstOrDefaultAsync(b => b.Id == dmoId && b.NnaUserId == userId, cancellationToken);
     }

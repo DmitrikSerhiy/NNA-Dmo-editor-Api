@@ -8,7 +8,6 @@ using NNA.Api.Features.Editor.Validators;
 using NNA.Domain.DTOs.Beats;
 using NNA.Domain.DTOs.Characters;
 using NNA.Domain.DTOs.Dmos;
-using NNA.Domain.DTOs.Tags;
 using NNA.Domain.Entities;
 using NNA.Domain.Enums;
 using NNA.Domain.Interfaces;
@@ -218,14 +217,9 @@ public sealed class DmosController : NnaController {
                     .FirstOrDefault(cha => cha.Id == characterInBeat.CharacterId.ToString())?.Color ?? "#000000";
             }
         }
-        
-        var allTagsInBeats = new List<NnaTagInBeat>();
-        allTagsInBeats.AddRange(dmoWithData.Beats.SelectMany(b => b.Tags));
-        var allTags = allTagsInBeats.Select(t => t.Tag).DistinctBy(t => t.Id).ToList();
-        
+
         dmoWithDataDto.Characters = dmoWithDataDto.Characters.OrderByDescending(cha => cha.Count).ToList();
         dmoWithDataDto.Beats = dmoWithDataDto.Beats.OrderBy(b => b.Order).ToList();
-        dmoWithDataDto.Tags = allTags.Select(_mapper.Map<TagDto>).ToList();
         
         return OkWithData(dmoWithDataDto);
     }
