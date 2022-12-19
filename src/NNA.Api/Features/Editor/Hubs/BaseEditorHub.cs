@@ -22,7 +22,7 @@ public class BaseEditorHub : Hub<IEditorClient> {
     protected readonly IHostEnvironment Environment;
 
     private readonly ClaimsValidator _claimsValidator;
-    private readonly IUserRepository _userRepository;
+    protected readonly IUserRepository UserRepository;
 
     public BaseEditorHub(
         IEditorService editorService,
@@ -32,7 +32,7 @@ public class BaseEditorHub : Hub<IEditorClient> {
         EditorService = editorService ?? throw new ArgumentNullException(nameof(editorService));
         Environment = hostEnvironment ?? throw new ArgumentNullException(nameof(hostEnvironment));
         _claimsValidator = claimsValidator ?? throw new ArgumentNullException(nameof(claimsValidator));
-        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        UserRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
     }
 
     public override async Task OnConnectedAsync() {
@@ -44,20 +44,20 @@ public class BaseEditorHub : Hub<IEditorClient> {
         }
 
         var authData = await _claimsValidator.ValidateAndGetAuthDataAsync(Context.User.Claims.ToList(), CancellationToken.None);
-        if (await _userRepository.HasEditorConnectionAsync(authData.UserId, CancellationToken.None)) {
+        if (await UserRepository.HasEditorConnectionAsync(authData.UserId, CancellationToken.None)) {
             if (Environment.IsLocal()) {
                 Log.Information($"{Context.GetCurrentUserEmail()} already has connection. Connection will be replaced with new one.");
             }
 
-            await _userRepository.RemoveUserConnectionsAsync(authData.UserId, CancellationToken.None);
+            await UserRepository.RemoveUserConnectionsAsync(authData.UserId, CancellationToken.None);
         }
         
-        _userRepository.AddEditorConnection(new EditorConnection {
+        UserRepository.AddEditorConnection(new EditorConnection {
             UserId = authData.UserId,
             ConnectionId = Context.ConnectionId
         });
         
-        await _userRepository.SyncContextImmediatelyAsync(CancellationToken.None);
+        await UserRepository.SyncContextImmediatelyAsync(CancellationToken.None);
         Context.AuthenticateUser(authData);
         
         if (Environment.IsLocal()) {
@@ -81,8 +81,8 @@ public class BaseEditorHub : Hub<IEditorClient> {
     }
 
     protected async Task RemoveUserAndRemoveConnection() {
-        await _userRepository.RemoveUserConnectionsAsync(Context.GetCurrentUserId().GetValueOrDefault(), CancellationToken.None);
-        await _userRepository.SyncContextImmediatelyAsync(CancellationToken.None);
+        await UserRepository.RemoveUserConnectionsAsync(Context.GetCurrentUserId().GetValueOrDefault(), CancellationToken.None);
+        await UserRepository.SyncContextImmediatelyAsync(CancellationToken.None);
         Context.LogoutUser();
     }
 

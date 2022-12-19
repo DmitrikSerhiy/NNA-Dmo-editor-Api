@@ -23,10 +23,6 @@ internal sealed class UserRepository : CommonRepository, IUserRepository {
         Context.EditorConnections.Add(connection);
     }
 
-    public void RemoveEditorConnection(EditorConnection connection) {
-        Context.EditorConnections.Remove(connection);
-    }
-
     public async Task RemoveUserConnectionsAsync(Guid userId, CancellationToken token) {
         var connections = await Context.EditorConnections
             .Where(ec => ec.UserId == userId)

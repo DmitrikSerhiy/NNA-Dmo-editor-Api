@@ -14,7 +14,6 @@ public interface IUserRepository : IRepository {
     Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email, CancellationToken token);
     Task<bool> HasEditorConnectionAsync(Guid userId, CancellationToken token);
     void AddEditorConnection(EditorConnection connection);
-    void RemoveEditorConnection(EditorConnection connection);
     Task RemoveUserConnectionsAsync(Guid userId, CancellationToken token);
     void SanitiseEditorConnections();
     void SanitiseUserTokens();

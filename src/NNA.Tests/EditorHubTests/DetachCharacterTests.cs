@@ -2,26 +2,26 @@
 using Microsoft.AspNetCore.SignalR;
 using Moq;
 using NNA.Api.Features.Editor.Hubs;
-using NNA.Domain.DTOs.Editor;
-using NNA.Domain.Entities;
+using NNA.Domain.DTOs.CharactersInBeats;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
 namespace NNA.Tests.EditorHubTests;
 
-public sealed class UpdateShortDmoTests : BaseEditorTests {
-    private UpdateShortDmoDto DmoDto { get; set; } = null!;
+public sealed class DetachCharacterTests : BaseEditorTests {
+    private DetachCharacterToBeatDto DetachCharacterFromBeatDto { get; set; } = null!;
 
     private void SetMockAndVariables() {
         SetupConstructorMocks();
-        DmoDto = new UpdateShortDmoDto {
+        DetachCharacterFromBeatDto = new DetachCharacterToBeatDto {
             Id = Guid.NewGuid().ToString(),
-            MovieTitle = "movie title",
-            Name = "dmo name",
-            ShortComment = "some comment"
+            BeatId = Guid.NewGuid().ToString(),
+            DmoId = Guid.NewGuid().ToString(),
         };
     }
-
+    
+    
+    
     [Fact]
     public async Task ShouldReturnBadRequestIfEntryDtoIsEmptyTest() {
         //Arrange
@@ -34,15 +34,13 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
-#pragma warning disable CS0612
-        Func<Task> act = async () => await Subject.UpdateShortDmo(null);
-#pragma warning restore CS0612
+        Func<Task> act = async () => await Subject.DetachCharacterFromBeat(null);
         await act.Invoke();
 
         //Assert
         EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
     }
-
+    
     [Fact]
     public async Task ShouldReturnNotAuthorizedIfNoUserInContextTest() {
         //Arrange
@@ -58,80 +56,7 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         Subject.Context = hubContext.Object;
 
         //Act
-#pragma warning disable CS0612
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
-#pragma warning restore CS0612
-        await act.Invoke();
-
-        //Assert
-        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
-    }
-
-    [Fact]
-    public async Task ShouldReturnNotValidResponseIfDtoIsNotValidTest() {
-        //Arrange
-        SetMockAndVariables();
-        DmoDto.Id = null;
-        Subject = new EditorHub(
-            EditorServiceMock.Object,
-            EnvironmentMock.Object,
-            ClaimsValidatorMock.Object,
-            UserRepositoryMock.Object);
-        SetupHubContext();
-
-        //Act
-#pragma warning disable CS0612
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
-#pragma warning restore CS0612
-        await act.Invoke();
-
-        //Assert
-        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
-    }
-
-    [Fact]
-    public async Task ShouldCallServiceMethodToUpdateShortDmoInfoTest() {
-        //Arrange
-        SetMockAndVariables();
-
-        EditorServiceMock.Setup(esm => esm.UpdateShortDmo(DmoDto, UserId)).Verifiable();
-        Subject = new EditorHub(
-            EditorServiceMock.Object,
-            EnvironmentMock.Object,
-            ClaimsValidatorMock.Object,
-            UserRepositoryMock.Object);
-        SetupHubContext();
-
-        //Act
-#pragma warning disable CS0612
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
-#pragma warning restore CS0612
-        await act.Invoke();
-
-        //Assert
-        EditorServiceMock.Verify(esm => esm.UpdateShortDmo(DmoDto, UserId), Times.Once);
-        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Never());
-    }
-
-    [Fact]
-    public async Task ShouldReturnInternalServerErrorResponseIfRepositoryThrowsTest() {
-        //Arrange
-        SetMockAndVariables();
-        var exceptionMessage = "some message";
-
-        EditorServiceMock.Setup(esm => esm.UpdateShortDmo(DmoDto, UserId))
-            .ThrowsAsync(new UpdateShortDmoException(exceptionMessage, new Exception("exception from repository")));
-        Subject = new EditorHub(
-            EditorServiceMock.Object,
-            EnvironmentMock.Object,
-            ClaimsValidatorMock.Object,
-            UserRepositoryMock.Object);
-        SetupHubContext();
-
-        //Act
-#pragma warning disable CS0612
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
-#pragma warning restore CS0612
+        Func<Task> act = async () => await Subject.DetachCharacterFromBeat(DetachCharacterFromBeatDto);
         await act.Invoke();
 
         //Assert
@@ -139,13 +64,118 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
     }
     
     [Fact]
-    public async Task ShouldDisconnectUserIfRepositoryThrowsTest() {
+    public async Task ShouldReturnNotValidResponseIfDmoIdIsMissingTest() {
+        //Arrange
+        SetMockAndVariables();
+        DetachCharacterFromBeatDto.DmoId = null!;
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.DetachCharacterFromBeat(DetachCharacterFromBeatDto);
+        await act.Invoke();
+
+        //Assert
+        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
+    }
+    
+    [Fact]
+    public async Task ShouldReturnNotValidResponseIfIdIsMissingTest() {
+        //Arrange
+        SetMockAndVariables();
+        DetachCharacterFromBeatDto.Id = null!;
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.DetachCharacterFromBeat(DetachCharacterFromBeatDto);
+        await act.Invoke();
+
+        //Assert
+        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
+    }
+    
+    [Fact]
+    public async Task ShouldReturnNotValidResponseIfBeatIdIsMissingTest() {
+        //Arrange
+        SetMockAndVariables();
+        DetachCharacterFromBeatDto.BeatId = null!;
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.DetachCharacterFromBeat(DetachCharacterFromBeatDto);
+        await act.Invoke();
+
+        //Assert
+        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
+    }
+    
+    [Fact]
+    public async Task ShouldCallServiceMethodToDetachCharacterFromBeatTest() {
+        //Arrange
+        SetMockAndVariables();
+
+        EditorServiceMock.Setup(esm => esm.DetachCharacterFromBeat(DetachCharacterFromBeatDto, UserId)).Verifiable();
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.DetachCharacterFromBeat(DetachCharacterFromBeatDto);
+        await act.Invoke();
+
+        //Assert
+        EditorServiceMock.Verify(esm => esm.DetachCharacterFromBeat(DetachCharacterFromBeatDto, UserId), Times.Once);
+        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Never());
+    }
+    
+    [Fact]
+    public async Task ShouldReturnInternalServerErrorResponseIfRepositoryThrowsTest() {
         //Arrange
         SetMockAndVariables();
         var exceptionMessage = "some message";
 
-        EditorServiceMock.Setup(esm => esm.UpdateShortDmo(DmoDto, UserId))
-            .ThrowsAsync(new UpdateShortDmoException(exceptionMessage, new Exception("exception from repository")));
+        EditorServiceMock.Setup(esm => esm.DetachCharacterFromBeat(DetachCharacterFromBeatDto, UserId))
+            .ThrowsAsync(new RemoveCharacterFromBeatException(exceptionMessage, new Exception("exception from repository")));
+        Subject = new EditorHub(
+            EditorServiceMock.Object,
+            EnvironmentMock.Object,
+            ClaimsValidatorMock.Object,
+            UserRepositoryMock.Object);
+        SetupHubContext();
+
+        //Act
+        Func<Task> act = async () => await Subject.DetachCharacterFromBeat(DetachCharacterFromBeatDto);
+        await act.Invoke();
+
+        //Assert
+        EditorClientsMock.Verify(sbj => sbj.Caller.OnServerError(It.IsAny<object>()), Times.Once());
+    }
+    
+    
+    [Fact]
+    public async Task ShouldDisconnectUserIfRepositoryThrowsTest() {
+        //Arrange
+        SetMockAndVariables();
+        var exceptionMessage = "some message";
+        EditorServiceMock.Setup(esm => esm.DetachCharacterFromBeat(DetachCharacterFromBeatDto, UserId))
+            .ThrowsAsync(new RemoveCharacterFromBeatException(exceptionMessage, new Exception("exception from repository")));
 
         UserRepositoryMock
             .Setup(repository => repository.RemoveUserConnectionsAsync(EditorConnection.UserId, CancellationToken.None))
@@ -163,9 +193,7 @@ public sealed class UpdateShortDmoTests : BaseEditorTests {
         SetupHubContext();
 
         //Act
-#pragma warning disable CS0612
-        Func<Task> act = async () => await Subject.UpdateShortDmo(DmoDto);
-#pragma warning restore CS0612
+        Func<Task> act = async () => await Subject.DetachCharacterFromBeat(DetachCharacterFromBeatDto);
         await act.Invoke();
 
         //Assert

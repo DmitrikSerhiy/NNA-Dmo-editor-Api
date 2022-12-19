@@ -32,6 +32,7 @@ public class BaseEditorTests {
         EnvironmentMock = new Mock<IHostEnvironment>();
         ClaimsValidatorMock = new Mock<ClaimsValidator>();
         UserRepositoryMock = new Mock<IUserRepository>();
+        EditorConnection = new EditorConnection { UserId = UserId, ConnectionId = ConnectionId };
     }
 
     protected void SetupHubContext() {
@@ -60,8 +61,6 @@ public class BaseEditorTests {
         EditorClientsMock = new Mock<IHubCallerClients<IEditorClient>>();
         EditorClientsMock.Setup(client => client.Caller).Returns(new Mock<EditorClient>().Object);
         Subject.Clients = EditorClientsMock.Object;
-        
-        EditorConnection = new EditorConnection { UserId = UserId, ConnectionId = ConnectionId };
     }
 
     public  class EditorClient : IEditorClient {

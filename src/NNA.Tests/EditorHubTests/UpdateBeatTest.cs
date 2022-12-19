@@ -207,7 +207,7 @@ public sealed class UpdateBeatTest : BaseEditorTests {
             .ThrowsAsync(new UpdateBeatException(exceptionMessage, new Exception("exception from repository")));
 
         UserRepositoryMock
-            .Setup(repository => repository.RemoveEditorConnection(EditorConnection))
+            .Setup(repository => repository.RemoveUserConnectionsAsync(EditorConnection.UserId, CancellationToken.None))
             .Verifiable();
         
         UserRepositoryMock
@@ -226,8 +226,8 @@ public sealed class UpdateBeatTest : BaseEditorTests {
         await act.Invoke();
 
         //Assert
-        UserRepositoryMock.Verify(sbj => sbj.RemoveEditorConnection(
-                It.Is<EditorConnection>(ec => ec.ConnectionId == EditorConnection.ConnectionId && ec.UserId == EditorConnection.UserId )), 
+        UserRepositoryMock.Verify(sbj => sbj.RemoveUserConnectionsAsync(
+                It.Is<Guid>(userId => userId == EditorConnection.UserId), CancellationToken.None), 
             Times.Once());
         UserRepositoryMock.Verify(sbj => sbj.SyncContextImmediatelyAsync(CancellationToken.None), Times.Once());
         Subject.Context.Items.Should().NotContainKey("user");
