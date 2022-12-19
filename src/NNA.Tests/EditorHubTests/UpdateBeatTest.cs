@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.SignalR;
 using Moq;
 using NNA.Api.Features.Editor.Hubs;
 using NNA.Domain.DTOs.Editor;
-using NNA.Domain.Entities;
 using NNA.Domain.Enums;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;

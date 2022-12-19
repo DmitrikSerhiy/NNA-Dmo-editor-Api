@@ -14,7 +14,7 @@ public interface IEditorService {
     Task UpdateBeat(UpdateBeatDto update, Guid userId);
     Task SwapBeats(SwapBeatsDto update, Guid userId);
     Task MoveBeat(MoveBeatDto update, Guid userId);
-    Task AttachCharacterToBeat(AttachCharacterToBeatDto characterToBeatDto, Guid userId);
+    Task AttachCharacterToBeat(AttachCharacterToBeatDto characterToAttachDto, Guid userId);
     Task DetachCharacterFromBeat(DetachCharacterToBeatDto characterToDetachDto, Guid userId);
     Task AttachTagToBeat(AttachTagToBeatDto attachTagToBeatDto, Guid userId);
     Task DetachTagFromBeat(DetachTagFromBeatDto detachTagFromBeatDto, Guid userId);

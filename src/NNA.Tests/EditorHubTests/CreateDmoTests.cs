@@ -4,7 +4,6 @@ using Moq;
 using NNA.Api.Features.Editor.Hubs;
 using NNA.Domain.DTOs.Editor;
 using NNA.Domain.DTOs.Editor.Response;
-using NNA.Domain.Entities;
 using NNA.Domain.Exceptions.Editor;
 using Xunit;
 
@@ -78,7 +77,7 @@ public sealed class CreateDmoTests : BaseEditorTests {
     public async Task ShouldReturnNotValidResponseIfDtoIsNotValidTest() {
         //Arrange
         SetMockAndVariables();
-        DmoDto.MovieTitle = null;
+        DmoDto.MovieTitle = null!;
         Subject = new EditorHub(
             EditorServiceMock.Object,
             EnvironmentMock.Object,

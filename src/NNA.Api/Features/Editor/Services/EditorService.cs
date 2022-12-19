@@ -280,27 +280,27 @@ public class EditorService : IEditorService {
         }
     }
 
-    public async Task AttachCharacterToBeat(AttachCharacterToBeatDto characterToBeatDto, Guid userId) {
+    public async Task AttachCharacterToBeat(AttachCharacterToBeatDto characterToAttachDto, Guid userId) {
         if (userId == Guid.Empty) throw new ArgumentNullException(nameof(userId));
-        if (characterToBeatDto == null) throw new ArgumentNullException(nameof(characterToBeatDto));
+        if (characterToAttachDto == null) throw new ArgumentNullException(nameof(characterToAttachDto));
         
-        var dmoId = Guid.Parse(characterToBeatDto.DmoId);
-        var characterId = Guid.Parse(characterToBeatDto.CharacterId); 
-        var isBeatIdIsGuid = Guid.TryParse(characterToBeatDto.BeatId, out var beatIdGuid);
+        var dmoId = Guid.Parse(characterToAttachDto.DmoId);
+        var characterId = Guid.Parse(characterToAttachDto.CharacterId); 
+        var isBeatIdIsGuid = Guid.TryParse(characterToAttachDto.BeatId, out var beatIdGuid);
         Guid beatId;
         bool isAttached;
 
         if (isBeatIdIsGuid) {
             beatId = beatIdGuid;
         } else {
-            var loadedBeatId = await _editorRepository.LoadBeatIdByTempId(dmoId, characterToBeatDto.BeatId, userId);
+            var loadedBeatId = await _editorRepository.LoadBeatIdByTempId(dmoId, characterToAttachDto.BeatId, userId);
             beatId = loadedBeatId;
         }
 
         var characterInBeatEntity = new NnaMovieCharacterInBeat {
             CharacterId = characterId,
             BeatId = beatId,
-            TempId = characterToBeatDto.Id
+            TempId = characterToAttachDto.Id
         };
 
         try {

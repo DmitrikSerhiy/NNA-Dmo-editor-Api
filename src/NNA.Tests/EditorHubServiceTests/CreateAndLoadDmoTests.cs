@@ -41,7 +41,7 @@ public sealed class CreateAndLoadDmoTests : BaseHubServiceTests {
 
     [Fact]
     public async Task ShouldSetUserIdBeforeRepositoryIsCalledTest() {
-        //Arrange
+            //Arrange
         SetupMocksAndVariables();
         MapperMock.Setup(m => m.Map<Dmo>(dmoDto)).Returns(InitialDmo);
         RepositoryMock.Setup(rm => rm.CreateDmoAsync(InitialDmo)).ReturnsAsync(true);
