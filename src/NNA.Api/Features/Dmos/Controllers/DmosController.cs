@@ -241,4 +241,18 @@ public sealed class DmosController : NnaController {
         
         return NoContent();
     }
+
+    [HttpPost]
+    [Route("{DmoId}")]
+    public async Task<IActionResult> PublishOrUnpublishDmo([FromRoute] string dmoId, [FromBody] PublishOrUnpublishDmoDto publishOrUnpublishDmoDto, CancellationToken token) {
+        var dmo = await _dmosRepository.GetById(Guid.Parse(dmoId), token);
+        if (dmo is null) {
+            return NoContent();
+        }
+        
+        dmo.Published = publishOrUnpublishDmoDto.State == DmoPublishState.Published;
+        _dmosRepository.UpdateDmo(dmo);
+        return NoContent();
+    }
+    
 }

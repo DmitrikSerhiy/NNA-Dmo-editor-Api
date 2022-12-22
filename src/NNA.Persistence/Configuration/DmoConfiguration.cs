@@ -21,6 +21,10 @@ public static class DmoConfiguration {
             .HasDefaultValue(0);
         
         modelBuilder.Entity<Dmo>()
+            .Property(b => b.Published)
+            .HasDefaultValue(false);
+
+        modelBuilder.Entity<Dmo>()
             .HasMany(d => d.Conflicts)
             .WithOne(c => c.Dmo)
             .HasForeignKey(c => c.DmoId)

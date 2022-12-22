@@ -18,6 +18,8 @@ public sealed class Dmo : Entity {
     public bool? Didacticism { get; set; }
     public string? DidacticismDescription { get; set; }
     
+    public bool Published { get; set; }
+    
     public NnaUser NnaUser { get; set; } = null!;
     public Guid NnaUserId { get; set; }
 

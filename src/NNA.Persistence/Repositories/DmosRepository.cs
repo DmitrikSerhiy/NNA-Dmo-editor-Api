@@ -29,7 +29,8 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
 
         return await query.Select(dmo => new Dmo {
                 DmoStatus = dmo.DmoStatus,
-                MovieTitle = dmo.MovieTitle
+                MovieTitle = dmo.MovieTitle,
+                Published = dmo.Published
             })
             .FirstOrDefaultAsync(token);
     }
