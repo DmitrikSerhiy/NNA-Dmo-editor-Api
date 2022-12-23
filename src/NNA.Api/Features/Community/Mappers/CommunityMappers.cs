@@ -9,7 +9,7 @@ public sealed class CommunityMappers : Profile {
         CreateMap<Dmo, PublishedDmoShortDto>()
             .ForMember(d => d.DmoStatusId, dcd => dcd.MapFrom(dd => dd.DmoStatus))
             .ForMember(d => d.AuthorNickname, dcd => dcd.MapFrom(dd => dd.NnaUser.UserName))
-            .ForMember(d => d.PublishDate, dcd => dcd.MapFrom(dd =>  new DateTimeOffset(dd.PublishDate!.Value, TimeSpan.Zero).ToString("g") ));
-
+            .ForMember(d => d.PublishDate, dcd => dcd.MapFrom(dd =>  new DateTimeOffset(dd.PublishDate!.Value, TimeSpan.Zero).ToString("g")))
+            .ForMember(d => d.PublishDateRaw, dcd => dcd.MapFrom(dd => dd.PublishDate!.Value));
     }
 }

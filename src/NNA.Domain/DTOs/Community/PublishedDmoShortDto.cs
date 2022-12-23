@@ -7,4 +7,5 @@ public sealed class PublishedDmoShortDto : BaseDto {
     public short DmoStatusId { get; set; }
     public string AuthorNickname { get; set; } = null!;
     public string PublishDate { get; set; } = null!;
+    public long PublishDateRaw { get; set; }
 }
