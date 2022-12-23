@@ -251,6 +251,12 @@ public sealed class DmosController : NnaController {
         }
         
         dmo.Published = publishOrUnpublishDmoDto.State == DmoPublishState.Published;
+        if (dmo.Published) {
+            dmo.PublishDate = DateTimeOffset.UtcNow.UtcTicks;
+        } else {
+            dmo.PublishDate = null;
+        }
+        
         _dmosRepository.UpdateDmo(dmo);
         return NoContent();
     }
