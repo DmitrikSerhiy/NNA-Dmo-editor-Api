@@ -39,6 +39,7 @@ public sealed class CommunityController : NnaController {
             Dmos = publishedDmoDtos,
             Pagination = new PaginationDetailsResultDto(totalAmount, paginationDetailsDto.PageNumber, paginationDetailsDto.PageSize)
         };
+        // todo: send socket notification when new dmo is published.
 
         return OkWithData(result);
     }

@@ -15,7 +15,7 @@ public sealed class CommunityRepository : CommonRepository, ICommunityRepository
             .Include(dmo => dmo.NnaUser)
             .AsNoTracking()
             .OrderByDescending(dmo => dmo.PublishDate)
-            .Skip(pageSize * (pageNumber - 1))
+            .Skip(pageSize * pageNumber)
             .Take(pageSize)
             .ToListAsync(token);
     }
