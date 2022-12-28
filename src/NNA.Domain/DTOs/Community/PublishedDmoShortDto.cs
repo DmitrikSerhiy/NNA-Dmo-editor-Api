@@ -5,6 +5,7 @@ public sealed class PublishedDmoShortDto : BaseDto {
     public string MovieTitle { get; set; } = null!;
     public string? Name { get; set; }
     public short DmoStatusId { get; set; }
+    public string DmoStatus { get; set; } = null!;
     public string AuthorNickname { get; set; } = null!;
     public string? ShortComment { get; set; }
     public string PublishDate { get; set; } = null!;

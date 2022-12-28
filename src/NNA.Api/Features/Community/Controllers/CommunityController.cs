@@ -39,8 +39,27 @@ public sealed class CommunityController : NnaController {
             Dmos = publishedDmoDtos,
             Pagination = new PaginationDetailsResultDto(totalAmount, paginationDetailsDto.PageNumber, paginationDetailsDto.PageSize)
         };
-        // todo: send socket notification when new dmo is published.
 
         return OkWithData(result);
+    }
+    
+    [HttpGet("dmos/{id}/details")]
+    public async Task<IActionResult> GetPublishedDmoMetadata([FromRoute] string id, CancellationToken token) {
+        var dmoId = Guid.Parse(id);
+        var beatsCount = await _communityRepository.GetBeatsCount(dmoId, token);
+        var realBeatsCount = await _communityRepository.GetNonAestheticBeatsCount(dmoId, token);
+        var charactersCount = await _communityRepository.GetCharactersCount(dmoId, token);
+        var (premise, controllingIdea) = await _communityRepository.GetDmoPremiseAndControllingIdea(dmoId, token);
+
+        var detailsDto = new PublishedDmoDetailsDto {
+            Id = id,
+            BeatsCount = realBeatsCount,
+            CharactersCount = charactersCount,
+            Premise = premise,
+            ControllingIdea = controllingIdea,
+            MinutesToRead = beatsCount <= 14 ? 1 : (int)Math.Ceiling(beatsCount / (double)14)
+        }; // ~14 beats takes 1 minute to read
+        
+        return OkWithData(detailsDto);
     }
 }

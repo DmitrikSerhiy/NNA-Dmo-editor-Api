@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NNA.Domain.Entities;
+using NNA.Domain.Enums;
 using NNA.Domain.Interfaces;
 using NNA.Domain.Interfaces.Repositories;
 
@@ -23,6 +24,38 @@ public sealed class CommunityRepository : CommonRepository, ICommunityRepository
     public Task<int> GetPublishedAmountAsync(CancellationToken token) {
         return Context.Dmos
             .Where(dmo => dmo.Published)
+            .AsNoTracking()
             .CountAsync(token);
+    }
+
+    public async Task<int> GetBeatsCount(Guid dmoId, CancellationToken token) {
+        return await Context.Beats
+            .Where(b => b.DmoId == dmoId)
+            .AsNoTracking()
+            .CountAsync(token);
+    }
+
+    public async Task<int> GetNonAestheticBeatsCount(Guid dmoId, CancellationToken token) {
+        return await Context.Beats
+            .Where(b => b.DmoId == dmoId && b.Type != BeatType.AestheticBeat)
+            .AsNoTracking()
+            .CountAsync(token);
+    }
+
+    public async Task<int> GetCharactersCount(Guid dmoId, CancellationToken token) {
+        return await Context.Characters
+            .Where(cha => cha.DmoId == dmoId)
+            .AsNoTracking()
+            .CountAsync(token);
+    }
+
+    public async Task<(string?, string?)> GetDmoPremiseAndControllingIdea(Guid dmoId, CancellationToken token) {
+        var dmoData = await Context.Dmos
+            .Where(dmo => dmo.Id == dmoId)
+            .AsNoTracking()
+            .Select(dmo => new { premise = dmo.Premise, controllingIdea = dmo.ControllingIdea })
+            .FirstOrDefaultAsync(token);
+
+        return (dmoData!.premise, dmoData.controllingIdea);
     }
 }
