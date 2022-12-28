@@ -5,6 +5,9 @@ namespace NNA.Domain.Interfaces.Repositories;
 public interface ICommunityRepository {
     Task<List<Dmo>> GetPublishedDmosAsync(int pageSize, int pageNumber, CancellationToken token);
     Task<int> GetPublishedAmountAsync(CancellationToken token);
+    Task<int> GetPublishedDmosAmountAsync(List<Guid> dmoIdsToIgnore, string searchBy, CancellationToken token);
+    Task<List<Dmo>> GetPublishedDmosAsync(List<Guid> dmoIdsToIgnore, string searchBy, int pageSize, int pageNumber, CancellationToken token);
+
     Task<int> GetBeatsCount(Guid dmoId, CancellationToken token);
     Task<int> GetNonAestheticBeatsCount(Guid dmoId, CancellationToken token);
 

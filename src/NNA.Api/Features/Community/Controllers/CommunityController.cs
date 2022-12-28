@@ -62,4 +62,37 @@ public sealed class CommunityController : NnaController {
         
         return OkWithData(detailsDto);
     }
+
+    [HttpPost("dmos/search/amount")]
+    public async Task<IActionResult> SearchPublishedDmoAmount([FromQuery] string searchBy, [FromBody] SearchPublishedDmoAmountDto searchPublishedDmoAmountDto, CancellationToken token) {
+        if (string.IsNullOrWhiteSpace(searchBy)) {
+            return OkWithData(0);
+        }
+        
+        var dmosToIgnore = new List<Guid>();
+        if (searchPublishedDmoAmountDto.DmoIdsToIgnore.Length > 0) {
+            dmosToIgnore.AddRange(searchPublishedDmoAmountDto.DmoIdsToIgnore.Select(Guid.Parse));
+        }
+
+        var searchedAmount = await _communityRepository.GetPublishedDmosAmountAsync(dmosToIgnore, searchBy, token);
+        return OkWithData(searchedAmount);
+    }
+    
+    
+    [HttpPost("dmos/search/data")]
+    public async Task<IActionResult> SearchPublishedDmoData([FromQuery] string searchBy, [FromBody] SearchPublishedDmosDto searchPublishedDmosDto, CancellationToken token) {
+        var dmosToIgnore = new List<Guid>();
+        if (searchPublishedDmosDto.DmoIdsToIgnore.Length > 0) {
+            dmosToIgnore.AddRange(searchPublishedDmosDto.DmoIdsToIgnore.Select(Guid.Parse));
+        }
+
+        var searchedDmos = await _communityRepository.GetPublishedDmosAsync(dmosToIgnore, searchBy, searchPublishedDmosDto.PageSize, searchPublishedDmosDto.PageNumber, token);
+        var publishedSearchedDmoDtos = searchedDmos.Select(_mapper.Map<PublishedDmoShortDto>).ToList();
+
+        var result = new PublishedDmosDto {
+            Dmos = publishedSearchedDmoDtos,
+            Pagination = new PaginationDetailsResultDto(searchPublishedDmosDto.TotalAmount, searchPublishedDmosDto.PageNumber, searchPublishedDmosDto.PageSize)
+        };
+        return OkWithData(result);
+    }
 }

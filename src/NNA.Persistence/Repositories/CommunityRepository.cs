@@ -21,6 +21,41 @@ public sealed class CommunityRepository : CommonRepository, ICommunityRepository
             .ToListAsync(token);
     }
 
+    public async Task<int> GetPublishedDmosAmountAsync(List<Guid> dmoIdsToIgnore, string searchBy, CancellationToken token) {
+        var query = Context.Dmos
+            .Include(dmo => dmo.NnaUser)
+            .Where(dmo => dmo.Published &&
+                          (dmo.MovieTitle.Contains(searchBy) ||
+                           (dmo.Name != null && dmo.Name.Contains(searchBy)) ||
+                           dmo.NnaUser.UserName.Contains(searchBy)))
+            .AsNoTracking();
+
+        if (dmoIdsToIgnore.Count > 0) {
+            query = query.Where(dmo => !dmoIdsToIgnore.Contains(dmo.Id));
+        }
+        
+        return await query.CountAsync(token);
+    }
+    
+    public async Task<List<Dmo>> GetPublishedDmosAsync(List<Guid> dmoIdsToIgnore, string searchBy, int pageSize, int pageNumber, CancellationToken token) {
+        var query = Context.Dmos
+            .Include(dmo => dmo.NnaUser)
+            .Where(dmo => dmo.Published &&
+                          (dmo.MovieTitle.Contains(searchBy) ||
+                           (dmo.Name != null && dmo.Name.Contains(searchBy)) ||
+                           dmo.NnaUser.UserName.Contains(searchBy)))
+            .AsNoTracking();
+        
+        if (dmoIdsToIgnore.Count > 0) {
+            query = query.Where(dmo => !dmoIdsToIgnore.Contains(dmo.Id));
+        }
+
+        return await query.OrderByDescending(dmo => dmo.PublishDate)
+            .Skip(pageSize * pageNumber)
+            .Take(pageSize)
+            .ToListAsync(token);
+    }
+
     public Task<int> GetPublishedAmountAsync(CancellationToken token) {
         return Context.Dmos
             .Where(dmo => dmo.Published)
