@@ -37,7 +37,7 @@ public sealed class CommunityRepository : CommonRepository, ICommunityRepository
         return await query.CountAsync(token);
     }
     
-    public async Task<List<Dmo>> GetPublishedDmosAsync(List<Guid> dmoIdsToIgnore, string searchBy, int pageSize, int pageNumber, CancellationToken token) {
+    public async Task<List<Dmo>> GetPublishedDmosAsync(List<Guid> dmoIdsToIgnore, string searchBy, int amount, CancellationToken token) {
         var query = Context.Dmos
             .Include(dmo => dmo.NnaUser)
             .Where(dmo => dmo.Published &&
@@ -51,8 +51,7 @@ public sealed class CommunityRepository : CommonRepository, ICommunityRepository
         }
 
         return await query.OrderByDescending(dmo => dmo.PublishDate)
-            .Skip(pageSize * pageNumber)
-            .Take(pageSize)
+            .Take(amount)
             .ToListAsync(token);
     }
 

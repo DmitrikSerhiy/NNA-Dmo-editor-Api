@@ -86,13 +86,8 @@ public sealed class CommunityController : NnaController {
             dmosToIgnore.AddRange(searchPublishedDmosDto.DmoIdsToIgnore.Select(Guid.Parse));
         }
 
-        var searchedDmos = await _communityRepository.GetPublishedDmosAsync(dmosToIgnore, searchBy, searchPublishedDmosDto.PageSize, searchPublishedDmosDto.PageNumber, token);
-        var publishedSearchedDmoDtos = searchedDmos.Select(_mapper.Map<PublishedDmoShortDto>).ToList();
-
-        var result = new PublishedDmosDto {
-            Dmos = publishedSearchedDmoDtos,
-            Pagination = new PaginationDetailsResultDto(searchPublishedDmosDto.TotalAmount, searchPublishedDmosDto.PageNumber, searchPublishedDmosDto.PageSize)
-        };
-        return OkWithData(result);
+        var searchedDmos = await _communityRepository.GetPublishedDmosAsync(dmosToIgnore, searchBy, searchPublishedDmosDto.Amount, token);
+        var publishedDmoDtos = searchedDmos.Select(_mapper.Map<PublishedDmoShortDto>).ToList();
+        return OkWithData(publishedDmoDtos);
     }
 }

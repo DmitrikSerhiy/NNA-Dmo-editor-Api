@@ -5,7 +5,7 @@ public class PaginationDetailsResultDto : BaseDto {
     public int TotalAmount { get; }
     public int PagesAmount { get; }
     public bool HasPreviousPage => PageNumber > 1;
-    public bool HasNextPage => PageNumber < PagesAmount;
+    public bool HasNextPage => PageNumber < (PagesAmount - 1);
 
     public PaginationDetailsResultDto(int totalAmount, int pageNumber, int pageSize) {
         TotalAmount = totalAmount;
