@@ -21,13 +21,14 @@ public sealed class TagsController : NnaController {
         _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
     }
     
-    
+    // todo: add cache 
     [HttpGet]
     public async Task<IActionResult> GetAllTags(CancellationToken cancellationToken) {
         var tags = await _tagsRepository.GetAllTagsWithoutDescriptionAsync(cancellationToken);
         return OkWithData(tags.Select(_mapper.Map<TagWithoutDescriptionDto>));
     }
     
+    // todo: add cache 
     [HttpGet("{id}")]
     public async Task<IActionResult> GetTagDescription([FromRoute] string id, CancellationToken cancellationToken) {
         var tag = await _tagsRepository.GetTagAsync(Guid.Parse(id),  cancellationToken);
