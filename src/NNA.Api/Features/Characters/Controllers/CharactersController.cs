@@ -106,6 +106,7 @@ public sealed class CharactersController : NnaController {
                 }
 
                 _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beats[i]);
+                _tempIdSanitizer.SanitizeTagsTempIdsInBeatDescription(beats[i]);
             }
         }
 
@@ -133,6 +134,7 @@ public sealed class CharactersController : NnaController {
                 }
 
                 beats[i].Order = i;
+                _tempIdSanitizer.SanitizeTagsTempIdsInBeatDescription(beats[i]);
                 _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beats[i]);
                 _tempIdSanitizer.SanitizeRemovedCharactersInBeatDescription(beats[i], characterInBeatsIds);
             }
