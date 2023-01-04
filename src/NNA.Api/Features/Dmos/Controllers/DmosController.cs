@@ -194,7 +194,7 @@ public sealed class DmosController : NnaController {
             await _dmosRepository.SyncContextImmediatelyAsync(cancellationToken);
         }
         
-        var dmoWithData = await _dmosRepository.GetDmoWithDataAsync(_authenticatedIdentityProvider.AuthenticatedUserId, getDmoWithDataDto.Id, cancellationToken);
+        var dmoWithData = await _dmosRepository.GetDmoWithDataAsync(getDmoWithDataDto.Id, cancellationToken);
         if (dmoWithData is null) {
             return NoContent();
         }

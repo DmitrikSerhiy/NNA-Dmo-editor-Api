@@ -55,11 +55,6 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
             .ToListAsync(token);
     }
 
-    public async Task<Dmo?> GetShortDmoAsync(Guid userId, Guid? dmoId, CancellationToken token) {
-        if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
-        return await Context.Dmos.FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId.Value, token);
-    }
-
     public async Task<Dmo?> GetDmoForDelete(Guid userId, Guid dmoId, CancellationToken token) {
         return await Context.Dmos
             .Include(d => d.DmoCollectionDmos)
@@ -96,7 +91,7 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
         Context.NnaMovieCharacterConflicts.Remove(conflict);    
     }
 
-    public async Task<Dmo?> GetDmoWithDataAsync(Guid userId, Guid dmoId, CancellationToken cancellationToken) {
+    public async Task<Dmo?> GetDmoWithDataAsync(Guid dmoId, CancellationToken cancellationToken) {
         return await Context.Dmos
             .AsNoTracking()
             .Include(d => d.Beats)
@@ -106,7 +101,7 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
                 .ThenInclude(tig => tig.Tags)
                     .ThenInclude(t => t.Tag)
             .Include(d => d.Characters)
-            .FirstOrDefaultAsync(b => b.Id == dmoId && b.NnaUserId == userId, cancellationToken);
+            .FirstOrDefaultAsync(b => b.Id == dmoId, cancellationToken);
     }
 
     public async Task<List<Beat>> LoadBeatsWithCharactersAsync(Guid userId, Guid dmoId) {
