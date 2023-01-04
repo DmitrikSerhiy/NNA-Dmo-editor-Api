@@ -94,16 +94,18 @@ public sealed class CharactersController : NnaController {
             var beats = await _dmosRepository.LoadBeatsWithCharactersAsync(
                 _authenticatedIdentityProvider.AuthenticatedUserId, 
                 characterToUpdate.DmoId);
-            
-            foreach (var beat in beats) {
-                if (beat.TempId != null) {
-                    beat.TempId = null;
+
+            for (var i = 0; i < beats.Count; i++) {
+                if (beats[i].TempId != null) {
+                    beats[i].TempId = null;
                 }
-                if (string.IsNullOrWhiteSpace(beat.Description)) {
+
+                beats[i].Order = i;
+                if (string.IsNullOrWhiteSpace(beats[i].Description)) {
                     continue;
                 }
 
-                _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beat);
+                _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beats[i]);
             }
         }
 
@@ -125,16 +127,14 @@ public sealed class CharactersController : NnaController {
                 _authenticatedIdentityProvider.AuthenticatedUserId, 
                 characterToDelete.DmoId);
 
-            foreach (var beat in beats) {
-                if (beat.TempId != null) {
-                    beat.TempId = null;
-                }
-                if (string.IsNullOrWhiteSpace(beat.Description)) {
-                    continue;
+            for (var i = 0; i < beats.Count; i++) {
+                if (beats[i].TempId != null) {
+                    beats[i].TempId = null;
                 }
 
-                _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beat);
-                _tempIdSanitizer.SanitizeRemovedCharactersInBeatDescription(beat, characterInBeatsIds);
+                beats[i].Order = i;
+                _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beats[i]);
+                _tempIdSanitizer.SanitizeRemovedCharactersInBeatDescription(beats[i], characterInBeatsIds);
             }
         }
         

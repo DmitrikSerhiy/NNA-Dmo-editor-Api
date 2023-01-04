@@ -38,7 +38,6 @@ public sealed class DmosController : NnaController {
         _tempIdSanitizer = tempIdSanitizer ?? throw new ArgumentNullException(nameof(tempIdSanitizer));
     }
 
-    // todo: add pagination here
     [HttpGet]
     public async Task<IActionResult> GetDmos(CancellationToken cancellationToken) {
         var dmos = await _dmosRepository.GetAllAsync(_authenticatedIdentityProvider.AuthenticatedUserId, cancellationToken);
@@ -174,11 +173,15 @@ public sealed class DmosController : NnaController {
     public async Task<IActionResult> RemoveDmo([FromQuery] RemoveDmoDto dto, CancellationToken cancellationToken) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
 
-        var dmo = await _dmosRepository.GetDmoAsync(_authenticatedIdentityProvider.AuthenticatedUserId, dto.DmoId, cancellationToken);
+        var dmo = await _dmosRepository.GetDmoForDelete(_authenticatedIdentityProvider.AuthenticatedUserId, dto.DmoId, cancellationToken);
         if (dmo == null) {
             return BadRequestWithMessageToToastr($"Dmo {dto.DmoId} is not found");
         }
 
+        foreach (var conflict in dmo.Conflicts) {
+            _dmosRepository.DeleteConflictInDmo(conflict);
+        }
+        
         _dmosRepository.DeleteDmo(dmo);
         return NoContent();
     }
@@ -231,14 +234,16 @@ public sealed class DmosController : NnaController {
             _authenticatedIdentityProvider.AuthenticatedUserId, 
             sanitizeTempIdsInDmoDto.DmoId);
 
-        foreach (var beat in beats) {
-            if (beat.TempId != null) {
-                beat.TempId = null;
+        for (var i = 0; i < beats.Count; i++) {
+            if (beats[i].TempId != null) {
+                beats[i].TempId = null;
             }
-            _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beat);
-            _tempIdSanitizer.SanitizeTagsTempIdsInBeatDescription(beat);
+
+            beats[i].Order = i;
+            _tempIdSanitizer.SanitizeCharactersTempIdsInBeatDescription(beats[i]);
+            _tempIdSanitizer.SanitizeTagsTempIdsInBeatDescription(beats[i]);
         }
-        
+
         return NoContent();
     }
 

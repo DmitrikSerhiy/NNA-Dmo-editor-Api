@@ -60,15 +60,15 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
         return await Context.Dmos.FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId.Value, token);
     }
 
-    public async Task<Dmo?> GetDmoAsync(Guid userId, Guid? dmoId, CancellationToken token) {
-        if (!dmoId.HasValue) throw new ArgumentNullException(nameof(dmoId));
+    public async Task<Dmo?> GetDmoForDelete(Guid userId, Guid dmoId, CancellationToken token) {
         return await Context.Dmos
             .Include(d => d.DmoCollectionDmos)
             .ThenInclude(dd => dd.DmoCollection)
             .Include(d => d.Beats)
-            .FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId.Value, token);
+            .Include(d => d.Conflicts)
+            .FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId, token);
     }
-
+    
     public void DeleteDmo(Dmo? dmo) {
         if (dmo == null) throw new ArgumentNullException(nameof(dmo));
         dmo.DmoCollectionDmos.Clear();
@@ -93,7 +93,8 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
 
     public void DeleteConflictInDmo(NnaMovieCharacterConflictInDmo? conflict) {
         if (conflict is null) throw new ArgumentNullException(nameof(conflict));
-        Context.NnaMovieCharacterConflicts.Remove(conflict);    }
+        Context.NnaMovieCharacterConflicts.Remove(conflict);    
+    }
 
     public async Task<Dmo?> GetDmoWithDataAsync(Guid userId, Guid dmoId, CancellationToken cancellationToken) {
         return await Context.Dmos
@@ -113,6 +114,7 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
             .AsTracking()
             .Where(d => d.DmoId == dmoId && d.UserId == userId)
             .Include(d => d.Characters)
+            .OrderBy(d => d.Order)
             .ToListAsync();
     }
     
@@ -122,6 +124,7 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
             .Where(d => d.DmoId == dmoId && d.UserId == userId)
             .Include(d => d.Characters)
             .Include(d => d.Tags)
+            .OrderBy(d => d.Order)
             .ToListAsync();
     }
     

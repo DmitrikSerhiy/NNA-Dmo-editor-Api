@@ -11,7 +11,7 @@ public interface IDmosRepository : IRepository {
     Task<List<NnaMovieCharacterConflictInDmo>> GetNnaMovieCharacterConflictByPairId(Guid conflictPairId, CancellationToken token);
 
     Task<Dmo?> GetShortDmoAsync(Guid userId, Guid? dmoId, CancellationToken token);
-    Task<Dmo?> GetDmoAsync(Guid userId, Guid? dmoId, CancellationToken token);
+    Task<Dmo?> GetDmoForDelete(Guid userId, Guid dmoId, CancellationToken token);
     void UpdateDmo(Dmo? dmo);
     void DeleteDmo(Dmo? dmo);
     void UpdateConflictInDmo(NnaMovieCharacterConflictInDmo? conflict);
