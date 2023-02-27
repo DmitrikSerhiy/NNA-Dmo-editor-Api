@@ -63,6 +63,7 @@ public sealed class CommunityController : NnaController {
         return OkWithData(detailsDto);
     }
 
+    // todo: escape or encode searchBy param (by SQL language) to prevent any kind of SQL injection
     [HttpPost("dmos/search/amount")]
     public async Task<IActionResult> SearchPublishedDmoAmount([FromQuery] string searchBy, [FromBody] SearchPublishedDmoAmountDto searchPublishedDmoAmountDto, CancellationToken token) {
         if (string.IsNullOrWhiteSpace(searchBy)) {
@@ -78,7 +79,7 @@ public sealed class CommunityController : NnaController {
         return OkWithData(searchedAmount);
     }
     
-    
+    // todo: escape or encode searchBy param  (by SQL language) to prevent any kind of SQL injection
     [HttpPost("dmos/search/data")]
     public async Task<IActionResult> SearchPublishedDmoData([FromQuery] string searchBy, [FromBody] SearchPublishedDmosDto searchPublishedDmosDto, CancellationToken token) {
         var dmosToIgnore = new List<Guid>();

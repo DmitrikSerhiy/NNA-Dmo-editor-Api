@@ -11,7 +11,7 @@ using NNA.Domain.Interfaces.Repositories;
 namespace NNA.Tests.EditorHubTests;
 
 public class BaseEditorTests {
-    protected EditorHub Subject { get; set; } = null!;
+    protected EditorHub? Subject { get; set; } = null!;
     protected Mock<IEditorService> EditorServiceMock { get; private set; } = null!;
     protected Mock<IHostEnvironment> EnvironmentMock { get; private set; } = null!;
     protected Mock<ClaimsValidator> ClaimsValidatorMock { get; private set; } = null!;
