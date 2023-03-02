@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Web;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NNA.Api.Attributes;
 using NNA.Api.Features.Account.Services;
 using NNA.Api.Helpers;
 using NNA.Domain;
@@ -14,9 +16,10 @@ namespace NNA.Api.Features.Account.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[NotActiveUserAuthorize]
 public sealed class AccountController : NnaController {
     private readonly NnaUserManager _userManager;
+    private readonly NnaRoleManager _roleManager;
     private readonly NnaTokenManager _nnaTokenManager;
     private readonly MailService _mailService;
     private readonly IAuthenticatedIdentityProvider _identityProvider;
@@ -27,12 +30,14 @@ public sealed class AccountController : NnaController {
         NnaTokenManager nnaTokenManager,
         MailService mailService,
         IAuthenticatedIdentityProvider identityProvider,
-        IUserRepository userRepository) {
+        IUserRepository userRepository, 
+        NnaRoleManager roleManager) {
         _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         _nnaTokenManager = nnaTokenManager ?? throw new ArgumentNullException(nameof(nnaTokenManager));
         _mailService = mailService ?? throw new ArgumentNullException(nameof(mailService));
         _identityProvider = identityProvider ?? throw new ArgumentNullException(nameof(identityProvider));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+        _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
     }
 
     [HttpPost]
@@ -93,9 +98,12 @@ public sealed class AccountController : NnaController {
             return BadRequestWithMessageForUi("Failed to create account");
         }
 
-        var newlyCreatedUser = await _userManager.FindByEmailAsync(registerDto.Email);
-        await _mailService.SendConfirmAccountEmailAsync(newlyCreatedUser, cancellationToken);
-        var tokens = _nnaTokenManager.CreateTokens(newlyCreatedUser);
+        var newUser = await _userManager.FindByEmailAsync(registerDto.Email);
+        
+        await _userManager.AddToRoleAsync(newUser, _roleManager.GetInitialRole() );
+        await _mailService.SendConfirmAccountEmailAsync(newUser, cancellationToken);
+        
+        var tokens = _nnaTokenManager.CreateTokens(newUser);
 
         return OkWithData(new {
             accessToken = tokens.AccessToken,
@@ -109,7 +117,7 @@ public sealed class AccountController : NnaController {
     [Route("token")]
     [AllowAnonymous]
     public async Task<IActionResult> Login(LoginDto loginDto, CancellationToken cancellationToken) {
-        var user = await _userManager.FindByEmailAsync(loginDto.Email);
+        var user = await _userManager.FindByEmailWithRolesAsync(loginDto.Email);
         if (user == null) {
             return BadRequestWithMessageForUi("User with this email is not found");
         }
@@ -161,7 +169,7 @@ public sealed class AccountController : NnaController {
             return InvalidRequestWithValidationMessagesToToastr(nameof(AuthGoogleDto.GoogleToken), "Token is invalid");
         }
 
-        var user = await _userManager.FindByEmailAsync(authGoogleDto.Email);
+        var user = await _userManager.FindByEmailWithRolesAsync(authGoogleDto.Email);
         if (user != null) {
             // login user
             var tokens = await _nnaTokenManager.GetOrCreateTokensAsync(user, cancellationToken, LoginProviderName.google);
@@ -208,7 +216,10 @@ public sealed class AccountController : NnaController {
         }
 
         var newUser = await _userManager.FindByEmailAsync(authGoogleDto.Email);
+        
+        await _userManager.AddToRoleAsync(newUser, _roleManager.GetInitialRole() );
         await _mailService.SendConfirmAccountEmailAsync(newUser, cancellationToken);
+
         var tokensForNewUser = _nnaTokenManager.CreateTokens(newUser, LoginProviderName.google);
 
         return OkWithData(new {
@@ -368,21 +379,37 @@ public sealed class AccountController : NnaController {
     // todo: add rate limit once per token lifetime
     [HttpPost]
     [Route("confirmation")]
-    public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto changePasswordDto) {
-        var user = await _userManager.FindByEmailAsync(_identityProvider.AuthenticatedUserEmail);
-        if (user.Email != changePasswordDto.Email) {
+    public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmAccountDto) {
+        var user = await _userManager.FindByEmailWithRolesAsync(_identityProvider.AuthenticatedUserEmail);
+
+        if (user is null) {
+            return BadRequestWithMessageToToastr("User is not found");
+        }
+        
+        if (user.Email != confirmAccountDto.Email) {
             return BadRequestWithMessageToToastr("Wrong email address");
+        }
+
+        if (user.Roles.Count != 1 || user.Roles.FirstOrDefault() != _roleManager.GetInitialRole()) {
+            return BadRequestWithMessageToToastr($"Failed to confirm email for user {user.UserName}");
         }
 
         if (await _userManager.IsEmailConfirmedAsync(user)) {
             return NoContent();
         }
 
-        var isEmailConfirmed = await _userManager.ConfirmEmailAsync(user, changePasswordDto.Token);
+        var isEmailConfirmed = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(confirmAccountDto.Token));
         if (!isEmailConfirmed.Succeeded) {
             return BadRequestWithMessageForUi("Failed to confirm email");
         }
 
+        await _userManager.RemoveFromRoleAsync(user, user.Roles.FirstOrDefault());
+        await _userManager.AddToRoleAsync(user, _roleManager.GetActiveUserRole());
+        
+        await _nnaTokenManager.ClearTokensAsync(user, CancellationToken.None);
+        await _userRepository.RemoveUserConnectionsAsync(user.Id, CancellationToken.None);
+        Response.Headers.Add(NnaHeaders.Get(NnaHeaderNames.RedirectToLogin));
+        
         return NoContent();
     }
 

@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using NNA.Api.Attributes;
 using NNA.Api.Features.Characters.Services;
 using NNA.Api.Features.Dmos.Validators;
 using NNA.Api.Features.Editor.Validators;
@@ -17,7 +17,6 @@ namespace NNA.Api.Features.Dmos.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public sealed class DmosController : NnaController {
     private readonly IMapper _mapper;
     private readonly TempIdSanitizer _tempIdSanitizer;
@@ -39,12 +38,14 @@ public sealed class DmosController : NnaController {
     }
 
     [HttpGet]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> GetDmos(CancellationToken cancellationToken) {
         var dmos = await _dmosRepository.GetAllAsync(_authenticatedIdentityProvider.AuthenticatedUserId, cancellationToken);
         return OkWithData(dmos.Select(_mapper.Map<DmoShortDto>).ToArray());
     }
 
     [HttpPost]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> CreateDmo(CreateDmoDto newDmoDto) {
         var dmoDtoForEditor = _mapper.Map<Domain.DTOs.Editor.CreateDmoDto>(newDmoDto);
         var newDmo = await _editorService.CreateAndLoadDmo(dmoDtoForEditor, _authenticatedIdentityProvider.AuthenticatedUserId);
@@ -52,6 +53,7 @@ public sealed class DmosController : NnaController {
     }
 
     [HttpGet("short/{id}")]
+    [NotActiveUserAuthorize]
     public async Task<IActionResult> GetDmoDetailsShort([FromRoute] string id, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetShortById(Guid.Parse(id), cancellationToken);
         return dmo == null 
@@ -60,6 +62,7 @@ public sealed class DmosController : NnaController {
     }
     
     [HttpGet("{id}")]
+    [NotActiveUserAuthorize]
     public async Task<IActionResult> GetDmoDetails([FromRoute] string id, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetByIdWithCharactersAndConflicts(Guid.Parse(id), cancellationToken);
 
@@ -77,6 +80,7 @@ public sealed class DmosController : NnaController {
     }
 
     [HttpPatch("{id}/details")]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> UpdateDmoDetails([FromRoute] string id, [FromBody] JsonPatchDocument<PatchDmoDetailsDto> patchDocument, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken, true);
         if (dmo is null) {
@@ -97,6 +101,7 @@ public sealed class DmosController : NnaController {
     }
     
     [HttpPost("{id}/conflict")]
+    [ActiveUserAuthorize]
     public IActionResult CreateConflict([FromRoute] string id) {
         var dmoId = Guid.Parse(id);
         var pairId = Guid.NewGuid();
@@ -121,6 +126,7 @@ public sealed class DmosController : NnaController {
     }
     
     [HttpDelete("dmo/conflictPair/{conflictPairId}")]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> DeleteDmoConflict([FromRoute] string conflictPairId, CancellationToken cancellationToken) {
         var conflicts = await _dmosRepository.GetNnaMovieCharacterConflictByPairId(Guid.Parse(conflictPairId), cancellationToken);
         if (conflicts.Count == 0) {
@@ -135,6 +141,7 @@ public sealed class DmosController : NnaController {
     }
     
     [HttpPatch("dmo/conflict/{conflictId}")]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> UpdateDmoConflict([FromRoute] string conflictId, [FromBody] JsonPatchDocument<UpdateDmoConflictDto> patchDocument, CancellationToken cancellationToken) {
         var conflict = await _dmosRepository.GetNnaMovieCharacterConflictById(Guid.Parse(conflictId), cancellationToken);
         if (conflict is null) {
@@ -150,6 +157,7 @@ public sealed class DmosController : NnaController {
     }
     
     [HttpPatch("{id}/plot")]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> UpdateDmoPlotDetails([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateDmoPlotDetailsDto> patchDocument, CancellationToken cancellationToken) {
         var dmo = await _dmosRepository.GetById(Guid.Parse(id), cancellationToken, true);
         if (dmo is null) {
@@ -170,6 +178,7 @@ public sealed class DmosController : NnaController {
     }
     
     [HttpDelete]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> RemoveDmo([FromQuery] RemoveDmoDto dto, CancellationToken cancellationToken) {
         if (dto == null) throw new ArgumentNullException(nameof(dto));
 
@@ -188,6 +197,7 @@ public sealed class DmosController : NnaController {
 
     [HttpGet]
     [Route("{Id}/withData")]
+    [NotActiveUserAuthorize]
     public async Task<IActionResult> LoadDmoWithData([FromRoute] GetDmoWithDataDto getDmoWithDataDto, CancellationToken cancellationToken, [FromQuery] bool sanitizeBeforeLoad = false) {
         if (sanitizeBeforeLoad) {
             await SanitizeTempIds(new SanitizeTempIdsInDmoDto { DmoId = getDmoWithDataDto.Id} );
@@ -229,6 +239,7 @@ public sealed class DmosController : NnaController {
     
     [HttpDelete]
     [Route("{DmoId}/tempIds")]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> SanitizeTempIds([FromRoute] SanitizeTempIdsInDmoDto sanitizeTempIdsInDmoDto ) { // do not add cancellation token here
         var beats = await _dmosRepository.LoadBeatsWithNestedEntitiesAsync(
             _authenticatedIdentityProvider.AuthenticatedUserId, 
@@ -249,6 +260,7 @@ public sealed class DmosController : NnaController {
 
     [HttpPost]
     [Route("{DmoId}")]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> PublishOrUnpublishDmo([FromRoute] string dmoId, [FromBody] PublishOrUnpublishDmoDto publishOrUnpublishDmoDto, CancellationToken token) {
         var dmo = await _dmosRepository.GetById(Guid.Parse(dmoId), token);
         if (dmo is null) {

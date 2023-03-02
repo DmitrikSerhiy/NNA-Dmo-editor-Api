@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NNA.Api.Attributes;
 using NNA.Domain.DTOs;
 using NNA.Domain.DTOs.Community;
 using NNA.Domain.Interfaces.Repositories;
@@ -9,7 +9,7 @@ namespace NNA.Api.Features.Community.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[NotActiveUserAuthorize]
 public sealed class CommunityController : NnaController {
 
     private readonly ICommunityRepository _communityRepository;

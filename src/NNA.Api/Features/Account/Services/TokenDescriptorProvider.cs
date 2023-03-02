@@ -16,7 +16,7 @@ public sealed class TokenDescriptorProvider {
     public SecurityTokenDescriptor ProvideForAccessTokenWithCredentialsAndSubject(NnaUser user) {
         var accessTokenDescriptor = ProvideForAccessToken();
         accessTokenDescriptor.AddSigningCredentials(_jwtOptions);
-        accessTokenDescriptor.AddSubjectClaims(user.Email, user.Id);
+        accessTokenDescriptor.AddSubjectClaims(user);
 
         return accessTokenDescriptor;
     }
@@ -24,7 +24,7 @@ public sealed class TokenDescriptorProvider {
     public SecurityTokenDescriptor ProvideForRefreshTokenWithCredentialsAndSubject(NnaUser user) {
         var refreshTokenDescriptor = ProvideForRefreshToken();
         refreshTokenDescriptor.AddSigningCredentials(_jwtOptions);
-        refreshTokenDescriptor.AddSubjectClaims(user.Email, user.Id);
+        refreshTokenDescriptor.AddSubjectClaims(user);
 
         return refreshTokenDescriptor;
     }
@@ -52,8 +52,7 @@ public sealed class TokenDescriptorProvider {
             TokenType = "JWT",
             Claims = new Dictionary<string, object> {
                 { nameof(NnaCustomTokenClaims.oid), Guid.NewGuid() }
-            },
-            
+            }
         };
     }
 }

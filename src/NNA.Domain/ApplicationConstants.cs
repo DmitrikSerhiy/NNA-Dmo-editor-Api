@@ -17,4 +17,13 @@ public static class ApplicationConstants {
 
     public const short MaxCharacterNameLength = 60;
     public const short MaxCharacterAliasesLength = 100;
+    
+    
+    
+    public const string NnaCharacterInterpolatorPrefix = "{{nna-character-";
+    public const string NnaCharacterInterpolatorPostfix = "-nna-character}}";
+
+    public const string NotActiveUserPolicy = "NotActiveUser";
+    public const string ActiveUserPolicy = "ActiveUser";
+    public const string SuperUserPolicy = "SuperUser";
 }

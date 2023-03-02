@@ -29,9 +29,7 @@ public sealed class MailService {
 
     public async Task<bool> SendConfirmAccountEmailAsync(NnaUser user, CancellationToken cancellationToken) {
         var to = new EmailAddress(user.Email, user.UserName);
-        var token = await _nnaUserManager.GenerateNnaUserTokenAsync(
-            user,
-            Enum.GetName(typeof(TokenGenerationReasons), TokenGenerationReasons.NnaConfirmEmail));
+        var token = await _nnaUserManager.GenerateNnaUserTokenAsync(user, Enum.GetName(TokenGenerationReasons.NnaConfirmEmail));
         var plainTextContent = GenerateMessageForConfirmEmailActionWithLink(token);
         var message = MailHelper.CreateSingleEmail(_nnaFromEmail, to, "Confirm your account", plainTextContent, "");
 

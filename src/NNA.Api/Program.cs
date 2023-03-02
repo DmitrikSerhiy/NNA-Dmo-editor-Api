@@ -54,7 +54,7 @@ try {
     app.UseNnaCorsOptions();
     app.UseAuthentication();
     app.UseAuthorization();
-    app.UseMiddleware<AuthenticatedIdentityMiddleware>();
+    app.UseMiddleware<NnaAuthenticationMiddleware>();
 
     app.UseEndpoints(endpoints => {
         endpoints.MapControllers();

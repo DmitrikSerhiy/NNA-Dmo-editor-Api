@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NNA.Api.Attributes;
 using NNA.Domain.DTOs.DmoCollections;
 using NNA.Domain.DTOs.Dmos;
 using NNA.Domain.Entities;
@@ -11,7 +11,7 @@ namespace NNA.Api.Features.DmoCollections.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
+[ActiveUserAuthorize]
 public sealed class DmoCollectionsController : NnaController {
     private readonly IDmoCollectionsRepository _dmoCollectionsRepository;
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;

@@ -1,4 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
+using NNA.Domain.Enums;
 
 namespace NNA.Api.Features.Account.Services;
 
@@ -17,7 +18,12 @@ internal sealed class TokenValidationParametersProvider {
             RequireExpirationTime = true,
 
             ValidTypes = new[] { tokenDescriptor.TokenType },
-            ClockSkew = TimeSpan.Zero
+            ClockSkew = TimeSpan.Zero,
+
+            RoleClaimType = NnaRoleClaimType,
+            RoleClaimTypeRetriever = (_, _) => NnaRoleClaimType
         };
     }
+
+    internal static string NnaRoleClaimType = Enum.GetName(NnaCustomTokenClaims.rls)!;
 }

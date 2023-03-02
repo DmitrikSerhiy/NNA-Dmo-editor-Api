@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NNA.Api.Attributes;
 using NNA.Domain.Interfaces.Repositories;
 
 namespace NNA.Api.Features.HealthCheck.Controllers;
@@ -30,7 +31,7 @@ public sealed class HealthController : ControllerBase {
     }
 
     [HttpGet]
-    [Authorize]
+    [SuperUserAuthorize]
     [Route("security")]
     public IActionResult CheckToken() {
         return new JsonResult(new { message = "Token is valid" });

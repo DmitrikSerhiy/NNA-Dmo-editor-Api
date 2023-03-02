@@ -1,11 +1,12 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using NNA.Domain.Entities;
 using NNA.Persistence.Configuration;
 
 namespace NNA.Persistence;
 
-public sealed class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
+public sealed class NnaContext : IdentityDbContext<NnaUser, IdentityRole<Guid>, Guid> {
     public DbSet<NnaUser> ApplicationUsers => Set<NnaUser>();
     public DbSet<Dmo> Dmos => Set<Dmo>();
     public DbSet<DmoCollection> DmoCollections => Set<DmoCollection>();
@@ -18,7 +19,7 @@ public sealed class NnaContext : IdentityDbContext<NnaUser, NnaRole, Guid> {
     public DbSet<NnaMovieCharacterConflictInDmo> NnaMovieCharacterConflicts => Set<NnaMovieCharacterConflictInDmo>();
     public DbSet<NnaTag> Tags => Set<NnaTag>();
     public DbSet<NnaTagInBeat> TagInBeats => Set<NnaTagInBeat>();
-
+    
     public NnaContext(DbContextOptions<NnaContext> options)
         : base(options) { }
 

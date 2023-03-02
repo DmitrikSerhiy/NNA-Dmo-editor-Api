@@ -5,6 +5,7 @@ using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -63,8 +64,8 @@ public static class ApiBuilderExtensions {
         var tokenDescriptor = tokenDescriptorProvider.ProvideForAccessToken();
         tokenDescriptor.AddSigningCredentials(jwtOptions.Value);
 
-        var identityBuilder = builder.Services
-            .AddIdentity<NnaUser, NnaRole>(options => {
+        builder.Services
+            .AddIdentity<NnaUser, IdentityRole<Guid>>(options => {
                 options.User.RequireUniqueEmail = true;
                 options.User.AllowedUserNameCharacters = new UserOptions().AllowedUserNameCharacters += " ";
                 options.Password.RequiredLength = ApplicationConstants.MinPasswordLength;
@@ -74,9 +75,10 @@ public static class ApiBuilderExtensions {
                 options.Password.RequiredUniqueChars = ApplicationConstants.MinPasswordLength / 2;
                 options.Password.RequireNonAlphanumeric = false;
             })
-            .AddEntityFrameworkStores<NnaContext>();
-        identityBuilder.AddUserManager<NnaUserManager>();
-        identityBuilder.AddTokenProvider<DataProtectorTokenProvider<NnaUser>>("");
+            .AddEntityFrameworkStores<NnaContext>()
+            .AddUserManager<NnaUserManager>()
+            .AddRoleManager<NnaRoleManager>()
+            .AddTokenProvider<EmailTokenProvider<NnaUser>>("");
 
         builder.Services
             .AddAuthentication(options => {
@@ -106,6 +108,30 @@ public static class ApiBuilderExtensions {
                     }
                 };
             });
+        
+        // builder.Services.AddAuthorization();
+        builder.Services.AddAuthorization(options => {
+
+            options.DefaultPolicy = new AuthorizationPolicyBuilder()
+                .RequireAuthenticatedUser()
+                .RequireClaim(Enum.GetName(NnaCustomTokenClaims.rls)!, Enum.GetNames<NnaRoles>())
+                .Build();
+
+            options.AddPolicy(ApplicationConstants.NotActiveUserPolicy, policy => policy
+                .RequireAuthenticatedUser()
+                .RequireClaim(Enum.GetName(NnaCustomTokenClaims.rls)!, Enum.GetName(NnaRoles.NotActiveUser)!, Enum.GetName(NnaRoles.ActiveUser)!, Enum.GetName(NnaRoles.SuperUser)!));
+
+            options.AddPolicy(ApplicationConstants.ActiveUserPolicy, policy => policy
+                .RequireAuthenticatedUser()
+                .RequireClaim(Enum.GetName(NnaCustomTokenClaims.rls)!, Enum.GetName(NnaRoles.ActiveUser)!, Enum.GetName(NnaRoles.SuperUser)!));
+
+            options.AddPolicy(ApplicationConstants.SuperUserPolicy, policy => policy
+                .RequireAuthenticatedUser()
+                .RequireClaim(Enum.GetName(NnaCustomTokenClaims.rls)!, Enum.GetName(NnaRoles.SuperUser)!));
+        });
+        
+        builder.Services.AddSingleton<IAuthorizationMiddlewareResultHandler, NnaAuthorizationMiddleware>();
+
     }
 
     public static void AddNnaOptions(this WebApplicationBuilder builder) {

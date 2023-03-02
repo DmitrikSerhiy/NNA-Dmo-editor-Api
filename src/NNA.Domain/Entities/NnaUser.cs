@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Identity;
 
 namespace NNA.Domain.Entities;
 
@@ -24,4 +25,6 @@ public sealed class NnaUser : IdentityUser<Guid> {
     public ICollection<Dmo> Dmos { get; set; } = new List<Dmo>();
     public ICollection<DmoCollection> DmoCollections { get; set; } = new List<DmoCollection>();
     public ICollection<Beat> Beats { get; set; } = new List<Beat>();
+    [NotMapped]
+    public ICollection<string> Roles { get; set; } = new List<string>();
 }

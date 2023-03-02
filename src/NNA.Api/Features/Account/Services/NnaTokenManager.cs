@@ -48,8 +48,10 @@ public sealed class NnaTokenManager {
     /// Load existing tokens or generate new if tokens are missing.
     /// If tokens exist but are invalid then new tokens are created 
     /// </summary>
-    public async Task<TokensDto> GetOrCreateTokensAsync(NnaUser? user,
-        CancellationToken cancellationToken, LoginProviderName loginProviderName = LoginProviderName.password) {
+    public async Task<TokensDto> GetOrCreateTokensAsync(
+        NnaUser? user,
+        CancellationToken cancellationToken, 
+        LoginProviderName loginProviderName = LoginProviderName.password) {
         if (user == null) throw new ArgumentNullException(nameof(user));
         var tokens = await _userRepository.GetTokens(user.Id, cancellationToken);
 
@@ -155,7 +157,8 @@ public sealed class NnaTokenManager {
     }
 
 
-    private TokensDto GenerateAndUpdateTokens(NnaUser user,
+    private TokensDto GenerateAndUpdateTokens(
+        NnaUser user,
         LoginProviderName loginProviderName = LoginProviderName.password) {
         var newTokens = GenerateNewTokenPair(user);
 
@@ -166,7 +169,8 @@ public sealed class NnaTokenManager {
         return newTokens;
     }
 
-    private TokensDto GenerateAndSaveTokens(NnaUser user,
+    private TokensDto GenerateAndSaveTokens(
+        NnaUser user,
         LoginProviderName loginProviderName = LoginProviderName.password) {
         var newTokens = GenerateNewTokenPair(user);
 

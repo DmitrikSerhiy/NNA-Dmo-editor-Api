@@ -71,7 +71,7 @@ public sealed class TempIdSanitizer {
         var beatDesc = Uri.UnescapeDataString(beat.Description);
         foreach (var characterInBeatId in characterInBeatsIds) {
             if (!beatDesc.Contains(characterInBeatId.ToString())) continue;
-            beatDesc = beatDesc.Replace(Constants.NnaCharacterInterpolatorPrefix + characterInBeatId + Constants.NnaCharacterInterpolatorPostfix, "");
+            beatDesc = beatDesc.Replace(ApplicationConstants.NnaCharacterInterpolatorPrefix + characterInBeatId + ApplicationConstants.NnaCharacterInterpolatorPostfix, "");
             beat.Description = Uri.EscapeDataString(beatDesc);
         }
     }

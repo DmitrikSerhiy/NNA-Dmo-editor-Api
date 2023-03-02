@@ -1,8 +1,8 @@
 ﻿using System.Security.Authentication;
 using System.Security.Claims;
 using FluentValidation.Results;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
+using NNA.Api.Attributes;
 using NNA.Api.Extensions;
 using NNA.Api.Features.Editor.Services;
 using NNA.Api.Helpers;
@@ -16,7 +16,7 @@ using Serilog;
 
 namespace NNA.Api.Features.Editor.Hubs;
 
-[Authorize]
+[ActiveUserAuthorize]
 public class BaseEditorHub : Hub<IEditorClient> {
     protected readonly IEditorService EditorService;
     protected readonly IHostEnvironment Environment;
@@ -36,10 +36,11 @@ public class BaseEditorHub : Hub<IEditorClient> {
     }
 
     public override async Task OnConnectedAsync() {
-        if (!(Context.User!.Claims.Any(claim => claim.Type.Equals(ClaimTypes.Email)) &&
-              Context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)) &&
-              Context.User.Claims.Any(claim =>
-                  claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid))))) {
+        if (!(
+                Context.User!.Claims.Any(claim => claim.Type.Equals(ClaimTypes.Email)) &&
+                Context.User.Claims.Any(claim => claim.Type.Equals(ClaimTypes.NameIdentifier)) &&
+                Context.User.Claims.Any(claim =>claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid)))
+            )) {
             throw new AuthenticationException("Missing user claims");
         }
 

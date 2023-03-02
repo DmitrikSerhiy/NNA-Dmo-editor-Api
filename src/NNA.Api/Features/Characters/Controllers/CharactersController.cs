@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using NNA.Api.Attributes;
 using NNA.Api.Features.Characters.Services;
 using NNA.Api.Features.Characters.Validators;
 using NNA.Domain.DTOs.Characters;
@@ -13,7 +13,6 @@ namespace NNA.Api.Features.Characters.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-[Authorize]
 public sealed class CharactersController : NnaController {
     private readonly IAuthenticatedIdentityProvider _authenticatedIdentityProvider;
     private readonly ICharactersRepository _charactersRepository;
@@ -35,6 +34,7 @@ public sealed class CharactersController : NnaController {
     }
     
     [HttpGet]
+    [NotActiveUserAuthorize]
     public async Task<IActionResult> GetDmoCharacters([FromQuery] GetCharactersDto charactersDto, CancellationToken cancellationToken) {
         var characters = await _charactersRepository.GetDmoCharactersWithBeatsAsync(charactersDto.DmoId, cancellationToken);
         var charactersWithBeatsDto = characters
@@ -52,6 +52,7 @@ public sealed class CharactersController : NnaController {
     }
  
     [HttpPost]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> CreateCharacter([FromBody] CreateCharacterDto createCharacterDto, CancellationToken cancellationToken) {
         var isCharacterNameTaken =
             await _charactersRepository.IsExistAsync(createCharacterDto.Name, createCharacterDto.DmoId, cancellationToken);
@@ -66,6 +67,7 @@ public sealed class CharactersController : NnaController {
     }
     
     [HttpPatch("{id}")]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> UpdateCharacter([FromRoute] string id, [FromBody] JsonPatchDocument<UpdateCharacterDto> patchDocument, CancellationToken cancellationToken) {
         var characterToUpdate = await _charactersRepository.GetCharacterByIdAsync(Guid.Parse(id), cancellationToken);
         if (characterToUpdate is null) {
@@ -116,6 +118,7 @@ public sealed class CharactersController : NnaController {
     }
     
     [HttpDelete]
+    [ActiveUserAuthorize]
     public async Task<IActionResult> DeleteCharacter([FromQuery] DeleteCharacterDto deleteCharacterDto, CancellationToken cancellationToken) {
         var characterToDelete = await _charactersRepository.GetCharacterByIdAsync(deleteCharacterDto.Id, cancellationToken);
         if (characterToDelete is null) {

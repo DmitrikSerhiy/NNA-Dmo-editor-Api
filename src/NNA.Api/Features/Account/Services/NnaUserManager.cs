@@ -10,11 +10,9 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
     private readonly IServiceProvider _serviceProvider;
     private readonly IUserRepository _userRepository;
 
-    private readonly string? _nnaSetPasswordPurpose =
-        Enum.GetName(typeof(SendMailReason), SendMailReason.NnaSetPassword);
+    private readonly string? _nnaSetPasswordPurpose = Enum.GetName(SendMailReason.NnaSetPassword);
 
-    private readonly string? _nnaResetPasswordPurpose =
-        Enum.GetName(typeof(SendMailReason), SendMailReason.NnaResetPassword);
+    private readonly string? _nnaResetPasswordPurpose = Enum.GetName(SendMailReason.NnaResetPassword);
 
     private const string NnaTokenProviderName = "NnaDataProtectorTokenProvider";
 
@@ -32,7 +30,22 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
             services, logger) {
         _serviceProvider = services;
         _userRepository = _serviceProvider.GetService<IUserRepository>()!;
-        RegisterTokenProvider(NnaTokenProviderName, GetNnaDataProtectorTokenProvider());
+        RegisterTokenProvider(NnaTokenProviderName, GetNnaTokenProvider());
+    }
+
+    public async Task<NnaUser?> FindByEmailWithRolesAsync(string email) {
+        var user = await FindByEmailAsync(email);
+        if (user is null) {
+            return null;
+        }
+
+        var roles = await GetRolesAsync(user);
+        if (roles.Count == 0) {
+            return user;
+        }
+
+        user.Roles = roles;
+        return user;
     }
 
     public override async Task<IdentityResult> ConfirmEmailAsync(NnaUser user, string token) {
@@ -40,8 +53,8 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
             throw new ArgumentNullException(nameof(user));
         }
 
-        var isValid = await GetNnaDataProtectorTokenProvider().ValidateAsync(
-            Enum.GetName(typeof(TokenGenerationReasons), TokenGenerationReasons.NnaConfirmEmail), token, this, user);
+        var isValid = await GetNnaTokenProvider().ValidateAsync(
+            Enum.GetName(TokenGenerationReasons.NnaConfirmEmail), token, this, user);
 
         if (!isValid) {
             return IdentityResult.Failed(new IdentityError
@@ -73,9 +86,9 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
     public async Task<bool> ValidateNnaTokenForSetOrResetPasswordAsync(NnaUser user, string token,
         SendMailReason reason) {
         return reason switch {
-            SendMailReason.NnaSetPassword => await GetNnaDataProtectorTokenProvider()
+            SendMailReason.NnaSetPassword => await GetNnaTokenProvider()
                 .ValidateAsync(_nnaSetPasswordPurpose, token, this, user),
-            SendMailReason.NnaResetPassword => await GetNnaDataProtectorTokenProvider()
+            SendMailReason.NnaResetPassword => await GetNnaTokenProvider()
                 .ValidateAsync(_nnaResetPasswordPurpose, token, this, user),
             _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
         };
@@ -86,7 +99,18 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
         await UpdateUserAsync(user);
     }
 
-    private IUserTwoFactorTokenProvider<NnaUser> GetNnaDataProtectorTokenProvider() {
-        return _serviceProvider.GetService<DataProtectorTokenProvider<NnaUser>>()!;
+    private EmailTokenProvider<NnaUser> GetNnaTokenProvider() {
+        return _serviceProvider.GetService<EmailTokenProvider<NnaUser>>()!;
+    }
+
+    // pass only user with loaded roles
+    public override async Task<IdentityResult> AddToRoleAsync(NnaUser user, string role) {
+        var result = await base.AddToRoleAsync(user, role);
+        if (result.Succeeded == false) {
+            return result;
+        }
+        
+        user.Roles.Add(role);
+        return result;
     }
 }
