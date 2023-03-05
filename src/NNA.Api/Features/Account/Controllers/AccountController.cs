@@ -1,5 +1,4 @@
-﻿using System.Web;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api.Attributes;
 using NNA.Api.Features.Account.Services;
@@ -317,8 +316,7 @@ public sealed class AccountController : NnaController {
             HasPassword = !string.IsNullOrEmpty(user.PasswordHash)
         });
     }
-
-    // todo: add rate limit here once per hour
+    
     [HttpPost]
     [Route("mail/confirmation")]
     public async Task<IActionResult> SendEmailForAccountConfirmation(SendConfirmAccountEmailDto update, CancellationToken cancellationToken) {
@@ -375,8 +373,7 @@ public sealed class AccountController : NnaController {
 
         return NoContent();
     }
-
-    // todo: add rate limit once per token lifetime
+    
     [HttpPost]
     [Route("confirmation")]
     public async Task<IActionResult> ConfirmEmail(ConfirmEmailDto confirmAccountDto) {
@@ -398,7 +395,7 @@ public sealed class AccountController : NnaController {
             return NoContent();
         }
 
-        var isEmailConfirmed = await _userManager.ConfirmEmailAsync(user, HttpUtility.UrlDecode(confirmAccountDto.Token));
+        var isEmailConfirmed = await _userManager.ConfirmEmailAsync(user, confirmAccountDto.Token);
         if (!isEmailConfirmed.Succeeded) {
             return BadRequestWithMessageForUi("Failed to confirm email");
         }

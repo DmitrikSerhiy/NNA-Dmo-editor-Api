@@ -1,3 +1,4 @@
+using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.Mvc;
 using NNA.Api;
@@ -27,6 +28,7 @@ try {
     builder.AddNnaCorsOptions();
     builder.AddNnaOptions();
     builder.AddNnaAuthenticationOptions();
+    builder.AddNnaRateLimiter();
 
     builder.Services
         .AddSignalR()
@@ -51,6 +53,7 @@ try {
     app.UseHttpsRedirection();
     app.UseHsts();
     app.UseRouting();
+    app.UseIpRateLimiting();
     app.UseNnaCorsOptions();
     app.UseAuthentication();
     app.UseAuthorization();

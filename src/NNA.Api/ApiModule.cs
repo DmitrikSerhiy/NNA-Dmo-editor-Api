@@ -45,6 +45,11 @@ public sealed class ApiModule : Module {
             .AsSelf()
             .InstancePerLifetimeScope();
         
+        builder
+            .RegisterType<NnaDataProtectorTokenProvider>()
+            .AsSelf()
+            .InstancePerLifetimeScope();
+        
 
         builder
             .RegisterAssemblyTypes(typeof(Program).Assembly)

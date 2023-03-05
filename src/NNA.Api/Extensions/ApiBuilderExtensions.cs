@@ -1,4 +1,5 @@
-﻿using Autofac;
+﻿using AspNetCoreRateLimit;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Azure.Core;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
@@ -134,10 +135,18 @@ public static class ApiBuilderExtensions {
 
     }
 
+    public static void AddNnaRateLimiter(this WebApplicationBuilder builder) {
+        builder.Services.AddMemoryCache();
+        builder.Services.AddInMemoryRateLimiting();
+        builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+    }
+    
     public static void AddNnaOptions(this WebApplicationBuilder builder) {
         builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(nameof(JwtOptions)));
-        builder.Services.Configure<SendGridConfiguration>(
-            builder.Configuration.GetSection(nameof(SendGridConfiguration)));
+        builder.Services.Configure<SendGridConfiguration>(builder.Configuration.GetSection(nameof(SendGridConfiguration)));
+        builder.Services.Configure<IpRateLimitOptions>(builder.Configuration.GetSection("IpRateLimiting"));
+        builder.Services.Configure<IpRateLimitPolicies>(builder.Configuration.GetSection("IpRateLimitPolicies"));
+        
     }
 
     public static void AddNnaDbOptions(this WebApplicationBuilder builder) {
