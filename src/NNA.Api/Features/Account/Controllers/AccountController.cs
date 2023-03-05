@@ -313,7 +313,9 @@ public sealed class AccountController : NnaController {
 
         return OkWithData(new PersonalInfoDto(user.UserName, user.Email, user.Id.ToString(), user.GetAuthProviders()) {
             IsEmailVerified = user.EmailConfirmed,
-            HasPassword = !string.IsNullOrEmpty(user.PasswordHash)
+            HasPassword = !string.IsNullOrEmpty(user.PasswordHash),
+            IsEmailSent = user.LastTimeEmailSent != null,
+            LastTimeEmailSent = user.LastTimeEmailSent
         });
     }
     
@@ -325,7 +327,14 @@ public sealed class AccountController : NnaController {
             return BadRequestWithMessageToToastr("Wrong email address");
         }
 
-        await _mailService.SendConfirmAccountEmailAsync(user, cancellationToken);
+        var isSent = await _mailService.SendConfirmAccountEmailAsync(user, cancellationToken);
+        if (isSent == false) {
+            return BadRequestWithMessageToToastr("Failed to send email");
+        }
+
+        user.LastTimeEmailSent = DateTimeOffset.Now;
+        _userRepository.UpdateUser(user);
+        
         return NoContent();
     }
 

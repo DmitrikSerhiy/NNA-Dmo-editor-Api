@@ -60,8 +60,10 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
             return IdentityResult.Failed(new IdentityError
                 { Code = "", Description = "Invalid confirm email nna token" });
         }
-
-        _userRepository.ConfirmUserEmail(user);
+        
+        user.EmailConfirmed = true;
+        user.LastTimeEmailSent = null;
+        _userRepository.UpdateUser(user);
         return IdentityResult.Success;
     }
 

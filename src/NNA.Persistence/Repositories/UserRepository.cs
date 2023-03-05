@@ -59,14 +59,7 @@ internal sealed class UserRepository : CommonRepository, IUserRepository {
         Context.AttachRange(accessToken, refreshToken);
         Context.Tokens.UpdateRange(accessToken, refreshToken);
     }
-
-    public void ConfirmUserEmail(NnaUser user) {
-        if (user == null) throw new ArgumentNullException(nameof(user));
-        Context.Attach(user);
-        user.EmailConfirmed = true;
-        Context.Update(user);
-    }
-
+    
     public async Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId, CancellationToken token) {
         var tokens = await Context.Tokens
             .Where(tkn => tkn.UserId == userId)

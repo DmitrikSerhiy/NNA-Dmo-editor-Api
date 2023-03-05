@@ -20,6 +20,7 @@ public sealed class NnaUser : IdentityUser<Guid> {
     }
 
     public string? AuthProviders { get; set; }
+    public DateTimeOffset? LastTimeEmailSent { get; set; }
 
     // ReSharper disable CollectionNeverUpdated.Global
     public ICollection<Dmo> Dmos { get; set; } = new List<Dmo>();

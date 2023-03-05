@@ -13,5 +13,7 @@ public sealed class PersonalInfoDto : BaseDto {
     public string UserId { get; set; }
     public string[] AuthProviders { get; set; }
     public bool IsEmailVerified { get; set; }
+    public bool IsEmailSent { get; set; }
+    public DateTimeOffset? LastTimeEmailSent { get; set; }
     public bool HasPassword { get; set; }
 }

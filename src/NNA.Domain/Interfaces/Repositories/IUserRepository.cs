@@ -9,7 +9,6 @@ public interface IUserRepository : IRepository {
     void SaveTokens(NnaToken accessToken, NnaToken refreshToken);
     Task ClearTokensAsync(NnaUser user, CancellationToken token);
     void UpdateTokens(NnaToken accessToken, NnaToken refreshToken);
-    void ConfirmUserEmail(NnaUser user);
     Task<(NnaToken accessToken, NnaToken refreshToken)?> GetTokens(Guid userId, CancellationToken token);
     Task<UsersTokens?> GetAuthenticatedUserDataAsync(string email, CancellationToken token);
     Task<bool> HasEditorConnectionAsync(Guid userId, CancellationToken token);
