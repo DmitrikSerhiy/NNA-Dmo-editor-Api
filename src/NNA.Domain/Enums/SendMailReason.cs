@@ -1,6 +1,6 @@
 ﻿namespace NNA.Domain.Enums;
 
 public enum SendMailReason {
-    NnaSetPassword,
+    NnaSetPassword = 0,
     NnaResetPassword
 }

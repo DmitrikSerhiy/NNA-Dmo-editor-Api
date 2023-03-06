@@ -79,7 +79,7 @@ public static class ApiBuilderExtensions {
             .AddEntityFrameworkStores<NnaContext>()
             .AddUserManager<NnaUserManager>()
             .AddRoleManager<NnaRoleManager>()
-            .AddTokenProvider<EmailTokenProvider<NnaUser>>("");
+            .AddDefaultTokenProviders();
 
         builder.Services
             .AddAuthentication(options => {

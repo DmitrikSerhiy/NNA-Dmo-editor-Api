@@ -36,8 +36,6 @@ public sealed class SetOrResetPasswordDtoValidator : AbstractValidator<SetOrRese
             .WithMessage("Set or Reset token is missing");
 
         RuleFor(u => u.Reason)
-            .NotEmpty()
-            .WithMessage("Reason is missing")
             .IsInEnum()
             .WithMessage("Not valid reason");
     }

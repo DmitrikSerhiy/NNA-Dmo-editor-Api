@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using System.Net;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using NNA.Domain.Entities;
 using NNA.Domain.Enums;
@@ -7,7 +8,6 @@ using NNA.Domain.Interfaces.Repositories;
 namespace NNA.Api.Features.Account.Services;
 
 public sealed class NnaUserManager : UserManager<NnaUser> {
-    private readonly NnaDataProtectorTokenProvider _nnaDataProtectorTokenProvider;
     private readonly IUserRepository _userRepository;
 
     private readonly string? _nnaSetPasswordPurpose = Enum.GetName(SendMailReason.NnaSetPassword);
@@ -24,13 +24,10 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
         IdentityErrorDescriber errors,
         IServiceProvider services,
         ILogger<NnaUserManager> logger,
-        NnaDataProtectorTokenProvider nnaDataProtectorTokenProvider,
         IUserRepository userRepository)
         : base(store, optionsAccessor, passwordHasher, userValidators, passwordValidators, keyNormalizer, errors,
             services, logger) {
-        _nnaDataProtectorTokenProvider = nnaDataProtectorTokenProvider;
         _userRepository = userRepository;
-        RegisterTokenProvider(_nnaDataProtectorTokenProvider.Name, nnaDataProtectorTokenProvider);
     }
 
     public async Task<NnaUser?> FindByEmailWithRolesAsync(string email) {
@@ -53,9 +50,9 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
             throw new ArgumentNullException(nameof(user));
         }
 
-        var isValid = await _nnaDataProtectorTokenProvider.ValidateAsync(
-            Enum.GetName(TokenGenerationReasons.NnaConfirmEmail), token, this, user);
-
+        var isValid = !await VerifyUserTokenAsync(user, Options.Tokens.EmailConfirmationTokenProvider,
+            ConfirmEmailTokenPurpose, token);
+            
         if (!isValid) {
             return IdentityResult.Failed(new IdentityError
                 { Code = "", Description = "Invalid confirm email nna token" });
@@ -66,34 +63,25 @@ public sealed class NnaUserManager : UserManager<NnaUser> {
         _userRepository.UpdateUser(user);
         return IdentityResult.Success;
     }
-
-    public async Task<string> GenerateNnaUserTokenAsync(NnaUser user, string? reason) {
-        return await GenerateUserTokenAsync(user, _nnaDataProtectorTokenProvider.Name, reason);
-    }
-
+    
     public async Task<string> GenerateNnaTokenForSetOrResetPasswordAsync(NnaUser user, SendMailReason reason) {
-        return reason switch {
-            SendMailReason.NnaSetPassword => await GenerateUserTokenAsync(
-                user,
-                _nnaDataProtectorTokenProvider.Name,
-                _nnaSetPasswordPurpose),
-            SendMailReason.NnaResetPassword => await GenerateUserTokenAsync(
-                user,
-                _nnaDataProtectorTokenProvider.Name,
-                _nnaResetPasswordPurpose),
+        var token = reason switch {
+            SendMailReason.NnaSetPassword => await GenerateUserTokenAsync(user, Options.Tokens.PasswordResetTokenProvider, _nnaSetPasswordPurpose),
+            SendMailReason.NnaResetPassword => await GenerateUserTokenAsync(user, Options.Tokens.PasswordResetTokenProvider, _nnaResetPasswordPurpose),
             _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
         };
+        
+        return WebUtility.UrlEncode(token);
     }
 
-    public async Task<bool> ValidateNnaTokenForSetOrResetPasswordAsync(NnaUser user, string token,
-        SendMailReason reason) {
-        return reason switch {
-            SendMailReason.NnaSetPassword => await _nnaDataProtectorTokenProvider
-                .ValidateAsync(_nnaSetPasswordPurpose, token, this, user),
-            SendMailReason.NnaResetPassword => await _nnaDataProtectorTokenProvider
-                .ValidateAsync(_nnaResetPasswordPurpose, token, this, user),
+    public async Task<bool> ValidateNnaTokenForSetOrResetPasswordAsync(NnaUser user, string token, SendMailReason reason) {
+        var isValid = reason switch {
+            SendMailReason.NnaSetPassword => await VerifyUserTokenAsync(user, Options.Tokens.PasswordResetTokenProvider, _nnaSetPasswordPurpose, token),
+            SendMailReason.NnaResetPassword =>  await VerifyUserTokenAsync(user, Options.Tokens.PasswordResetTokenProvider, _nnaResetPasswordPurpose, token),
             _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, null)
         };
+
+        return isValid;
     }
 
     public async Task ResetNnaPassword(NnaUser user, string password) {

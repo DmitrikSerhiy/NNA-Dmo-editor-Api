@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using System.Text;
-using System.Web;
 using Microsoft.Extensions.Options;
 using NNA.Domain.Entities;
 using NNA.Domain.Enums;
@@ -29,7 +28,7 @@ public sealed class MailService {
 
     public async Task<bool> SendConfirmAccountEmailAsync(NnaUser user, CancellationToken cancellationToken) {
         var to = new EmailAddress(user.Email, user.UserName);
-        var token = await _nnaUserManager.GenerateNnaUserTokenAsync(user, Enum.GetName(TokenGenerationReasons.NnaConfirmEmail));
+        var token = await _nnaUserManager.GenerateEmailConfirmationTokenAsync(user);
         var plainTextContent = GenerateMessageForConfirmEmailActionWithLink(token);
         var message = MailHelper.CreateSingleEmail(_nnaFromEmail, to, "Confirm your account", plainTextContent, "");
 
@@ -72,7 +71,7 @@ public sealed class MailService {
 
         var link = new StringBuilder();
         link.Append(_sendGridConfiguration.ConfirmAccountUrl);
-        link.Append($"?token={HttpUtility.UrlEncode(token)}");
+        link.Append($"?token={token}");
         link.AppendLine("");
 
         var goodbyeMessage = new StringBuilder();
@@ -96,7 +95,7 @@ public sealed class MailService {
         link.AppendLine("");
         link.AppendLine("");
         link.Append(_sendGridConfiguration.PasswordFormUrl);
-        link.Append($"?token={HttpUtility.UrlEncode(token)}");
+        link.Append($"?token={token}");
         link.Append($"&reason={(int)reason}");
         link.Append($"&user={user.Email}");
 

@@ -18,8 +18,6 @@ public sealed class UpdateBeatDtoValidator : AbstractValidator<UpdateBeatDto> {
             .WithMessage("Seconds should be in between of 0 and 59");
         
         RuleFor(d => d.Type)
-            .NotEmpty()
-            .WithMessage("Beat type is required")
             .IsInEnum()
             .WithMessage("Not valid type"); 
     }

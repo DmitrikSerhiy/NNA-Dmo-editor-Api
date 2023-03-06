@@ -46,12 +46,6 @@ public sealed class ApiModule : Module {
             .InstancePerLifetimeScope();
         
         builder
-            .RegisterType<NnaDataProtectorTokenProvider>()
-            .AsSelf()
-            .InstancePerLifetimeScope();
-        
-
-        builder
             .RegisterAssemblyTypes(typeof(Program).Assembly)
             .Where(type =>
                 type.Name.EndsWith("Validator") && type.GetInterfaces().Any(x => x.Name == nameof(IValidator)))
