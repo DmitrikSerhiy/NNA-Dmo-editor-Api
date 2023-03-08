@@ -20,18 +20,17 @@ public class ClaimsValidator {
             throw new AuthenticationException("Invalid token. Refresh token should not be used as authentication key");
         }
 
-        var userId = claims.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.NameIdentifier))?.Value;
+        var userId = GetUserIdFromClaims(claims);
         if (string.IsNullOrWhiteSpace(userId)) {
             throw new AuthenticationException("User id claim is missing");
         }
 
-        var userEmail = claims.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.Email))?.Value;
+        var userEmail = GetUserEmailFromClaims(claims);
         if (string.IsNullOrWhiteSpace(userEmail)) {
             throw new AuthenticationException("User email claim is missing");
         }
 
-        var tokenId = claims.FirstOrDefault(claim =>
-            claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid)))?.Value;
+        var tokenId = GetOidFromClaims(claims);
         if (string.IsNullOrWhiteSpace(tokenId)) {
             throw new AuthenticationException("User oid claim is missing");
         }
@@ -49,4 +48,22 @@ public class ClaimsValidator {
 
         return authData;
     }
+
+    public static string? GetUserEmailFromClaims(IEnumerable<Claim>? claims) {
+        return claims?.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.Email))?.Value;
+    }
+    
+    public static string? GetUserIdFromClaims(IEnumerable<Claim>? claims) {
+        return claims?.FirstOrDefault(claim => claim.Type.Equals(ClaimTypes.NameIdentifier))?.Value;
+    }
+
+    public static string? GetOidFromClaims(IEnumerable<Claim>? claims) {
+        return claims?.FirstOrDefault(claim =>
+            claim.Type.Equals(NnaCustomTokenClaimsDictionary.GetValue(NnaCustomTokenClaims.oid)))?.Value;
+    }
+    
+    public static string? GetUserRoleFromClaims(IEnumerable<Claim>? claims) {
+        return claims?.FirstOrDefault(claim => claim.Type.Equals(Enum.GetName(NnaCustomTokenClaims.rls)))?.Value;
+    }
+    
 }

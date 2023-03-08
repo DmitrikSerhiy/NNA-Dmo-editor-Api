@@ -5,6 +5,8 @@ using Azure.Core;
 using Azure.Extensions.AspNetCore.Configuration.Secrets;
 using Azure.Identity;
 using Azure.Security.KeyVault.Secrets;
+using Microsoft.ApplicationInsights.AspNetCore.Extensions;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -155,6 +157,35 @@ public static class ApiBuilderExtensions {
                 sqlOptions.EnableRetryOnFailure(2);
             });
         });
+    }
+
+    public static void AddNnaAppInsightLogging(this WebApplicationBuilder builder) {
+
+        var options = new ApplicationInsightsServiceOptions()
+        {
+            ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"],
+            EnableAuthenticationTrackingJavaScript = false,
+            EnableQuickPulseMetricStream = false, // for live metrics with latency of 1 second. NO NEED FOR NOW.
+            EnableEventCounterCollectionModule = false, // no counters are used by default by module is enables by default. NO NEED FOR NOW. But in future it might be used for collection GC execution (for example). More info here: https://learn.microsoft.com/en-us/dotnet/core/diagnostics/event-counters#available-counters
+            DeveloperMode = false, // might slow down the app
+            EnableActiveTelemetryConfigurationSetup = false, // should be false for new apps
+            
+            EnableDependencyTrackingTelemetryModule = false, // tracks local or remote http cals, db cals etc. Maybe it should be enabled
+
+            EnableDiagnosticsTelemetryModule = false, // these four are used for custom metrics with information about the runtime.
+            EnableAppServicesHeartbeatTelemetryModule = false, 
+            EnableAzureInstanceMetadataTelemetryModule = false,
+            EnableHeartbeat = false,
+            
+            
+            EnableRequestTrackingTelemetryModule = true, // track all requests
+            EnablePerformanceCounterCollectionModule = true, // track performance
+            EnableAdaptiveSampling = true, // automatically reduce amount of metrics when app is under high load
+            AddAutoCollectedMetricExtractor = true, // improve performance of searching in Azure Portal AppInsight. More info: https://learn.microsoft.com/en-us/azure/azure-monitor/app/pre-aggregated-metrics-log-metrics
+        };
+
+        builder.Services.AddApplicationInsightsTelemetry(options);
+        builder.Services.AddSingleton<ITelemetryInitializer, NnaUserTelemetryInitializer>();
     }
 
     public static void AddNnaAzureKeyVaultAndSecretsOptions(this WebApplicationBuilder builder) {

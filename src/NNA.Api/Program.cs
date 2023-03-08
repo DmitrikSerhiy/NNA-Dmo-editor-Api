@@ -43,6 +43,9 @@ try {
     if (builder.Environment.IsLocalMachine()) {
         builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration));
     }
+    else {
+        builder.AddNnaAppInsightLogging();
+    }
 
     var app = builder.Build();
 

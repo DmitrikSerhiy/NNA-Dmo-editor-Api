@@ -60,7 +60,7 @@ public sealed class NnaAuthorizationMiddleware : IAuthorizationMiddlewareResultH
         });
     }
     
-    private string GetHighestRole(string userRoles) {
+    public static string GetHighestRole(string userRoles) {
         var roles = userRoles.Split(",");
         if (roles.Contains(Enum.GetName(NnaRoles.SuperUser))) {
             return Enum.GetName(NnaRoles.SuperUser)!;
