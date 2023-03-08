@@ -20,6 +20,7 @@ using NNA.Domain.Entities;
 using NNA.Domain.Enums;
 using NNA.Domain.Models;
 using NNA.Persistence;
+using Serilog;
 
 namespace NNA.Api.Extensions;
 
@@ -159,6 +160,18 @@ public static class ApiBuilderExtensions {
         });
     }
 
+    public static void AddNnaLogging(this WebApplicationBuilder builder) {
+        if (builder.Environment.IsLocalMachine()) { // for local machine log only in console and file with information log level
+            builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration));
+        }
+        else {
+            builder.AddNnaAppInsightLogging(); // for cloud machine log into appInsight with warning log level 
+            builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
+                .WriteTo.ApplicationInsights(services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces) 
+                .ReadFrom.Configuration(context.Configuration));
+        }
+    }
+
     public static void AddNnaAppInsightLogging(this WebApplicationBuilder builder) {
 
         var options = new ApplicationInsightsServiceOptions()
@@ -169,15 +182,12 @@ public static class ApiBuilderExtensions {
             EnableEventCounterCollectionModule = false, // no counters are used by default by module is enables by default. NO NEED FOR NOW. But in future it might be used for collection GC execution (for example). More info here: https://learn.microsoft.com/en-us/dotnet/core/diagnostics/event-counters#available-counters
             DeveloperMode = false, // might slow down the app
             EnableActiveTelemetryConfigurationSetup = false, // should be false for new apps
-            
-            EnableDependencyTrackingTelemetryModule = false, // tracks local or remote http cals, db cals etc. Maybe it should be enabled
-
-            EnableDiagnosticsTelemetryModule = false, // these four are used for custom metrics with information about the runtime.
+            EnableDependencyTrackingTelemetryModule = false, // tracks local or remote http cals, db cals etc. NO NEED FOR NOW. Serilog sink is used instead.
+            EnableDiagnosticsTelemetryModule = false, // these last four are used for custom metrics with information about the runtime.
             EnableAppServicesHeartbeatTelemetryModule = false, 
             EnableAzureInstanceMetadataTelemetryModule = false,
             EnableHeartbeat = false,
-            
-            
+
             EnableRequestTrackingTelemetryModule = true, // track all requests
             EnablePerformanceCounterCollectionModule = true, // track performance
             EnableAdaptiveSampling = true, // automatically reduce amount of metrics when app is under high load
