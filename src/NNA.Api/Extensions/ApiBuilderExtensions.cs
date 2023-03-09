@@ -161,11 +161,11 @@ public static class ApiBuilderExtensions {
     }
 
     public static void AddNnaLogging(this WebApplicationBuilder builder) {
-        if (builder.Environment.IsLocalMachine()) { // for local machine log only in console and file with information log level
+        if (builder.Environment.IsLocal()) { // for local env. log only in console and file with information log level
             builder.Host.UseSerilog((ctx, lc) => lc.ReadFrom.Configuration(ctx.Configuration));
         }
         else {
-            builder.AddNnaAppInsightLogging(); // for cloud machine log into appInsight with warning log level 
+            builder.AddNnaAppInsightLogging(); // for dev. env. log into appInsight and console with warning log level 
             builder.Host.UseSerilog((context, services, loggerConfiguration) => loggerConfiguration
                 .WriteTo.ApplicationInsights(services.GetRequiredService<TelemetryConfiguration>(), TelemetryConverter.Traces) 
                 .ReadFrom.Configuration(context.Configuration));
