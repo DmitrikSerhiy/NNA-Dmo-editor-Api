@@ -17,8 +17,8 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
     public async Task<Dmo?> GetByIdWithCharactersAndConflicts(Guid id, CancellationToken token, bool withTracking = false) {
         if (id == Guid.Empty) throw new ArgumentException(nameof(id));
         return withTracking
-            ? await Context.Dmos.Include(dmo => dmo.Characters).Include(cha => cha.Conflicts).FirstOrDefaultAsync(dmo => dmo.Id == id, token)
-            : await Context.Dmos.Include(dmo => dmo.Characters).Include(cha => cha.Conflicts).AsNoTracking().FirstOrDefaultAsync(dmo => dmo.Id == id, token);
+            ? await Context.Dmos.Include(dmo => dmo.Characters).Include(cha => cha.Conflicts).AsSplitQuery().FirstOrDefaultAsync(dmo => dmo.Id == id, token)
+            : await Context.Dmos.Include(dmo => dmo.Characters).Include(cha => cha.Conflicts).AsSplitQuery().AsNoTracking().FirstOrDefaultAsync(dmo => dmo.Id == id, token);
     }
     
     public async Task<Dmo?> GetShortById(Guid id, CancellationToken token, bool withTracking = false) {
@@ -61,6 +61,7 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
             .ThenInclude(dd => dd.DmoCollection)
             .Include(d => d.Beats)
             .Include(d => d.Conflicts)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(d => d.NnaUserId == userId && d.Id == dmoId, token);
     }
     
@@ -101,6 +102,7 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
                 .ThenInclude(tig => tig.Tags)
                     .ThenInclude(t => t.Tag)
             .Include(d => d.Characters)
+            .AsSplitQuery()
             .FirstOrDefaultAsync(b => b.Id == dmoId, cancellationToken);
     }
 
@@ -119,6 +121,7 @@ internal sealed class DmosRepository : CommonRepository, IDmosRepository {
             .Where(d => d.DmoId == dmoId && d.UserId == userId)
             .Include(d => d.Characters)
             .Include(d => d.Tags)
+            .AsSplitQuery()
             .OrderBy(d => d.Order)
             .ToListAsync();
     }
